@@ -1,2 +1,2 @@
-# mitwelten-discover-app
-Mitwelten.org Discover App
+# Mitwelten Discover App
+https://discover.mitwelten.org/
