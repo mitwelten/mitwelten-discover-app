@@ -1,0 +1,16 @@
+body {
+    font-family: Verdana, sans-serif;
+    margin: 0;
+    background-color: #800020;
+}
+
+#map-container {
+    background-color: darkgreen;
+    width: 100vw;
+    height: 100vh;
+}
+
+.dash-graph {
+    width: 100vw;
+    height: 100vh;
+}
