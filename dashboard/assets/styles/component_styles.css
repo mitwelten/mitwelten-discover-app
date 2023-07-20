@@ -1,0 +1,39 @@
+.action-button {
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 50%;
+    box-shadow:
+            0 3px 6px rgba(0, 0, 0, 0.16),
+            0 3px 6px rgba(0, 0, 0, 0.23);
+
+    transition: 250ms ease;
+    transition-property: filter, box-shadow;
+}
+
+.action-button :hover:not([disabled]) {
+    filter: brightness(90%);
+}
+
+.action-button:disabled {
+    cursor: not-allowed;
+    box-shadow: none;
+    background: rgb(200, 200, 200);
+}
+
+.action-button:active:not([disabled]) {
+    box-shadow: none;
+    filter: brightness(75%);
+}
+
+#theme-switch-container {
+    position: absolute;
+    right: 10px;
+    bottom:10px;
+}
+#settings-container {
+    position: relative;
+    display: flex;
+    height: 100%;
+    flex-flow: column;
+}
