@@ -38,15 +38,8 @@ body {
 #left-drawer-btn {
     position: absolute;
     top: 20px;
-    left: 20px;
+    left: 50px;
 }
-
-
-
-/*.minimap-btn  {*/
-/*    background: red;*/
-/*    width:100px;*/
-/*}*/
 
 .minimap-button-container {
     display: inline-block;
@@ -119,10 +112,9 @@ body {
     text-align: center;
 }
 
-#map-selector {
+#map-selector-popup {
     position: absolute;
     width: 200px;
     top: 60px;
     right: 20px;
-    visibility: hidden;
 }

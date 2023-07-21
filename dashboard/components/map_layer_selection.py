@@ -1,7 +1,7 @@
 import dash
+import dash_leaflet as dl
 import dash_mantine_components as dmc
-import plotly.graph_objects as go
-from dash import html, Output, Input, ALL, State, callback
+from dash import html, Output, Input, ALL, callback
 
 from dashboard.config import map_config as config
 
@@ -52,40 +52,27 @@ def minimap_button(id_prefix, map_config):
 
 
 @callback(
-    Output(component_id="map_id", component_property="figure"),
-    [Input(component_id={'role': "minimap-btn", 'index': ALL, 'place': ALL}, component_property='n_clicks'),
-     Input(component_id="map_id", component_property="figure")]
+    Output("map", "children"),
+    [
+        Input({'role': "minimap-btn", 'index': ALL, 'place': ALL}, 'n_clicks'),
+        Input("data_layer", "id"),
+        Input("data_layer", "children")
+    ]
 )
-def minimap_action(_, data):
-
-    new_map = config.map_configs[config.DEFAULT_MAP_INDEX]
-    prev_zoom = config.DEFAULT_ZOOM
-    center = {'lon': config.DEFAULT_LON, 'lat': config.DEFAULT_LAT}
-
-    if data is not None:
-        mapbox = data["layout"]["mapbox"]
-        prev_zoom = mapbox["zoom"]
-        center = mapbox["center"]
-
-    if dash.ctx.triggered_id is not None:
+def minimap_action(_, data_layer_id, data_layer):
+    if dash.ctx.triggered_id is not None and type(dash.ctx.triggered_id.index) is int:
         new_map = config.map_configs[dash.ctx.triggered_id.index]
+    else:
+        return dash.no_update
 
-    new_fig = go.Figure(
-        go.Scattermapbox(),
-        layout_mapbox_style=new_map.style,
-        layout_mapbox_zoom=prev_zoom,
-        layout_mapbox_layers=[new_map.layers],
-        layout_mapbox_center=center,
-        layout_margin={'r': 0, 'l': 0, 't': 0, 'b': 0},
-    )
-    new_fig.update_layout(clickmode='event')
-    return new_fig
-
-
-@callback(
-    Output("test-id","children"),
-    Input("map_id", "clickData"),
-)
-def mapClick(clickData):
-    print(clickData)
-    return clickData
+    return [
+        dl.TileLayer(
+            url=new_map.source,
+            attribution=new_map.source_attribution
+        ),
+        dl.LocateControl(options={"locateOptions": {"enableHighAccuracy": True}}),
+        dl.LayerGroup(
+            id=data_layer_id,
+            children=data_layer,
+        ),
+    ]

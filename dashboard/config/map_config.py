@@ -40,6 +40,8 @@ class MapConfiguration:
             self,
             title,
             image,
+            source,
+            source_attribution,
             style="white-bg",
             layers=None
     ):
@@ -49,34 +51,38 @@ class MapConfiguration:
         self.id = next(self.iter_id)
         self.title = title
         self.image = image
+        self.source = source
+        self.source_attribution = source_attribution
         self.style = style
         self.layers = layers
 
 
 map_configs = [
-    MapConfiguration(
-        title="Carto",
-        image="./assets/minimap/carto.png",
-        style="carto-positron"
-    ),
-    MapConfiguration(
-        title="Carto Dark",
-        image="./assets/minimap/carto-dark.png",
-        style="carto-darkmatter",
-    ),
-    MapConfiguration(
-        title="Stamen Toner",
-        image="./assets/minimap/stamen-toner.png",
-        style="stamen-toner",
-    ),
-    MapConfiguration(
-        title="Stamen Terrain",
-        image="./assets/minimap/stamen-terrain.png",
-        style="stamen-terrain",
-    ),
+    # MapConfiguration(
+    #     title="Carto",
+    #     image="./assets/minimap/carto.png",
+    #     style="carto-positron"
+    # ),
+    # MapConfiguration(
+    #     title="Carto Dark",
+    #     image="./assets/minimap/carto-dark.png",
+    #     style="carto-darkmatter",
+    # ),
+    # MapConfiguration(
+    #     title="Stamen Toner",
+    #     image="./assets/minimap/stamen-toner.png",
+    #     style="stamen-toner",
+    # ),
+    # MapConfiguration(
+    #     title="Stamen Terrain",
+    #     image="./assets/minimap/stamen-terrain.png",
+    #     style="stamen-terrain",
+    # ),
     MapConfiguration(
         title="Open Street Map",
         image="./assets/minimap/open-street.png",
+        source="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        source_attribution='© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
         style="open-street-map",
     ),
     # MapConfiguration(
@@ -87,16 +93,22 @@ map_configs = [
     MapConfiguration(
         title="Swiss Topo Picture",
         image="./assets/minimap/swiss-topo-picture.png",
+        source="https://wmts10.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg",
+        source_attribution='<a href="https://www.swisstopo.admin.ch/de/home.html" target="_blank">SwissTopo</a>',
         layers=DEFAULT_MAP_LAYER,
     ),
     MapConfiguration(
         title="Swiss Topo Grey",
         image="./assets/minimap/swiss-topo-grey.png",
+        source="https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-grau/default/current/3857/{z}/{x}/{y}.jpeg",
+        source_attribution='<a href="https://www.swisstopo.admin.ch/de/home.html" target="_blank">SwissTopo</a>',
         layers=PIXEL_GREY_MAP_LAYER,
     ),
     MapConfiguration(
         title="Swiss Topo Color",
         image="./assets/minimap/swiss-topo-color.png",
+        source="https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg",
+        source_attribution='<a href="https://www.swisstopo.admin.ch/de/home.html" target="_blank">SwissTopo</a>',
         layers=PIXEL_COLOR_MAP_LAYER,
     ),
 ]

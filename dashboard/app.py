@@ -1,31 +1,62 @@
-import dash
+import json
+import urllib
+
+import dash_leaflet as dl
 import dash_mantine_components as dmc
-import plotly.graph_objects as go
-from dash import Output, Input, html, dcc
+import requests
+from dash import Output, Input, html, dcc, dash, State
 from dash_iconify import DashIconify
+from urllib.parse import urlparse, parse_qs
+from functools import reduce
 
 from dashboard.components.map_layer_selection import map_selection
 from dashboard.components.settings import settings
+from dashboard.config import api_config as api
 from dashboard.config import map_config as config
 from dashboard.maindash import app
+from dashboard.model.deployment import Deployment
 
+all_deployments = [Deployment(d) for d in requests.get(api.URL_DEPLOYMENTS).json()]
 
-initial_map = config.map_configs[1]
-initial_figure = go.Figure(
-    go.Scattermapbox(),
-    layout_mapbox_style=initial_map.style,
-    layout_mapbox_zoom=config.DEFAULT_ZOOM,
-    layout_mapbox_layers=[initial_map.layers],
-    layout_mapbox_center={'lon': config.DEFAULT_LON, 'lat': config.DEFAULT_LAT},
-    layout_margin={'r': 0, 'l': 0, 't': 0, 'b': 0},
+all_types = set(map(lambda d: d.node_type, all_deployments))
+
+all_tags = map(lambda d: d.tags, all_deployments)
+all_tags = sorted(set(reduce(list.__add__, all_tags)))
+json_tags = json.dumps(all_tags)
+
+deployment_dict = {}
+for type in all_types:
+    deployment_dict[type] = [d.to_json() for d in all_deployments if type.lower().strip() in d.node_type.lower()]
+
+initial_map = config.map_configs[0]
+map_figure = dl.Map(
+    [
+        dl.TileLayer(
+            id="tile_layer",
+            url=initial_map.source,
+            attribution=initial_map.source_attribution,
+            maxZoom=20.9,
+        ),
+        dl.LocateControl(options={"locateOptions": {"enableHighAccuracy": True}}),
+        dl.LayerGroup(id="data_layer"),
+    ],
+    center=(config.DEFAULT_LAT, config.DEFAULT_LON),
+    zoom=14,
+    id="map",
+    style={
+        "width": "100vw",
+        "height": "100vh",
+        "zIndex": 0,
+    },
 )
 
 
 app_content = [
-    html.Div(
-        dcc.Graph(id="map_id"),
-        id="map-container",
-    ),
+    dcc.Location(id='url', refresh=False, search=""),
+    dcc.Store(id="deployment_data", data=deployment_dict),
+    dcc.Store(id="tags_data", data=json_tags),
+    dcc.Store(id="popup-state", data={'clicks': 0}),
+    map_figure,
     dmc.MediaQuery([
             dmc.ActionIcon(
                 DashIconify(
@@ -62,10 +93,11 @@ app_content = [
     ),
     dmc.Card(
         children=[map_selection("on-map")],
-        id="map-selector",
+        id="map-selector-popup",
         withBorder=True,
         shadow="lg",
         radius="md",
+        styles={"visibility": "hidden"}
     ),
     dmc.ActionIcon(
         DashIconify(
@@ -85,7 +117,7 @@ app_content = [
         zIndex=10000,
     ),
     dmc.Drawer(
-        settings(),
+        settings(deployment_dict, all_tags),
         id="left-drawer",
         opened=True,
         size=400,
@@ -94,7 +126,7 @@ app_content = [
         withOverlay=False,
         zIndex=10000,
     ),
-    html.Div(id="test-id")
+    html.Div(id="test")
 ]
 
 
@@ -128,20 +160,48 @@ discover_app = dmc.MantineProvider(
 
 app.layout = discover_app
 
+@app.callback(
+    Output('map', 'center'),
+    Input('url', 'href'),
+)
+def display_page(href):
+    lat = config.DEFAULT_LAT
+    lon = config.DEFAULT_LON
+    query = urlparse(href).query
+    r = parse_qs(query)
+    if r is not {}:
+        lat = r["lat"][0]
+        lon = r["lon"][0]
+
+    return (lat, lon)
+
 
 @app.callback(
-    Output("map-selector", "style"),
+    [
+        Output("url", "search"),
+        Output("map-selector-popup", "style"),
+        Output("popup-state", "data"),
+    ],
     [
         Input("map-selector-btn", "n_clicks"),
-        Input("map-selector", "style"),
+        Input("map", "click_lat_lng"),
+        State("popup-state", "data"),
     ],
-    prevent_initial_call=True,
+    prevent_initial_callback=True
 )
-def show_map_selector(_, style):
-    if style is not None and style["visibility"] == "visible":
-        return {"visibility": "hidden"}
-    else:
-        return {"visibility": "visible"}
+def map_click(n_clicks, click_lat_lng, data):
+    popup_style = {"visibility": "hidden"}
+    data = data or {'clicks': None}
+    if n_clicks is not None:
+        if n_clicks != data['clicks']:
+            data = {'clicks': n_clicks}
+            popup_style = {"visibility": "visible"}
+            print("button pressed")
+
+    loc = ""
+    if click_lat_lng is not None:
+        loc = [f"?lat={click_lat_lng[0]}&lon={click_lat_lng[1]}"]
+    return loc, popup_style, data
 
 
 @app.callback(
