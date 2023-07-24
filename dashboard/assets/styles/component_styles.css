@@ -26,14 +26,13 @@
     filter: brightness(75%);
 }
 
-#theme-switch-container {
-    position: absolute;
-    right: 10px;
-    bottom:10px;
-}
 #settings-container {
     position: relative;
     display: flex;
     height: 100%;
     flex-flow: column;
+}
+
+#scroll-div-container {
+    max-height: calc(100vh - 10rem);
 }

@@ -1,5 +1,4 @@
 import json
-import urllib
 
 import dash_leaflet as dl
 import dash_mantine_components as dmc
@@ -10,7 +9,7 @@ from urllib.parse import urlparse, parse_qs
 from functools import reduce
 
 from dashboard.components.map_layer_selection import map_selection
-from dashboard.components.settings import settings
+from dashboard.components.left_drawer.settings import settings
 from dashboard.config import api_config as api
 from dashboard.config import map_config as config
 from dashboard.maindash import app
@@ -35,7 +34,8 @@ map_figure = dl.Map(
             id="tile_layer",
             url=initial_map.source,
             attribution=initial_map.source_attribution,
-            maxZoom=20.9,
+            # maxZoom=20.9,
+            maxZoom=24.0,
         ),
         dl.LocateControl(options={"locateOptions": {"enableHighAccuracy": True}}),
         dl.LayerGroup(id="data_layer"),
@@ -126,7 +126,6 @@ app_content = [
         withOverlay=False,
         zIndex=10000,
     ),
-    html.Div(id="test")
 ]
 
 
@@ -143,7 +142,7 @@ discover_app = dmc.MantineProvider(
         "headings": {
             "fontFamily": "Roboto, sans-serif",
             "sizes": {
-                "h1": {"fontSize": 30},
+                "h1": {"fontSize": 20},
             },
         },
     },
@@ -159,6 +158,7 @@ discover_app = dmc.MantineProvider(
 )
 
 app.layout = discover_app
+
 
 @app.callback(
     Output('map', 'center'),
