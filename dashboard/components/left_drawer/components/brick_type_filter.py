@@ -4,7 +4,7 @@ import dash_mantine_components as dmc
 from dash import html, dcc, callback, Output, Input
 
 from dashboard.components.left_drawer.components.decorators import spaced_section
-from dashboard.config.id_config import ID_ALL_ACTIVE_STORE, ID_TYPE_CHECKBOX_GROUP
+from dashboard.config.id_config import *
 
 
 @spaced_section

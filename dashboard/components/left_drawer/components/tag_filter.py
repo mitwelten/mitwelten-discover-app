@@ -5,13 +5,7 @@ from dash_iconify import DashIconify
 import dash_core_components as dcc
 
 from dashboard.config import api_config as api
-from dashboard.config.id_config import \
-    ID_CURRENT_TAG_DATA_STORE, \
-    ID_OPEN_MODAL_BUTTON, \
-    ID_TAG_CHIPS_GROUP, \
-    ID_CHIPS_MODAL, \
-    ID_MODAL_CHIPS_GROUP, \
-    ID_CLOSE_MODAL_BUTTON
+from dashboard.config.id_config import *
 
 
 def tag_filter(data):

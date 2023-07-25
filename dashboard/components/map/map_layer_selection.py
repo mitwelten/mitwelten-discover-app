@@ -4,7 +4,7 @@ import dash_mantine_components as dmc
 from dash import html, Output, Input, ALL, callback
 
 from dashboard.config import map_config as config
-from dashboard.config.id_config import ID_MAP_LAYER_GROUP
+from dashboard.config.id_config import *
 
 
 def map_selection(id_prefix):

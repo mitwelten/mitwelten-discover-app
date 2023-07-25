@@ -2,7 +2,7 @@ import dash_mantine_components as dmc
 from dash import html
 from dash_iconify import DashIconify
 
-from dashboard.config.id_config import ID_MINIMAP_LAYER_BUTTON, ID_MINIMAP_LABEL
+from dashboard.config.id_config import *
 
 layer_button = html.Div(
     children=[

@@ -2,8 +2,7 @@ import dash_mantine_components as dmc
 from dash import html, callback, Output, Input
 from dash_iconify import DashIconify
 
-from dashboard.config.id_config import ID_THEME_SWITCH
-from dashboard.config.id_config import ID_APP_THEME
+from dashboard.config.id_config import *
 from dashboard.components.left_drawer.components.decorators import spaced_section
 
 

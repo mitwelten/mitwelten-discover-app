@@ -15,12 +15,7 @@ from dashboard.components.left_drawer.components.setting_controls import setting
 from dashboard.components.left_drawer.components.tag_filter import tag_filter
 from dashboard.config import api_config as api
 from dashboard.api.api_client import get_env_tod
-from dashboard.config.id_config import \
-    ID_MARKER_CLICK_STORE, \
-    ID_CHART_MODAL, \
-    ID_MEASUREMENT_CHART, \
-    ID_LEFT_DRAWER_CONTENT_SCROLL_AREA, ID_MAP_LAYER_GROUP, ID_DATE_RANGE_PICKER, ID_TYPE_CHECKBOX_GROUP, \
-    ID_TAG_CHIPS_GROUP, ID_DATE_RANGE_SEGMENT, ID_DEPLOYMENT_DATA_STORE
+from dashboard.config.id_config import *
 
 from util.functions import safe_reduce
 

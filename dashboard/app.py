@@ -12,9 +12,7 @@ from dashboard.components.map.map_layer_selection import map_selection
 from dashboard.components.left_drawer.settings import settings
 from dashboard.config import api_config as api
 from dashboard.config import map_config as config
-from dashboard.config.id_config import ID_APP_THEME, ID_TILE_LAYER_MAP, ID_MAP_LAYER_GROUP, ID_DEPLOYMENT_DATA_STORE, \
-    ID_POPUP_STATE_STORE, ID_TAG_DATA_STORE, ID_MAP_SELECTOR_BUTTON, ID_MAP_SELECTION_POPUP, ID_OPEN_LEFT_DRAWER_BUTTON, \
-    ID_BOTTOM_DRAWER, ID_LEFT_DRAWER, ID_APP_CONTAINER, ID_MAP, ID_URL_LOCATION, ID_BOTTOM_DRAWER_BUTTON
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
 

@@ -4,7 +4,7 @@ import dash_mantine_components as dmc
 from dash import html
 
 from dashboard.components.left_drawer.components.decorators import spaced_section
-from dashboard.config.id_config import ID_DATE_RANGE_SEGMENT, ID_DATE_RANGE_PICKER
+from dashboard.config.id_config import *
 from dashboard.config.settings_config import DEFAULT_DATE_RANGES
 
 
