@@ -1,67 +1,42 @@
 import json
-
 from datetime import datetime, timedelta
 
-import pandas as pd
-import plotly.express as px
 import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import html, Output, Input, callback, ALL, State, dcc
+from dash import html, Output, Input, callback
 from dash_iconify import DashIconify
 
-from dashboard.components.left_drawer.components.type_filter import brick_type_filter
-from dashboard.components.left_drawer.components.date_time_section import date_time_section
+from dashboard.components.chart_modal.chart import modal_chart
 from dashboard.components.left_drawer.components.controls import setting_controls
+from dashboard.components.left_drawer.components.date_time_section import date_time_section
 from dashboard.components.left_drawer.components.tag_filter import tag_filter
-from dashboard.api.api_client import get_env_tod
+from dashboard.components.left_drawer.components.type_filter import brick_type_filter
 from dashboard.config.id_config import *
 
-from util.functions import safe_reduce
-
 header = dmc.Center(dmc.Text("Mitwelten Discover", size="lg"))
-fig = px.line()
+
+
+def divider(title: str):
+    return dmc.Divider(label=title, labelPosition="center", size="md")
 
 
 def settings(node_types, tags_data, depl_colors):
     return dmc.Container(
         children=[
-            dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
-            html.Div([
-                dmc.Modal(
-                    title="Measurement Chart",
-                    id=ID_CHART_MODAL,
-                    centered=True,
-                    zIndex=10000,
-                    size="80%",
-                    closeOnClickOutside=True,
-                    closeOnEscape=False,
-                    children=[
-                        dmc.Container(
-                            dcc.Graph(
-                                id=ID_MEASUREMENT_CHART,
-                                figure=fig,
-                                config={"displayModeBar": False},
-                                style={"height": "inherit", "width": "inherit"}
-                            ),
-                        )
-                    ],
-                ),
-            ]
-            ),
             header,
             dmc.Space(h=30),
             dmc.ScrollArea([
                 html.Div([
-                    dmc.Divider(label="Time Range Selection", labelPosition="center", size="md"),
+                    divider("Time Range Selection"),
                     date_time_section(),
 
-                    dmc.Divider(label="Filter", labelPosition="center", size="md"),
+                    divider("Filter"),
                     brick_type_filter(node_types, depl_colors),
                     tag_filter(tags_data),
                     dmc.Space(h=30),
 
-                    dmc.Divider(label="Settings", labelPosition="center", size="md"),
+                    divider("Settings"),
                     setting_controls(),
                 ],
                     id=ID_LEFT_DRAWER_CONTENT_SCROLL_AREA,
@@ -70,6 +45,7 @@ def settings(node_types, tags_data, depl_colors):
                 offsetScrollbars=True,
                 type="always"
             ),
+            modal_chart,
         ],
         fluid=True,
         style={"height": "100vh"}
@@ -162,37 +138,3 @@ def filter_map_data(checkboxes, chips, deployment_data, time_range, seg_time_ran
             ))
 
     return markers, update_picker
-
-
-@callback(
-    Output(ID_MEASUREMENT_CHART, "figure"),
-    Output(ID_CHART_MODAL, "opened"),
-    Output(ID_MARKER_CLICK_STORE, "data"),
-    Input({"role": ALL, "id": ALL, "label": ALL}, "n_clicks"),
-    Input(ID_DATE_RANGE_PICKER, "value"),
-    Input(ID_MARKER_CLICK_STORE, "data"),
-    State(ID_CHART_MODAL, "opened"),
-    prevent_initial_call=True,
-)
-def marker_click(n_clicks, date, data, opened):
-    click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
-    print(n_clicks, date, data, opened, dash.ctx.triggered_id)
-
-    has_click_triggered = click_sum != data["clicks"]
-
-    if click_sum is not None:
-        data["clicks"] = click_sum
-
-    if has_click_triggered and dash.ctx.triggered_id is not None:
-        trigger_id = dash.ctx.triggered_id["id"]
-        print(dash.ctx.triggered_id, opened)
-        resp = get_env_tod(trigger_id, "temperature", "mean", "1h")
-        resp["time"] = pd.to_datetime(resp["time"], format="%Y-%m-%d", exact=False)
-        new_figure = px.line(
-            resp,
-            x='time',
-            y="value",
-            title=f"{dash.ctx.triggered_id['role']} - {dash.ctx.triggered_id['label']}",
-        )
-        return new_figure, True, data
-    return dash.no_update

@@ -3,7 +3,7 @@ from functools import reduce
 import dash_mantine_components as dmc
 from dash import html, dcc, callback, Output, Input
 
-from dashboard.components.left_drawer.decorators import spaced_section
+from dashboard.decorators import spaced_section
 from dashboard.config.id_config import *
 
 

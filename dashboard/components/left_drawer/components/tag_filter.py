@@ -83,4 +83,3 @@ def toggle_modal(_1, _2, value, active_chips, children, opened):
     if trigger_id == ID_CLOSE_CHIP_MODAL_BUTTON or trigger_id == ID_OPEN_CHIP_MODAL_BUTTON:
         return not opened, new_children, new_active_chips
     return opened, children, active_chips
-
