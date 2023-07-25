@@ -33,8 +33,8 @@ ID_DATE_RANGE_SEGMENT = "id-time-range-segment"
 ID_TAG_CHIPS_GROUP = "id-tag-chips-group"
 ID_CHIPS_MODAL = "id-chip-modal"
 ID_MODAL_CHIPS_GROUP = "id-modal-chips-group"
-ID_CLOSE_MODAL_BUTTON = "id-close-modal-btn"
-ID_OPEN_MODAL_BUTTON = "id-open-modal-btn"
+ID_CLOSE_CHIP_MODAL_BUTTON = "id-close-modal-btn"
+ID_OPEN_CHIP_MODAL_BUTTON = "id-open-modal-btn"
 
 # left drawer
 ID_LEFT_DRAWER_CONTENT_SCROLL_AREA = "id-scroll-div-container"

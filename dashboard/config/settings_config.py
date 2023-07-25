@@ -8,3 +8,5 @@ DEFAULT_DATE_RANGES = [
     {"value": "4", "label": "1 M"},
     {"value": "1", "label": "1 W"},
 ]
+
+DEFAULT_TAGS = ["FS1", "FS2", "FS3"]

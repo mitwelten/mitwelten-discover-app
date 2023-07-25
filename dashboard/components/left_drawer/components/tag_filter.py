@@ -4,13 +4,13 @@ from dash import html, callback, Input, Output, State
 from dash_iconify import DashIconify
 import dash_core_components as dcc
 
-from dashboard.config import api_config as api
+from dashboard.config.settings_config import DEFAULT_TAGS
 from dashboard.config.id_config import *
 
 
 def tag_filter(data):
     return html.Div([
-        dcc.Store(id=ID_CURRENT_TAG_DATA_STORE, data=api.DEFAULT_TAGS),
+        dcc.Store(id=ID_CURRENT_TAG_DATA_STORE, data=DEFAULT_TAGS),
         dmc.Group([
             dmc.Text("Select visible TAG's",
                      size="xs",
@@ -24,7 +24,7 @@ def tag_filter(data):
                 ),
                 variant="outline",
                 size="xs",
-                id=ID_OPEN_MODAL_BUTTON,
+                id=ID_OPEN_CHIP_MODAL_BUTTON,
                 n_clicks=0,
                 radius="xl",
             ),
@@ -34,9 +34,10 @@ def tag_filter(data):
         dmc.Space(h=10),
         dmc.Center([
             dmc.ChipGroup(
-                [dmc.Chip(x, value=x, size="xs") for x in api.DEFAULT_TAGS],
+                [dmc.Chip(x, value=x, size="xs") for x in DEFAULT_TAGS],
                 multiple=True,
                 id=ID_TAG_CHIPS_GROUP,
+                value=[],
             ),
             html.Div(
                 dmc.Modal(
@@ -49,9 +50,10 @@ def tag_filter(data):
                             [dmc.Chip(x, value=x, size="xs") for x in sorted(data)],
                             multiple=True,
                             id=ID_MODAL_CHIPS_GROUP,
+                            value=DEFAULT_TAGS,
                         ),
                         dmc.Space(h=20),
-                        dmc.Center(dmc.Button("Add", id=ID_CLOSE_MODAL_BUTTON)),
+                        dmc.Center(dmc.Button("Ok", id=ID_CLOSE_CHIP_MODAL_BUTTON)),
                     ],
                 ),
             ),
@@ -63,8 +65,8 @@ def tag_filter(data):
     Output(ID_CHIPS_MODAL, "opened"),
     Output(ID_TAG_CHIPS_GROUP, "children"),
     Output(ID_TAG_CHIPS_GROUP, "value"),
-    Input(ID_OPEN_MODAL_BUTTON, "n_clicks"),
-    Input(ID_CLOSE_MODAL_BUTTON, "n_clicks"),
+    Input(ID_OPEN_CHIP_MODAL_BUTTON, "n_clicks"),
+    Input(ID_CLOSE_CHIP_MODAL_BUTTON, "n_clicks"),
     Input(ID_MODAL_CHIPS_GROUP, "value"),
     Input(ID_TAG_CHIPS_GROUP, "value"),
     Input(ID_TAG_CHIPS_GROUP, "children"),
@@ -78,7 +80,7 @@ def toggle_modal(_1, _2, value, active_chips, children, opened):
     new_active_chips = list(filter(lambda x: x not in filtered, value))
 
     trigger_id = dash.ctx.triggered_id
-    if trigger_id == "close-modal-btn" or trigger_id == "open-modal-btn":
+    if trigger_id == ID_CLOSE_CHIP_MODAL_BUTTON or trigger_id == ID_OPEN_CHIP_MODAL_BUTTON:
         return not opened, new_children, new_active_chips
     return opened, children, active_chips
 
