@@ -3,7 +3,7 @@ from dash import html, callback, Output, Input
 from dash_iconify import DashIconify
 
 from dashboard.config.id_config import *
-from dashboard.components.left_drawer.components.decorators import spaced_section
+from dashboard.components.left_drawer.decorators import spaced_section
 
 
 @spaced_section

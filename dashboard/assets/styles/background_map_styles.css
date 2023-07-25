@@ -8,7 +8,7 @@ body {
     height: 100vh;
 }
 
-#app-container {
+#id-app-container {
     position: relative;
     width: 100vw;
     height: 100vh;
@@ -23,19 +23,19 @@ body {
     padding: 0;
 }
 
-#bottom-drawer-btn {
+#id-bottom-drawer-btn {
     position: absolute;
     top: 20px;
     right: 20px;
 }
 
-#map-selector-btn {
+#id-map-selector-btn {
     position: absolute;
     top: 20px;
     right: 20px;
 }
 
-#left-drawer-btn {
+#id-left-drawer-btn {
     position: absolute;
     top: 20px;
     left: 50px;
@@ -71,7 +71,7 @@ body {
     left: 10px;
 }
 
-#minimap-layer-button {
+#id-minimap-layer-button {
     position: absolute;
     z-index: 1;
     background: linear-gradient(transparent 60%, black);
@@ -85,11 +85,11 @@ body {
     transition: ease 100ms;
 }
 
-#minimap-layer-button:hover {
+#id-minimap-layer-button:hover {
     border-width: 4px;
 }
 
-#minimap-label {
+#id-minimap-label {
     position: absolute;
     display: flex;
     justify-content: space-evenly;
@@ -112,7 +112,7 @@ body {
     text-align: center;
 }
 
-#map-selector-popup {
+#id-map-selector-popup {
     position: absolute;
     width: 200px;
     top: 60px;

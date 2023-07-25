@@ -4,6 +4,18 @@ DEFAULT_LAT = 47.53522891224535
 DEFAULT_LON = 7.606299048260731
 DEFAULT_ZOOM = 11.5
 DEFAULT_MAP_INDEX = 1
+DEFAULT_MARKER_COLORS = [
+    "#FF5733",  # (Rot-Orange)
+    "#00A86B",  # (Tiefgrün)
+    "#4287f5",  # (Königsblau)
+    "#FDB813",  # (Goldgelb)
+    "#7D3C98",  # (Purpur)
+    "#1ABC9C",  # (Türkis)
+    "#E74C3C",  # (Scharlachrot)
+    "#3498DB",  # (Himmelblau)
+    "#F39C12",  # (Orange)
+    "#9B59B6",  # (Helles Lavendelviolett)
+]
 
 DEFAULT_MAP_LAYER = {
     "below": "traces",

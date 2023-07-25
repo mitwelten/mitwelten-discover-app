@@ -3,15 +3,28 @@ from functools import reduce
 import dash_mantine_components as dmc
 from dash import html, dcc, callback, Output, Input
 
-from dashboard.components.left_drawer.components.decorators import spaced_section
+from dashboard.components.left_drawer.decorators import spaced_section
 from dashboard.config.id_config import *
 
 
+def get_checkbox_by_type(node_type: str, colors):
+    return dmc.Checkbox(
+        label=dmc.Group([
+            html.Div(
+                className="color-point",
+                style={"background": f"{colors[node_type]}"}
+            ),
+            node_type,
+        ]),
+        value=node_type,
+        size="xs")
+
+
 @spaced_section
-def brick_type_filter(data):
+def brick_type_filter(data, colors):
     brick_types = reduce(
         list.__add__,
-        [list(map(lambda x: dmc.Checkbox(label=x, value=x, size="xs"), sorted(data.keys())))],
+        [list(map(lambda x: get_checkbox_by_type(x, colors), (sorted(data.keys()))))],
         [dmc.Checkbox(label="All", value="all", size="xs")])
 
     return html.Div([

@@ -53,7 +53,7 @@ def minimap_button(id_prefix, map_config):
 
 
 @callback(
-    Output("map", "children"),
+    Output(ID_MAP, "children"),
     [
         Input({'role': "minimap-btn", 'index': ALL, 'place': ALL}, 'n_clicks'),
         Input(ID_MAP_LAYER_GROUP, "id"),

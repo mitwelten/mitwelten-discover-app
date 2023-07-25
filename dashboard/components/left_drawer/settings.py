@@ -8,12 +8,12 @@ import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import html, Output, Input, callback, ALL, State, dcc
+from dash_iconify import DashIconify
 
-from dashboard.components.left_drawer.components.brick_type_filter import brick_type_filter
+from dashboard.components.left_drawer.components.type_filter import brick_type_filter
 from dashboard.components.left_drawer.components.date_time_section import date_time_section
-from dashboard.components.left_drawer.components.setting_controls import setting_controls
+from dashboard.components.left_drawer.components.controls import setting_controls
 from dashboard.components.left_drawer.components.tag_filter import tag_filter
-from dashboard.config import api_config as api
 from dashboard.api.api_client import get_env_tod
 from dashboard.config.id_config import *
 
@@ -23,10 +23,10 @@ header = dmc.Center(dmc.Text("Mitwelten Discover", size="lg"))
 fig = px.line()
 
 
-def settings(brick_types, tags_data):
+def settings(node_types, tags_data, depl_colors):
     return dmc.Container(
         children=[
-            dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(env=None)),
+            dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
             html.Div([
                 dmc.Modal(
                     title="Measurement Chart",
@@ -57,7 +57,7 @@ def settings(brick_types, tags_data):
                     date_time_section(),
 
                     dmc.Divider(label="Filter", labelPosition="center", size="md"),
-                    brick_type_filter(brick_types),
+                    brick_type_filter(node_types, depl_colors),
                     tag_filter(tags_data),
                     dmc.Space(h=30),
 
@@ -77,19 +77,16 @@ def settings(brick_types, tags_data):
 
 
 @callback(
-    [
-        Output(ID_MAP_LAYER_GROUP, "children"),
-        Output(ID_DATE_RANGE_PICKER, "value"),
-    ],
-    [
-        Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-        Input(ID_TAG_CHIPS_GROUP, "value"),
-        Input(ID_DEPLOYMENT_DATA_STORE, "data"),
-        Input(ID_DATE_RANGE_PICKER, "value"),
-        Input(ID_DATE_RANGE_SEGMENT, "value"),
-    ]
+    Output(ID_MAP_LAYER_GROUP, "children"),
+    Output(ID_DATE_RANGE_PICKER, "value"),
+    Input(ID_TYPE_CHECKBOX_GROUP, "value"),
+    Input(ID_TAG_CHIPS_GROUP, "value"),
+    Input(ID_DEPLOYMENT_DATA_STORE, "data"),
+    Input(ID_DATE_RANGE_PICKER, "value"),
+    Input(ID_DATE_RANGE_SEGMENT, "value"),
+    Input(ID_DEPLOYMENT_COLOR_STORE, "data"),
 )
-def filter_map_data(checkboxes, chips, deployment_data, time_range, seg_time_range):
+def filter_map_data(checkboxes, chips, deployment_data, time_range, seg_time_range, colors):
     trigger_id = dash.ctx.triggered_id
     checkboxes = list(filter(lambda c: c != "all", checkboxes))
 
@@ -102,7 +99,7 @@ def filter_map_data(checkboxes, chips, deployment_data, time_range, seg_time_ran
         datetime.strptime(time_range[0], "%Y-%m-%d").date(),
         datetime.strptime(time_range[1], "%Y-%m-%d").date()
     ]
-    if trigger_id == "segmented-time-range":
+    if trigger_id == ID_DATE_RANGE_SEGMENT:
         update_picker = [datetime.now().date() - timedelta(weeks=seg_time_range), datetime.now().date()]
 
     depl_to_show = {}
@@ -150,11 +147,18 @@ def filter_map_data(checkboxes, chips, deployment_data, time_range, seg_time_ran
 
     for key in depl_to_show.keys():
         for d in depl_to_show[key]:
-            markers.append(dl.Marker(
+            markers.append(dl.DivMarker(
+                children=[
+                    DashIconify(
+                        icon="ion:location-sharp",
+                        height=24,
+                        color=f"{colors[d['node_type']]}"
+                    ),
+                    dl.Tooltip(f"{d['node_type']}\n{d['node_label']}"),
+                ],
+                iconOptions=dict(className="div-icon", iconAnchor=[32, 16]),
                 position=[d["lat"], d["lon"]],
-                children=dl.Tooltip(f"{d['node_type']}\n{d['node_label']}"),
                 id={"role": f"{d['node_type']}", "id": d['deployment_id'], "label": d["node_label"]},
-                icon=dict(iconUrl=api.URL_ICON, iconAnchor=[32, 16]),
             ))
 
     return markers, update_picker
@@ -164,8 +168,8 @@ def filter_map_data(checkboxes, chips, deployment_data, time_range, seg_time_ran
     Output(ID_MEASUREMENT_CHART, "figure"),
     Output(ID_CHART_MODAL, "opened"),
     Output(ID_MARKER_CLICK_STORE, "data"),
-    Input({"role": "Env. Sensor", "id": ALL, "label": ALL}, "n_clicks"),
-    Input("date-range-picker", "value"),
+    Input({"role": ALL, "id": ALL, "label": ALL}, "n_clicks"),
+    Input(ID_DATE_RANGE_PICKER, "value"),
     Input(ID_MARKER_CLICK_STORE, "data"),
     State(ID_CHART_MODAL, "opened"),
     prevent_initial_call=True,
@@ -174,10 +178,10 @@ def marker_click(n_clicks, date, data, opened):
     click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
     print(n_clicks, date, data, opened, dash.ctx.triggered_id)
 
-    has_click_triggered = click_sum != data["env"]
+    has_click_triggered = click_sum != data["clicks"]
 
     if click_sum is not None:
-        data["env"] = click_sum
+        data["clicks"] = click_sum
 
     if has_click_triggered and dash.ctx.triggered_id is not None:
         trigger_id = dash.ctx.triggered_id["id"]

@@ -15,6 +15,7 @@ from dashboard.config import map_config as config
 from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
+from dashboard.config.map_config import DEFAULT_MARKER_COLORS
 
 
 all_deployments = [Deployment(d) for d in requests.get(api.URL_DEPLOYMENTS).json()]
@@ -25,9 +26,17 @@ all_tags = map(lambda d: d.tags, all_deployments)
 all_tags = sorted(set(reduce(list.__add__, all_tags)))
 json_tags = json.dumps(all_tags)
 
+# {type: color}
+deployment_colors = {}
+idx_list = enumerate(sorted(all_types))
+for (idx, node_type) in idx_list:
+    deployment_colors[node_type] = DEFAULT_MARKER_COLORS[idx]
+
+# {type: deployment}
 deployment_dict = {}
-for type in all_types:
-    deployment_dict[type] = [d.to_json() for d in all_deployments if type.lower().strip() in d.node_type.lower()]
+for node_type in all_types:
+    deployment_dict[node_type] = [d.to_json() for d in all_deployments if node_type.lower().strip() in d.node_type.lower()]
+
 
 initial_map = config.map_configs[0]
 map_figure = dl.Map(
@@ -56,6 +65,7 @@ app_content = [
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployment_dict),
     dcc.Store(id=ID_TAG_DATA_STORE, data=json_tags),
     dcc.Store(id=ID_POPUP_STATE_STORE, data={'clicks': 0}),
+    dcc.Store(id=ID_DEPLOYMENT_COLOR_STORE, data=deployment_colors),
     map_figure,
     dmc.MediaQuery([
             dmc.ActionIcon(
@@ -117,7 +127,7 @@ app_content = [
         zIndex=10000,
     ),
     dmc.Drawer(
-        settings(deployment_dict, all_tags),
+        settings(deployment_dict, all_tags, deployment_colors),
         id=ID_LEFT_DRAWER,
         opened=True,
         size=400,
