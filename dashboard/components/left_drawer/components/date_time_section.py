@@ -4,30 +4,25 @@ import dash_mantine_components as dmc
 from dash import html
 
 from dashboard.components.left_drawer.components.decorators import spaced_section
+from dashboard.config.id_config import ID_DATE_RANGE_SEGMENT, ID_DATE_RANGE_PICKER
+from dashboard.config.settings_config import DEFAULT_DATE_RANGES
 
 
 @spaced_section
 def date_time_section():
     return html.Div([
         dmc.SegmentedControl(
-            id="segmented-time-range",
+            id=ID_DATE_RANGE_SEGMENT,
             color="green",
             value="1",
             fullWidth=True,
-            data=[
-                {"value": "100000", "label": "All"},
-                {"value": "52", "label": "12 M"},
-                {"value": "26", "label": "6 M"},
-                {"value": "12", "label": "3 M"},
-                {"value": "4", "label": "1 M"},
-                {"value": "1", "label": "1 W"},
-            ],
+            data=DEFAULT_DATE_RANGES,
             mt=10,
         ),
         dmc.Space(h=20),
         dmc.Center(
             dmc.DateRangePicker(
-                id="date-range-picker",
+                id=ID_DATE_RANGE_PICKER,
                 label="Date Range",
                 inputFormat="DD MMMM, YY",
                 description="",

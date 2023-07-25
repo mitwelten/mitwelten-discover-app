@@ -4,6 +4,7 @@ import dash_mantine_components as dmc
 from dash import html, dcc, callback, Output, Input
 
 from dashboard.components.left_drawer.components.decorators import spaced_section
+from dashboard.config.id_config import ID_ALL_ACTIVE_STORE, ID_TYPE_CHECKBOX_GROUP
 
 
 @spaced_section
@@ -14,9 +15,9 @@ def brick_type_filter(data):
         [dmc.Checkbox(label="All", value="all", size="xs")])
 
     return html.Div([
-        dcc.Store(id="checkbox-all", data={"active": False}),
+        dcc.Store(id=ID_ALL_ACTIVE_STORE, data={"active": False}),
         dmc.CheckboxGroup(
-            id="checkbox-group",
+            id=ID_TYPE_CHECKBOX_GROUP,
             label="Bricks",
             description="Select visible Bricks",
             orientation="vertical",
@@ -30,13 +31,13 @@ def brick_type_filter(data):
 
 @callback(
     [
-        Output("checkbox-group", "value"),
-        Output("checkbox-all", "data"),
+        Output(ID_TYPE_CHECKBOX_GROUP, "value"),
+        Output(ID_ALL_ACTIVE_STORE, "data"),
     ],
     [
-        Input("checkbox-group", "value"),
-        Input("checkbox-group", "children"),
-        Input("checkbox-all", "data"),
+        Input(ID_TYPE_CHECKBOX_GROUP, "value"),
+        Input(ID_TYPE_CHECKBOX_GROUP, "children"),
+        Input(ID_ALL_ACTIVE_STORE, "data"),
     ]
 )
 def activate_all(value, data, all_enabled):

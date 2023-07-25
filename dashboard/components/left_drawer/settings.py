@@ -1,43 +1,77 @@
 import json
+
 from datetime import datetime, timedelta
 
+import pandas as pd
+import plotly.express as px
 import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import html, Output, Input, callback, ALL
+from dash import html, Output, Input, callback, ALL, State, dcc
 
 from dashboard.components.left_drawer.components.brick_type_filter import brick_type_filter
 from dashboard.components.left_drawer.components.date_time_section import date_time_section
 from dashboard.components.left_drawer.components.setting_controls import setting_controls
 from dashboard.components.left_drawer.components.tag_filter import tag_filter
 from dashboard.config import api_config as api
+from dashboard.api.api_client import get_env_tod
+from dashboard.config.id_config import \
+    ID_MARKER_CLICK_STORE, \
+    ID_CHART_MODAL, \
+    ID_MEASUREMENT_CHART, \
+    ID_LEFT_DRAWER_CONTENT_SCROLL_AREA, ID_MAP_LAYER_GROUP, ID_DATE_RANGE_PICKER, ID_TYPE_CHECKBOX_GROUP, \
+    ID_TAG_CHIPS_GROUP, ID_DATE_RANGE_SEGMENT, ID_DEPLOYMENT_DATA_STORE
 
+from util.functions import safe_reduce
 
 header = dmc.Center(dmc.Text("Mitwelten Discover", size="lg"))
+fig = px.line()
 
 
 def settings(brick_types, tags_data):
     return dmc.Container(
         children=[
+            dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(env=None)),
+            html.Div([
+                dmc.Modal(
+                    title="Measurement Chart",
+                    id=ID_CHART_MODAL,
+                    centered=True,
+                    zIndex=10000,
+                    size="80%",
+                    closeOnClickOutside=True,
+                    closeOnEscape=False,
+                    children=[
+                        dmc.Container(
+                            dcc.Graph(
+                                id=ID_MEASUREMENT_CHART,
+                                figure=fig,
+                                config={"displayModeBar": False},
+                                style={"height": "inherit", "width": "inherit"}
+                            ),
+                        )
+                    ],
+                ),
+            ]
+            ),
             header,
             dmc.Space(h=30),
-            dmc.ScrollArea(
-                [
-                    html.Div([
-                        dmc.Divider(label="Time Range Selection", labelPosition="center", size="md"),
-                        date_time_section(),
+            dmc.ScrollArea([
+                html.Div([
+                    dmc.Divider(label="Time Range Selection", labelPosition="center", size="md"),
+                    date_time_section(),
 
-                        dmc.Divider(label="Filter", labelPosition="center", size="md"),
-                        brick_type_filter(brick_types),
-                        tag_filter(tags_data),
-                        dmc.Space(h=30),
+                    dmc.Divider(label="Filter", labelPosition="center", size="md"),
+                    brick_type_filter(brick_types),
+                    tag_filter(tags_data),
+                    dmc.Space(h=30),
 
-                        dmc.Divider(label="Settings", labelPosition="center", size="md"),
-                        setting_controls(),
-                    ],
-                        id="scroll-div-container",
-                    ),
+                    dmc.Divider(label="Settings", labelPosition="center", size="md"),
+                    setting_controls(),
                 ],
+                    id=ID_LEFT_DRAWER_CONTENT_SCROLL_AREA,
+                ),
+            ],
                 offsetScrollbars=True,
                 type="always"
             ),
@@ -49,15 +83,15 @@ def settings(brick_types, tags_data):
 
 @callback(
     [
-        Output("data_layer", "children"),
-        Output("date-range-picker", "value"),
+        Output(ID_MAP_LAYER_GROUP, "children"),
+        Output(ID_DATE_RANGE_PICKER, "value"),
     ],
     [
-        Input("checkbox-group", "value"),
-        Input("chips-group", "value"),
-        Input("deployment_data", "data"),
-        Input("date-range-picker", "value"),
-        Input("segmented-time-range", "value"),
+        Input(ID_TYPE_CHECKBOX_GROUP, "value"),
+        Input(ID_TAG_CHIPS_GROUP, "value"),
+        Input(ID_DEPLOYMENT_DATA_STORE, "data"),
+        Input(ID_DATE_RANGE_PICKER, "value"),
+        Input(ID_DATE_RANGE_SEGMENT, "value"),
     ]
 )
 def filter_map_data(checkboxes, chips, deployment_data, time_range, seg_time_range):
@@ -124,7 +158,7 @@ def filter_map_data(checkboxes, chips, deployment_data, time_range, seg_time_ran
             markers.append(dl.Marker(
                 position=[d["lat"], d["lon"]],
                 children=dl.Tooltip(f"{d['node_type']}\n{d['node_label']}"),
-                id={"role": f"marker-{d['node_type']}", "id": d['node_label']},
+                id={"role": f"{d['node_type']}", "id": d['deployment_id'], "label": d["node_label"]},
                 icon=dict(iconUrl=api.URL_ICON, iconAnchor=[32, 16]),
             ))
 
@@ -132,10 +166,34 @@ def filter_map_data(checkboxes, chips, deployment_data, time_range, seg_time_ran
 
 
 @callback(
-    Output("theme-switch-container", "children"),
-    Input({"role": "marker-Pax Counter", "id": ALL}, "n_clicks")
+    Output(ID_MEASUREMENT_CHART, "figure"),
+    Output(ID_CHART_MODAL, "opened"),
+    Output(ID_MARKER_CLICK_STORE, "data"),
+    Input({"role": "Env. Sensor", "id": ALL, "label": ALL}, "n_clicks"),
+    Input("date-range-picker", "value"),
+    Input(ID_MARKER_CLICK_STORE, "data"),
+    State(ID_CHART_MODAL, "opened"),
+    prevent_initial_call=True,
 )
-def marker_click(click):
-    print(f"{click} from {dash.ctx.triggered_id}")
-    return dash.no_update
+def marker_click(n_clicks, date, data, opened):
+    click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
+    print(n_clicks, date, data, opened, dash.ctx.triggered_id)
 
+    has_click_triggered = click_sum != data["env"]
+
+    if click_sum is not None:
+        data["env"] = click_sum
+
+    if has_click_triggered and dash.ctx.triggered_id is not None:
+        trigger_id = dash.ctx.triggered_id["id"]
+        print(dash.ctx.triggered_id, opened)
+        resp = get_env_tod(trigger_id, "temperature", "mean", "1h")
+        resp["time"] = pd.to_datetime(resp["time"], format="%Y-%m-%d", exact=False)
+        new_figure = px.line(
+            resp,
+            x='time',
+            y="value",
+            title=f"{dash.ctx.triggered_id['role']} - {dash.ctx.triggered_id['label']}",
+        )
+        return new_figure, True, data
+    return dash.no_update

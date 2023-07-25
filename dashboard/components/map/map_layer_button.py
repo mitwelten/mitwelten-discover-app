@@ -2,17 +2,19 @@ import dash_mantine_components as dmc
 from dash import html
 from dash_iconify import DashIconify
 
+from dashboard.config.id_config import ID_MINIMAP_LAYER_BUTTON, ID_MINIMAP_LABEL
+
 layer_button = html.Div(
     children=[
         html.Div(
-            id="minimap-layer-button",
+            id=ID_MINIMAP_LAYER_BUTTON,
             children=[
                 html.Div(
-                    id="minimap-label",
+                    id=ID_MINIMAP_LABEL,
                     children=[
                         DashIconify(icon="bx:layer", width=20, style={'color': "white"}),
                         html.P(
-                            "Ebenen",
+                            "Layers",
                             style={'color': "white", 'fontSize': 13}),
                     ]
                 ),

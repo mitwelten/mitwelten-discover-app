@@ -5,13 +5,24 @@ from dash_iconify import DashIconify
 import dash_core_components as dcc
 
 from dashboard.config import api_config as api
+from dashboard.config.id_config import \
+    ID_CURRENT_TAG_DATA_STORE, \
+    ID_OPEN_MODAL_BUTTON, \
+    ID_TAG_CHIPS_GROUP, \
+    ID_CHIPS_MODAL, \
+    ID_MODAL_CHIPS_GROUP, \
+    ID_CLOSE_MODAL_BUTTON
 
 
 def tag_filter(data):
     return html.Div([
-        dcc.Store(id="current_tags_data", data=api.DEFAULT_TAGS),
+        dcc.Store(id=ID_CURRENT_TAG_DATA_STORE, data=api.DEFAULT_TAGS),
         dmc.Group([
-            dmc.Text("Select visible TAG's", size="xs", color="dimmed", style={"display": "inline-block"}),
+            dmc.Text("Select visible TAG's",
+                     size="xs",
+                     color="dimmed",
+                     style={"display": "inline-block"}
+                     ),
             dmc.ActionIcon(
                 DashIconify(
                     icon="material-symbols:add",
@@ -19,7 +30,7 @@ def tag_filter(data):
                 ),
                 variant="outline",
                 size="xs",
-                id="open-modal-btn",
+                id=ID_OPEN_MODAL_BUTTON,
                 n_clicks=0,
                 radius="xl",
             ),
@@ -31,24 +42,22 @@ def tag_filter(data):
             dmc.ChipGroup(
                 [dmc.Chip(x, value=x, size="xs") for x in api.DEFAULT_TAGS],
                 multiple=True,
-                value=api.DEFAULT_TAGS,
-                id="chips-group",
+                id=ID_TAG_CHIPS_GROUP,
             ),
             html.Div(
                 dmc.Modal(
                     title="Select Tag's",
-                    id="chip-modal",
+                    id=ID_CHIPS_MODAL,
                     zIndex=10000,
                     overflow="inside",
                     children=[
                         dmc.ChipGroup(
                             [dmc.Chip(x, value=x, size="xs") for x in sorted(data)],
                             multiple=True,
-                            value=api.DEFAULT_TAGS,
-                            id="modal-chips-group",
+                            id=ID_MODAL_CHIPS_GROUP,
                         ),
                         dmc.Space(h=20),
-                        dmc.Center(dmc.Button("Add", id="close-modal-btn")),
+                        dmc.Center(dmc.Button("Add", id=ID_CLOSE_MODAL_BUTTON)),
                     ],
                 ),
             ),
@@ -57,15 +66,15 @@ def tag_filter(data):
 
 
 @callback(
-    Output("chip-modal", "opened"),
-    Output("chips-group", "children"),
-    Output("chips-group", "value"),
-    Input("open-modal-btn", "n_clicks"),
-    Input("close-modal-btn", "n_clicks"),
-    Input("modal-chips-group", "value"),
-    Input("chips-group", "value"),
-    Input("chips-group", "children"),
-    State("chip-modal", "opened"),
+    Output(ID_CHIPS_MODAL, "opened"),
+    Output(ID_TAG_CHIPS_GROUP, "children"),
+    Output(ID_TAG_CHIPS_GROUP, "value"),
+    Input(ID_OPEN_MODAL_BUTTON, "n_clicks"),
+    Input(ID_CLOSE_MODAL_BUTTON, "n_clicks"),
+    Input(ID_MODAL_CHIPS_GROUP, "value"),
+    Input(ID_TAG_CHIPS_GROUP, "value"),
+    Input(ID_TAG_CHIPS_GROUP, "children"),
+    State(ID_CHIPS_MODAL, "opened"),
     prevent_initial_call=True,
 )
 def toggle_modal(_1, _2, value, active_chips, children, opened):

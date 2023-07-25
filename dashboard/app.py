@@ -8,12 +8,16 @@ from dash_iconify import DashIconify
 from urllib.parse import urlparse, parse_qs
 from functools import reduce
 
-from dashboard.components.map_layer_selection import map_selection
+from dashboard.components.map.map_layer_selection import map_selection
 from dashboard.components.left_drawer.settings import settings
 from dashboard.config import api_config as api
 from dashboard.config import map_config as config
+from dashboard.config.id_config import ID_APP_THEME, ID_TILE_LAYER_MAP, ID_MAP_LAYER_GROUP, ID_DEPLOYMENT_DATA_STORE, \
+    ID_POPUP_STATE_STORE, ID_TAG_DATA_STORE, ID_MAP_SELECTOR_BUTTON, ID_MAP_SELECTION_POPUP, ID_OPEN_LEFT_DRAWER_BUTTON, \
+    ID_BOTTOM_DRAWER, ID_LEFT_DRAWER, ID_APP_CONTAINER, ID_MAP, ID_URL_LOCATION, ID_BOTTOM_DRAWER_BUTTON
 from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
+
 
 all_deployments = [Deployment(d) for d in requests.get(api.URL_DEPLOYMENTS).json()]
 
@@ -31,18 +35,17 @@ initial_map = config.map_configs[0]
 map_figure = dl.Map(
     [
         dl.TileLayer(
-            id="tile_layer",
+            id=ID_TILE_LAYER_MAP,
             url=initial_map.source,
             attribution=initial_map.source_attribution,
-            # maxZoom=20.9,
-            maxZoom=24.0,
+            maxZoom=20.9,
         ),
         dl.LocateControl(options={"locateOptions": {"enableHighAccuracy": True}}),
-        dl.LayerGroup(id="data_layer"),
+        dl.LayerGroup(id=ID_MAP_LAYER_GROUP),
     ],
     center=(config.DEFAULT_LAT, config.DEFAULT_LON),
     zoom=14,
-    id="map",
+    id=ID_MAP,
     style={
         "width": "100vw",
         "height": "100vh",
@@ -50,12 +53,11 @@ map_figure = dl.Map(
     },
 )
 
-
 app_content = [
-    dcc.Location(id='url', refresh=False, search=""),
-    dcc.Store(id="deployment_data", data=deployment_dict),
-    dcc.Store(id="tags_data", data=json_tags),
-    dcc.Store(id="popup-state", data={'clicks': 0}),
+    dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
+    dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployment_dict),
+    dcc.Store(id=ID_TAG_DATA_STORE, data=json_tags),
+    dcc.Store(id=ID_POPUP_STATE_STORE, data={'clicks': 0}),
     map_figure,
     dmc.MediaQuery([
             dmc.ActionIcon(
@@ -66,7 +68,7 @@ app_content = [
                 ),
                 variant="light",
                 size="lg",
-                id="bottom-drawer-btn",
+                id=ID_BOTTOM_DRAWER_BUTTON,
                 n_clicks=0,
                 radius="xl",
             ),
@@ -83,7 +85,7 @@ app_content = [
             ),
             variant="light",
             size="lg",
-            id="map-selector-btn",
+            id=ID_MAP_SELECTOR_BUTTON,
             n_clicks=0,
             radius="xl",
         ),
@@ -93,7 +95,7 @@ app_content = [
     ),
     dmc.Card(
         children=[map_selection("on-map")],
-        id="map-selector-popup",
+        id=ID_MAP_SELECTION_POPUP,
         withBorder=True,
         shadow="lg",
         radius="md",
@@ -107,22 +109,23 @@ app_content = [
         ),
         variant="light",
         size="lg",
-        id="left-drawer-btn",
+        id=ID_OPEN_LEFT_DRAWER_BUTTON,
         n_clicks=0,
         radius="xl"
     ),
     dmc.Drawer(
         map_selection("on-drawer"),
-        id="bottom-drawer",
+        id=ID_BOTTOM_DRAWER,
         zIndex=10000,
     ),
     dmc.Drawer(
         settings(deployment_dict, all_tags),
-        id="left-drawer",
+        id=ID_LEFT_DRAWER,
         opened=True,
         size=400,
         padding="md",
         closeOnClickOutside=False,
+        closeOnEscape=False,
         withOverlay=False,
         zIndex=10000,
     ),
@@ -130,7 +133,7 @@ app_content = [
 
 
 discover_app = dmc.MantineProvider(
-    id="app-theme",
+    id=ID_APP_THEME,
     theme={
         "colorScheme": "dark",
         "primaryColor": "green",
@@ -152,7 +155,7 @@ discover_app = dmc.MantineProvider(
     children=[
         html.Div(
             children=app_content,
-            id="app-container",
+            id=ID_APP_CONTAINER,
         ),
     ]
 )
@@ -161,8 +164,8 @@ app.layout = discover_app
 
 
 @app.callback(
-    Output('map', 'center'),
-    Input('url', 'href'),
+    Output(ID_MAP, 'center'),
+    Input(ID_URL_LOCATION, 'href'),
 )
 def display_page(href):
     lat = config.DEFAULT_LAT
@@ -178,14 +181,14 @@ def display_page(href):
 
 @app.callback(
     [
-        Output("url", "search"),
-        Output("map-selector-popup", "style"),
-        Output("popup-state", "data"),
+        Output(ID_URL_LOCATION, "search"),
+        Output(ID_MAP_SELECTION_POPUP, "style"),
+        Output(ID_POPUP_STATE_STORE, "data"),
     ],
     [
-        Input("map-selector-btn", "n_clicks"),
-        Input("map", "click_lat_lng"),
-        State("popup-state", "data"),
+        Input(ID_MAP_SELECTOR_BUTTON, "n_clicks"),
+        Input(ID_MAP, "click_lat_lng"),
+        State(ID_POPUP_STATE_STORE, "data"),
     ],
     prevent_initial_callback=True
 )
@@ -205,9 +208,9 @@ def map_click(n_clicks, click_lat_lng, data):
 
 
 @app.callback(
-    Output("bottom-drawer", "opened"),
-    Output("bottom-drawer", "position"),
-    Input("bottom-drawer-btn", "n_clicks"),
+    Output(ID_BOTTOM_DRAWER, "opened"),
+    Output(ID_BOTTOM_DRAWER, "position"),
+    Input(ID_BOTTOM_DRAWER_BUTTON, "n_clicks"),
     prevent_initial_call=True,
 )
 def drawer_demo(n_clicks):
@@ -215,9 +218,9 @@ def drawer_demo(n_clicks):
 
 
 @app.callback(
-    Output("left-drawer", "opened"),
-    Output("left-drawer", "position"),
-    Input("left-drawer-btn", "n_clicks"),
+    Output(ID_LEFT_DRAWER, "opened"),
+    Output(ID_LEFT_DRAWER, "position"),
+    Input(ID_OPEN_LEFT_DRAWER_BUTTON, "n_clicks"),
     prevent_initial_call=True,
 )
 def drawer_demo(n_clicks):

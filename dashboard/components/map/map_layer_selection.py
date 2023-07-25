@@ -4,6 +4,7 @@ import dash_mantine_components as dmc
 from dash import html, Output, Input, ALL, callback
 
 from dashboard.config import map_config as config
+from dashboard.config.id_config import ID_MAP_LAYER_GROUP
 
 
 def map_selection(id_prefix):
@@ -55,8 +56,8 @@ def minimap_button(id_prefix, map_config):
     Output("map", "children"),
     [
         Input({'role': "minimap-btn", 'index': ALL, 'place': ALL}, 'n_clicks'),
-        Input("data_layer", "id"),
-        Input("data_layer", "children")
+        Input(ID_MAP_LAYER_GROUP, "id"),
+        Input(ID_MAP_LAYER_GROUP, "children")
     ]
 )
 def minimap_action(_, data_layer_id, data_layer):
@@ -68,7 +69,8 @@ def minimap_action(_, data_layer_id, data_layer):
     return [
         dl.TileLayer(
             url=new_map.source,
-            attribution=new_map.source_attribution
+            attribution=new_map.source_attribution,
+            maxZoom=24.0,
         ),
         dl.LocateControl(options={"locateOptions": {"enableHighAccuracy": True}}),
         dl.LayerGroup(
