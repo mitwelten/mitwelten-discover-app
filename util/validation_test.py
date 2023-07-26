@@ -29,6 +29,11 @@ class ValidationTestSuite(unittest.TestCase):
         result = cleanup_timeseries(test_dict, 0, 10, "value1", "value2")
         self.assertEqual({"value1": [0, 2, 3], "value2": [4, 6, 7]}, result)
 
+    def test_null_values(self):
+        test_dict = {"time": [0, 1, 2], "value": [None, None, None]}
+        result = cleanup_timeseries(test_dict, 0, 10)
+        self.assertEqual({"time": [], "value": []}, result)
+
 
 if __name__ == '__main__':
     unittest.main()

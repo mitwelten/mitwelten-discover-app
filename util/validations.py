@@ -5,7 +5,13 @@ def cleanup_timeseries(dict_data, lower_boundary, upper_boundary, key1="time", k
         return dict_data
 
     zipped = zip(dict_data[key1], dict_data[key2])
-    zipped = filter(lambda pair: upper_boundary > pair[1] > lower_boundary, zipped)
-    l1, l2 = zip(*zipped)
-    result = {key1: list(l1), key2: list(l2)}
-    return result
+    zipped = filter(lambda pair:
+                    pair[0] is not None and
+                    pair[1] is not None and
+                    upper_boundary > pair[1] > lower_boundary,
+                    zipped)
+    if not zipped:
+        l1, l2 = zip(*zipped)
+        return {key1: list(l1), key2: list(l2)}
+
+    return {key1: [], key2: []}
