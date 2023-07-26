@@ -7,8 +7,10 @@ import dash_mantine_components as dmc
 import plotly.express as px
 from dash import html, Output, Input, callback, ALL, State, dcc
 
+from util.validations import cleanup_timeseries
 from dashboard.api.api_client import get_env_timeseries, get_pax_timeseries
 from dashboard.config.id_config import *
+from dashboard.config.api_config import *
 from dashboard.maindash import app
 from util.functions import safe_reduce
 
@@ -45,6 +47,9 @@ def create_env_chart(trigger_id):
     temp = get_env_timeseries(trigger_id, "temperature", "mean", bucket_width)
     hum = get_env_timeseries(trigger_id, "humidity", "mean", bucket_width)
     moi = get_env_timeseries(trigger_id, "moisture", "mean", bucket_width)
+    temp = cleanup_timeseries(temp, TEMP_LOWER_BOUNDARY, TEMP_UPPER_BOUNDARY)
+    hum = cleanup_timeseries(hum, HUM_LOWER_BOUNDARY, HUM_UPPER_BOUNDARY)
+    moi = cleanup_timeseries(moi, MOI_LOWER_BOUNDARY, MOI_UPPER_BOUNDARY)
 
     new_figure = go.Figure()
     new_figure.add_trace(go.Scatter(
@@ -105,51 +110,6 @@ def create_pax_chart(trigger_id):
     return new_figure
 
 
-def create_wild_cam_chart(trigger_id):
-    # x = range(11)
-    # line1 = [1,5,3,0,5,6,4]
-    # newFigure = go.Figure()
-    # newFigure.add_trace(go.Scatter(
-    #     x=x,
-    #     y=line1,
-    # ))
-    # newFigure.update_traces()
-    x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    x_rev = x[::-1]
-    print(x_rev)
-
-    # Line 1
-    y1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    y1_upper = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-    y1_lower = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    y1_lower = y1_lower[::-1]
-
-    # Line 2
-    y2 = [5, 2.5, 5, 7.5, 5, 2.5, 7.5, 4.5, 5.5, 5]
-    y2_upper = [5.5, 3, 5.5, 8, 6, 3, 8, 5, 6, 5.5]
-    y2_lower = [4.5, 2, 4.4, 7, 4, 2, 7, 4, 5, 4.75]
-    y2_lower = y2_lower[::-1]
-
-    # Line 3
-    y3 = [10, 8, 6, 4, 2, 0, 2, 4, 2, 0]
-    y3_upper = [11, 9, 7, 5, 3, 1, 3, 5, 3, 1]
-    y3_lower = [9, 7, 5, 3, 1, -.5, 1, 3, 1, -1]
-    y3_lower = y3_lower[::-1]
-
-
-    fig = go.Figure()
-
-    fig.add_trace(go.Scatter(
-        x=x,
-        y=y1_upper+y1_lower,
-        fill='toself',
-        fillcolor='rgba(0,100,80,0.2)',
-        line_color='rgba(255,255,255,0)',
-        showlegend=False,
-        name='Fair',
-    ))
-    return fig
-
 
 @app.long_callback(
     Output(ID_MEASUREMENT_CHART, "figure"),
@@ -169,7 +129,7 @@ def create_wild_cam_chart(trigger_id):
     ],
     prevent_initial_call=True,
 )
-def marker_click(n_clicks,data, date , opened):
+def marker_click(n_clicks, data, date, opened):
     click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
     # print(n_clicks, date, data, opened, dash.ctx.triggered_id)
 
@@ -183,7 +143,7 @@ def marker_click(n_clicks,data, date , opened):
         match dash.ctx.triggered_id["role"]:
             case "Env. Sensor": new_figure = create_env_chart(trigger_id)
             case "Pax Counter": new_figure = create_pax_chart(trigger_id)
-            case "Wild Cam": new_figure = create_wild_cam_chart(trigger_id)
+            # case "Wild Cam": new_figure = create_wild_cam_chart(trigger_id)
             case _: return dash.no_update
 
         return new_figure, True, data
