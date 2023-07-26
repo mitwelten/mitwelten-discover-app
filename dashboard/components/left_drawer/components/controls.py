@@ -1,6 +1,8 @@
+import dash
 import dash_mantine_components as dmc
-from dash import html, callback, Output, Input
+from dash import html, callback, Output, Input, State
 from dash_iconify import DashIconify
+from dashboard.maindash import app
 
 from dashboard.config.id_config import *
 from dashboard.decorators import spaced_section
@@ -22,12 +24,15 @@ def setting_controls():
     ])
 
 
-@callback(
+@app.callback(
     Output(ID_APP_THEME, 'theme'),
-    Input(ID_APP_THEME, 'theme'),
     Input(ID_THEME_SWITCH, "checked"),
-    prevent_intial_call=True)
-def switch_theme(theme, checked):
+    State(ID_APP_THEME, 'theme'),
+    prevent_intial_call=True
+)
+def switch_theme(checked, theme):
+    if checked is None:
+        return dash.no_update
     if not checked:
         theme.update({'colorScheme': 'light'})
     else:
