@@ -4,9 +4,13 @@ import dash_leaflet as dl
 import dash_mantine_components as dmc
 import requests
 from dash import Output, Input, html, dcc, dash, State
+from dash.long_callback import DiskcacheLongCallbackManager
 from dash_iconify import DashIconify
 from urllib.parse import urlparse, parse_qs
 from functools import reduce
+
+from dashboard.config.api_config import URL_ICON
+from dashboard.config.map_config import DEFAULT_LON, DEFAULT_LAT
 
 from dashboard.components.map.map_layer_selection import map_selection
 from dashboard.components.left_drawer.settings import settings
@@ -48,7 +52,9 @@ map_figure = dl.Map(
             maxZoom=20.9,
         ),
         dl.LocateControl(options={"locateOptions": {"enableHighAccuracy": True}}),
-        dl.LayerGroup(id=ID_MAP_LAYER_GROUP),
+        dl.LayerGroup(
+            id=ID_MAP_LAYER_GROUP,
+        ),
     ],
     center=(config.DEFAULT_LAT, config.DEFAULT_LON),
     zoom=14,
@@ -66,6 +72,13 @@ app_content = [
     dcc.Store(id=ID_TAG_DATA_STORE, data=json_tags),
     dcc.Store(id=ID_POPUP_STATE_STORE, data={'clicks': 0}),
     dcc.Store(id=ID_DEPLOYMENT_COLOR_STORE, data=deployment_colors),
+    dmc.Loader(
+        id=ID_LOADER,
+        color="blue",
+        size="lg",
+        variant="bars",
+        className="loader-icon",
+    ),
     map_figure,
     dmc.MediaQuery([
             dmc.ActionIcon(

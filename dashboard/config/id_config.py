@@ -1,6 +1,7 @@
 # theme
 ID_THEME_SWITCH = "id-theme-switch"
 ID_APP_THEME = "id-app-theme"
+ID_LOADER = "id-loader"
 
 # UI elements
 ID_APP_CONTAINER = "id-app-container"

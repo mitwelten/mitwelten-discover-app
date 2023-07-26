@@ -19,3 +19,11 @@
     height: 7px;
     border-radius: 50%;
 }
+
+.loader-icon {
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    z-index: 10000;
+    visibility: hidden;
+}

@@ -65,6 +65,7 @@ def settings(node_types, tags_data, depl_colors):
 def filter_map_data(checkboxes, chips, deployment_data, time_range, seg_time_range, colors):
     trigger_id = dash.ctx.triggered_id
     checkboxes = list(filter(lambda c: c != "all", checkboxes))
+    print(seg_time_range)
 
     if not seg_time_range:
         seg_time_range = 7

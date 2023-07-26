@@ -54,13 +54,11 @@ def minimap_button(id_prefix, map_config):
 
 @callback(
     Output(ID_MAP, "children"),
-    [
-        Input({'role': "minimap-btn", 'index': ALL, 'place': ALL}, 'n_clicks'),
-        Input(ID_MAP_LAYER_GROUP, "id"),
-        Input(ID_MAP_LAYER_GROUP, "children")
-    ]
+    Input({'role': "minimap-btn", 'index': ALL, 'place': ALL}, 'n_clicks'),
+    Input(ID_MAP_LAYER_GROUP, "children"),
+
 )
-def minimap_action(_, data_layer_id, data_layer):
+def minimap_action(_, data_layer):
     if dash.ctx.triggered_id is not None and type(dash.ctx.triggered_id.index) is int:
         new_map = config.map_configs[dash.ctx.triggered_id.index]
     else:
@@ -70,11 +68,11 @@ def minimap_action(_, data_layer_id, data_layer):
         dl.TileLayer(
             url=new_map.source,
             attribution=new_map.source_attribution,
-            maxZoom=24.0,
+            maxZoom=20.9,
         ),
         dl.LocateControl(options={"locateOptions": {"enableHighAccuracy": True}}),
         dl.LayerGroup(
-            id=data_layer_id,
+            id=ID_MAP_LAYER_GROUP,
             children=data_layer,
         ),
     ]

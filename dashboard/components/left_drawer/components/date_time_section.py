@@ -5,6 +5,7 @@ from dash import html
 
 from dashboard.decorators import spaced_section
 from dashboard.config.id_config import *
+from dashboard.config.settings_config import FIRST_DEPLOYMENT_WEEKS_AGO
 from dashboard.config.settings_config import DEFAULT_DATE_RANGES
 
 
@@ -14,7 +15,7 @@ def date_time_section():
         dmc.SegmentedControl(
             id=ID_DATE_RANGE_SEGMENT,
             color="green",
-            value="1",
+            value=f"{FIRST_DEPLOYMENT_WEEKS_AGO}",
             fullWidth=True,
             data=DEFAULT_DATE_RANGES,
             mt=10,
@@ -27,7 +28,7 @@ def date_time_section():
                 inputFormat="DD MMMM, YY",
                 description="",
                 minDate=date(2020, 8, 5),
-                value=[datetime.now().date() - timedelta(days=7), datetime.now().date()],
+                value=[datetime.now().date() - timedelta(weeks=FIRST_DEPLOYMENT_WEEKS_AGO), datetime.now().date()],
                 style={"width": 250},
             ),
         ),
