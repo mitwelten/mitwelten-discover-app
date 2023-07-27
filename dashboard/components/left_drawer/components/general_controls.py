@@ -1,6 +1,6 @@
 import dash
 import dash_mantine_components as dmc
-from dash import html, callback, Output, Input, State
+from dash import html,  Output, Input, State
 from dash_iconify import DashIconify
 from dashboard.maindash import app
 

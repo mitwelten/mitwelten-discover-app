@@ -62,7 +62,12 @@ def create_env_chart(trigger_id):
 
 def create_pax_chart(trigger_id):
     print("fetch pax data - id: ", trigger_id)
-    resp = get_pax_timeseries(trigger_id, "1h", (datetime.now() - timedelta(days=1000)).isoformat(), datetime.now().isoformat())
+    resp = get_pax_timeseries(
+        deployment_id=trigger_id,
+        bucket_width="1h",
+        time_from=(datetime.now() - timedelta(days=1000)).isoformat(),
+        time_to=datetime.now().isoformat()
+    )
     new_figure = px.line(
         resp,
         x='buckets',
@@ -70,4 +75,3 @@ def create_pax_chart(trigger_id):
         title=f"{dash.ctx.triggered_id['role']} - {dash.ctx.triggered_id['label']}",
     )
     return new_figure
-

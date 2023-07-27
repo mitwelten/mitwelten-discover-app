@@ -25,4 +25,3 @@ map_figure = dl.Map(
         "zIndex": 0,
     },
 )
-

@@ -1,7 +1,7 @@
 import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import html, Output, Input, ALL, callback
+from dash import html, Output, Input, ALL
 from dashboard.maindash import app
 
 from dashboard.config import map_config as config

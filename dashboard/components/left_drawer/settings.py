@@ -1,4 +1,3 @@
-import json
 from datetime import datetime, timedelta
 
 import dash_leaflet as dl
@@ -79,7 +78,7 @@ def filter_map_data(checkboxes, chips, time_range, colors, deployment_data):
 
     # parse to json objects
     for key in deployment_data:
-        deployment_data[key] = map(lambda d: Deployment(d), deployment_data[key])
+        deployment_data[key] = map(lambda depl: Deployment(depl), deployment_data[key])
 
     # checkbox filter
     for active in checkboxes:
@@ -89,7 +88,7 @@ def filter_map_data(checkboxes, chips, time_range, colors, deployment_data):
     # chip filter
     if chips:
         for key in depl_to_show.keys():
-            depl_to_show[key] = filter(lambda d: any(item in chips for item in d.tags), depl_to_show[key])
+            depl_to_show[key] = filter(lambda depl: any(item in chips for item in depl.tags), depl_to_show[key])
 
     # time filter
     for key in depl_to_show.keys():

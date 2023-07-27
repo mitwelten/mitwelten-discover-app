@@ -2,6 +2,7 @@ import unittest
 from util.functions import safe_reduce, was_deployed
 from datetime import datetime, timedelta
 
+
 class FunctionsTestSuite(unittest.TestCase):
 
     # safe_reduce
@@ -26,13 +27,12 @@ class FunctionsTestSuite(unittest.TestCase):
         self.assertEqual(result, None)
 
     # was_deployed
-    def test_safe_reduce_empty_iterable(self):
+    def test_typical_case(self):
         end = datetime.now().date()
         start = datetime.now().date() - timedelta(weeks=1)
 
         result = was_deployed
         self.assertEqual(result, None)
-
 
 
 if __name__ == '__main__':

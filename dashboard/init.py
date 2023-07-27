@@ -26,6 +26,9 @@ def init_app_data():
     # {type: deployment}
     deployment_dict = {}
     for node_type in all_types:
-        deployment_dict[node_type] = [d for d in all_deployments_json if node_type.lower().strip() in d["node"]["type"].lower()]
+        deployment_dict[node_type] = [
+            d for d in all_deployments_json
+            if node_type.lower().strip() in d["node"]["type"].lower()
+        ]
 
     return deployment_dict, deployment_colors, tags

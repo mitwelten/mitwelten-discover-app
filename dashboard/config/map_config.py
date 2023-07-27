@@ -45,8 +45,6 @@ PIXEL_GREY_MAP_LAYER = {
 }
 
 
-
-
 class MapConfiguration:
     iter_id = itertools.count()
 
