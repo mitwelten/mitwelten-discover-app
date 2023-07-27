@@ -6,10 +6,11 @@ import plotly.express as px
 from dash import Output, Input, html, dcc, State, ALL
 from dash_iconify import DashIconify
 
+from dashboard.components.action_button import action_button
 from dashboard.components.data_chart.chart import create_env_chart, create_pax_chart
 from dashboard.components.left_drawer.settings import settings_content
 from dashboard.components.map.init_map import map_figure
-from dashboard.components.map.map_layer_selection import map_selection
+from dashboard.components.map.map_layer_selection import map_menu_popup, map_selection
 from dashboard.config import map_config
 from dashboard.config.id_config import *
 from dashboard.init import init_app_data
@@ -43,60 +44,19 @@ app_content = [
         className="loader-icon",
     ),
     map_figure,
-    dmc.MediaQuery([
-            dmc.ActionIcon(
-                DashIconify(
-                    icon="material-symbols:layers-outline",
-                    width=20,
-                    color=dmc.theme.DEFAULT_COLORS["green"][9],
-                ),
-                variant="light",
-                size="lg",
-                id=ID_BOTTOM_DRAWER_BUTTON,
-                n_clicks=0,
-                radius="xl",
-            ),
-        ],
+
+    dmc.MediaQuery(
+        action_button(button_id=ID_BOTTOM_DRAWER_BUTTON, icon="material-symbols:layers-outline"),
         largerThan="sm",
         styles={"visibility": "hidden"}
     ),
-    dmc.MediaQuery([
-        dmc.ActionIcon(
-            DashIconify(
-                icon="material-symbols:layers-outline",
-                width=20,
-                color=dmc.theme.DEFAULT_COLORS["green"][9],
-            ),
-            variant="light",
-            size="lg",
-            id=ID_MAP_SELECTOR_BUTTON,
-            n_clicks=0,
-            radius="xl",
-        ),
-    ],
+    dmc.MediaQuery(
+        map_menu_popup(""),
         smallerThan="sm",
         styles={"visibility": "hidden"}
     ),
-    dmc.Card(
-        children=[map_selection("on-map")],
-        id=ID_MAP_SELECTION_POPUP,
-        withBorder=True,
-        shadow="lg",
-        radius="md",
-        style={"visibility": "hidden"}
-    ),
-    dmc.ActionIcon(
-        DashIconify(
-            icon="material-symbols:menu",
-            width=20,
-            color=dmc.theme.DEFAULT_COLORS["green"][9],
-        ),
-        variant="light",
-        size="lg",
-        id=ID_OPEN_LEFT_DRAWER_BUTTON,
-        n_clicks=0,
-        radius="xl"
-    ),
+
+    action_button(button_id=ID_OPEN_LEFT_DRAWER_BUTTON, icon="material-symbols:menu"),
     dmc.Drawer(
         map_selection("on-drawer"),
         id=ID_BOTTOM_DRAWER,
@@ -126,6 +86,7 @@ app_content = [
         withOverlay=False,
         zIndex=10000,
     ),
+
 ]
 
 
@@ -177,21 +138,7 @@ def display_page(href):
 
 
 @app.callback(
-    Output(ID_MAP_SELECTION_POPUP, "style", allow_duplicate=True),
-    Input(ID_MAP_SELECTOR_BUTTON, "n_clicks"),
-    State(ID_MAP_SELECTION_POPUP, "style"),
-    prevent_initial_call=True
-)
-def toggle_map_selection_popup(_, style):
-    if style is None or style["visibility"] == "visible":
-        return {"visibility": "hidden"}
-
-    return {"visibility": "visible"}
-
-
-@app.callback(
     Output(ID_URL_LOCATION, "search"),
-    Output(ID_MAP_SELECTION_POPUP, "style", allow_duplicate=True),
     Input(ID_MAP, "click_lat_lng"),
     prevent_initial_call=True
 )
@@ -199,7 +146,7 @@ def map_click(click_lat_lng):
     loc = ""
     if click_lat_lng is not None:
         loc = [f"?lat={click_lat_lng[0]}&lon={click_lat_lng[1]}"]
-    return loc, {"visibility": "hidden"}
+    return loc
 
 
 @app.callback(

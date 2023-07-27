@@ -112,9 +112,8 @@ body {
     text-align: center;
 }
 
-#id-map-selector-popup {
+.map-menu {
     position: absolute;
-    width: 200px;
-    top: 60px;
+    top: 20px;
     right: 20px;
 }
