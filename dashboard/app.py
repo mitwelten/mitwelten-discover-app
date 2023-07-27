@@ -1,77 +1,40 @@
-import json
-
-import dash_leaflet as dl
-import dash_mantine_components as dmc
-import requests
-from dash import Output, Input, html, dcc, dash, State
-from dash.long_callback import DiskcacheLongCallbackManager
-from dash_iconify import DashIconify
 from urllib.parse import urlparse, parse_qs
-from functools import reduce
 
-from dashboard.config.api_config import URL_ICON
-from dashboard.config.map_config import DEFAULT_LON, DEFAULT_LAT
+import dash
+import dash_mantine_components as dmc
+import plotly.express as px
+from dash import Output, Input, html, dcc, State, ALL
+from dash_iconify import DashIconify
 
+from dashboard.components.chart_modal.chart import create_env_chart, create_pax_chart
+from dashboard.components.left_drawer.settings import settings_content
+from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.map_layer_selection import map_selection
-from dashboard.components.left_drawer.settings import settings
-from dashboard.config import api_config as api
-from dashboard.config import map_config as config
+from dashboard.config import map_config
 from dashboard.config.id_config import *
+from dashboard.init import init_app_data
 from dashboard.maindash import app
-from dashboard.model.deployment import Deployment
-from dashboard.config.map_config import DEFAULT_MARKER_COLORS
+from util.functions import safe_reduce
 
+deployments, colors,  tags = init_app_data()
 
-all_deployments = [Deployment(d) for d in requests.get(api.URL_DEPLOYMENTS).json()]
+fig = px.line()
 
-all_types = set(map(lambda d: d.node_type, all_deployments))
-
-all_tags = map(lambda d: d.tags, all_deployments)
-all_tags = sorted(set(reduce(list.__add__, all_tags)))
-json_tags = json.dumps(all_tags)
-
-# {type: color}
-deployment_colors = {}
-idx_list = enumerate(sorted(all_types))
-for (idx, node_type) in idx_list:
-    deployment_colors[node_type] = DEFAULT_MARKER_COLORS[idx]
-
-# {type: deployment}
-deployment_dict = {}
-for node_type in all_types:
-    deployment_dict[node_type] = [d.to_json() for d in all_deployments if node_type.lower().strip() in d.node_type.lower()]
-
-
-initial_map = config.map_configs[0]
-map_figure = dl.Map(
-    [
-        dl.TileLayer(
-            id=ID_TILE_LAYER_MAP,
-            url=initial_map.source,
-            attribution=initial_map.source_attribution,
-            maxZoom=20.9,
-        ),
-        dl.LocateControl(options={"locateOptions": {"enableHighAccuracy": True}}),
-        dl.LayerGroup(
-            id=ID_MAP_LAYER_GROUP,
-        ),
-    ],
-    center=(config.DEFAULT_LAT, config.DEFAULT_LON),
-    zoom=14,
-    id=ID_MAP,
-    style={
-        "width": "100vw",
-        "height": "100vh",
-        "zIndex": 0,
-    },
+graph = dmc.Container(
+    dcc.Graph(
+        id=ID_MEASUREMENT_CHART,
+        figure=fig,
+        config={"displayModeBar": False},
+        style={"height": "inherit", "width": "inherit"}
+    ),
 )
 
 app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
-    dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployment_dict),
-    dcc.Store(id=ID_TAG_DATA_STORE, data=json_tags),
-    dcc.Store(id=ID_POPUP_STATE_STORE, data={'clicks': 0}),
-    dcc.Store(id=ID_DEPLOYMENT_COLOR_STORE, data=deployment_colors),
+    dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployments),
+    dcc.Store(id=ID_TAG_DATA_STORE, data=tags),
+    dcc.Store(id=ID_DEPLOYMENT_COLOR_STORE, data=colors),
+    dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
     dmc.Loader(
         id=ID_LOADER,
         color="blue",
@@ -120,7 +83,7 @@ app_content = [
         withBorder=True,
         shadow="lg",
         radius="md",
-        styles={"visibility": "hidden"}
+        style={"visibility": "hidden"}
     ),
     dmc.ActionIcon(
         DashIconify(
@@ -139,9 +102,22 @@ app_content = [
         id=ID_BOTTOM_DRAWER,
         zIndex=10000,
     ),
+    dmc.Modal(
+        title="Measurement Chart",
+        opened=False,
+        id=ID_CHART_DRAWER,
+        zIndex=20000,
+        size="80%",
+        children=[
+            dmc.ScrollArea([
+                graph
+            ],
+            )
+        ]
+    ),
     dmc.Drawer(
-        settings(deployment_dict, all_tags, deployment_colors),
         id=ID_LEFT_DRAWER,
+        children=settings_content(deployments, tags, colors),
         opened=True,
         size=400,
         padding="md",
@@ -156,7 +132,7 @@ app_content = [
 discover_app = dmc.MantineProvider(
     id=ID_APP_THEME,
     theme={
-        "colorScheme": "dark",
+        "colorScheme": "light",
         "primaryColor": "green",
         "shadows": {
             # other shadows (xs, sm, lg) will be merged from default theme
@@ -189,43 +165,41 @@ app.layout = discover_app
     Input(ID_URL_LOCATION, 'href'),
 )
 def display_page(href):
-    lat = config.DEFAULT_LAT
-    lon = config.DEFAULT_LON
+    lat = map_config.DEFAULT_LAT
+    lon = map_config.DEFAULT_LON
     query = urlparse(href).query
-    r = parse_qs(query)
-    if r is not {}:
-        lat = r["lat"][0]
-        lon = r["lon"][0]
+    query_params: dict = parse_qs(query)
+    if query_params:
+        lat = query_params["lat"][0]
+        lon = query_params["lon"][0]
 
-    return (lat, lon)
+    return lat, lon
 
 
 @app.callback(
-    [
-        Output(ID_URL_LOCATION, "search"),
-        Output(ID_MAP_SELECTION_POPUP, "style"),
-        Output(ID_POPUP_STATE_STORE, "data"),
-    ],
-    [
-        Input(ID_MAP_SELECTOR_BUTTON, "n_clicks"),
-        Input(ID_MAP, "click_lat_lng"),
-        State(ID_POPUP_STATE_STORE, "data"),
-    ],
-    prevent_initial_callback=True
+    Output(ID_MAP_SELECTION_POPUP, "style", allow_duplicate=True),
+    Input(ID_MAP_SELECTOR_BUTTON, "n_clicks"),
+    State(ID_MAP_SELECTION_POPUP, "style"),
+    prevent_initial_call=True
 )
-def map_click(n_clicks, click_lat_lng, data):
-    popup_style = {"visibility": "hidden"}
-    data = data or {'clicks': None}
-    if n_clicks is not None:
-        if n_clicks != data['clicks']:
-            data = {'clicks': n_clicks}
-            popup_style = {"visibility": "visible"}
-            print("button pressed")
+def toggle_map_selection_popup(_, style):
+    if style is None or style["visibility"] == "visible":
+        return {"visibility": "hidden"}
 
+    return {"visibility": "visible"}
+
+
+@app.callback(
+    Output(ID_URL_LOCATION, "search"),
+    Output(ID_MAP_SELECTION_POPUP, "style", allow_duplicate=True),
+    Input(ID_MAP, "click_lat_lng"),
+    prevent_initial_call=True
+)
+def map_click(click_lat_lng):
     loc = ""
     if click_lat_lng is not None:
         loc = [f"?lat={click_lat_lng[0]}&lon={click_lat_lng[1]}"]
-    return loc, popup_style, data
+    return loc, {"visibility": "hidden"}
 
 
 @app.callback(
@@ -234,7 +208,7 @@ def map_click(n_clicks, click_lat_lng, data):
     Input(ID_BOTTOM_DRAWER_BUTTON, "n_clicks"),
     prevent_initial_call=True,
 )
-def drawer_demo(n_clicks):
+def open_bottom_drawer(_):
     return True, "bottom"
 
 
@@ -244,5 +218,41 @@ def drawer_demo(n_clicks):
     Input(ID_OPEN_LEFT_DRAWER_BUTTON, "n_clicks"),
     prevent_initial_call=True,
 )
-def drawer_demo(n_clicks):
+def open_left_drawer(_):
     return True, "left"
+
+
+@app.callback(
+    Output(ID_MEASUREMENT_CHART, "figure"),
+    Output(ID_CHART_DRAWER, "opened"),
+    Output(ID_MARKER_CLICK_STORE, "data"),
+    Input({"role": ALL, "id": ALL, "label": ALL}, "n_clicks"),
+    Input(ID_MARKER_CLICK_STORE, "data"),
+    running=[
+        (
+                Output(ID_LOADER, "style"),
+                {"visibility": "visible"},
+                {"visibility": "hidden"},
+        ),
+    ],
+    prevent_initial_call=True,
+)
+def marker_click(n_clicks, data):
+    click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
+    print(dash.ctx.triggered_id)
+
+    has_click_triggered = click_sum != data["clicks"]
+
+    if click_sum is not None:
+        data["clicks"] = click_sum
+
+    if has_click_triggered and dash.ctx.triggered_id is not None:
+        trigger_id = dash.ctx.triggered_id["id"]
+        match dash.ctx.triggered_id["role"]:
+            case "Env. Sensor": new_figure = create_env_chart(trigger_id)
+            case "Pax Counter": new_figure = create_pax_chart(trigger_id)
+            # case "Wild Cam": new_figure = create_wild_cam_chart(trigger_id)
+            case _: return dash.no_update
+
+        return new_figure, True, data
+    return px.line(), False, data

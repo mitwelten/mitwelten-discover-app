@@ -3,7 +3,7 @@ import dash_mantine_components as dmc
 from dash import html, callback, Input, Output, State
 from dash_iconify import DashIconify
 import dash_core_components as dcc
-
+from dashboard.maindash import app
 from dashboard.config.settings_config import DEFAULT_TAGS
 from dashboard.config.id_config import *
 
@@ -61,7 +61,7 @@ def tag_filter(data):
     ])
 
 
-@callback(
+@app.callback(
     Output(ID_CHIPS_MODAL, "opened"),
     Output(ID_TAG_CHIPS_GROUP, "children"),
     Output(ID_TAG_CHIPS_GROUP, "value"),

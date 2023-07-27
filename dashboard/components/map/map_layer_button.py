@@ -21,7 +21,7 @@ layer_button = html.Div(
             ]
         ),
         dmc.Image(
-            src="./assets/swiss_topo_picture.png",
+            src="./assets/swiss-topo-button.png",
             alt="map",
             width=96,
             radius=10,

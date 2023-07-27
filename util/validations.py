@@ -10,8 +10,11 @@ def cleanup_timeseries(dict_data, lower_boundary, upper_boundary, key1="time", k
                     pair[1] is not None and
                     upper_boundary > pair[1] > lower_boundary,
                     zipped)
-    if not zipped:
+
+    try:
         l1, l2 = zip(*zipped)
         return {key1: list(l1), key2: list(l2)}
+    except ValueError:
+        print("Validation of timeseries with empty collection result!")
 
     return {key1: [], key2: []}

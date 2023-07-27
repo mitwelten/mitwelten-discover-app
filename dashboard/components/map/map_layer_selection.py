@@ -2,6 +2,7 @@ import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import html, Output, Input, ALL, callback
+from dashboard.maindash import app
 
 from dashboard.config import map_config as config
 from dashboard.config.id_config import *
@@ -52,7 +53,7 @@ def minimap_button(id_prefix, map_config):
     )
 
 
-@callback(
+@app.callback(
     Output(ID_MAP, "children"),
     Input({'role': "minimap-btn", 'index': ALL, 'place': ALL}, 'n_clicks'),
     Input(ID_MAP_LAYER_GROUP, "children"),

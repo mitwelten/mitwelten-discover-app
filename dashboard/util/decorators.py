@@ -11,3 +11,6 @@ def spaced_section(content_func):
         return html.Div([pre, elems, post])
 
     return inner
+
+
+eval = lambda f: f()

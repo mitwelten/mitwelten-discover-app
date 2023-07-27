@@ -15,7 +15,6 @@ ID_MAP = "id-map"
 ID_URL_LOCATION = 'id-url-location'
 
 # stores
-ID_POPUP_STATE_STORE = "id-popup-state-store"
 ID_DEPLOYMENT_DATA_STORE = "id-deployment-data-store"
 ID_TAG_DATA_STORE = "id-tags-data-store"
 ID_MARKER_CLICK_STORE = "id-marker-clicks-store"
@@ -40,7 +39,7 @@ ID_OPEN_CHIP_MODAL_BUTTON = "id-open-modal-btn"
 # left drawer
 ID_LEFT_DRAWER_CONTENT_SCROLL_AREA = "id-scroll-div-container"
 ID_MEASUREMENT_CHART = "id-measurement-chart"
-ID_CHART_MODAL = "id-chart-modal"
+ID_CHART_DRAWER = "id-chart-drawer"
 
 # map selection & handling
 ID_MAP_LAYER_GROUP = "id-map-data-layer"

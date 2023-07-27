@@ -3,7 +3,8 @@ from functools import reduce
 import dash_mantine_components as dmc
 from dash import html, dcc, callback, Output, Input
 
-from dashboard.decorators import spaced_section
+from dashboard.maindash import app
+from dashboard.util.decorators import spaced_section
 from dashboard.config.id_config import *
 
 
@@ -21,7 +22,7 @@ def get_checkbox_by_type(node_type: str, colors):
 
 
 @spaced_section
-def brick_type_filter(data, colors):
+def type_filter(data, colors):
     brick_types = reduce(
         list.__add__,
         [list(map(lambda x: get_checkbox_by_type(x, colors), (sorted(data.keys()))))],
@@ -42,7 +43,7 @@ def brick_type_filter(data, colors):
     ])
 
 
-@callback(
+@app.callback(
     [
         Output(ID_TYPE_CHECKBOX_GROUP, "value"),
         Output(ID_ALL_ACTIVE_STORE, "data"),

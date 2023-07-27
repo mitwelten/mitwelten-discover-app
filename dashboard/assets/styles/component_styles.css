@@ -27,3 +27,19 @@
     z-index: 10000;
     visibility: hidden;
 }
+
+@media screen and (max-width: 992px) {
+    #test-div {
+        color: red;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    #test-div {
+        color: red;
+    }
+}
+
+#test-div {
+    color: blue;
+}

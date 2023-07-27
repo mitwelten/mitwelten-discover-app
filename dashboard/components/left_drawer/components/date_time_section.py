@@ -3,10 +3,10 @@ from datetime import datetime, date, timedelta
 import dash_mantine_components as dmc
 from dash import html
 
-from dashboard.decorators import spaced_section
 from dashboard.config.id_config import *
-from dashboard.config.settings_config import FIRST_DEPLOYMENT_WEEKS_AGO
 from dashboard.config.settings_config import DEFAULT_DATE_RANGES
+from dashboard.config.settings_config import FIRST_DEPLOYMENT_WEEKS_AGO
+from dashboard.util.decorators import spaced_section
 
 
 @spaced_section
@@ -32,5 +32,4 @@ def date_time_section():
                 style={"width": 250},
             ),
         ),
-    ],
-    )
+    ])

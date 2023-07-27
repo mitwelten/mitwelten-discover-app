@@ -1,4 +1,5 @@
 import json
+from typing import TypedDict
 
 
 class Deployment:
@@ -30,3 +31,4 @@ class Deployment:
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__)
+

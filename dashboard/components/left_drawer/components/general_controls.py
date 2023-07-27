@@ -5,11 +5,11 @@ from dash_iconify import DashIconify
 from dashboard.maindash import app
 
 from dashboard.config.id_config import *
-from dashboard.decorators import spaced_section
+from dashboard.util.decorators import spaced_section
 
 
 @spaced_section
-def setting_controls():
+def general_controls():
     return html.Div([
         dmc.Group([
             dmc.Text("Theme (light / dark)", size="sm"),
