@@ -1,11 +1,28 @@
 import unittest
+
+from parameterized import parameterized
+
+from dashboard.model.deployment import Deployment
 from util.functions import safe_reduce, was_deployed
-from datetime import datetime, timedelta
+
+
+deployment_data: dict = {
+    'deployment_id': 2099,
+    'description': None,
+    'location': {'lat': 47.53297706812293, 'lon': 7.61063731466237},
+    'node': {'connectivity': 'LoRaWAN',
+             'node_id': 17,
+             'node_label': '0291-3299',
+             'type': 'Env. Sensor'
+             },
+    'node_id': 17,
+    'period': {'end': None, 'start': None},
+}
 
 
 class FunctionsTestSuite(unittest.TestCase):
 
-    # safe_reduce
+    # safe_reduce functions tests
     def test_safe_reduce(self):
         result = safe_reduce(lambda x, y: x + y, [0, 1, 2, 3])
         self.assertEqual(result, 6)
@@ -26,13 +43,24 @@ class FunctionsTestSuite(unittest.TestCase):
         result = safe_reduce(lambda x, y: x + y, [])
         self.assertEqual(result, None)
 
-    # was_deployed
-    def test_typical_case(self):
-        end = datetime.now().date()
-        start = datetime.now().date() - timedelta(weeks=1)
+    # was_deployed function tests
+    @parameterized.expand([
+        # yyyy-mm-dd
+        ("2020-01-03", "2020-01-04", True),   # start and end in range
+        ("2020-01-03", "2020-01-11", True),   # only start in range
+        ("2019-01-01", "2020-01-04", True),   # only end in range
+        ("2019-01-01", "2021-01-01", True),   # start before, end after
+        ("2019-01-01", "2020-01-01", False),  # start and end before range
+        ("2020-01-11", "2020-01-15", False),  # start and end after range
+    ])
+    def test_typical_case(self, start, end, expected):
+        time_range = ["2020-01-02", "2020-01-10"]
+        deployment = Deployment(deployment_data)
+        deployment.period_start = start
+        deployment.period_end = end
 
-        result = was_deployed
-        self.assertEqual(result, None)
+        actual = was_deployed(deployment, time_range[0], time_range[1])
+        self.assertEqual(actual, expected)
 
 
 if __name__ == '__main__':

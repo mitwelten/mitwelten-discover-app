@@ -9,6 +9,7 @@ from dashboard.model.deployment import Deployment
 
 def init_app_data():
     all_deployments_json = [d for d in requests.get(api_config.URL_DEPLOYMENTS).json()]
+
     all_deployments = [Deployment(d) for d in all_deployments_json]
 
     all_types = set(map(lambda d: d.node_type, all_deployments))

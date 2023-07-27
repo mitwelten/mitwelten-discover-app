@@ -2,6 +2,7 @@ import json
 
 
 class Deployment:
+
     def __init__(self, deployment_response: dict):
         self.deployment_id = deployment_response.get("deployment_id")
         description = deployment_response.get("description")
