@@ -1,7 +1,7 @@
 import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import html, Output, Input, ALL
+from dash import html, Output, Input, ALL, State
 from dashboard.maindash import app
 
 from dashboard.config import map_config as config
@@ -15,7 +15,15 @@ def map_selection(id_prefix):
                 list(map(lambda x: minimap_button(id_prefix, x), config.map_configs)),
                 gutter="xl",
                 grow=True,
-            )
+            ),
+            dmc.Space(h=10),
+            dmc.Divider(label="Overlays", labelPosition="center", size="sm"),
+            dmc.Space(h=20),
+            dmc.Grid(
+                list(map(lambda x: minimap_button(f"test-{id_prefix}", x), config.map_configs[1:-1])),
+                gutter="xl",
+                grow=True,
+            ),
         ],
     )
 
@@ -49,15 +57,15 @@ def minimap_button(id_prefix, map_config):
                 )
             ]
         ),
-        span=2,
+        style={"textAlign": "center"},
+        span=3,
     )
 
 
 @app.callback(
     Output(ID_MAP, "children"),
     Input({'role': "minimap-btn", 'index': ALL, 'place': ALL}, 'n_clicks'),
-    Input(ID_MAP_LAYER_GROUP, "children"),
-
+    State(ID_MAP_LAYER_GROUP, "children"),
 )
 def minimap_action(_, data_layer):
     if dash.ctx.triggered_id is not None and type(dash.ctx.triggered_id.index) is int:
