@@ -1,14 +1,15 @@
 from functools import reduce
 
+import dash
 import dash_mantine_components as dmc
 from dash import html, dcc, Output, Input
 
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.util.decorators import spaced_section
-from dashboard.config.id_config import *
 
 
-def get_checkbox_by_type(node_type: str, colors):
+def get_checkbox_by_type(node_type: str, colors: dict):
     return dmc.Checkbox(
         label=dmc.Group([
             html.Div(
@@ -44,22 +45,22 @@ def type_filter(data, colors):
 
 
 @app.callback(
-    [
-        Output(ID_TYPE_CHECKBOX_GROUP, "value"),
-        Output(ID_ALL_ACTIVE_STORE, "data"),
-    ],
-    [
-        Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-        Input(ID_TYPE_CHECKBOX_GROUP, "children"),
-        Input(ID_ALL_ACTIVE_STORE, "data"),
-    ]
+    Output(ID_TYPE_CHECKBOX_GROUP, "value"),
+    Output(ID_ALL_ACTIVE_STORE, "data"),
+    Input(ID_TYPE_CHECKBOX_GROUP, "value"),
+    Input(ID_TYPE_CHECKBOX_GROUP, "children"),
+    Input(ID_ALL_ACTIVE_STORE, "data"),
 )
 def activate_all(value, data, all_enabled):
     values = list(map(lambda x: x["props"]["value"], data))
 
     if "all" in value and not all_enabled["active"]:
         return values, {"active": True}
+
     if "all" not in value and all_enabled["active"] and len(value) == len(values) - 1:
         return [], {"active": False}
+
     if all_enabled["active"]:
         return list(filter(lambda x: x != "all", value)), {"active": False}
+
+    return dash.no_update
