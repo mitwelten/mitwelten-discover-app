@@ -105,7 +105,11 @@ def filter_map_data(checkboxes, chips, time_range, colors, deployment_data):
                         height=24,
                         color=f"{colors[d.node_type]}"
                     ),
-                    dl.Tooltip(f"{d.node_type}\n{d.node_label}"),
+                    dl.Tooltip(
+                        children=f"{d.node_type}\n{d.node_label}",
+                        offset={"x": 25, "y": -15}
+
+                    ),
                 ],
                 iconOptions=dict(className="div-icon", iconAnchor=[32, 16]),
                 position=[d.lat, d.lon],

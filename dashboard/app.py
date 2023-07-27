@@ -6,7 +6,7 @@ import plotly.express as px
 from dash import Output, Input, html, dcc, State, ALL
 from dash_iconify import DashIconify
 
-from dashboard.components.chart_modal.chart import create_env_chart, create_pax_chart
+from dashboard.components.data_chart.chart import create_env_chart, create_pax_chart
 from dashboard.components.left_drawer.settings import settings_content
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.map_layer_selection import map_selection
@@ -239,7 +239,6 @@ def open_left_drawer(_):
 )
 def marker_click(n_clicks, data):
     click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
-    print(dash.ctx.triggered_id)
 
     has_click_triggered = click_sum != data["clicks"]
 

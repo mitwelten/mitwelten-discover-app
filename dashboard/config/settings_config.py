@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 FIRST_DEPLOYMENT = datetime(2020, 1, 1)
 FIRST_DEPLOYMENT_WEEKS_AGO = int((datetime.now().date() - FIRST_DEPLOYMENT.date()).days / 7)

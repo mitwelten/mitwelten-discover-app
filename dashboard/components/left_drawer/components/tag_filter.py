@@ -1,11 +1,12 @@
 import dash
-import dash_mantine_components as dmc
-from dash import html, callback, Input, Output, State
-from dash_iconify import DashIconify
 import dash_core_components as dcc
-from dashboard.maindash import app
-from dashboard.config.settings_config import DEFAULT_TAGS
+import dash_mantine_components as dmc
+from dash import html, Input, Output, State
+from dash_iconify import DashIconify
+
 from dashboard.config.id_config import *
+from dashboard.config.settings_config import DEFAULT_TAGS
+from dashboard.maindash import app
 
 
 def tag_filter(data):
@@ -73,7 +74,7 @@ def tag_filter(data):
     State(ID_CHIPS_MODAL, "opened"),
     prevent_initial_call=True,
 )
-def toggle_modal(_1, _2, value, active_chips, children, opened):
+def select_tags(_1, _2, value, active_chips, children, opened):
     new_children = [dmc.Chip(x, value=x, size="xs") for x in value]
     current_chips = list(map(lambda x: x["props"]["value"], children))
     filtered = list(filter(lambda d: d not in active_chips, current_chips))
