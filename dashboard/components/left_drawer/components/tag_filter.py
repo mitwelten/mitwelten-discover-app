@@ -51,7 +51,7 @@ def tag_filter(all_tags):
                     overflow="inside",
                     children=[
                         dmc.ChipGroup(
-                            [(dmc.Chip(x, value=x, size="xs") for x in sorted(all_tags))],
+                            [dmc.Chip(x, value=x, size="xs") for x in sorted(all_tags)],
                             id=ID_MODAL_CHIPS_GROUP,
                             value=DEFAULT_TAGS,
                         ),
@@ -64,29 +64,29 @@ def tag_filter(all_tags):
     ])
 
 
-@app.callback(
-    Output(ID_CHIPS_MODAL, "opened"),
-    Output(ID_TAG_CHIPS_GROUP, "children"),
-    Output(ID_TAG_CHIPS_GROUP, "value"),
-    Input(ID_OPEN_CHIP_MODAL_BUTTON, "n_clicks"),
-    Input(ID_CLOSE_CHIP_MODAL_BUTTON, "n_clicks"),
-    Input(ID_MODAL_CHIPS_GROUP, "value"),
-    Input(ID_TAG_CHIPS_GROUP, "value"),
-    Input(ID_TAG_CHIPS_GROUP, "children"),
-    State(ID_CHIPS_MODAL, "opened"),
-    prevent_initial_call=True,
-)
-def select_tags(_1, _2, value, active_chips, children, opened):
-    new_children = [dmc.Chip(x, value=x, size="xs") for x in value]
-    current_chips = list(map(lambda x: x["props"]["value"], children))
-    filtered = list(filter(lambda d: d not in active_chips, current_chips))
-    new_active_chips = list(filter(lambda x: x not in filtered, value))
-
-    print(new_children)
-    print(current_chips)
-    print(filtered)
-    print(new_active_chips)
-    trigger_id = dash.ctx.triggered_id
-    if trigger_id == ID_CLOSE_CHIP_MODAL_BUTTON or trigger_id == ID_OPEN_CHIP_MODAL_BUTTON:
-        return not opened, new_children, new_active_chips
-    return opened, children, active_chips
+# @app.callback(
+#     Output(ID_CHIPS_MODAL, "opened"),
+#     Output(ID_TAG_CHIPS_GROUP, "children"),
+#     Output(ID_TAG_CHIPS_GROUP, "value"),
+#     Input(ID_OPEN_CHIP_MODAL_BUTTON, "n_clicks"),
+#     Input(ID_CLOSE_CHIP_MODAL_BUTTON, "n_clicks"),
+#     Input(ID_MODAL_CHIPS_GROUP, "value"),
+#     Input(ID_TAG_CHIPS_GROUP, "value"),
+#     Input(ID_TAG_CHIPS_GROUP, "children"),
+#     State(ID_CHIPS_MODAL, "opened"),
+#     prevent_initial_call=True,
+# )
+# def select_tags(_1, _2, value, active_chips, children, opened):
+#     new_children = [dmc.Chip(x, value=x, size="xs") for x in value]
+#     current_chips = list(map(lambda x: x["props"]["value"], children))
+#     filtered = list(filter(lambda d: d not in active_chips, current_chips))
+#     new_active_chips = list(filter(lambda x: x not in filtered, value))
+#
+#     print(new_children)
+#     print(current_chips)
+#     print(filtered)
+#     print(new_active_chips)
+#     trigger_id = dash.ctx.triggered_id
+#     if trigger_id == ID_CLOSE_CHIP_MODAL_BUTTON or trigger_id == ID_OPEN_CHIP_MODAL_BUTTON:
+#         return not opened, new_children, new_active_chips
+#     return opened, children, active_chips
