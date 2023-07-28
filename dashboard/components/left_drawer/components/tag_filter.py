@@ -1,3 +1,5 @@
+import json
+
 import dash
 import dash_core_components as dcc
 import dash_mantine_components as dmc
@@ -9,7 +11,8 @@ from dashboard.config.settings_config import DEFAULT_TAGS
 from dashboard.maindash import app
 
 
-def tag_filter(data):
+def tag_filter(all_tags):
+    all_tags = json.loads(all_tags)
     return html.Div([
         dcc.Store(id=ID_CURRENT_TAG_DATA_STORE, data=DEFAULT_TAGS),
         dmc.Group([
@@ -48,8 +51,7 @@ def tag_filter(data):
                     overflow="inside",
                     children=[
                         dmc.ChipGroup(
-                            [dmc.Chip(x, value=x, size="xs") for x in sorted(data)],
-                            multiple=True,
+                            [(dmc.Chip(x, value=x, size="xs") for x in sorted(all_tags))],
                             id=ID_MODAL_CHIPS_GROUP,
                             value=DEFAULT_TAGS,
                         ),
@@ -80,6 +82,10 @@ def select_tags(_1, _2, value, active_chips, children, opened):
     filtered = list(filter(lambda d: d not in active_chips, current_chips))
     new_active_chips = list(filter(lambda x: x not in filtered, value))
 
+    print(new_children)
+    print(current_chips)
+    print(filtered)
+    print(new_active_chips)
     trigger_id = dash.ctx.triggered_id
     if trigger_id == ID_CLOSE_CHIP_MODAL_BUTTON or trigger_id == ID_OPEN_CHIP_MODAL_BUTTON:
         return not opened, new_children, new_active_chips
