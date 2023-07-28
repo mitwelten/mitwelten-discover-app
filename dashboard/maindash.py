@@ -8,7 +8,7 @@ cache = diskcache.Cache("./cache")
 long_callback_manager = DiskcacheLongCallbackManager(cache)
 
 external_stylesheets = [
-    open("./dashboard/assets/styles/background_map_styles.css"),
+    open("./dashboard/assets/styles/map_styles.css"),
     open("./dashboard/assets/styles/component_styles.css"),
     dbc.themes.BOOTSTRAP,
 ]
