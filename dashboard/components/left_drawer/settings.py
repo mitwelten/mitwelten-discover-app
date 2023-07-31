@@ -67,11 +67,12 @@ def update_picker_from_segment(segment_data):
     Output(ID_MAP_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_TAG_CHIPS_GROUP, "value"),
+    Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_PICKER, "value"),
     State(ID_DEPLOYMENT_COLOR_STORE, "data"),
     State(ID_DEPLOYMENT_DATA_STORE, "data"),
 )
-def filter_map_data(checkboxes, chips, time_range, colors, deployment_data):
+def filter_map_data(checkboxes, tags, fs_tags, time_range, colors, deployment_data):
     checkboxes = list(filter(lambda c: c != "all", checkboxes))
 
     depl_to_show = {}
@@ -86,9 +87,10 @@ def filter_map_data(checkboxes, chips, time_range, colors, deployment_data):
         depl_to_show[active] = deployment_data[active]
 
     # chip filter
-    if chips:
+    tags = tags + fs_tags
+    if tags:
         for key in depl_to_show.keys():
-            depl_to_show[key] = filter(lambda depl: any(item in chips for item in depl.tags), depl_to_show[key])
+            depl_to_show[key] = filter(lambda depl: any(item in tags for item in depl.tags), depl_to_show[key])
 
     # time filter
     for key in depl_to_show.keys():

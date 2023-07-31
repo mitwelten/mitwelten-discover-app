@@ -3,15 +3,13 @@ from urllib.parse import urlparse, parse_qs
 import dash
 import dash_mantine_components as dmc
 import plotly.express as px
-from dash import Output, Input, html, dcc, State, ALL
-from dash_iconify import DashIconify
+from dash import Output, Input, html, dcc, ALL
 
 from dashboard.components.action_button import action_button
 from dashboard.components.data_chart.chart import create_env_chart, create_pax_chart
 from dashboard.components.left_drawer.settings import settings_content
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.map_layer_selection import map_menu_popup, map_menu_drawer
-# from dashboard.components.map.map_layer_selection import map_menu_popup, map_selection
 from dashboard.config import map_config
 from dashboard.config.id_config import *
 from dashboard.init import init_app_data
