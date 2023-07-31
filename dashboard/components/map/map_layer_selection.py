@@ -50,12 +50,12 @@ def map_menu_popup(id_prefix):
     )
 
 
-def map_selection(id_prefix):
+def map_menu_drawer(id_prefix):
     return dmc.Container(
         children=[
             dmc.Grid(
                 list(map(
-                    lambda x: dmc.Col(minimap_button(id_prefix, x), style={"textAlign": "center"}, span=3),
+                    lambda x: dmc.Col(minimap_button(id_prefix, x, MAP_TYPES[0]), style={"textAlign": "center"}, span=3),
                     MAPS)
                 ),
                 gutter="xl",
@@ -66,8 +66,8 @@ def map_selection(id_prefix):
             dmc.Space(h=20),
             dmc.Grid(
                 list(map(
-                    lambda x: dmc.Col(minimap_button(f"test-{id_prefix}", x), style={"textAlign": "center"}, span=3),
-                    MAPS[1:-1])
+                    lambda x: dmc.Col(minimap_button(id_prefix, x, MAP_TYPES[1]), style={"textAlign": "center"}, span=3),
+                    OVERLAYS)
                 ),
                 gutter="xl",
                 grow=True,
@@ -76,9 +76,9 @@ def map_selection(id_prefix):
     )
 
 
-def minimap_button(id_prefix, map_config):
+def minimap_button(id_prefix, map_config, role):
     return html.Div(
-        id={'role': "minimap-btn", 'index': map_config.index, 'place': id_prefix},
+        id={'role': role, 'index': map_config.index, 'place': id_prefix},
         className="minimap-btn",
         children=[
             html.Div(

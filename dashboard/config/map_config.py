@@ -69,7 +69,7 @@ MAPS = [
 OVERLAYS = [
     MapConfiguration(
         title="No Overlay",
-        image="./assets/minimap/lebensraum.png",
+        image="./assets/minimap/no-map.png",
         index=0,
         source="",
         source_attribution="",
@@ -83,14 +83,14 @@ OVERLAYS = [
     ),
     MapConfiguration(
         title="Vegetationshöhenmodell LFI",
-        image="./assets/minimap/lebensraum.png",
+        image="./assets/minimap/vegetation.png",
         index=2,
         source="https://wmts9.geo.admin.ch/1.0.0/ch.bafu.landesforstinventar-vegetationshoehenmodell/default/current/3857/{z}/{x}/{y}.png",
         source_attribution="<a href='https://www.bafu.admin.ch/bafu/de/home.html' target='_blank'>BAFU</a>",
     ),
     MapConfiguration(
         title="Oberflächenmodell LFI",
-        image="./assets/minimap/lebensraum.png",
+        image="./assets/minimap/oberflaechenmodell.png",
         index=3,
         source="https://wmts9.geo.admin.ch/1.0.0/ch.bafu.landesforstinventar-vegetationshoehenmodell_relief/default/current/3857/{z}/{x}/{y}.png",
         source_attribution="<a href='https://www.bafu.admin.ch/bafu/de/home.html' target='_blank'>BAFU</a>",

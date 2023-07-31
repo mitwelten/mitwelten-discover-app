@@ -10,7 +10,7 @@ from dashboard.components.action_button import action_button
 from dashboard.components.data_chart.chart import create_env_chart, create_pax_chart
 from dashboard.components.left_drawer.settings import settings_content
 from dashboard.components.map.init_map import map_figure
-from dashboard.components.map.map_layer_selection import map_menu_popup, map_selection
+from dashboard.components.map.map_layer_selection import map_menu_popup, map_menu_drawer
 # from dashboard.components.map.map_layer_selection import map_menu_popup, map_selection
 from dashboard.config import map_config
 from dashboard.config.id_config import *
@@ -62,7 +62,7 @@ app_content = [
 
     action_button(button_id=ID_OPEN_LEFT_DRAWER_BUTTON, icon="material-symbols:menu"),
     dmc.Drawer(
-        map_selection("drawer"),
+        map_menu_drawer("drawer"),
         id=ID_BOTTOM_DRAWER,
         zIndex=10000,
     ),
@@ -163,13 +163,24 @@ def map_click(click_lat_lng):
 
 
 @app.callback(
-    Output(ID_BOTTOM_DRAWER, "opened"),
-    Output(ID_BOTTOM_DRAWER, "position"),
+    Output(ID_BOTTOM_DRAWER, "opened", allow_duplicate=True),
+    Output(ID_BOTTOM_DRAWER, "position", allow_duplicate=True),
     Input(ID_BOTTOM_DRAWER_BUTTON, "n_clicks"),
     prevent_initial_call=True,
 )
 def open_bottom_drawer(_):
     return True, "bottom"
+
+
+@app.callback(
+    Output(ID_BOTTOM_DRAWER, "opened", allow_duplicate=True),
+    Output(ID_BOTTOM_DRAWER, "position", allow_duplicate=True),
+    Input(ID_MAP, "click_lat_lng"),
+    Input({'role': ALL, 'index': ALL, 'place': "drawer"}, 'n_clicks'),
+    prevent_initial_call=True,
+)
+def open_bottom_drawer(_1, _2):
+    return False, "bottom"
 
 
 @app.callback(
