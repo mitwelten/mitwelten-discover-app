@@ -11,6 +11,7 @@ from dashboard.components.data_chart.chart import create_env_chart, create_pax_c
 from dashboard.components.left_drawer.settings import settings_content
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.map_layer_selection import map_menu_popup, map_selection
+# from dashboard.components.map.map_layer_selection import map_menu_popup, map_selection
 from dashboard.config import map_config
 from dashboard.config.id_config import *
 from dashboard.init import init_app_data
@@ -18,6 +19,7 @@ from dashboard.maindash import app
 from util.functions import safe_reduce
 
 deployments, colors,  tags = init_app_data()
+
 
 fig = px.line()
 
@@ -36,6 +38,8 @@ app_content = [
     dcc.Store(id=ID_TAG_DATA_STORE, data=tags),
     dcc.Store(id=ID_DEPLOYMENT_COLOR_STORE, data=colors),
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
+    dcc.Store(id=ID_BASE_MAP_STORE, data=dict(id=1)),
+    dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(id=4)),
     dmc.Loader(
         id=ID_LOADER,
         color="blue",
@@ -51,14 +55,14 @@ app_content = [
         styles={"visibility": "hidden"}
     ),
     dmc.MediaQuery(
-        map_menu_popup(""),
+        map_menu_popup("menu"),
         smallerThan="sm",
         styles={"visibility": "hidden"}
     ),
 
     action_button(button_id=ID_OPEN_LEFT_DRAWER_BUTTON, icon="material-symbols:menu"),
     dmc.Drawer(
-        map_selection("on-drawer"),
+        map_selection("drawer"),
         id=ID_BOTTOM_DRAWER,
         zIndex=10000,
     ),
@@ -135,6 +139,15 @@ def display_page(href):
         lon = query_params["lon"][0]
 
     return lat, lon
+
+
+# @app.callback(
+#     Output(ID_LOADER, "children"),
+#     Input(ID_MAP, "dbl_click_lat_lng")
+# )
+# def handle_double_click(click):
+#     print("double clicked")
+#     return dash.no_update
 
 
 @app.callback(

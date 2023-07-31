@@ -3,6 +3,7 @@ import itertools
 DEFAULT_LAT = 47.53522891224535
 DEFAULT_LON = 7.606299048260731
 DEFAULT_ZOOM = 11.5
+DEFAULT_MAX_ZOOM = 20.9
 DEFAULT_MAP_INDEX = 1
 DEFAULT_MARKER_COLORS = [
     "#FF5733",  # (Pastell Orange)
@@ -55,7 +56,8 @@ class MapConfiguration:
             source,
             source_attribution,
             style="white-bg",
-            layers=None
+            layers=None,
+            overlay=False
     ):
         if layers is None:
             layers = {}
@@ -67,9 +69,10 @@ class MapConfiguration:
         self.source_attribution = source_attribution
         self.style = style
         self.layers = layers
+        self.overlay = overlay
 
 
-map_configs = [
+MAPS = [
     # MapConfiguration(
     #     title="Carto",
     #     image="./assets/minimap/carto.png",
@@ -123,4 +126,25 @@ map_configs = [
         source_attribution='<a href="https://www.swisstopo.admin.ch/de/home.html" target="_blank">SwissTopo</a>',
         layers=PIXEL_COLOR_MAP_LAYER,
     ),
+    MapConfiguration(
+        title="Lebensraumkarte",
+        image="./assets/minimap/lebensraum.png",
+        source="https://wmts9.geo.admin.ch/1.0.0/ch.bafu.lebensraumkarte-schweiz/default/current/3857/{z}/{x}/{y}.png",
+        source_attribution="<a href='https://www.bafu.admin.ch/bafu/de/home.html' target='_blank'>BAFU</a>",
+        overlay=True
+    ),
+    MapConfiguration(
+        title="Vegetationshöhenmodell LFI",
+        image="./assets/minimap/lebensraum.png",
+        source="https://wmts9.geo.admin.ch/1.0.0/ch.bafu.landesforstinventar-vegetationshoehenmodell/default/current/3857/{z}/{x}/{y}.png",
+        source_attribution="<a href='https://www.bafu.admin.ch/bafu/de/home.html' target='_blank'>BAFU</a>",
+        overlay=True
+    ),
+    MapConfiguration(
+        title="Oberflächenmodell LFI",
+        image="./assets/minimap/lebensraum.png",
+        source="https://wmts9.geo.admin.ch/1.0.0/ch.bafu.landesforstinventar-vegetationshoehenmodell_relief/default/current/3857/{z}/{x}/{y}.png",
+        source_attribution="<a href='https://www.bafu.admin.ch/bafu/de/home.html' target='_blank'>BAFU</a>",
+        overlay=True
+    )
 ]

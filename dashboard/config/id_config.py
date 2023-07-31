@@ -20,6 +20,8 @@ ID_TAG_DATA_STORE = "id-tags-data-store"
 ID_MARKER_CLICK_STORE = "id-marker-clicks-store"
 ID_CURRENT_TAG_DATA_STORE = "id-current-tags-data-store"
 ID_DEPLOYMENT_COLOR_STORE = "id-current-tags-color-store"
+ID_BASE_MAP_STORE = "id-base-map-store"
+ID_OVERLAY_MAP_STORE = "id-overlay-map-store"
 
 # node types
 ID_ALL_ACTIVE_STORE = "id-active-all-checkbox"
@@ -43,6 +45,7 @@ ID_CHART_DRAWER = "id-chart-drawer"
 
 # map selection & handling
 ID_MAP_LAYER_GROUP = "id-map-data-layer"
-ID_TILE_LAYER_MAP = "id-map-tile_layer"
+ID_TILE_LAYER_MAP = "id-map-tile-layer"
+ID_OVERLAY_MAP = "id-map-overlay"
 ID_MINIMAP_LABEL = "id-minimap-label"
 ID_MINIMAP_LAYER_BUTTON = "id-minimap-layer-button"
