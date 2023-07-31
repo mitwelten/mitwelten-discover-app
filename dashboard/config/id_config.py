@@ -45,7 +45,7 @@ ID_CHART_DRAWER = "id-chart-drawer"
 
 # map selection & handling
 ID_MAP_LAYER_GROUP = "id-map-data-layer"
-ID_TILE_LAYER_MAP = "id-map-tile-layer"
+ID_BASE_LAYER_MAP = "id-map-tile-layer"
 ID_OVERLAY_MAP = "id-map-overlay"
 ID_MINIMAP_LABEL = "id-minimap-label"
 ID_MINIMAP_LAYER_BUTTON = "id-minimap-layer-button"
