@@ -81,5 +81,4 @@ def update_segment_style(date_range, date_range_store, light_mode, segment_value
     else:
         segment_value = ""
 
-    print("update style ", segment_styles)
     return new_date_range, segment_styles, segment_value

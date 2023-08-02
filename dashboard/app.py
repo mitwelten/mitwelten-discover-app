@@ -205,7 +205,6 @@ def open_left_drawer(_):
     prevent_initial_call=True,
 )
 def marker_click(n_clicks, data, chart_data):
-    print("click", dash.ctx.triggered_id)
     # determine whether the callback is triggered by a click
     # necessary, because adding markers to the map triggers the callback
     click_sum = safe_reduce(lambda x, y: x + y, n_clicks)

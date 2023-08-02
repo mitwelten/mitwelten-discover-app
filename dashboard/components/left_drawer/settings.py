@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 
+import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import html, Output, Input, State
+from dash import html, Output, Input, State, ALL, MATCH
 
 from dashboard.components.left_drawer.components.date_time_section import date_time_section
 from dashboard.components.left_drawer.components.general_controls import general_controls
@@ -49,7 +50,59 @@ def settings_content(node_types, tags_data, depl_colors):
     )
 
 
-
+def marker_popup(deployment, color):
+    start = datetime.strftime(datetime.fromisoformat(deployment.period_start), '%d %b %Y - %H:%M')
+    end = datetime.strftime(datetime.fromisoformat(deployment.period_start), '%d %b %Y - %H:%M') if deployment.period_end else "-"
+    return dmc.Container([
+        dmc.Group([
+            dmc.Group([
+                html.Div(
+                    className="color-point",
+                    style={"background": f"{color}"}
+                ),
+                dmc.Text(deployment.node_type, weight=700, size="sm"),
+            ],
+                position="left",
+                spacing="sm"
+            ),
+            dmc.Text(deployment.node_label, size="sm"),
+        ],
+            position="apart"
+        ),
+        dmc.Space(h=10),
+        dmc.Divider(),
+        dmc.Space(h=10),
+        dmc.Group([
+            dmc.Text("Deployment ID", size="xs"),
+            dmc.Text(
+                deployment.deployment_id,
+                size="xs",
+                color="dimmed",
+            ),
+        ],
+            position="apart"
+        ),
+        dmc.Group([
+            dmc.Text("Start", size="xs"),
+            dmc.Text(start, size="xs", color="dimmed"),
+        ],
+            position="apart"
+        ),
+        dmc.Group([
+            dmc.Text("End", size="xs"),
+            dmc.Text(end, size="xs", color="dimmed"),
+        ],
+            position="apart"
+        ),
+        dmc.Space(h=10),
+        dmc.Group(
+            children=[dmc.Badge(t, size="sm", variant="outline") for t in deployment.tags],
+            spacing="xs"
+        ),
+    ],
+        fluid=True,
+        style={"width": "240px"}
+    )
 
 @app.callback(
     Output(ID_MAP_LAYER_GROUP, "children"),
@@ -94,8 +147,18 @@ def filter_map_data(checkboxes, tags, fs_tags, time_range, colors, deployment_da
             markers.append(
                 dl.Marker(
                     position=[d.lat, d.lon],
-                    children=dl.Tooltip(children=f"{d.node_type}\n{d.node_label}", offset={"x": 25, "y": -15}),
-                    icon=dict(iconUrl=colors[d.node_type]['svgPath'], iconAnchor=[32, 16], iconSize=30),
+                    children=[
+                        dl.Popup(
+                            children=[marker_popup(d, colors[d.node_type]['color'])],
+                            closeButton=False
+                        ),
+                        dl.Tooltip(
+                            children=f"{d.node_type}\n{d.node_label}",
+                            offset={"x": -10, "y": 2},
+                            direction="left",
+                        ),
+                    ],
+                    icon=dict(iconUrl=colors[d.node_type]['svgPath'], iconAnchor=[15, 6], iconSize=30),
                     id={"role": f"{d.node_type}", "development_id": d.deployment_id, "label": d.node_label},
                 )
             )
