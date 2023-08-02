@@ -17,7 +17,8 @@ def setting_controls():
                 offLabel=DashIconify(icon="radix-icons:moon", width=16),
                 onLabel=DashIconify(icon="radix-icons:sun", width=16),
                 size="xs",
-                id=ID_THEME_SWITCH
+                id=ID_THEME_SWITCH,
+                checked=True
             )],
             position="apart",
         ),

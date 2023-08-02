@@ -41,7 +41,7 @@ modal_chart = html.Div([
     ])
 
 
-def create_env_chart(trigger_id):
+def create_env_chart(trigger_id, light_mode = False):
     print("fetch env data - id: ", trigger_id)
     bucket_width = "1h"
     temp = get_env_timeseries(trigger_id, "temperature", "mean", bucket_width)
@@ -87,6 +87,9 @@ def create_env_chart(trigger_id):
             overlaying="y",
             shift=-2 * offset,
         ),
+        template="plotly_white" if light_mode else "plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
     )
 
     # new_figure = px.line(
@@ -98,7 +101,7 @@ def create_env_chart(trigger_id):
     return new_figure
 
 
-def create_pax_chart(trigger_id):
+def create_pax_chart(trigger_id, light_mode=False):
     print("fetch pax data - id: ", trigger_id)
     resp = get_pax_timeseries(trigger_id, "1h", (datetime.now() - timedelta(days=3)).isoformat(), datetime.now().isoformat())
     new_figure = px.line(
@@ -107,6 +110,7 @@ def create_pax_chart(trigger_id):
         y="pax",
         title=f"{dash.ctx.triggered_id['role']} - {dash.ctx.triggered_id['label']}",
     )
+    new_figure.update_layout(template="plotly_white" if light_mode else "plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
     return new_figure
 
 
@@ -119,6 +123,7 @@ def create_pax_chart(trigger_id):
     Input(ID_MARKER_CLICK_STORE, "data"),
     State(ID_DATE_RANGE_PICKER, "value"),
     State(ID_CHART_MODAL, "opened"),
+    State(ID_APP_THEME, "theme"),
     running=[
         (
                 Output(ID_LOADER, "style"),
@@ -129,7 +134,7 @@ def create_pax_chart(trigger_id):
     ],
     prevent_initial_call=True,
 )
-def marker_click(n_clicks, data, date, opened):
+def marker_click(n_clicks, data, date, opened, theme):
     click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
     # print(n_clicks, date, data, opened, dash.ctx.triggered_id)
 
@@ -141,8 +146,8 @@ def marker_click(n_clicks, data, date, opened):
     if has_click_triggered and dash.ctx.triggered_id is not None:
         trigger_id = dash.ctx.triggered_id["id"]
         match dash.ctx.triggered_id["role"]:
-            case "Env. Sensor": new_figure = create_env_chart(trigger_id)
-            case "Pax Counter": new_figure = create_pax_chart(trigger_id)
+            case "Env. Sensor": new_figure = create_env_chart(trigger_id,theme.get("colorScheme")=="light")
+            case "Pax Counter": new_figure = create_pax_chart(trigger_id, theme.get("colorScheme")=="light")
             # case "Wild Cam": new_figure = create_wild_cam_chart(trigger_id)
             case _: return dash.no_update
 

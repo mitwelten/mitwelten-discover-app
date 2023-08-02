@@ -47,7 +47,7 @@ def tag_filter(data):
                     overflow="inside",
                     children=[
                         dmc.ChipGroup(
-                            [dmc.Chip(x, value=x, size="xs") for x in sorted(data)],
+                            [dmc.Chip(x, value=x, size="xs", color="indigo") for x in sorted(data)],
                             multiple=True,
                             id=ID_MODAL_CHIPS_GROUP,
                             value=DEFAULT_TAGS,
