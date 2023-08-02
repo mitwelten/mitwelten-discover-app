@@ -39,10 +39,7 @@ app_content = [
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(index=1)),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=4)),
     dcc.Store(id=ID_CURRENT_CHART_DATA, data=dict(role=None, id=None)),
-
-
     map_figure,
-
     dmc.MediaQuery(
         action_button(button_id=ID_BOTTOM_DRAWER_BUTTON, icon="material-symbols:layers-outline"),
         largerThan="sm",
@@ -60,7 +57,6 @@ app_content = [
         id=ID_BOTTOM_DRAWER,
         zIndex=10000,
     ),
-
     dmc.Drawer(
         opened=False,
         id=ID_CHART_DRAWER,
@@ -83,7 +79,6 @@ app_content = [
             ])
         ]
     ),
-
     dmc.Drawer(
         id=ID_LEFT_DRAWER,
         children=settings_content(deployments, tags, colors),
@@ -95,7 +90,6 @@ app_content = [
         withOverlay=False,
         zIndex=10000,
     ),
-
 ]
 
 
