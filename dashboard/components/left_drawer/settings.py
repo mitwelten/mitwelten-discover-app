@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import html, Output, Input, State
@@ -100,22 +101,12 @@ def filter_map_data(checkboxes, tags, fs_tags, time_range, colors, deployment_da
 
     for key in depl_to_show.keys():
         for d in depl_to_show[key]:
-            markers.append(dl.DivMarker(
-                children=[
-                    DashIconify(
-                        icon="ion:location-sharp",
-                        height=24,
-                        color=f"{colors[d.node_type]}"
-                    ),
-                    dl.Tooltip(
-                        children=f"{d.node_type}\n{d.node_label}",
-                        offset={"x": 25, "y": -15}
-
-                    ),
-                ],
-                iconOptions=dict(className="div-icon", iconAnchor=[32, 16]),
-                position=[d.lat, d.lon],
-                id={"role": f"{d.node_type}", "id": d.deployment_id, "label": d.node_label},
-            ))
-
+            markers.append(
+                dl.Marker(
+                    position=[d.lat, d.lon],
+                    children=dl.Tooltip(children=f"{d.node_type}\n{d.node_label}", offset={"x": 25, "y": -15}),
+                    icon=dict(iconUrl=colors[d.node_type]['svgPath'], iconAnchor=[32, 16], iconSize=30, iconColor="#00ff00"),
+                    id={"role": f"{d.node_type}", "development_id": d.deployment_id, "label": d.node_label},
+                )
+            )
     return markers

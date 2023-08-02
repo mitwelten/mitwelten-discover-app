@@ -14,12 +14,14 @@ def get_checkbox_by_type(node_type: str, colors: dict):
         label=dmc.Group([
             html.Div(
                 className="color-point",
-                style={"background": f"{colors[node_type]}"}
+                style={"background": f"{colors[node_type]['color']}"}
             ),
             node_type,
         ]),
         value=node_type,
-        size="xs")
+        size="xs",
+        persistence=True,
+    )
 
 
 @spaced_section
