@@ -22,7 +22,10 @@ def init_app_data():
     deployment_colors = {}
     idx_list = enumerate(sorted(all_types))
     for (idx, node_type) in idx_list:
-        deployment_colors[node_type] = map_config.DEFAULT_MARKER_COLORS[idx]
+        deployment_colors[node_type] = dict(
+            color=map_config.DEFAULT_MARKER_COLORS[idx],
+            svgPath=f"assets/markers/location-{idx}.svg"
+        )
 
     # {type: deployment}
     deployment_dict = {}

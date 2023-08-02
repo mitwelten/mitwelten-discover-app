@@ -1,13 +1,11 @@
 from datetime import datetime, timedelta
 
-import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import html, Output, Input, State
-from dash_iconify import DashIconify
 
-from dashboard.components.left_drawer.components.general_controls import general_controls
 from dashboard.components.left_drawer.components.date_time_section import date_time_section
+from dashboard.components.left_drawer.components.general_controls import general_controls
 from dashboard.components.left_drawer.components.tag_filter import tag_filter
 from dashboard.components.left_drawer.components.type_filter import type_filter
 from dashboard.config.id_config import *
@@ -74,28 +72,31 @@ def update_picker_from_segment(segment_data):
     State(ID_DEPLOYMENT_DATA_STORE, "data"),
 )
 def filter_map_data(checkboxes, tags, fs_tags, time_range, colors, deployment_data):
+    print(checkboxes)
     checkboxes = list(filter(lambda c: c != "all", checkboxes))
 
     depl_to_show = {}
 
     # parse to json objects
     for key in deployment_data:
-        deployment_data[key] = map(lambda depl: Deployment(depl), deployment_data[key])
+        deployment_data[key] = list(map(lambda depl: Deployment(depl), deployment_data[key]))
+
 
     # checkbox filter
     for active in checkboxes:
         # depl_to_show:  {"key": [Deployments]
         depl_to_show[active] = deployment_data[active]
 
+
     # chip filter
     tags = tags + fs_tags
     if tags:
         for key in depl_to_show.keys():
-            depl_to_show[key] = filter(lambda depl: any(item in tags for item in depl.tags), depl_to_show[key])
+            depl_to_show[key] = list(filter(lambda depl: any(item in tags for item in depl.tags), depl_to_show[key]))
 
     # time filter
     for key in depl_to_show.keys():
-        depl_to_show[key] = filter(lambda x: was_deployed(x, time_range[0], time_range[1]), depl_to_show[key])
+        depl_to_show[key] = list(filter(lambda x: was_deployed(x, time_range[0], time_range[1]), depl_to_show[key]))
 
     markers = []
 
@@ -105,7 +106,7 @@ def filter_map_data(checkboxes, tags, fs_tags, time_range, colors, deployment_da
                 dl.Marker(
                     position=[d.lat, d.lon],
                     children=dl.Tooltip(children=f"{d.node_type}\n{d.node_label}", offset={"x": 25, "y": -15}),
-                    icon=dict(iconUrl=colors[d.node_type]['svgPath'], iconAnchor=[32, 16], iconSize=30, iconColor="#00ff00"),
+                    icon=dict(iconUrl=colors[d.node_type]['svgPath'], iconAnchor=[32, 16], iconSize=30),
                     id={"role": f"{d.node_type}", "development_id": d.deployment_id, "label": d.node_label},
                 )
             )

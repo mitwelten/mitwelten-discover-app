@@ -31,6 +31,7 @@ def tag_filter(all_tags):
                 multiple=True,
                 id=ID_FS_TAG_CHIPS_GROUP,
                 value=fs_tags,
+                persistence=True
             ),
         ]),
         dmc.Space(h=20),

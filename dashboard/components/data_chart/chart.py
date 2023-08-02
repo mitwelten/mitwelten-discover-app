@@ -1,3 +1,4 @@
+import time
 from datetime import datetime, timedelta
 
 import dash
@@ -9,7 +10,7 @@ from dashboard.config.api_config import *
 from util.validations import cleanup_timeseries
 
 
-def create_env_chart(trigger_id):
+def create_env_chart(trigger_id, light_mode=True):
     print("fetch env data - id: ", trigger_id)
     bucket_width = "1h"
     temp = get_env_timeseries(trigger_id, "temperature", "mean", bucket_width)
@@ -56,11 +57,14 @@ def create_env_chart(trigger_id):
             overlaying="y",
             shift=-2 * offset,
         ),
+        template="plotly_white" if light_mode else "plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
     )
     return new_figure
 
 
-def create_pax_chart(trigger_id):
+def create_pax_chart(trigger_id, light_mode=True):
     print("fetch pax data - id: ", trigger_id)
     resp = get_pax_timeseries(
         deployment_id=trigger_id,
@@ -72,6 +76,11 @@ def create_pax_chart(trigger_id):
         resp,
         x='buckets',
         y="pax",
-        title=f"{dash.ctx.triggered_id['role']} - {dash.ctx.triggered_id['label']}",
+        title=f"Pax Counter - {trigger_id}",
+    )
+    new_figure.update_layout(
+        template="plotly_white" if light_mode else "plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
     )
     return new_figure

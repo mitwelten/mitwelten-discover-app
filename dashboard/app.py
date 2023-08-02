@@ -3,7 +3,7 @@ from urllib.parse import urlparse, parse_qs
 import dash
 import dash_mantine_components as dmc
 import plotly.express as px
-from dash import Output, Input, html, dcc, ALL
+from dash import Output, Input, html, dcc, ALL, State
 
 from dashboard.components.action_button import action_button
 from dashboard.components.data_chart.chart import create_env_chart, create_pax_chart
@@ -26,7 +26,7 @@ graph = dmc.Container(
         id=ID_MEASUREMENT_CHART,
         figure=fig,
         config={"displayModeBar": False},
-        style={"height": "inherit", "width": "inherit"}
+        className="measurement-chart",
     ),
 )
 
@@ -38,13 +38,9 @@ app_content = [
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(index=1)),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=4)),
-    dmc.Loader(
-        id=ID_LOADER,
-        color="blue",
-        size="lg",
-        variant="bars",
-        className="loader-icon",
-    ),
+    dcc.Store(id=ID_CURRENT_CHART_DATA, data=dict(role=None, id=None)),
+
+
     map_figure,
 
     dmc.MediaQuery(
@@ -64,19 +60,30 @@ app_content = [
         id=ID_BOTTOM_DRAWER,
         zIndex=10000,
     ),
-    dmc.Modal(
-        title="Measurement Chart",
+
+    dmc.Drawer(
         opened=False,
         id=ID_CHART_DRAWER,
         zIndex=20000,
-        size="80%",
+        size="50%",
+        closeOnClickOutside=False,
+        closeOnEscape=False,
+        withOverlay=False,
         children=[
+            dmc.Loader(
+                id=ID_LOADER,
+                color="blue",
+                size="lg",
+                variant="bars",
+                className="loader-icon",
+                style={}
+            ),
             dmc.ScrollArea([
-                graph
-            ],
-            )
+                graph,
+            ])
         ]
     ),
+
     dmc.Drawer(
         id=ID_LEFT_DRAWER,
         children=settings_content(deployments, tags, colors),
@@ -192,35 +199,54 @@ def open_left_drawer(_):
 
 
 @app.callback(
-    Output(ID_MEASUREMENT_CHART, "figure"),
     Output(ID_CHART_DRAWER, "opened"),
+    Output(ID_CHART_DRAWER, "position"),
     Output(ID_MARKER_CLICK_STORE, "data"),
-    Input({"role": ALL, "id": ALL, "label": ALL}, "n_clicks"),
-    Input(ID_MARKER_CLICK_STORE, "data"),
-    running=[
-        (
-                Output(ID_LOADER, "style"),
-                {"visibility": "visible"},
-                {"visibility": "hidden"},
-        ),
-    ],
+    Output(ID_CURRENT_CHART_DATA, "data"),
+    Output(ID_LOADER, "style", allow_duplicate=True),
+    Output(ID_MEASUREMENT_CHART, "style", allow_duplicate=True),
+    Input({"role": ALL, "development_id": ALL, "label": ALL}, "n_clicks"),
+    State(ID_MARKER_CLICK_STORE, "data"),
+    State(ID_CURRENT_CHART_DATA, "data"),
     prevent_initial_call=True,
 )
-def marker_click(n_clicks, data):
+def marker_click(n_clicks, data, chart_data):
+    print("click", dash.ctx.triggered_id)
+    # determine whether the callback is triggered by a click
+    # necessary, because adding markers to the map triggers the callback
     click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
-
     has_click_triggered = click_sum != data["clicks"]
 
     if click_sum is not None:
         data["clicks"] = click_sum
 
+    open_drawer = False
+    loader_style = {"visibility": "hidden"}
     if has_click_triggered and dash.ctx.triggered_id is not None:
-        trigger_id = dash.ctx.triggered_id["id"]
-        match dash.ctx.triggered_id["role"]:
-            case "Env. Sensor": new_figure = create_env_chart(trigger_id)
-            case "Pax Counter": new_figure = create_pax_chart(trigger_id)
-            # case "Wild Cam": new_figure = create_wild_cam_chart(trigger_id)
-            case _: return dash.no_update
+        trigger_id = dash.ctx.triggered_id
+        chart_data = dict(role=trigger_id["role"], id=trigger_id["development_id"])
+        open_drawer = True
+        loader_style = {"visibility": "visible"}
 
-        return new_figure, True, data
-    return px.line(), False, data
+    figure_style = {"visibility": "hidden"}
+    return open_drawer, "bottom", data, chart_data, loader_style, figure_style
+
+
+@app.callback(
+    Output(ID_MEASUREMENT_CHART, "figure"),
+    Output(ID_MEASUREMENT_CHART, "style", allow_duplicate=True),
+    Output(ID_LOADER, "style", allow_duplicate=True),
+    Input(ID_CURRENT_CHART_DATA, "data"),
+    State(ID_APP_THEME, "theme"),
+    prevent_initial_call=True
+)
+def display_chart(data, theme):
+    print("display chart: ", data)
+    loader_style = {"visibility": "hidden"}
+    figure_style = {"visibility": "visible"}
+    deployment_id = data["id"]
+    match data["role"]:
+        case "Env. Sensor": new_figure = create_env_chart(deployment_id, theme)
+        case "Pax Counter": new_figure = create_pax_chart(deployment_id, theme)
+        case _: return px.line(), figure_style, loader_style
+    return new_figure, figure_style, loader_style

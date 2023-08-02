@@ -17,7 +17,7 @@
 
 .loader-icon {
     position: absolute;
-    top: 50vh;
+    top: 100px;
     left: 50vw;
     z-index: 10000;
     visibility: hidden;
