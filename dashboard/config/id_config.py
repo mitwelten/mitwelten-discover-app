@@ -23,6 +23,7 @@ ID_DEPLOYMENT_COLOR_STORE = "id-current-tags-color-store"
 ID_BASE_MAP_STORE = "id-base-map-store"
 ID_OVERLAY_MAP_STORE = "id-overlay-map-store"
 ID_CURRENT_CHART_DATA = "id-current-chart-data"
+ID_DATE_RANGE_STORE = "id-date-range-store"
 
 # node types
 ID_ALL_ACTIVE_STORE = "id-active-all-checkbox"

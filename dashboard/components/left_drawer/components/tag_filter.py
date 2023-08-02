@@ -18,9 +18,6 @@ def tag_filter(all_tags):
     tags = [t for t in all_tags if t not in fs_tags]
     return html.Div([
         dcc.Store(id=ID_CURRENT_TAG_DATA_STORE, data=[]),
-        dmc.Text("TAG Selection",
-                 size="sm",
-                 ),
         dmc.Text("Feldstudien",
                  size="sm",
                  color="dimmed",
@@ -36,7 +33,7 @@ def tag_filter(all_tags):
         ]),
         dmc.Space(h=20),
         dmc.Group([
-            dmc.Text("Additional TAG's",
+            dmc.Text("Additional Tag",
                      size="sm",
                      color="dimmed",
                      style={"display": "inline-block"}
@@ -54,7 +51,7 @@ def tag_filter(all_tags):
                     radius="xl",
                 ),
                 dmc.Button(
-                    "Reset",
+                    "Clear",
                     variant="light",
                     compact=True,
                     size="xs",
@@ -75,7 +72,7 @@ def tag_filter(all_tags):
             ),
             html.Div(
                 dmc.Modal(
-                    title="Select Tag's",
+                    title="Select Tags",
                     id=ID_CHIPS_MODAL,
                     zIndex=10000,
                     children=[

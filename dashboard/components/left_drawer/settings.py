@@ -27,11 +27,12 @@ def settings_content(node_types, tags_data, depl_colors):
             dmc.Space(h=30),
             dmc.ScrollArea([
                 html.Div([
-                    divider("Time Range Selection"),
+                    divider("Date Range"),
                     date_time_section(),
 
-                    divider("Filter"),
+                    divider("Device Type"),
                     type_filter(node_types, depl_colors),
+                    divider("Tags"),
                     tag_filter(tags_data),
                     dmc.Space(h=30),
 
@@ -48,18 +49,6 @@ def settings_content(node_types, tags_data, depl_colors):
     )
 
 
-# callback ordering matters!
-@app.callback(
-    Output(ID_DATE_RANGE_PICKER, "value"),
-    Input(ID_DATE_RANGE_SEGMENT, "value"),
-)
-def update_picker_from_segment(segment_data):
-    if not segment_data:
-        seg_time_range = 7
-    else:
-        seg_time_range = int(segment_data)
-
-    return [datetime.now().date() - timedelta(weeks=seg_time_range), datetime.now().date()]
 
 
 @app.callback(

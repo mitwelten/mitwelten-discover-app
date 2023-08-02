@@ -35,8 +35,6 @@ def type_filter(data, colors):
         dcc.Store(id=ID_ALL_ACTIVE_STORE, data={"active": False}),
         dmc.CheckboxGroup(
             id=ID_TYPE_CHECKBOX_GROUP,
-            label="Devices",
-            description="Select visible Bricks",
             orientation="vertical",
             withAsterisk=False,
             offset="xs",
