@@ -104,6 +104,7 @@ def marker_popup(deployment, color):
         style={"width": "240px"}
     )
 
+
 @app.callback(
     Output(ID_MAP_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),

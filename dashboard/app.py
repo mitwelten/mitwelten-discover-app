@@ -19,6 +19,8 @@ from util.functions import safe_reduce
 deployments, colors,  tags = init_app_data()
 
 
+style_hidden = {"visibility": "hidden"}
+style_visible = {"visibility": "visible"}
 fig = px.line()
 
 graph = dmc.Container(
@@ -43,12 +45,12 @@ app_content = [
     dmc.MediaQuery(
         action_button(button_id=ID_BOTTOM_DRAWER_BUTTON, icon="material-symbols:layers-outline"),
         largerThan="sm",
-        styles={"visibility": "hidden"}
+        styles=style_hidden
     ),
     dmc.MediaQuery(
         map_menu_popup("menu"),
         smallerThan="sm",
-        styles={"visibility": "hidden"}
+        styles=style_hidden
     ),
 
     action_button(button_id=ID_OPEN_LEFT_DRAWER_BUTTON, icon="material-symbols:menu"),
@@ -205,23 +207,27 @@ def open_left_drawer(_):
     prevent_initial_call=True,
 )
 def marker_click(n_clicks, data, chart_data):
+    print(n_clicks)
+    print("context ", dash.ctx.triggered_id)
     # determine whether the callback is triggered by a click
     # necessary, because adding markers to the map triggers the callback
     click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
-    has_click_triggered = click_sum != data["clicks"]
+    print("click sum ", click_sum)
+    has_click_triggered = False
 
     if click_sum is not None:
+        has_click_triggered = click_sum != data["clicks"]
         data["clicks"] = click_sum
 
     open_drawer = False
-    loader_style = {"visibility": "hidden"}
+    loader_style = style_hidden
     if has_click_triggered and dash.ctx.triggered_id is not None:
         trigger_id = dash.ctx.triggered_id
         chart_data = dict(role=trigger_id["role"], id=trigger_id["development_id"])
         open_drawer = True
-        loader_style = {"visibility": "visible"}
+        loader_style = style_visible
 
-    figure_style = {"visibility": "hidden"}
+    figure_style = style_hidden
     return open_drawer, "bottom", data, chart_data, loader_style, figure_style
 
 
@@ -235,8 +241,8 @@ def marker_click(n_clicks, data, chart_data):
 )
 def display_chart(data, theme):
     print("display chart: ", data)
-    loader_style = {"visibility": "hidden"}
-    figure_style = {"visibility": "visible"}
+    loader_style = style_hidden
+    figure_style = style_visible
     deployment_id = data["id"]
     match data["role"]:
         case "Env. Sensor": new_figure = create_env_chart(deployment_id, theme)
