@@ -135,7 +135,7 @@ def filter_map_data(checkboxes, tags, fs_tags, time_range, colors, deployment_da
     tags = tags + fs_tags
     if tags:
         for key in depl_to_show.keys():
-            depl_to_show[key] = list(filter(lambda depl: any(item in tags for item in depl.tags), depl_to_show[key]))
+            depl_to_show[key] = list(filter(lambda depl: all(item in depl.tags for item in tags), depl_to_show[key]))
 
     # time filter
     for key in depl_to_show.keys():
