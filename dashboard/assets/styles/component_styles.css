@@ -28,3 +28,45 @@
     width: 200px;
     display: inline-block;
 }
+
+.measurement-chart {
+    height: inherit;
+}
+
+.chart-graph {
+    height: 100%;
+    width: 100%;
+    margin: 1em;
+}
+
+.chart-drawer{
+    left: 400px;
+    width: calc(100vw - 400px);
+}
+
+@media screen and (max-width: 1000px) {
+    .chart-drawer {
+        left: 0;
+        height: 60%;
+        width: 100vw;
+    }
+
+    .chart-graph {
+        margin: 0;
+    }
+}
+
+@media screen and (max-height: 500px) {
+    .chart-drawer {
+        left: 0;
+        height: 100%;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+    }
+
+    .chart-graph {
+        margin: 0;
+        height: 300px;
+    }
+}

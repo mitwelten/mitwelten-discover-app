@@ -207,6 +207,6 @@ def display_chart(data, theme):
     match data["role"]:
         case "Env. Sensor": new_figure = create_env_chart(deployment_id, theme)
         case "Pax Counter": new_figure = create_pax_chart(deployment_id, theme)
-        case _: new_figure = html.Div("No Data available")
+        case _: new_figure = dmc.Center(dmc.Text("No Data available", color="dimmed"))
 
     return new_figure
