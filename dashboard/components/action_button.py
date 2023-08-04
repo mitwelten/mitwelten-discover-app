@@ -7,7 +7,7 @@ def action_button(button_id: str = None, icon: str = None):
         DashIconify(
             icon=icon,
             width=20,
-            color=dmc.theme.DEFAULT_COLORS["green"][9],
+            color="mitwelten_green",
         ),
         variant="light",
         size="lg",

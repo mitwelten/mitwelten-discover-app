@@ -24,7 +24,7 @@ def tag_filter(all_tags):
                  ),
         dmc.Center([
             dmc.SegmentedControl(
-                color="green",
+                color="mitwelten_green",
                 id=ID_FS_TAG_CHIPS_GROUP,
                 data=fs_tags,
                 persistence=True,
@@ -41,7 +41,7 @@ def tag_filter(all_tags):
                 dmc.ActionIcon(
                     DashIconify(
                         icon="material-symbols:add",
-                        color=dmc.theme.DEFAULT_COLORS["green"][9],
+                        color="mitwelten_green",
                     ),
                     variant="light",
                     id=ID_OPEN_CHIP_MODAL_BUTTON,

@@ -18,7 +18,7 @@ def date_time_section():
         dcc.Store(id=ID_DATE_RANGE_STORE, data=dict()),
         dmc.SegmentedControl(
             id=ID_DATE_RANGE_SEGMENT,
-            color="green",
+            color="mitwelten_green",
             value=f"{FIRST_DEPLOYMENT_WEEKS_AGO}",
             fullWidth=True,
             data=DEFAULT_DATE_RANGES,

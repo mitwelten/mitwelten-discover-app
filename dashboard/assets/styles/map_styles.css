@@ -38,7 +38,7 @@ body {
 #id-left-drawer-btn {
     position: absolute;
     top: 20px;
-    left: 50px;
+    left: 20px;
 }
 
 .minimap-button-container {
@@ -134,4 +134,8 @@ body {
     justify-self: end;
     left: 400px;
     width: calc(100vw - 400px);
+}
+.leaflet-control-zoom {
+    left: calc(100vw - 52px);
+    top: calc(100vh - 180px);
 }
