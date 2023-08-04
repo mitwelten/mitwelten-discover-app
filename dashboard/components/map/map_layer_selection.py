@@ -1,6 +1,6 @@
 import dash
 import dash_mantine_components as dmc
-from dash import html, Output, Input, ALL, callback, State
+from dash import html, Output, Input, ALL, State
 
 from dashboard.components.action_button import action_button
 from dashboard.config.id_config import *
@@ -18,7 +18,10 @@ def map_menu_popup(id_prefix):
         menu_entries.append(
             dmc.MenuItem(
                 map_config.title,
-                icon=html.Div(dmc.Image(src=map_config.image, alt="map", width=48, radius=5)),
+                icon=html.Div(
+                    dmc.Image(src=map_config.image, alt="map", width=48, height=48, radius=5),
+                    className="map-image-selected" if map_config.index == 0 else ""
+                ),
                 id={'role': "base", 'index': map_config.index, 'place': id_prefix},
             )
         )
@@ -29,7 +32,10 @@ def map_menu_popup(id_prefix):
         menu_entries.append(
             dmc.MenuItem(
                 overlay_config.title,
-                icon=html.Div(dmc.Image(src=overlay_config.image, alt="map", width=48, radius=5)),
+                icon=html.Div(
+                    dmc.Image(src=overlay_config.image, alt="map", width=48, height=48, radius=5),
+                    className="map-image-selected" if overlay_config.index == 0 else ""
+                ),
                 id={'role': MAP_TYPES[1], 'index': overlay_config.index, 'place': id_prefix},
             )
         )
@@ -53,23 +59,25 @@ def map_menu_popup(id_prefix):
 def map_menu_drawer(id_prefix):
     return dmc.Container(
         children=[
+            dmc.Divider(label="Map", labelPosition="center", size="xs"),
+            dmc.Space(h=20),
             dmc.Grid(
                 list(map(
                     lambda x: dmc.Col(minimap_button(id_prefix, x, MAP_TYPES[0]), style={"textAlign": "center"}, span=3),
                     MAPS)
                 ),
-                gutter="xl",
+                gutter="sm",
                 grow=True,
             ),
             dmc.Space(h=10),
-            dmc.Divider(label="Overlays", labelPosition="center", size="sm"),
+            dmc.Divider(label="Overlay", labelPosition="center", size="xs"),
             dmc.Space(h=20),
             dmc.Grid(
                 list(map(
                     lambda x: dmc.Col(minimap_button(id_prefix, x, MAP_TYPES[1]), style={"textAlign": "center"}, span=3),
                     OVERLAYS)
                 ),
-                gutter="xl",
+                gutter="sm",
                 grow=True,
             ),
         ],
@@ -77,32 +85,27 @@ def map_menu_drawer(id_prefix):
 
 
 def minimap_button(id_prefix, map_config, role):
-    return html.Div(
-        id={'role': role, 'index': map_config.index, 'place': id_prefix},
-        className="minimap-btn",
+    return html.Div(dmc.Stack(
         children=[
             html.Div(
-                className="minimap-button-container",
-                children=[
-                    html.Div(
-                        className="map-image",
-                        children=[
-                            dmc.Image(
-                                src=map_config.image,
-                                alt="map",
-                                width=48,
-                                radius=5,
-                            ),
-                        ]
-                    ),
-                    html.P(
-                        className="minimap-button-label",
-                        children=map_config.title,
-                        style={'fontSize': 10}
-                    )
-                ]
+                dmc.Image(
+                    src=map_config.image,
+                    alt="map",
+                    width=48,
+                    height=48,
+                    radius=5,
+                ),
+                className="map-image-selected" if map_config.index == 0 else ""
             ),
-        ]
+            dmc.Text(
+                size="xs",
+                children=map_config.title,
+            )
+        ],
+        align="center",
+        spacing="xs",
+    ),
+        id={'role': role, 'index': map_config.index, 'place': id_prefix},
     )
 
 
@@ -150,21 +153,26 @@ app.callback(
 )(handle_map_update)
 
 
-def update_map_icon(_, icons):
-    overlay_id = dash.ctx.triggered_id["index"]
+def update_map_icon(data, children, icons):
+    map_id = data["index"]
+    for child in children:
+        # nestet: Div - Stack - Div
+        child["props"]["children"][0]["props"]["className"] = ""
+
+    children[map_id]["props"]["children"][0]["props"]["className"] = "map-image-selected"
 
     for icon in icons:
         icon["props"]["className"] = ""
 
-    icons[overlay_id]["props"]["className"] = "map-image-selected"
-    return icons
+    icons[map_id]["props"]["className"] = "map-image-selected"
+    return icons, children
 
 
 for map_type in MAP_TYPES:
     app.callback(
             Output({'role': map_type, 'index': ALL, 'place': "menu"}, 'icon'),
-            Input({'role':  map_type, 'index': ALL, 'place': "menu"}, 'n_clicks'),
+            Output({'role': map_type, 'index': ALL, 'place': "drawer"}, 'children'),
+            Input({'role': "map_store", 'type': map_type}, "data"),
+            State({'role':  map_type, 'index': ALL, 'place': "drawer"}, 'children'),
             State({'role':  map_type, 'index': ALL, 'place': "menu"}, 'icon'),
-            prevent_initial_call=True
     )(update_map_icon)
-

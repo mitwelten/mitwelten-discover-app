@@ -57,6 +57,7 @@ app_content = [
     dmc.Drawer(
         map_menu_drawer("drawer"),
         id=ID_BOTTOM_DRAWER,
+        size="lg",
         zIndex=10000,
     ),
     dmc.Drawer(

@@ -20,8 +20,8 @@ ID_TAG_DATA_STORE = "id-tags-data-store"
 ID_MARKER_CLICK_STORE = "id-marker-clicks-store"
 ID_CURRENT_TAG_DATA_STORE = "id-current-tags-data-store"
 ID_DEPLOYMENT_COLOR_STORE = "id-current-tags-color-store"
-ID_BASE_MAP_STORE = "id-base-map-store"
-ID_OVERLAY_MAP_STORE = "id-overlay-map-store"
+ID_BASE_MAP_STORE = {"role": "map_store", "type": "base"}
+ID_OVERLAY_MAP_STORE = {"role": "map_store", "type": "overlay"}
 ID_CURRENT_CHART_DATA = "id-current-chart-data"
 ID_DATE_RANGE_STORE = "id-date-range-store"
 
