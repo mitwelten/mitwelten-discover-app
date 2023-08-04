@@ -42,7 +42,7 @@ def date_time_section():
     Output(ID_DATE_RANGE_STORE, "data"),
     Output(ID_DATE_RANGE_SEGMENT, "styles", allow_duplicate=True),
     Input(ID_DATE_RANGE_SEGMENT, "value"),
-    Input(ID_APP_THEME, "theme"),
+    State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
 def update_picker_from_segment(segment_data, light_mode):
@@ -63,7 +63,7 @@ def update_picker_from_segment(segment_data, light_mode):
     Output(ID_DATE_RANGE_SEGMENT, "value"),
     Input(ID_DATE_RANGE_PICKER, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
-    Input(ID_APP_THEME, "theme"),
+    State(ID_APP_THEME, "theme"),
     State(ID_DATE_RANGE_SEGMENT, "value"),
     prevent_initial_call=True
 )
