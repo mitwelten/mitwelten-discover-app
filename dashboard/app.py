@@ -68,6 +68,7 @@ app_content = [
         closeOnClickOutside=False,
         closeOnEscape=False,
         withOverlay=False,
+        className="chart-drawer",
         children=[
             dmc.Loader(
                 id=ID_LOADER,
@@ -208,12 +209,9 @@ def open_left_drawer(_):
     prevent_initial_call=True,
 )
 def marker_click(n_clicks, data, chart_data):
-    print(n_clicks)
-    print("context ", dash.ctx.triggered_id)
     # determine whether the callback is triggered by a click
     # necessary, because adding markers to the map triggers the callback
     click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
-    print("click sum ", click_sum)
     has_click_triggered = False
 
     if click_sum is not None:
