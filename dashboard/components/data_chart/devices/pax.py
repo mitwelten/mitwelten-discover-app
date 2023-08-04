@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-import plotly.express as px
 from dash import dcc
 
 from dashboard.api.api_client import get_pax_timeseries

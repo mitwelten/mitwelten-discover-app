@@ -1,4 +1,3 @@
-import time
 from urllib.parse import urlparse, parse_qs
 
 import dash
@@ -77,7 +76,7 @@ app_content = [
         closeOnClickOutside=False,
         closeOnEscape=False,
         withOverlay=False,
-        zIndex=10000,
+        zIndex=90000,
     ),
 ]
 

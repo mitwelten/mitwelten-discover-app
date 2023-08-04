@@ -1,16 +1,4 @@
-import time
-from datetime import datetime, timedelta
-
-import dash
-import plotly.express as px
 import plotly.graph_objects as go
-
-import dash_mantine_components as dmc
-from dash import dcc
-
-from dashboard.api.api_client import get_env_timeseries, get_pax_timeseries
-from dashboard.config.api_config import *
-from util.validations import cleanup_timeseries
 
 
 def create_figure_from_timeseries(series, light_mode, x_label="time", y_label="value"):
@@ -25,3 +13,6 @@ def create_figure_from_timeseries(series, light_mode, x_label="time", y_label="v
         y=series[y_label],
     ))
     return figure
+
+
+

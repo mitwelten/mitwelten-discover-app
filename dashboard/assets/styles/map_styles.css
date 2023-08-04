@@ -134,12 +134,37 @@ body {
 }
 
 .chart-drawer{
-    align-self: end;
-    align-content: end;
-    justify-self: end;
     left: 400px;
     width: calc(100vw - 400px);
 }
+
+@media screen and (max-width: 1000px) {
+   .chart-drawer {
+       left: 0;
+       height: 60%;
+       width: 100vw;
+   }
+
+    .chart-graph {
+        margin: 0;
+    }
+}
+
+@media screen and (max-height: 500px) {
+    .chart-drawer {
+        left: 0;
+        height: 100%;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+    }
+
+    .chart-graph {
+        margin: 0;
+        height: 300px;
+    }
+}
+
 .leaflet-control-zoom {
     left: calc(100vw - 52px);
     top: calc(100vh - 180px);
