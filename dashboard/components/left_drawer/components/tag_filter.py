@@ -23,12 +23,11 @@ def tag_filter(all_tags):
                  color="dimmed",
                  ),
         dmc.Center([
-            dmc.ChipGroup(
-                [dmc.Chip(x, value=x, size="xs") for x in fs_tags],
-                multiple=True,
+            dmc.SegmentedControl(
+                color="green",
                 id=ID_FS_TAG_CHIPS_GROUP,
-                value=fs_tags,
-                persistence=True
+                data=fs_tags,
+                persistence=True,
             ),
         ]),
         dmc.Space(h=20),
@@ -89,6 +88,7 @@ def tag_filter(all_tags):
             ),
         ]),
     ])
+
 
 @app.callback(
     Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),

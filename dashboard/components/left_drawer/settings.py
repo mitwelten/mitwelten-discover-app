@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from pprint import pprint
 
 import dash
 import dash_leaflet as dl
@@ -114,7 +115,7 @@ def marker_popup(deployment, color):
     State(ID_DEPLOYMENT_COLOR_STORE, "data"),
     State(ID_DEPLOYMENT_DATA_STORE, "data"),
 )
-def filter_map_data(checkboxes, tags, fs_tags, time_range, colors, deployment_data):
+def filter_map_data(checkboxes, tags, fs_tag, time_range, colors, deployment_data):
     print(checkboxes)
     checkboxes = list(filter(lambda c: c != "all", checkboxes))
 
@@ -124,18 +125,26 @@ def filter_map_data(checkboxes, tags, fs_tags, time_range, colors, deployment_da
     for key in deployment_data:
         deployment_data[key] = list(map(lambda depl: Deployment(depl), deployment_data[key]))
 
-
-    # checkbox filter
+    # type filter
     for active in checkboxes:
         # depl_to_show:  {"key": [Deployments]
         depl_to_show[active] = deployment_data[active]
 
+    depl_fs_filtered = {}
+    # tag filter
+    if fs_tag:
+        for key in depl_to_show.keys():
+            depl_fs_filtered[key] = list(filter(lambda depl: fs_tag in depl.tags, depl_to_show[key]))
 
-    # chip filter
-    tags = tags + fs_tags
+    depl_tags_filtered = {}
     if tags:
         for key in depl_to_show.keys():
-            depl_to_show[key] = list(filter(lambda depl: all(item in depl.tags for item in tags), depl_to_show[key]))
+            depl_tags_filtered[key] = list(filter(lambda depl: any(item in depl.tags for item in tags), depl_to_show[key]))
+
+    for key in depl_to_show.keys():
+        fs_tags = depl_fs_filtered.get(key) if depl_fs_filtered.get(key) is not None else []
+        tags = depl_tags_filtered.get(key) if depl_tags_filtered.get(key) is not None else []
+        depl_to_show[key] = fs_tags + tags
 
     # time filter
     for key in depl_to_show.keys():
