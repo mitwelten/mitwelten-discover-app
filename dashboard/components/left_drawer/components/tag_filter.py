@@ -26,7 +26,7 @@ def tag_filter(all_tags):
             dmc.SegmentedControl(
                 color="mitwelten_green",
                 id=ID_FS_TAG_CHIPS_GROUP,
-                data=fs_tags,
+                data=["All"] + fs_tags,
                 persistence=True,
             ),
         ]),

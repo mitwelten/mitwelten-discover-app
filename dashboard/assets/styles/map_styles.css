@@ -125,7 +125,12 @@ body {
 
 .measurement-chart {
    height: inherit;
-    width: inherit;
+}
+
+.chart-graph {
+    height: inherit;
+    width: 100%;
+    margin: 1em;
 }
 
 .chart-drawer{

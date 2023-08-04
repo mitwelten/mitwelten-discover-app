@@ -1,16 +1,18 @@
+import time
 from urllib.parse import urlparse, parse_qs
 
 import dash
 import dash_mantine_components as dmc
-import plotly.express as px
 from dash import Output, Input, html, dcc, ALL, State
 
 from dashboard.components.action_button import action_button
-from dashboard.components.data_chart.chart import create_env_chart, create_pax_chart
+from dashboard.components.data_chart.devices.env import create_env_chart
+from dashboard.components.data_chart.devices.pax import create_pax_chart
 from dashboard.components.left_drawer.settings import settings_content
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.map_layer_selection import map_menu_popup, map_menu_drawer
 from dashboard.config import map_config
+from dashboard.config.app_config import app_theme
 from dashboard.config.id_config import *
 from dashboard.init import init_app_data
 from dashboard.maindash import app
@@ -21,16 +23,6 @@ deployments, colors,  tags = init_app_data()
 
 style_hidden = {"visibility": "hidden"}
 style_visible = {"visibility": "visible"}
-fig = px.line()
-
-graph = dmc.Container(
-    dcc.Graph(
-        id=ID_MEASUREMENT_CHART,
-        figure=fig,
-        config={"displayModeBar": False},
-        className="measurement-chart",
-    ),
-)
 
 app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
@@ -70,17 +62,10 @@ app_content = [
         withOverlay=False,
         className="chart-drawer",
         children=[
-            dmc.Loader(
-                id=ID_LOADER,
-                color="blue",
-                size="lg",
-                variant="bars",
-                className="loader-icon",
-                style={}
-            ),
-            dmc.ScrollArea([
-                graph,
-            ])
+            dmc.LoadingOverlay(
+                html.Div(id=ID_CHART_CONTAINER, className="measurement-chart"),
+                loaderProps={"variant": "dots", "color": "orange", "size": "xl"},
+            )
         ]
     ),
     dmc.Drawer(
@@ -99,36 +84,7 @@ app_content = [
 
 discover_app = dmc.MantineProvider(
     id=ID_APP_THEME,
-    theme={
-        "colorScheme": "light",
-        "colors": {
-            "mitwelten_green":
-                [
-                    "#E8F5E9",
-                    "#C8E6C9",
-                    "#A5D6A7",
-                    "#81C784",
-                    "#66BB6A",
-                    "#4CAF50",
-                    "#43A047",
-                    "#388E3C",
-                    "#2E7D32",
-                    "#1B5E20",
-                ],
-        },
-        "primaryColor": "mitwelten_green",
-        "shadows": {
-            # other shadows (xs, sm, lg) will be merged from default theme
-            "md": "1px 1px 3px rgba(0,0,0,.25)",
-            "xl": "5px 5px 3px rgba(0,0,0,.25)",
-        },
-        "headings": {
-            "fontFamily": "Roboto, sans-serif",
-            "sizes": {
-                "h1": {"fontSize": 20},
-            },
-        },
-    },
+    theme=app_theme,
     inherit=True,
     withGlobalStyles=True,
     withNormalizeCSS=True,
@@ -216,8 +172,6 @@ def open_left_drawer(_):
     Output(ID_CHART_DRAWER, "position"),
     Output(ID_MARKER_CLICK_STORE, "data"),
     Output(ID_CURRENT_CHART_DATA, "data"),
-    Output(ID_LOADER, "style", allow_duplicate=True),
-    Output(ID_MEASUREMENT_CHART, "style", allow_duplicate=True),
     Input({"role": ALL, "development_id": ALL, "label": ALL}, "n_clicks"),
     State(ID_MARKER_CLICK_STORE, "data"),
     State(ID_CURRENT_CHART_DATA, "data"),
@@ -234,32 +188,26 @@ def marker_click(n_clicks, data, chart_data):
         data["clicks"] = click_sum
 
     open_drawer = False
-    loader_style = style_hidden
     if has_click_triggered and dash.ctx.triggered_id is not None:
         trigger_id = dash.ctx.triggered_id
         chart_data = dict(role=trigger_id["role"], id=trigger_id["development_id"])
         open_drawer = True
-        loader_style = style_visible
 
-    figure_style = style_hidden
-    return open_drawer, "bottom", data, chart_data, loader_style, figure_style
+    return open_drawer, "bottom", data, chart_data
 
 
 @app.callback(
-    Output(ID_MEASUREMENT_CHART, "figure"),
-    Output(ID_MEASUREMENT_CHART, "style", allow_duplicate=True),
-    Output(ID_LOADER, "style", allow_duplicate=True),
+    Output(ID_CHART_CONTAINER, "children"),
     Input(ID_CURRENT_CHART_DATA, "data"),
     State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
 def display_chart(data, theme):
     print("display chart: ", data)
-    loader_style = style_hidden
-    figure_style = style_visible
     deployment_id = data["id"]
     match data["role"]:
         case "Env. Sensor": new_figure = create_env_chart(deployment_id, theme)
         case "Pax Counter": new_figure = create_pax_chart(deployment_id, theme)
-        case _: return px.line(), figure_style, loader_style
-    return new_figure, figure_style, loader_style
+        case _: new_figure = html.Div("No Data available")
+
+    return new_figure

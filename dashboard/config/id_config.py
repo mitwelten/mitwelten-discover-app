@@ -44,7 +44,7 @@ ID_TAG_RESET_BUTTON = "id-tag-reset-button"
 
 # left drawer
 ID_LEFT_DRAWER_CONTENT_SCROLL_AREA = "id-scroll-div-container"
-ID_MEASUREMENT_CHART = "id-measurement-chart"
+ID_CHART_CONTAINER = "id-measurement-chart"
 ID_CHART_DRAWER = "id-chart-drawer"
 
 # map selection & handling

@@ -1,10 +1,8 @@
-from datetime import datetime, timedelta
-from pprint import pprint
+from datetime import datetime
 
-import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import html, Output, Input, State, ALL, MATCH
+from dash import html, Output, Input, State
 
 from dashboard.components.left_drawer.components.date_time_section import date_time_section
 from dashboard.components.left_drawer.components.general_controls import general_controls
@@ -130,21 +128,22 @@ def filter_map_data(checkboxes, tags, fs_tag, time_range, colors, deployment_dat
         # depl_to_show:  {"key": [Deployments]
         depl_to_show[active] = deployment_data[active]
 
-    depl_fs_filtered = {}
-    # tag filter
-    if fs_tag:
-        for key in depl_to_show.keys():
-            depl_fs_filtered[key] = list(filter(lambda depl: fs_tag in depl.tags, depl_to_show[key]))
+    if fs_tag != "All":
+        depl_fs_filtered = {}
+        # tag filter
+        if fs_tag:
+            for key in depl_to_show.keys():
+                depl_fs_filtered[key] = list(filter(lambda depl: fs_tag in depl.tags, depl_to_show[key]))
 
-    depl_tags_filtered = {}
-    if tags:
-        for key in depl_to_show.keys():
-            depl_tags_filtered[key] = list(filter(lambda depl: any(item in depl.tags for item in tags), depl_to_show[key]))
+        depl_tags_filtered = {}
+        if tags:
+            for key in depl_to_show.keys():
+                depl_tags_filtered[key] = list(filter(lambda depl: any(item in depl.tags for item in tags), depl_to_show[key]))
 
-    for key in depl_to_show.keys():
-        fs_tags = depl_fs_filtered.get(key) if depl_fs_filtered.get(key) is not None else []
-        tags = depl_tags_filtered.get(key) if depl_tags_filtered.get(key) is not None else []
-        depl_to_show[key] = fs_tags + tags
+        for key in depl_to_show.keys():
+            fs_tags = depl_fs_filtered.get(key) if depl_fs_filtered.get(key) is not None else []
+            tags = depl_tags_filtered.get(key) if depl_tags_filtered.get(key) is not None else []
+            depl_to_show[key] = fs_tags + tags
 
     # time filter
     for key in depl_to_show.keys():
