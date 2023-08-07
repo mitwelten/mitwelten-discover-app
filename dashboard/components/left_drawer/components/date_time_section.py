@@ -19,10 +19,11 @@ def date_time_section():
         dmc.SegmentedControl(
             id=ID_DATE_RANGE_SEGMENT,
             color="mitwelten_green",
-            value=f"{FIRST_DEPLOYMENT_WEEKS_AGO}",
+            # value=f"{FIRST_DEPLOYMENT_WEEKS_AGO}",
             fullWidth=True,
             data=DEFAULT_DATE_RANGES,
             mt=10,
+            persistence=True
         ),
         dmc.Space(h=20),
         dmc.Center(
@@ -33,6 +34,7 @@ def date_time_section():
                 minDate=date(2020, 8, 5),
                 value=[datetime.now().date() - timedelta(weeks=FIRST_DEPLOYMENT_WEEKS_AGO), datetime.now().date()],
                 style={"width": 250},
+                persistence=True
             ),
         ),
     ])

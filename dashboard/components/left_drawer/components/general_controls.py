@@ -10,7 +10,7 @@ from dashboard.util.decorators import spaced_section
 
 @spaced_section
 def general_controls():
-    return html.Div([
+    return dmc.Stack([
         dmc.Group([
             dmc.Text("Theme (light / dark)", size="sm"),
             dmc.Switch(
@@ -21,7 +21,22 @@ def general_controls():
             )],
             position="apart",
         ),
-    ])
+        dmc.NavLink(
+            label="More about Mitwelten",
+            icon=DashIconify(icon="material-symbols:info-outline-rounded", height=20),
+            active=True,
+            variant="subtle",
+            color="mitwelten_green",
+            id="navlink-interactive",
+            rightSection=DashIconify(icon="material-symbols:arrow-forward-ios-rounded"),
+            href="https://www.mitwelten.org",
+            target="_blank"
+        ),
+    ],
+        spacing="xl",
+        justify="space-between",
+        style={"height": "100%"}
+    )
 
 
 @app.callback(

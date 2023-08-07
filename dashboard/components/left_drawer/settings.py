@@ -40,12 +40,14 @@ def settings_content(node_types, tags_data, depl_colors):
                     general_controls(),
                 ],
                     id=ID_LEFT_DRAWER_CONTENT_SCROLL_AREA,
+                    style={"height": "100%"}
                 )],
                 offsetScrollbars=True,
-                type="always"
+                type="always",
+                style={"height": "100%"}
             )],
         fluid=True,
-        style={"height": "100vh"}
+        style={"height": "calc(100vh - 100px)"}
     )
 
 
@@ -114,7 +116,6 @@ def marker_popup(deployment, color):
     State(ID_DEPLOYMENT_DATA_STORE, "data"),
 )
 def filter_map_data(checkboxes, tags, fs_tag, time_range, colors, deployment_data):
-    print(checkboxes)
     checkboxes = list(filter(lambda c: c != "all", checkboxes))
 
     depl_to_show = {}

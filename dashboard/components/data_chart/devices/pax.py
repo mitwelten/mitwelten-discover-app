@@ -7,7 +7,6 @@ from dashboard.components.data_chart.chart import create_figure_from_timeseries
 
 
 def create_pax_chart(trigger_id, light_mode=True):
-    print("fetch pax data - id: ", trigger_id)
     resp = get_pax_timeseries(
         deployment_id=trigger_id,
         bucket_width="1h",

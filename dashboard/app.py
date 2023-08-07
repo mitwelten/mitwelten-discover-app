@@ -202,7 +202,6 @@ def marker_click(n_clicks, data, chart_data):
     prevent_initial_call=True
 )
 def display_chart(data, theme):
-    print("display chart: ", data)
     deployment_id = data["id"]
     match data["role"]:
         case "Env. Sensor": new_figure = create_env_chart(deployment_id, theme)
