@@ -1,10 +1,10 @@
 import dash
 import dash_mantine_components as dmc
-from dash import html,  Output, Input, State
+from dash import Output, Input, State
 from dash_iconify import DashIconify
-from dashboard.maindash import app
 
 from dashboard.config.id_config import *
+from dashboard.maindash import app
 from dashboard.util.decorators import spaced_section
 
 

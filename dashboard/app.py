@@ -100,18 +100,21 @@ app.layout = discover_app
 
 @app.callback(
     Output(ID_MAP, 'center'),
+    Output(ID_MAP, 'zoom'),
     Input(ID_URL_LOCATION, 'href'),
 )
 def display_page(href):
     lat = map_config.DEFAULT_LAT
     lon = map_config.DEFAULT_LON
+    zoom = map_config.DEFAULT_ZOOM
     query = urlparse(href).query
     query_params: dict = parse_qs(query)
     if query_params:
         lat = query_params["lat"][0]
         lon = query_params["lon"][0]
+        zoom = query_params["zoom"][0]
 
-    return lat, lon
+    return (lat, lon), zoom
 
 
 # @app.callback(
@@ -126,12 +129,13 @@ def display_page(href):
 @app.callback(
     Output(ID_URL_LOCATION, "search"),
     Input(ID_MAP, "click_lat_lng"),
+    Input(ID_MAP, "zoom"),
     prevent_initial_call=True
 )
-def map_click(click_lat_lng):
+def map_click(click_lat_lng, zoom):
     loc = ""
     if click_lat_lng is not None:
-        loc = [f"?lat={click_lat_lng[0]}&lon={click_lat_lng[1]}"]
+        loc = [f"?lat={click_lat_lng[0]}&lon={click_lat_lng[1]}&zoom={zoom}"]
     return loc
 
 

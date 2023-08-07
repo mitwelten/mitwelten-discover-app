@@ -6,7 +6,6 @@ from dashboard.config.map_config import DEFAULT_MAX_ZOOM
 initial_map = map_config.MAPS[0]
 map_figure = dl.Map(
     [
-
         dl.Pane(
             dl.TileLayer(
                 id=ID_BASE_LAYER_MAP,
