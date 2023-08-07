@@ -20,7 +20,7 @@ def map_menu_popup(id_prefix):
                 map_config.title,
                 icon=html.Div(
                     dmc.Image(src=map_config.image, alt="map", width=48, height=48, radius=5),
-                    className="map-image-selected" if map_config.index == 0 else ""
+                    # className="map-image-selected" if map_config.index == 0 else ""
                 ),
                 id={'role': "base", 'index': map_config.index, 'place': id_prefix},
             )
@@ -34,7 +34,7 @@ def map_menu_popup(id_prefix):
                 overlay_config.title,
                 icon=html.Div(
                     dmc.Image(src=overlay_config.image, alt="map", width=48, height=48, radius=5),
-                    className="map-image-selected" if overlay_config.index == 0 else ""
+                    # className="map-image-selected" if overlay_config.index == 0 else ""
                 ),
                 id={'role': MAP_TYPES[1], 'index': overlay_config.index, 'place': id_prefix},
             )
@@ -110,6 +110,7 @@ def minimap_button(id_prefix, map_config, role):
 
 
 def update_store(store, collection):
+    print("update_store", store, collection)
     index_map = store["index"]
     new_map = next(x for x in collection if x.index == index_map)
     if new_map is None:
@@ -123,6 +124,7 @@ def update_store(store, collection):
     Input(ID_BASE_MAP_STORE, "data")
 )
 def handle_map_store_update(store):
+    print("handle_map_store_update", store)
     return update_store(store, MAPS)
 
 

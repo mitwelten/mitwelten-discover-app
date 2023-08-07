@@ -9,8 +9,10 @@ map_figure = dl.Map(
         dl.Pane(
             dl.TileLayer(
                 id=ID_BASE_LAYER_MAP,
-                url=initial_map.source,
-                attribution=initial_map.source_attribution,
+                url="",
+                attribution="",
+                # url=initial_map.source,
+                # attribution=initial_map.source_attribution,
                 maxZoom=DEFAULT_MAX_ZOOM,
                 zIndex=0
             ),

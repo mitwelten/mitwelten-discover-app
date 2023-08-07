@@ -29,8 +29,8 @@ app_content = [
     dcc.Store(id=ID_TAG_DATA_STORE, data=tags),
     dcc.Store(id=ID_DEPLOYMENT_COLOR_STORE, data=colors),
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
-    dcc.Store(id=ID_BASE_MAP_STORE, data=dict(index=1)),
-    dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=4)),
+    dcc.Store(id=ID_BASE_MAP_STORE, data=dict(), storage_type="local"),
+    dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(), storage_type="local"),
     dcc.Store(id=ID_CURRENT_CHART_DATA, data=dict(role=None, id=None)),
     map_figure,
     dmc.MediaQuery(
