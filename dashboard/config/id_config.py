@@ -2,6 +2,7 @@
 ID_THEME_SWITCH = "id-theme-switch"
 ID_APP_THEME = "id-app-theme"
 ID_LOADER = "id-loader"
+ID_NOTIFICATION_CONTAINER = "id-notification_container"
 
 # UI elements
 ID_APP_CONTAINER = "id-app-container"
@@ -22,7 +23,7 @@ ID_CURRENT_TAG_DATA_STORE = "id-current-tags-data-store"
 ID_DEPLOYMENT_COLOR_STORE = "id-current-tags-color-store"
 ID_BASE_MAP_STORE = {"role": "map_store", "type": "base"}
 ID_OVERLAY_MAP_STORE = {"role": "map_store", "type": "overlay"}
-ID_CURRENT_CHART_DATA = "id-current-chart-data"
+ID_CURRENT_CHART_DATA_STORE = "id-current-chart-data"
 ID_DATE_RANGE_STORE = "id-date-range-store"
 
 # node types

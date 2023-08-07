@@ -3,10 +3,13 @@ from urllib.parse import urlparse, parse_qs
 import dash
 import dash_mantine_components as dmc
 from dash import Output, Input, html, dcc, ALL, State
+from dash_iconify import DashIconify
 
 from dashboard.components.action_button import action_button
+from dashboard.components.data_chart.devices.audio import create_audio_chart
 from dashboard.components.data_chart.devices.env import create_env_chart
 from dashboard.components.data_chart.devices.pax import create_pax_chart
+from dashboard.components.data_chart.devices.pollinator import create_pollinator_chart
 from dashboard.components.left_drawer.settings import settings_content
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.map_layer_selection import map_menu_popup, map_menu_drawer
@@ -23,6 +26,24 @@ deployments, colors,  tags = init_app_data()
 style_hidden = {"visibility": "hidden"}
 style_visible = {"visibility": "visible"}
 
+chart_supported_devices = {
+    "Env. Sensor": create_env_chart,
+    "Pax Counter": create_pax_chart,
+    "Audio Logger": create_audio_chart,
+    "Pollinator Cam": create_pollinator_chart,
+}
+
+
+def create_notification(title, message):
+    return dmc.Notification(
+        title=title,
+        id=f"id-notification-{title}",
+        action="show",
+        message=message,
+        icon=DashIconify(icon="material-symbols:circle-notifications", height=24),
+    )
+
+
 app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployments),
@@ -31,7 +52,8 @@ app_content = [
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(), storage_type="local"),
-    dcc.Store(id=ID_CURRENT_CHART_DATA, data=dict(role=None, id=None)),
+    dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None)),
+    html.Div(id=ID_NOTIFICATION_CONTAINER),
     map_figure,
     dmc.MediaQuery(
         action_button(button_id=ID_BOTTOM_DRAWER_BUTTON, icon="material-symbols:layers-outline"),
@@ -88,9 +110,11 @@ discover_app = dmc.MantineProvider(
     withGlobalStyles=True,
     withNormalizeCSS=True,
     children=[
-        html.Div(
-            children=app_content,
-            id=ID_APP_CONTAINER,
+        dmc.NotificationsProvider(
+            html.Div(
+                children=app_content,
+                id=ID_APP_CONTAINER,
+            )
         ),
     ]
 )
@@ -174,10 +198,11 @@ def open_left_drawer(_):
     Output(ID_CHART_DRAWER, "opened"),
     Output(ID_CHART_DRAWER, "position"),
     Output(ID_MARKER_CLICK_STORE, "data"),
-    Output(ID_CURRENT_CHART_DATA, "data"),
+    Output(ID_CURRENT_CHART_DATA_STORE, "data"),
+    Output(ID_NOTIFICATION_CONTAINER, "children"),
     Input({"role": ALL, "development_id": ALL, "label": ALL}, "n_clicks"),
     State(ID_MARKER_CLICK_STORE, "data"),
-    State(ID_CURRENT_CHART_DATA, "data"),
+    State(ID_CURRENT_CHART_DATA_STORE, "data"),
     prevent_initial_call=True,
 )
 def marker_click(n_clicks, data, chart_data):
@@ -191,25 +216,30 @@ def marker_click(n_clicks, data, chart_data):
         data["clicks"] = click_sum
 
     open_drawer = False
+    notification = None
     if has_click_triggered and dash.ctx.triggered_id is not None:
         trigger_id = dash.ctx.triggered_id
-        chart_data = dict(role=trigger_id["role"], id=trigger_id["development_id"])
-        open_drawer = True
+        if trigger_id["role"] not in chart_supported_devices.keys():
+            notification = create_notification(trigger_id["role"], "No further data available!")
+        else:
+            chart_data = dict(role=trigger_id["role"], id=trigger_id["development_id"])
+            open_drawer = True
 
-    return open_drawer, "bottom", data, chart_data
+    return open_drawer, "bottom", data, chart_data, notification
 
 
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
-    Input(ID_CURRENT_CHART_DATA, "data"),
+    Input(ID_CURRENT_CHART_DATA_STORE, "data"),
     State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
 def display_chart(data, theme):
     deployment_id = data["id"]
-    match data["role"]:
-        case "Env. Sensor": new_figure = create_env_chart(deployment_id, theme)
-        case "Pax Counter": new_figure = create_pax_chart(deployment_id, theme)
-        case _: new_figure = dmc.Center(dmc.Text("No Data available", color="dimmed"))
+    new_figure = dmc.Center(dmc.Text("No Data available", color="dimmed"))
+    device_type = data["role"]
+    if device_type in chart_supported_devices.keys():
+        fn = chart_supported_devices[device_type]
+        new_figure = fn(deployment_id, theme)
 
     return new_figure

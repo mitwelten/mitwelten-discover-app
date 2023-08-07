@@ -8,6 +8,8 @@ def create_figure_from_timeseries(series, light_mode, x_label="time", y_label="v
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)"
     )
+    print(series)
+    print(x_label)
     figure.add_trace(go.Scatter(
         x=series[x_label],
         y=series[y_label],

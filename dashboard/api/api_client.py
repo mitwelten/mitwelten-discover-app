@@ -34,3 +34,52 @@ def get_pax_timeseries(deployment_id, bucket_width, time_from=None, time_to=None
         return response.json()
 
     return None
+
+
+def get_audio_timeseries(
+        taxon_id,
+        deployment_id,
+        confidence,
+        bucket_width,
+        time_from=None,
+        time_to=None,
+        distinctspecies=False,
+):
+    url = construct_url(
+        f"birds/{taxon_id}/date",
+        {
+            "bucket_width": bucket_width,
+            "conf": confidence,
+            "from": time_from,
+            "to": time_to,
+            "distinctspecies": distinctspecies,
+            "deployment_ids": deployment_id
+        },
+    )
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+
+    return None
+
+
+def get_pollinator_timeseries(
+        pollinator_class, deployment_id, confidence, bucket_width, time_from=None, time_to=None
+):
+    url = construct_url(
+            f"pollinators/date",
+            {
+                "pollinator_class": pollinator_class,
+                "deployment_ids": deployment_id,
+                "bucket_width": bucket_width,
+                "conf": confidence,
+                "from": time_from,
+                "to": time_to,
+            },
+    )
+    print(url)
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+
+    return None
