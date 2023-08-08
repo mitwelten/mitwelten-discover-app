@@ -2,7 +2,8 @@ from urllib.parse import urlencode
 
 import requests
 
-from dashboard.config.api_config import DATA_API_URL
+
+DATA_API_URL = "https://data.mitwelten.org/api/v3/"
 
 
 def construct_url(path: str, args: dict = None):

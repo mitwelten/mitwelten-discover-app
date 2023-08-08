@@ -4,7 +4,7 @@ import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import Output, Input, State, html
 
-from dashboard.config.id_config import *
+from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.model.environment import Environment
 from dashboard.util.decorators import spaced_section

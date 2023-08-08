@@ -1,22 +1,23 @@
+from functools import partial
 from urllib.parse import urlparse, parse_qs
 
 import dash
 import dash_mantine_components as dmc
 from dash import Output, Input, html, dcc, ALL, State
 from dash_iconify import DashIconify
-from functools import partial
-from dashboard.components.action_button import action_button
-from dashboard.components.data_chart.devices.audio import create_audio_chart
-from dashboard.components.data_chart.devices.env import create_env_chart
-from dashboard.components.data_chart.devices.environment import create_environment_chart
-from dashboard.components.data_chart.devices.pax import create_pax_chart
-from dashboard.components.data_chart.devices.pollinator import create_pollinator_chart
-from dashboard.components.left_drawer.settings import settings_content
+
+from dashboard.components.button.action_button import action_button
+from dashboard.components.data_chart.types.audio import create_audio_chart
+from dashboard.components.data_chart.types.env import create_env_chart
+from dashboard.components.data_chart.types.environment import create_environment_chart
+from dashboard.components.data_chart.types.pax import create_pax_chart
+from dashboard.components.data_chart.types.pollinator import create_pollinator_chart
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.map_layer_selection import map_menu_popup, map_menu_drawer
-from dashboard.config import map_config
-from dashboard.config.app_config import app_theme
-from dashboard.config.id_config import *
+from dashboard.components.settings_drawer.settings import settings_content
+from dashboard.config.app import app_theme
+from dashboard.config.map import *
+from dashboard.config.id import *
 from dashboard.init import init_deployment_data, init_environment_data
 from dashboard.maindash import app
 from util.functions import safe_reduce
@@ -133,9 +134,9 @@ app.layout = discover_app
     prevent_initial_call=True
 )
 def display_page(href):
-    lat = map_config.DEFAULT_LAT
-    lon = map_config.DEFAULT_LON
-    zoom = map_config.DEFAULT_ZOOM
+    lat = DEFAULT_LAT
+    lon = DEFAULT_LON
+    zoom = DEFAULT_ZOOM
     query = urlparse(href).query
     query_params: dict = parse_qs(query)
     if query_params:

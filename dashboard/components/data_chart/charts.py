@@ -1,8 +1,14 @@
-
 import plotly.graph_objects as go
-from dash import dcc
 
-from dashboard.api.api_client import get_environment_data_by_id
+
+def create_themed_figure(light_mode):
+    figure = go.Figure()
+    figure.update_layout(
+        template="plotly_white" if light_mode else "plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)"
+    )
+    return figure
 
 
 def spider_chart(labels, keys, light_mode=True):
@@ -42,18 +48,4 @@ def spider_chart(labels, keys, light_mode=True):
         legend=dict(orientation="h"),
     )
     return fig
-
-
-def create_environment_chart(legend, trigger_id, light_mode=True):
-    resp = get_environment_data_by_id(trigger_id)
-    values = [resp[key] for key in legend.keys()]
-    labels = [legend[key]["label"] for key in legend.keys()]
-
-    figure = spider_chart(labels, values, light_mode)
-    graph = dcc.Graph(
-        figure=figure,
-        responsive=True,
-        className="chart-graph",
-    )
-    return graph
 

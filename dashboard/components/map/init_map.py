@@ -1,7 +1,7 @@
 import dash_leaflet as dl
-from dashboard.config import map_config
-from dashboard.config.id_config import *
-from dashboard.config.map_config import DEFAULT_MAX_ZOOM
+from dashboard.config import map as map_config
+from dashboard.config.id import *
+from dashboard.config.map import DEFAULT_MAX_ZOOM
 
 initial_map = map_config.MAPS[0]
 map_figure = dl.Map(

@@ -3,10 +3,10 @@ from datetime import datetime, timedelta
 import dash_mantine_components as dmc
 import plotly.graph_objects as go
 from dash import Output, Input, dcc, State, html
-from dashboard.config.id_config import *
+from dashboard.config.id import *
 
 from dashboard.api.api_client import get_pollinator_timeseries
-from dashboard.components.data_chart.chart import create_themed_figure
+from dashboard.components.data_chart.charts import create_themed_figure
 from dashboard.maindash import app
 
 

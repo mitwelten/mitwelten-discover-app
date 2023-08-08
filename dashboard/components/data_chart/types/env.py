@@ -3,8 +3,8 @@ from dash import dcc
 import plotly.graph_objects as go
 
 from dashboard.api.api_client import get_env_timeseries
-from dashboard.components.data_chart.chart import create_themed_figure
-from dashboard.config.api_config import *
+from dashboard.components.data_chart.charts import create_themed_figure
+from dashboard.config.api import *
 from util.validations import cleanup_timeseries
 
 

@@ -5,9 +5,9 @@ import dash
 import dash_mantine_components as dmc
 from dash import html, Output, Input, dcc, State
 
-from dashboard.config.id_config import *
-from dashboard.config.settings_config import DEFAULT_DATE_RANGES
-from dashboard.config.settings_config import FIRST_DEPLOYMENT_WEEKS_AGO
+from dashboard.config.id import *
+from dashboard.config.settings import DEFAULT_DATE_RANGES
+from dashboard.config.settings import FIRST_DEPLOYMENT_WEEKS_AGO
 from dashboard.maindash import app
 from dashboard.util.decorators import spaced_section
 

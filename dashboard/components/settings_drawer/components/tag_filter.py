@@ -7,7 +7,7 @@ import dash_mantine_components as dmc
 from dash import html, Input, Output, State
 from dash_iconify import DashIconify
 
-from dashboard.config.id_config import *
+from dashboard.config.id import *
 from dashboard.maindash import app
 
 

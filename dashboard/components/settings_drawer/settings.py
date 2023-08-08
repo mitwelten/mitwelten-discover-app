@@ -4,12 +4,12 @@ import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import html, Output, Input, State
 
-from dashboard.components.left_drawer.components.date_time_section import date_time_section
-from dashboard.components.left_drawer.components.environment_filter import environment_filter
-from dashboard.components.left_drawer.components.general_controls import general_controls
-from dashboard.components.left_drawer.components.tag_filter import tag_filter
-from dashboard.components.left_drawer.components.type_filter import type_filter
-from dashboard.config.id_config import *
+from dashboard.components.settings_drawer.components.date_time_section import date_time_section
+from dashboard.components.settings_drawer.components.environment_filter import environment_filter
+from dashboard.components.settings_drawer.components.general_controls import general_controls
+from dashboard.components.settings_drawer.components.tag_filter import tag_filter
+from dashboard.components.settings_drawer.components.type_filter import type_filter
+from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
 from util.functions import was_deployed
