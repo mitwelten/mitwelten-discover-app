@@ -99,7 +99,7 @@ def add_environment_markers(checked, data):
                         direction="left",
                     ),
                 ],
-                icon=dict(iconUrl=f"assets/markers/environment.svg", iconAnchor=[15, 6], iconSize=30),
+                icon=dict(iconUrl="assets/markers/environment.svg", iconAnchor=[15, 6], iconSize=30),
                 id={"role": "Environment", "id": e.environment_id, "label": ""},
             )
         )

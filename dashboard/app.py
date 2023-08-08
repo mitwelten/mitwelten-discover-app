@@ -2,6 +2,7 @@ from functools import partial
 from urllib.parse import urlparse, parse_qs
 
 import dash
+import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import Output, Input, html, dcc, ALL, State
 from dash_iconify import DashIconify
@@ -16,8 +17,8 @@ from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.map_layer_selection import map_menu_popup, map_menu_drawer
 from dashboard.components.settings_drawer.settings import settings_content
 from dashboard.config.app import app_theme
-from dashboard.config.map import *
 from dashboard.config.id import *
+from dashboard.config.map import *
 from dashboard.init import init_deployment_data, init_environment_data
 from dashboard.maindash import app
 from util.functions import safe_reduce
@@ -147,13 +148,20 @@ def display_page(href):
     return (lat, lon), zoom
 
 
-# @app.callback(
-#     Output(ID_LOADER, "children"),
-#     Input(ID_MAP, "dbl_click_lat_lng")
-# )
-# def handle_double_click(click):
-#     print("double clicked")
-#     return dash.no_update
+@app.callback(
+    Output(ID_NOTES_LAYER_GROUP, "children"),
+    Input(ID_MAP, "dbl_click_lat_lng"),
+    State(ID_NOTES_LAYER_GROUP, "children"),
+)
+def handle_double_click(click, markers):
+    print("double clicked", click)
+    marker = dl.Marker(
+        position=[click[0], click[1]],
+        icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
+    )
+    if markers is None:
+        markers = []
+    return [*markers, marker]
 
 
 @app.callback(

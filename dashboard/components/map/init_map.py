@@ -25,16 +25,10 @@ map_figure = dl.Map(
                 ),
             ]
         ),
-        dl.LayerGroup(
-            id=ID_MAP_LAYER_GROUP,
-        ),
-
-        dl.LayerGroup(
-            id=ID_ENV_LAYER_GROUP,
-        ),
-        dl.LayerGroup(
-            id=ID_HIGHLIGHT_LAYER_GROUP,
-        ),
+        dl.LayerGroup(id=ID_MAP_LAYER_GROUP),
+        dl.LayerGroup(id=ID_ENV_LAYER_GROUP),
+        dl.LayerGroup(id=ID_HIGHLIGHT_LAYER_GROUP),
+        dl.LayerGroup(id=ID_NOTES_LAYER_GROUP),
         dl.Pane(
             dl.TileLayer(
                 url="",
@@ -45,6 +39,7 @@ map_figure = dl.Map(
             ),
         ),
     ],
+    doubleClickZoom=False,
     useFlyTo=False,
     zoomControl={"position": "bottomright"},
     zoom=15,
