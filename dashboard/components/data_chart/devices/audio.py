@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
+import plotly.graph_objects as go
 
 from dash import dcc
 
 from dashboard.api.api_client import get_audio_timeseries
-from dashboard.components.data_chart.chart import create_figure_from_timeseries
+from dashboard.components.data_chart.chart import create_themed_figure
 
 
 def create_audio_chart(trigger_id, light_mode=True):
@@ -15,7 +16,11 @@ def create_audio_chart(trigger_id, light_mode=True):
         time_to=datetime.now().isoformat(),
         confidence=0.9
     )
-    figure = create_figure_from_timeseries(resp, light_mode, x_label="bucket", y_label="detections")
+    figure = create_themed_figure(light_mode)
+    figure.add_trace(go.Bar(
+        x=resp["bucket"],
+        y=resp["detections"],
+    ))
     graph = dcc.Graph(
         figure=figure,
         responsive=True,

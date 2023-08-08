@@ -114,6 +114,7 @@ def update_store(store, collection):
     index_map = store["index"]
     new_map = next(x for x in collection if x.index == index_map)
     if new_map is None:
+        print("no update")
         return dash.no_update
     return new_map.source, new_map.source_attribution
 
@@ -156,6 +157,7 @@ app.callback(
 
 
 def update_map_icon(data, children, icons):
+    print(data)
     map_id = data["index"]
     for child in children:
         # nestet: Div - Stack - Div

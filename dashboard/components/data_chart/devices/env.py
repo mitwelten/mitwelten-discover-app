@@ -1,8 +1,9 @@
 import dash_mantine_components as dmc
 from dash import dcc
+import plotly.graph_objects as go
 
 from dashboard.api.api_client import get_env_timeseries
-from dashboard.components.data_chart.chart import create_figure_from_timeseries
+from dashboard.components.data_chart.chart import create_themed_figure
 from dashboard.config.api_config import *
 from util.validations import cleanup_timeseries
 
@@ -10,19 +11,34 @@ from util.validations import cleanup_timeseries
 def create_env_temp_chart(trigger_id, bucket_width, light_mode):
     temp = get_env_timeseries(trigger_id, "temperature", "mean", bucket_width)
     temp = cleanup_timeseries(temp, TEMP_LOWER_BOUNDARY, TEMP_UPPER_BOUNDARY)
-    return create_figure_from_timeseries(temp, light_mode)
+    figure = create_themed_figure(light_mode)
+    figure.add_trace(go.Scatter(
+        x=temp["time"],
+        y=temp["value"],
+    ))
+    return figure
 
 
 def create_env_hum_chart(trigger_id, bucket_width, light_mode):
     hum = get_env_timeseries(trigger_id, "humidity", "mean", bucket_width)
     hum = cleanup_timeseries(hum, HUM_LOWER_BOUNDARY, HUM_UPPER_BOUNDARY)
-    return create_figure_from_timeseries(hum, light_mode)
+    figure = create_themed_figure(light_mode)
+    figure.add_trace(go.Scatter(
+        x=hum["time"],
+        y=hum["value"],
+    ))
+    return figure
 
 
 def create_env_moi_chart(trigger_id, bucket_width, light_mode):
     moi = get_env_timeseries(trigger_id, "moisture", "mean", bucket_width)
     moi = cleanup_timeseries(moi, MOI_LOWER_BOUNDARY, MOI_UPPER_BOUNDARY)
-    return create_figure_from_timeseries(moi, light_mode)
+    figure = create_themed_figure(light_mode)
+    figure.add_trace(go.Scatter(
+        x=moi["time"],
+        y=moi["value"],
+    ))
+    return figure
 
 
 def create_env_chart(trigger_id, light_mode=True):

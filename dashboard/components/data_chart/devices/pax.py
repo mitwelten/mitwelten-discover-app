@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 from dash import dcc
 
 from dashboard.api.api_client import get_pax_timeseries
-from dashboard.components.data_chart.chart import create_figure_from_timeseries
+from dashboard.components.data_chart.chart import create_themed_figure
+import plotly.graph_objects as go
 
 
 def create_pax_chart(trigger_id, light_mode=True):
@@ -13,7 +14,11 @@ def create_pax_chart(trigger_id, light_mode=True):
         time_from=(datetime.now() - timedelta(days=1000)).isoformat(),
         time_to=datetime.now().isoformat()
     )
-    figure = create_figure_from_timeseries(resp, light_mode, x_label="buckets", y_label="pax")
+    figure = create_themed_figure(light_mode)
+    figure.add_trace(go.Scatter(
+        x=resp["buckets"],
+        y=resp["pax"],
+    ))
     graph = dcc.Graph(
         figure=figure,
         responsive=True,
