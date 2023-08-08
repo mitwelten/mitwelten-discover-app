@@ -6,7 +6,7 @@ def spaced_section(content_func):
 
     def inner(*args, **kwargs):
         elems = content_func(*args, **kwargs)
-        pre = dmc.Space(h=10)
+        pre = dmc.Space(h=20)
         post = dmc.Space(h=30)
         return html.Div([pre, elems, post])
 

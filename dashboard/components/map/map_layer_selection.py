@@ -111,11 +111,9 @@ def minimap_button(id_prefix, map_config, role):
 
 
 def update_store(store, collection):
-    print("update_store", store, collection)
     index_map = store["index"]
     new_map = next(x for x in collection if x.index == index_map)
     if new_map is None:
-        print("no update")
         return dash.no_update
     return new_map.source, new_map.source_attribution
 
@@ -126,7 +124,6 @@ def update_store(store, collection):
     Input(ID_BASE_MAP_STORE, "data")
 )
 def handle_map_store_update(store):
-    print("handle_map_store_update", store)
     return update_store(store, MAPS)
 
 
@@ -136,12 +133,10 @@ def handle_map_store_update(store):
     Input(ID_OVERLAY_MAP_STORE, "data")
 )
 def handle_overlay_store_update(store):
-    print("handle_overlay_store_update")
     return update_store(store, OVERLAYS)
 
 
 def handle_map_update(_):
-    print("handle_map_update")
     if dash.ctx.triggered_id is None:
         return dash.no_update
     return {"index": dash.ctx.triggered_id["index"]}
@@ -152,7 +147,6 @@ def handle_map_update(_):
     Input({'role': MAP_TYPES[0], 'index': ALL, 'place': ALL}, 'n_clicks'),
 )
 def handle_map_update(_):
-    print("handle_map_update")
     if dash.ctx.triggered_id is None:
         return dash.no_update
     return {"index": dash.ctx.triggered_id["index"]}
@@ -163,14 +157,12 @@ def handle_map_update(_):
     Input({'role': MAP_TYPES[1], 'index': ALL, 'place': ALL}, 'n_clicks'),
 )
 def handle_map_update(_):
-    print("handle_map_update")
     if dash.ctx.triggered_id is None:
         return dash.no_update
     return {"index": dash.ctx.triggered_id["index"]}
 
 
 def update_map_icon(data, children, icons):
-    print("update_map_icon", data)
     map_id = data["index"]
     for child in children:
         # nestet: Div - Stack - Div

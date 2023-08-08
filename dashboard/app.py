@@ -4,10 +4,11 @@ import dash
 import dash_mantine_components as dmc
 from dash import Output, Input, html, dcc, ALL, State
 from dash_iconify import DashIconify
-
+from functools import partial
 from dashboard.components.action_button import action_button
 from dashboard.components.data_chart.devices.audio import create_audio_chart
 from dashboard.components.data_chart.devices.env import create_env_chart
+from dashboard.components.data_chart.devices.environment import create_environment_chart
 from dashboard.components.data_chart.devices.pax import create_pax_chart
 from dashboard.components.data_chart.devices.pollinator import create_pollinator_chart
 from dashboard.components.left_drawer.settings import settings_content
@@ -16,12 +17,12 @@ from dashboard.components.map.map_layer_selection import map_menu_popup, map_men
 from dashboard.config import map_config
 from dashboard.config.app_config import app_theme
 from dashboard.config.id_config import *
-from dashboard.init import init_app_data
+from dashboard.init import init_deployment_data, init_environment_data
 from dashboard.maindash import app
 from util.functions import safe_reduce
 
-deployments, colors,  tags = init_app_data()
-
+deployments, deployment_markers, tags = init_deployment_data()
+environments, environment_legend = init_environment_data()
 
 style_hidden = {"visibility": "hidden"}
 style_visible = {"visibility": "visible"}
@@ -31,6 +32,7 @@ chart_supported_devices = {
     "Pax Counter": create_pax_chart,
     "Audio Logger": create_audio_chart,
     "Pollinator Cam": create_pollinator_chart,
+    "Environment": partial(create_environment_chart, environment_legend)
 }
 
 
@@ -48,11 +50,13 @@ app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployments),
     dcc.Store(id=ID_TAG_DATA_STORE, data=tags),
-    dcc.Store(id=ID_DEPLOYMENT_COLOR_STORE, data=colors),
+    dcc.Store(id=ID_ENV_DATA_STORE, data=environments),
+    dcc.Store(id=ID_DEPLOYMENT_MARKER_STORE, data=deployment_markers),
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(), storage_type="local"),
     dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None)),
+    dcc.Store(id=ID_ENVIRONMENT_LEGEND_STORE, data=environment_legend),
     html.Div(id=ID_NOTIFICATION_CONTAINER),
     map_figure,
     dmc.MediaQuery(
@@ -91,7 +95,7 @@ app_content = [
     ),
     dmc.Drawer(
         id=ID_LEFT_DRAWER,
-        children=settings_content(deployments, tags, colors),
+        children=settings_content(deployments, tags, deployment_markers),
         opened=True,
         size=400,
         padding="md",
@@ -123,9 +127,10 @@ app.layout = discover_app
 
 
 @app.callback(
-    Output(ID_MAP, 'center'),
-    Output(ID_MAP, 'zoom'),
+    Output(ID_MAP, 'center', allow_duplicate=True),
+    Output(ID_MAP, 'zoom', allow_duplicate=True),
     Input(ID_URL_LOCATION, 'href'),
+    prevent_initial_call=True
 )
 def display_page(href):
     lat = map_config.DEFAULT_LAT
@@ -200,7 +205,7 @@ def open_left_drawer(_):
     Output(ID_MARKER_CLICK_STORE, "data"),
     Output(ID_CURRENT_CHART_DATA_STORE, "data"),
     Output(ID_NOTIFICATION_CONTAINER, "children"),
-    Input({"role": ALL, "development_id": ALL, "label": ALL}, "n_clicks"),
+    Input({"role": ALL, "id": ALL, "label": ALL}, "n_clicks"),
     State(ID_MARKER_CLICK_STORE, "data"),
     State(ID_CURRENT_CHART_DATA_STORE, "data"),
     prevent_initial_call=True,
@@ -222,7 +227,7 @@ def marker_click(n_clicks, data, chart_data):
         if trigger_id["role"] not in chart_supported_devices.keys():
             notification = create_notification(trigger_id["role"], "No further data available!")
         else:
-            chart_data = dict(role=trigger_id["role"], id=trigger_id["development_id"])
+            chart_data = dict(role=trigger_id["role"], id=trigger_id["id"])
             open_drawer = True
 
     return open_drawer, "bottom", data, chart_data, notification

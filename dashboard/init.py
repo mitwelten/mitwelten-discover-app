@@ -3,11 +3,12 @@ from functools import reduce
 
 import requests
 
+from dashboard.api.api_client import get_environment_data, get_environment_legend
 from dashboard.config import api_config, map_config
 from dashboard.model.deployment import Deployment
 
 
-def init_app_data():
+def init_deployment_data():
     all_deployments_json = [d for d in requests.get(api_config.URL_DEPLOYMENTS).json()]
 
     all_deployments = [Deployment(d) for d in all_deployments_json]
@@ -19,10 +20,10 @@ def init_app_data():
     tags = json.dumps(all_tags)
 
     # {type: color}
-    deployment_colors = {}
+    deployment_markers = {}
     idx_list = enumerate(sorted(all_types))
     for (idx, node_type) in idx_list:
-        deployment_colors[node_type] = dict(
+        deployment_markers[node_type] = dict(
             color=map_config.DEFAULT_MARKER_COLORS[idx],
             svgPath=f"assets/markers/location-{idx}.svg"
         )
@@ -35,4 +36,11 @@ def init_app_data():
             if node_type.lower().strip() in d["node"]["type"].lower()
         ]
 
-    return deployment_dict, deployment_colors, tags
+    return deployment_dict, deployment_markers, tags
+
+
+def init_environment_data():
+    all_environments_json = get_environment_data()
+    environment_legend = get_environment_legend()
+
+    return all_environments_json, environment_legend

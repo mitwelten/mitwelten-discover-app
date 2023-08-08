@@ -5,6 +5,7 @@ import dash_mantine_components as dmc
 from dash import html, Output, Input, State
 
 from dashboard.components.left_drawer.components.date_time_section import date_time_section
+from dashboard.components.left_drawer.components.environment_filter import environment_filter
 from dashboard.components.left_drawer.components.general_controls import general_controls
 from dashboard.components.left_drawer.components.tag_filter import tag_filter
 from dashboard.components.left_drawer.components.type_filter import type_filter
@@ -29,13 +30,12 @@ def settings_content(node_types, tags_data, depl_colors):
                 html.Div([
                     divider("Date Range"),
                     date_time_section(),
-
                     divider("Device Type"),
                     type_filter(node_types, depl_colors),
                     divider("Tags"),
                     tag_filter(tags_data),
-                    dmc.Space(h=30),
-
+                    divider("Environment"),
+                    environment_filter(),
                     divider("Settings"),
                     general_controls(),
                 ],
@@ -112,7 +112,7 @@ def marker_popup(deployment, color):
     Input(ID_TAG_CHIPS_GROUP, "value"),
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_PICKER, "value"),
-    State(ID_DEPLOYMENT_COLOR_STORE, "data"),
+    State(ID_DEPLOYMENT_MARKER_STORE, "data"),
     State(ID_DEPLOYMENT_DATA_STORE, "data"),
 )
 def filter_map_data(checkboxes, tags, fs_tag, time_range, colors, deployment_data):
@@ -160,7 +160,8 @@ def filter_map_data(checkboxes, tags, fs_tag, time_range, colors, deployment_dat
                     children=[
                         dl.Popup(
                             children=[marker_popup(d, colors[d.node_type]['color'])],
-                            closeButton=False
+                            closeButton=False,
+                            id=f"{d.deployment_id}"
                         ),
                         dl.Tooltip(
                             children=f"{d.node_type}\n{d.node_label}",
@@ -169,7 +170,7 @@ def filter_map_data(checkboxes, tags, fs_tag, time_range, colors, deployment_dat
                         ),
                     ],
                     icon=dict(iconUrl=colors[d.node_type]['svgPath'], iconAnchor=[15, 6], iconSize=30),
-                    id={"role": f"{d.node_type}", "development_id": d.deployment_id, "label": d.node_label},
+                    id={"role": f"{d.node_type}", "id": d.deployment_id, "label": d.node_label},
                 )
             )
     return markers

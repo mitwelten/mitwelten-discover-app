@@ -14,17 +14,21 @@ ID_MAP_SELECTOR_BUTTON = "id-map-selector-btn"
 ID_MAP_SELECTION_POPUP = "id-map-selector-popup"
 ID_MAP = "id-map"
 ID_URL_LOCATION = 'id-url-location'
+ID_SEARCH_DEPLOYMENT_BUTTON = "id-search-deployment-button"
+ID_DEPLOYMENT_SELECT = "id-deployment-select"
 
 # stores
 ID_DEPLOYMENT_DATA_STORE = "id-deployment-data-store"
 ID_TAG_DATA_STORE = "id-tags-data-store"
+ID_ENV_DATA_STORE = "id-env-data-store"
 ID_MARKER_CLICK_STORE = "id-marker-clicks-store"
 ID_CURRENT_TAG_DATA_STORE = "id-current-tags-data-store"
-ID_DEPLOYMENT_COLOR_STORE = "id-current-tags-color-store"
+ID_DEPLOYMENT_MARKER_STORE = "id-deployment-marker-store"
 ID_BASE_MAP_STORE = {"role": "map_store", "type": "base"}
 ID_OVERLAY_MAP_STORE = {"role": "map_store", "type": "overlay"}
 ID_CURRENT_CHART_DATA_STORE = "id-current-chart-data"
 ID_DATE_RANGE_STORE = "id-date-range-store"
+ID_ENVIRONMENT_LEGEND_STORE = "id-environment-legend-store"
 
 # node types
 ID_ALL_ACTIVE_STORE = "id-active-all-checkbox"
@@ -47,9 +51,12 @@ ID_TAG_RESET_BUTTON = "id-tag-reset-button"
 ID_LEFT_DRAWER_CONTENT_SCROLL_AREA = "id-scroll-div-container"
 ID_CHART_CONTAINER = "id-measurement-chart"
 ID_CHART_DRAWER = "id-chart-drawer"
+ID_ENVIRONMENT_SWITCH = "id-environment-switch"
 
 # map selection & handling
 ID_MAP_LAYER_GROUP = "id-map-data-layer"
+ID_ENV_LAYER_GROUP = "id-env-data-layer"
+ID_HIGHLIGHT_LAYER_GROUP = "id-highlight-data-layer"
 ID_BASE_LAYER_MAP = "id-map-tile-layer"
 ID_OVERLAY_MAP = "id-map-overlay"
 ID_MINIMAP_LABEL = "id-minimap-label"

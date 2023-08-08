@@ -43,7 +43,6 @@ def create_pollinator_figure(pollinator_class, trigger_id, bucket_width, light_m
         time_from=(datetime.now() - timedelta(days=1000)).isoformat(),
         time_to=datetime.now().isoformat(),
     )
-    print(resp)
     figure = create_themed_figure(light_mode)
     figure.add_trace(go.Bar(
         x=resp["bucket"],
