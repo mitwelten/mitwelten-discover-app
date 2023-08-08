@@ -53,6 +53,7 @@ def map_menu_popup(id_prefix):
         withArrow=True,
         arrowSize=10,
         arrowOffset=15,
+        zIndex=500000
     )
 
 
@@ -135,29 +136,41 @@ def handle_map_store_update(store):
     Input(ID_OVERLAY_MAP_STORE, "data")
 )
 def handle_overlay_store_update(store):
+    print("handle_overlay_store_update")
     return update_store(store, OVERLAYS)
 
 
 def handle_map_update(_):
+    print("handle_map_update")
     if dash.ctx.triggered_id is None:
         return dash.no_update
     return {"index": dash.ctx.triggered_id["index"]}
 
 
-app.callback(
+@app.callback(
     Output(ID_BASE_MAP_STORE, "data"),
     Input({'role': MAP_TYPES[0], 'index': ALL, 'place': ALL}, 'n_clicks'),
-)(handle_map_update)
+)
+def handle_map_update(_):
+    print("handle_map_update")
+    if dash.ctx.triggered_id is None:
+        return dash.no_update
+    return {"index": dash.ctx.triggered_id["index"]}
 
 
-app.callback(
+@app.callback(
     Output(ID_OVERLAY_MAP_STORE, "data"),
     Input({'role': MAP_TYPES[1], 'index': ALL, 'place': ALL}, 'n_clicks'),
-)(handle_map_update)
+)
+def handle_map_update(_):
+    print("handle_map_update")
+    if dash.ctx.triggered_id is None:
+        return dash.no_update
+    return {"index": dash.ctx.triggered_id["index"]}
 
 
 def update_map_icon(data, children, icons):
-    print(data)
+    print("update_map_icon", data)
     map_id = data["index"]
     for child in children:
         # nestet: Div - Stack - Div

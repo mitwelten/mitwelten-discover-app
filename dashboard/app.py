@@ -50,8 +50,8 @@ app_content = [
     dcc.Store(id=ID_TAG_DATA_STORE, data=tags),
     dcc.Store(id=ID_DEPLOYMENT_COLOR_STORE, data=colors),
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
-    dcc.Store(id=ID_BASE_MAP_STORE, data=dict(index=0), storage_type="local"),
-    dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=0), storage_type="local"),
+    dcc.Store(id=ID_BASE_MAP_STORE, data=dict(), storage_type="local"),
+    dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(), storage_type="local"),
     dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None)),
     html.Div(id=ID_NOTIFICATION_CONTAINER),
     map_figure,
@@ -85,7 +85,7 @@ app_content = [
         children=[
             dmc.LoadingOverlay(
                 html.Div(id=ID_CHART_CONTAINER, className="measurement-chart"),
-                loaderProps={"variant": "dots", "color": "orange", "size": "xl"},
+                loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
             )
         ]
     ),

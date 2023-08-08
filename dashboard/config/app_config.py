@@ -14,6 +14,19 @@ app_theme= {
                 "#2E7D32",
                 "#1B5E20",
             ],
+        "mitwelten_pink":
+            [
+                "#FCE4EC",
+                "#F8BBD0",
+                "#F48FB1",
+                "#F06292",
+                "#EC407A",
+                "#E91E63",
+                "#D81B60",
+                "#C2185B",
+                "#AD1457",
+                "#880E4F",
+            ],
     },
     "primaryColor": "mitwelten_green",
     "shadows": {
