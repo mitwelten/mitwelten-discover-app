@@ -45,6 +45,7 @@ map_figure = dl.Map(
             ),
         ),
     ],
+    useFlyTo=False,
     zoomControl={"position": "bottomright"},
     zoom=15,
     id=ID_MAP,

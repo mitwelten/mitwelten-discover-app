@@ -1,10 +1,8 @@
 from datetime import datetime
 
-import dash
+import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import Output, Input, State, html
-from dash_iconify import DashIconify
-import dash_leaflet as dl
 
 from dashboard.config.id_config import *
 from dashboard.maindash import app

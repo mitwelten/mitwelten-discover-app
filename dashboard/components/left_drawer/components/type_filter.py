@@ -1,9 +1,9 @@
 from functools import reduce
 
-import dash_leaflet as dl
 import dash
+import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import html, dcc, Output, Input, State, MATCH, ALL
+from dash import html, dcc, Output, Input, State
 from dash_iconify import DashIconify
 
 from dashboard.config.id_config import *
@@ -97,6 +97,7 @@ def activate_all(value, data, all_enabled):
 
 
 @app.callback(
+    Output(ID_MAP, "useFlyTo", allow_duplicate=True),
     Output(ID_MAP, "center", allow_duplicate=True),
     Output(ID_MAP, "zoom", allow_duplicate=True),
     Output("remove-highlight", "disabled", allow_duplicate=True),
@@ -113,16 +114,17 @@ def search_deployment(_, value):
             position=[lat, lon],
             icon=dict(iconUrl=f"assets/markers/highlight-circle.svg", iconAnchor=[40, 30], iconSize=80)
         )
-        return (lat, lon), 20, False, [marker]
+        return True, (lat, lon), 20, False, [marker]
     else:
         return dash.no_update
 
 
 @app.callback(
     Output(ID_HIGHLIGHT_LAYER_GROUP, "children", allow_duplicate=True),
+    Output(ID_MAP, "useFlyTo", allow_duplicate=True),
     Output("remove-highlight", "disabled", allow_duplicate=True),
     Input("remove-highlight", "n_intervals"),
     prevent_initial_call=True
 )
 def remove_highlight(_):
-    return [], True
+    return [], False, True
