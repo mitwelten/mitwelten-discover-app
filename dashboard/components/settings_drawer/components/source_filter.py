@@ -42,7 +42,7 @@ def source_filter(data, depl_markers):
     deployment_ids = []
     for key in data.keys():
         for entry in data[key]:
-            deployment_ids.append(dict(label=f"{key} - {entry['deployment_id']}", value=entry))
+            deployment_ids.append(dict(label=f"{key} - {entry['node']['node_label']}", value=entry))
 
     return html.Div([
         dcc.Interval(id="remove-highlight", interval=3000, disabled=True),
@@ -51,7 +51,7 @@ def source_filter(data, depl_markers):
             dmc.Select(
                 id=ID_DEPLOYMENT_SELECT,
                 data=deployment_ids,
-                placeholder="Deployment ID",
+                placeholder="Node Label",
                 searchable=True,
                 nothingFound="ID not found",
                 style={"width": "100%"},
