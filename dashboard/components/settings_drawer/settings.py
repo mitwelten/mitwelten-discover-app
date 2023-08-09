@@ -22,22 +22,26 @@ def settings_content(node_types, tags_data, depl_markers):
     return dmc.Container(
         children=[
             dmc.Space(h=30),
-            html.Div([
-                divider("Date Range"),
-                date_time_section(),
-                divider("Data Source"),
-                source_filter(node_types, depl_markers),
-                divider("Tags"),
-                tag_filter(tags_data),
-                divider("Settings"),
-                general_controls(),
-            ],
-                id=ID_LEFT_DRAWER_CONTENT_SCROLL_AREA,
+            dmc.ScrollArea([
+                html.Div([
+                    divider("Date Range"),
+                    date_time_section(),
+                    divider("Device Type"),
+                    source_filter(node_types, depl_markers),
+                    divider("Tags"),
+                    tag_filter(tags_data),
+                    divider("Settings"),
+                    general_controls(),
+                ],
+                    id=ID_LEFT_DRAWER_CONTENT_SCROLL_AREA,
+                    style={"height": "100%"}
+                )],
+                offsetScrollbars=True,
+                type="always",
                 style={"height": "100%"}
             )],
         fluid=True,
-        style={"height": "calc(100vh - 100px)"},
-        className="scroll-area"
+        style={"height": "calc(100vh - 100px)"}
     )
 
 @app.callback(
