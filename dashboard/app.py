@@ -68,7 +68,7 @@ app_content = [
             target="_blank",
             className="mitwelten-logo"
         ),
-        id="map-container",
+        id=ID_MAP_CONTAINER,
     ),
     html.Div(id="helo"),
     map_figure,
@@ -104,7 +104,7 @@ app_content = [
                 html.Div(id=ID_CHART_CONTAINER, className="measurement-chart", style={"margin": "20px"}),
                 loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
             )
-        ]
+        ],
     ),
     dmc.Drawer(
         id=ID_SETTINGS_DRAWER,
@@ -224,13 +224,17 @@ def open_left_drawer(_):
 
 
 @app.callback(
-    Output("map-container", "style"),
+    Output(ID_MAP_CONTAINER, "style"),
+    Output(ID_CHART_DRAWER, "styles"),
     Input(ID_SETTINGS_DRAWER, "opened")
 )
 def settings_drawer_state(state):
+    print("opend drawer", state)
+    width_reduced = {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
+    full_width = {"width": "100vw"}
     if state:
-        return {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
-    return {"width": "100vw"}
+        return width_reduced, {"drawer": {"left": "400px", "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}}
+    return full_width, {"drawer": {"left": "0", "width": "100vw"}}
 
 
 @app.callback(

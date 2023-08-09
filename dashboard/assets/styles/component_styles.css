@@ -39,11 +39,6 @@
     margin: 1em;
 }
 
-.chart-drawer{
-    left: 400px;
-    width: calc(100vw - 400px);
-}
-
 .scroll-area {
     overflow: auto;
     overflow-x: hidden;
@@ -61,7 +56,6 @@
         margin: 0;
     }
 }
-
 
 @media screen and (max-width: 380px) {
     .chart-drawer {
