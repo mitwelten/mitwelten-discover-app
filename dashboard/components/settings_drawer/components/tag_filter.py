@@ -18,7 +18,7 @@ def tag_filter(all_tags):
     tags = [t for t in all_tags if t not in fs_tags]
     return html.Div([
         dcc.Store(id=ID_CURRENT_TAG_DATA_STORE, data=[]),
-        dmc.Text("Feldstudien",
+        dmc.Text("Field Study",
                  size="sm",
                  color="dimmed",
                  ),
@@ -32,7 +32,7 @@ def tag_filter(all_tags):
         ]),
         dmc.Space(h=20),
         dmc.Group([
-            dmc.Text("Additional Tag",
+            dmc.Text("Additional Tags",
                      size="sm",
                      color="dimmed",
                      style={"display": "inline-block"}

@@ -63,6 +63,7 @@ def type_filter(data, colors):
         ],
             position="apart",
         ),
+        dmc.Space(h=10),
         dmc.CheckboxGroup(
             id=ID_TYPE_CHECKBOX_GROUP,
             orientation="vertical",

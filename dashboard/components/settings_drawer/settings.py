@@ -26,7 +26,7 @@ def settings_content(node_types, tags_data, depl_colors):
             html.Div([
                 divider("Date Range"),
                 date_time_section(),
-                divider("Device Type"),
+                divider("Data Source"),
                 type_filter(node_types, depl_colors),
                 divider("Tags"),
                 tag_filter(tags_data),
