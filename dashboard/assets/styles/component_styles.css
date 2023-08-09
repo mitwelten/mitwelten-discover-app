@@ -45,7 +45,7 @@
 }
 
 .scroll-area {
-    overflow: scroll;
+    overflow: auto;
     overflow-x: hidden;
     scroll-behavior: smooth;
 }

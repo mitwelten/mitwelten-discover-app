@@ -77,7 +77,7 @@ app_content = [
         map_menu_drawer("drawer"),
         id=ID_BOTTOM_DRAWER,
         size="lg",
-        zIndex=10000,
+        zIndex=90000,
     ),
     dmc.Drawer(
         opened=False,
@@ -96,7 +96,8 @@ app_content = [
         ]
     ),
     dmc.Drawer(
-        id=ID_LEFT_DRAWER,
+        id=ID_SETTINGS_DRAWER,
+        title=dmc.Title("Mitwelten Discover", align="center", order=1, style={"margin-left":"20px"}),
         children=settings_content(deployments, tags, deployment_markers),
         opened=True,
         size=400,
@@ -199,8 +200,8 @@ def open_bottom_drawer(_1, _2):
 
 
 @app.callback(
-    Output(ID_LEFT_DRAWER, "opened"),
-    Output(ID_LEFT_DRAWER, "position"),
+    Output(ID_SETTINGS_DRAWER, "opened"),
+    Output(ID_SETTINGS_DRAWER, "position"),
     Input(ID_OPEN_LEFT_DRAWER_BUTTON, "n_clicks"),
     prevent_initial_call=True,
 )

@@ -14,8 +14,6 @@ from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
 from util.functions import was_deployed
 
-header = dmc.Center(dmc.Text("Mitwelten Discover", size="lg"))
-
 
 def divider(title: str):
     return dmc.Divider(label=title, labelPosition="center", size="md")
@@ -24,7 +22,6 @@ def divider(title: str):
 def settings_content(node_types, tags_data, depl_colors):
     return dmc.Container(
         children=[
-            header,
             dmc.Space(h=30),
             html.Div([
                 divider("Date Range"),
