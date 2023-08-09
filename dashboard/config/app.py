@@ -1,4 +1,5 @@
-app_theme= {
+SETTINGS_DRAWER_WIDTH = 400
+app_theme = {
     "colorScheme": "light",
     "colors": {
         "mitwelten_green":

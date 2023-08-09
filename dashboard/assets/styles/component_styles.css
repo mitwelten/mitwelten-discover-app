@@ -89,3 +89,14 @@
         height: 300px;
     }
 }
+
+.mitwelten-logo {
+    margin: 10px;
+    color: white;
+    cursor: pointer;
+    font-family: Helvetica, sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+    /*background: radial-gradient( rgba(255,255,255,0.3) 10%, rgba(0,0,0,0) 50%);*/
+}

@@ -14,4 +14,5 @@ def action_button(button_id: str = None, icon: str = None):
         id=button_id if button_id else "",
         n_clicks=0,
         radius="xl",
+        style={"z-index": "1000"}
     )

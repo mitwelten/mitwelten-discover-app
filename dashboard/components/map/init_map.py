@@ -44,6 +44,7 @@ map_figure = dl.Map(
     zoomControl={"position": "bottomright"},
     zoom=15,
     id=ID_MAP,
+    className="id-map",
     style={
         "width": "100vw",
         "height": "100vh",

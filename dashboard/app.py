@@ -16,7 +16,7 @@ from dashboard.components.data_chart.types.pollinator import create_pollinator_c
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.map_layer_selection import map_menu_popup, map_menu_drawer
 from dashboard.components.settings_drawer.settings import settings_content
-from dashboard.config.app import app_theme
+from dashboard.config.app import app_theme, SETTINGS_DRAWER_WIDTH
 from dashboard.config.id import *
 from dashboard.config.map import *
 from dashboard.init import init_deployment_data, init_environment_data
@@ -60,6 +60,16 @@ app_content = [
     dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None)),
     dcc.Store(id=ID_ENVIRONMENT_LEGEND_STORE, data=environment_legend),
     html.Div(id=ID_NOTIFICATION_CONTAINER),
+    html.Div(
+        html.A(
+            "MITWELTEN",
+            title="mitwelten.org",
+            href="https://mitwelten.org",
+            target="_blank",
+            className="mitwelten-logo"
+        ),
+        id="map-container",
+    ),
     map_figure,
     dmc.MediaQuery(
         action_button(button_id=ID_BOTTOM_DRAWER_BUTTON, icon="material-symbols:layers-outline"),
@@ -100,7 +110,7 @@ app_content = [
         title=dmc.Title("Mitwelten Discover", align="center", order=1, style={"margin-left":"20px"}),
         children=settings_content(deployments, tags, deployment_markers),
         opened=True,
-        size=400,
+        size=SETTINGS_DRAWER_WIDTH,
         padding="md",
         closeOnClickOutside=False,
         closeOnEscape=False,
@@ -208,6 +218,16 @@ def open_bottom_drawer(_1, _2):
 )
 def open_left_drawer(_):
     return True, "left"
+
+
+@app.callback(
+    Output("map-container", "style"),
+    Input(ID_SETTINGS_DRAWER, "opened")
+)
+def settings_drawer_state(state):
+    if state:
+        return {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
+    return {"width": "100vw"}
 
 
 @app.callback(

@@ -17,10 +17,13 @@ body {
 }
 
 #map-container {
+    position: absolute;
+    right: 0;
+    bottom: 20px;
     width: 100vw;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
+    height: 20px;
+    text-align: center;
+    z-index: 90000;
 }
 
 #id-bottom-drawer-btn {
@@ -112,4 +115,3 @@ body {
     top: 20px;
     right: 20px;
 }
-
