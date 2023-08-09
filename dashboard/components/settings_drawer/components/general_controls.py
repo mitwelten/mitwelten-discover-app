@@ -21,17 +21,6 @@ def general_controls():
             )],
             position="apart",
         ),
-        dmc.NavLink(
-            label="More about Mitwelten",
-            icon=DashIconify(icon="material-symbols:info-outline-rounded", height=20),
-            active=True,
-            variant="subtle",
-            color="mitwelten_green",
-            id="navlink-interactive",
-            rightSection=DashIconify(icon="material-symbols:arrow-forward-ios-rounded"),
-            href="https://www.mitwelten.org",
-            target="_blank"
-        ),
     ],
         spacing="xl",
         justify="space-between",

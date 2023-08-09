@@ -4,7 +4,7 @@ from urllib.parse import urlparse, parse_qs
 import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import Output, Input, html, dcc, ALL, State
+from dash import Output, Input, html, dcc, ALL, State, clientside_callback
 from dash_iconify import DashIconify
 
 from dashboard.components.button.action_button import action_button
@@ -70,6 +70,7 @@ app_content = [
         ),
         id="map-container",
     ),
+    html.Div(id="helo"),
     map_figure,
     dmc.MediaQuery(
         action_button(button_id=ID_BOTTOM_DRAWER_BUTTON, icon="material-symbols:layers-outline"),
@@ -162,11 +163,13 @@ def display_page(href):
 @app.callback(
     Output(ID_NOTES_LAYER_GROUP, "children"),
     Input(ID_MAP, "dbl_click_lat_lng"),
+    State(ID_MAP, "boundsOptions"),
     State(ID_NOTES_LAYER_GROUP, "children"),
     prevent_initial_call=True
 )
-def handle_double_click(click, markers):
+def handle_double_click(click, bounds, markers):
     print("double clicked", click)
+    print("bounds", bounds)
     marker = dl.Marker(
         position=[click[0], click[1]],
         icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
