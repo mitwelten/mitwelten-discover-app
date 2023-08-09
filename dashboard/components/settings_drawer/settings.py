@@ -1,17 +1,16 @@
-from datetime import datetime
-
 import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import html, Output, Input, State
 
 from dashboard.components.settings_drawer.components.date_time_section import date_time_section
-from dashboard.components.settings_drawer.components.environment_filter import environment_filter
 from dashboard.components.settings_drawer.components.general_controls import general_controls
 from dashboard.components.settings_drawer.components.tag_filter import tag_filter
-from dashboard.components.settings_drawer.components.type_filter import type_filter
+from dashboard.components.settings_drawer.components.source_filter import source_filter
+from dashboard.components.settings_drawer.marker_popup import environment_popup, marker_popup
 from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
+from dashboard.model.environment import Environment
 from util.functions import was_deployed
 
 
@@ -19,7 +18,7 @@ def divider(title: str):
     return dmc.Divider(label=title, labelPosition="center", size="md")
 
 
-def settings_content(node_types, tags_data, depl_colors):
+def settings_content(node_types, tags_data, depl_markers):
     return dmc.Container(
         children=[
             dmc.Space(h=30),
@@ -27,11 +26,9 @@ def settings_content(node_types, tags_data, depl_colors):
                 divider("Date Range"),
                 date_time_section(),
                 divider("Data Source"),
-                type_filter(node_types, depl_colors),
+                source_filter(node_types, depl_markers),
                 divider("Tags"),
                 tag_filter(tags_data),
-                divider("Environment"),
-                environment_filter(),
                 divider("Settings"),
                 general_controls(),
             ],
@@ -43,62 +40,6 @@ def settings_content(node_types, tags_data, depl_colors):
         className="scroll-area"
     )
 
-
-def marker_popup(deployment, color):
-    start = datetime.strftime(datetime.fromisoformat(deployment.period_start), '%d %b %Y - %H:%M')
-    end = datetime.strftime(datetime.fromisoformat(deployment.period_start), '%d %b %Y - %H:%M') if deployment.period_end else "-"
-    return dmc.Container([
-        dmc.Group([
-            dmc.Group([
-                html.Div(
-                    className="color-point",
-                    style={"background": f"{color}"}
-                ),
-                dmc.Text(deployment.node_type, weight=700, size="sm"),
-            ],
-                position="left",
-                spacing="sm"
-            ),
-            dmc.Text(deployment.node_label, size="sm"),
-        ],
-            position="apart"
-        ),
-        dmc.Space(h=10),
-        dmc.Divider(),
-        dmc.Space(h=10),
-        dmc.Group([
-            dmc.Text("Deployment ID", size="xs"),
-            dmc.Text(
-                deployment.deployment_id,
-                size="xs",
-                color="dimmed",
-            ),
-        ],
-            position="apart"
-        ),
-        dmc.Group([
-            dmc.Text("Start", size="xs"),
-            dmc.Text(start, size="xs", color="dimmed"),
-        ],
-            position="apart"
-        ),
-        dmc.Group([
-            dmc.Text("End", size="xs"),
-            dmc.Text(end, size="xs", color="dimmed"),
-        ],
-            position="apart"
-        ),
-        dmc.Space(h=10),
-        dmc.Group(
-            children=[dmc.Badge(t, size="sm", variant="outline") for t in deployment.tags],
-            spacing="xs"
-        ),
-    ],
-        fluid=True,
-        style={"width": "240px"}
-    )
-
-
 @app.callback(
     Output(ID_MAP_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
@@ -109,14 +50,13 @@ def marker_popup(deployment, color):
     State(ID_DEPLOYMENT_DATA_STORE, "data"),
 )
 def filter_map_data(checkboxes, tags, fs_tag, time_range, colors, deployment_data):
-    checkboxes = list(filter(lambda c: c != "all", checkboxes))
-
-    depl_to_show = {}
+    checkboxes = list(filter(lambda c: c in deployment_data.keys(), checkboxes))
 
     # parse to json objects
     for key in deployment_data:
         deployment_data[key] = list(map(lambda depl: Deployment(depl), deployment_data[key]))
 
+    depl_to_show = {}
     # type filter
     for active in checkboxes:
         # depl_to_show:  {"key": [Deployments]
@@ -166,4 +106,37 @@ def filter_map_data(checkboxes, tags, fs_tag, time_range, colors, deployment_dat
                     id={"role": f"{d.node_type}", "id": d.deployment_id, "label": d.node_label},
                 )
             )
+    return markers
+
+
+@app.callback(
+    Output(ID_ENV_LAYER_GROUP, "children"),
+    Input(ID_TYPE_CHECKBOX_GROUP, "value"),
+    State(ID_ENV_DATA_STORE, "data"),
+)
+def add_environment_markers(values, data):
+    if "Environment Data Point" not in values:
+        return []
+    markers = []
+
+    for e in data:
+        e = Environment(e)
+        markers.append(
+            dl.Marker(
+                position=[e.lat, e.lon],
+                children=[
+                    dl.Popup(
+                        children=[environment_popup(e)],
+                        closeButton=False
+                    ),
+                    dl.Tooltip(
+                        children=f"Environment Data: {e.environment_id}",
+                        offset={"x": -10, "y": 2},
+                        direction="left",
+                    ),
+                ],
+                icon=dict(iconUrl="assets/markers/environment.svg", iconAnchor=[15, 6], iconSize=30),
+                id={"role": "Environment", "id": e.environment_id, "label": ""},
+            )
+        )
     return markers

@@ -11,12 +11,12 @@ from dashboard.maindash import app
 from dashboard.util.decorators import spaced_section
 
 
-def get_checkbox_by_type(node_type: str, colors: dict):
+def get_checkbox_by_type(node_type: str, depl_markers: dict):
     return dmc.Checkbox(
         label=dmc.Group([
             html.Div(
                 className="color-point",
-                style={"background": f"{colors[node_type]['color']}"}
+                style={"background": f"{depl_markers[node_type]['color']}"}
             ),
             node_type,
         ]),
@@ -27,11 +27,17 @@ def get_checkbox_by_type(node_type: str, colors: dict):
 
 
 @spaced_section
-def type_filter(data, colors):
+def source_filter(data, depl_markers):
     brick_types = reduce(
         list.__add__,
-        [list(map(lambda x: get_checkbox_by_type(x, colors), (sorted(data.keys()))))],
-        [dmc.Checkbox(label="All", value="all", size="xs")])
+        [list(map(lambda x: get_checkbox_by_type(x, depl_markers), (sorted(data.keys()))))],
+        [
+            dmc.Checkbox(label="All", value="all", size="xs"),
+            get_checkbox_by_type(
+                "Environment Data Point", 
+                {"Environment Data Point": {"color": "#946000"}},
+            )
+         ])
 
     deployment_ids = []
     for key in data.keys():

@@ -153,6 +153,7 @@ def display_page(href):
     Output(ID_NOTES_LAYER_GROUP, "children"),
     Input(ID_MAP, "dbl_click_lat_lng"),
     State(ID_NOTES_LAYER_GROUP, "children"),
+    prevent_initial_call=True
 )
 def handle_double_click(click, markers):
     print("double clicked", click)

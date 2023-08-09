@@ -51,7 +51,7 @@ ID_TAG_RESET_BUTTON = "id-tag-reset-button"
 ID_LEFT_DRAWER_CONTENT_SCROLL_AREA = "id-scroll-div-container"
 ID_CHART_CONTAINER = "id-measurement-chart"
 ID_CHART_DRAWER = "id-chart-drawer"
-ID_ENVIRONMENT_SWITCH = "id-environment-switch"
+ID_ENVIRONMENT_CHECKBOX = "id-environment-checkbox"
 
 # map selection & handling
 ID_MAP_LAYER_GROUP = "id-map-data-layer"
