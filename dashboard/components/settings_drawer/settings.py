@@ -26,28 +26,24 @@ def settings_content(node_types, tags_data, depl_colors):
         children=[
             header,
             dmc.Space(h=30),
-            dmc.ScrollArea([
-                html.Div([
-                    divider("Date Range"),
-                    date_time_section(),
-                    divider("Device Type"),
-                    type_filter(node_types, depl_colors),
-                    divider("Tags"),
-                    tag_filter(tags_data),
-                    divider("Environment"),
-                    environment_filter(),
-                    divider("Settings"),
-                    general_controls(),
-                ],
-                    id=ID_LEFT_DRAWER_CONTENT_SCROLL_AREA,
-                    style={"height": "100%"}
-                )],
-                offsetScrollbars=True,
-                type="always",
+            html.Div([
+                divider("Date Range"),
+                date_time_section(),
+                divider("Device Type"),
+                type_filter(node_types, depl_colors),
+                divider("Tags"),
+                tag_filter(tags_data),
+                divider("Environment"),
+                environment_filter(),
+                divider("Settings"),
+                general_controls(),
+            ],
+                id=ID_LEFT_DRAWER_CONTENT_SCROLL_AREA,
                 style={"height": "100%"}
             )],
         fluid=True,
-        style={"height": "calc(100vh - 100px)"}
+        style={"height": "calc(100vh - 100px)"},
+        className="scroll-area"
     )
 
 

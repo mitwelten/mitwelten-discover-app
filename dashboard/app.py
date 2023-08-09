@@ -90,7 +90,7 @@ app_content = [
         className="chart-drawer",
         children=[
             dmc.LoadingOverlay(
-                html.Div(id=ID_CHART_CONTAINER, className="measurement-chart"),
+                html.Div(id=ID_CHART_CONTAINER, className="measurement-chart", style={"margin": "20px"}),
                 loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
             )
         ]
