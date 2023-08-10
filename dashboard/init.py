@@ -1,9 +1,8 @@
 import json
 from functools import reduce
 
-import requests
 from dashboard.config.map import DEFAULT_MARKER_COLORS
-from dashboard.api.api_client import get_environment_data, get_environment_legend
+from dashboard.api.api_client import get_environment_data, get_environment_legend, get_deployments
 from dashboard.model.deployment import Deployment
 
 
@@ -11,7 +10,7 @@ URL_DEPLOYMENTS = "https://data.mitwelten.org/api/v3/deployments"
 
 
 def init_deployment_data():
-    all_deployments_json = [d for d in requests.get(URL_DEPLOYMENTS).json()]
+    all_deployments_json = [d for d in get_deployments()]
 
     all_deployments = [Deployment(d) for d in all_deployments_json]
 

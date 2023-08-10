@@ -3,6 +3,9 @@ from dash import html
 
 from dashboard.config.map import MAPS, OVERLAYS, MAP_TYPES
 
+# unused import is used to initialize callbacks !
+import dashboard.components.map.layer_selection.callbacks
+
 
 def minimap_button(id_prefix, map_config, role):
     return html.Div(dmc.Stack(

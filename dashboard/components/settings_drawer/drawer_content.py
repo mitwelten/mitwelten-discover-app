@@ -44,6 +44,7 @@ def drawer_content(node_types, tags_data, depl_markers):
         style={"height": "calc(100vh - 100px)"}
     )
 
+
 @app.callback(
     Output(ID_MAP_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),

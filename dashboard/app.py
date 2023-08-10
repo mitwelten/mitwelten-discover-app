@@ -14,8 +14,7 @@ from dashboard.components.chart_drawer.types.environment import create_environme
 from dashboard.components.chart_drawer.types.pax import create_pax_chart
 from dashboard.components.chart_drawer.types.pollinator import create_pollinator_chart
 from dashboard.components.map.init_map import map_figure
-from dashboard.components.map.layer_selection.drawer import map_menu_drawer
-from dashboard.components.map.layer_selection.popup import map_menu_popup
+from dashboard.components.map.menus import map_layer_menus
 from dashboard.components.settings_drawer.drawer import settings_drawer
 from dashboard.config.app import app_theme, SETTINGS_DRAWER_WIDTH
 from dashboard.config.id import *
@@ -23,11 +22,10 @@ from dashboard.init import init_deployment_data, init_environment_data
 from dashboard.maindash import app
 from util.functions import safe_reduce
 
+
 deployments, deployment_markers, tags = init_deployment_data()
 environments, environment_legend = init_environment_data()
 
-style_hidden = {"visibility": "hidden"}
-style_visible = {"visibility": "visible"}
 
 chart_supported_devices = {
     "Env. Sensor": create_env_chart,
@@ -71,18 +69,7 @@ app_content = [
         id=ID_MAP_CONTAINER,
     ),
     map_figure,
-    dmc.MediaQuery(
-        map_menu_popup("menu"),
-        smallerThan="sm",
-        styles=style_hidden
-    ),
-
-    dmc.Drawer(
-        map_menu_drawer("drawer"),
-        id=ID_BOTTOM_DRAWER,
-        size="lg",
-        zIndex=90000,
-    ),
+    *map_layer_menus(),
     *control_buttons(),
     chart_drawer(),
     settings_drawer(deployments, tags, deployment_markers)

@@ -6,6 +6,14 @@ import requests
 DATA_API_URL = "https://data.mitwelten.org/api/v3/"
 
 
+def get_deployments():
+    url = construct_url("deployments")
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    return None
+
+
 def construct_url(path: str, args: dict = None):
     url = f"{DATA_API_URL}{path}"
     if args:
