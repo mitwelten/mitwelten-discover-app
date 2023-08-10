@@ -26,7 +26,7 @@ def drawer_content(node_types, tags_data, depl_markers):
                 html.Div([
                     divider("Date Range"),
                     date_time_section(),
-                    divider("Device Type"),
+                    divider("Data Source"),
                     source_filter(node_types, depl_markers),
                     divider("Tags"),
                     tag_filter(tags_data),
