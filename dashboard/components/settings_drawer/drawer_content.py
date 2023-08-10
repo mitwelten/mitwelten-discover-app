@@ -6,7 +6,7 @@ from dashboard.components.settings_drawer.components.date_time_section import da
 from dashboard.components.settings_drawer.components.general_controls import general_controls
 from dashboard.components.settings_drawer.components.tag_filter import tag_filter
 from dashboard.components.settings_drawer.components.source_filter import source_filter
-from dashboard.components.settings_drawer.marker_popup import environment_popup, marker_popup
+from dashboard.components.settings_drawer.components.marker_popup import environment_popup, marker_popup
 from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
@@ -18,7 +18,7 @@ def divider(title: str):
     return dmc.Divider(label=title, labelPosition="center", size="md")
 
 
-def settings_content(node_types, tags_data, depl_markers):
+def drawer_content(node_types, tags_data, depl_markers):
     return dmc.Container(
         children=[
             dmc.Space(h=30),

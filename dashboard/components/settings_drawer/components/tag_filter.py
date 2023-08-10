@@ -2,7 +2,7 @@ import json
 import re
 
 import dash
-import dash_core_components as dcc
+from dash import dcc
 import dash_mantine_components as dmc
 from dash import html, Input, Output, State
 from dash_iconify import DashIconify

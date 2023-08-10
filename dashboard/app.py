@@ -15,7 +15,7 @@ from dashboard.components.data_chart.types.pax import create_pax_chart
 from dashboard.components.data_chart.types.pollinator import create_pollinator_chart
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.map_layer_selection import map_menu_popup, map_menu_drawer
-from dashboard.components.settings_drawer.settings import settings_content
+from dashboard.components.settings_drawer.drawer import settings_drawer
 from dashboard.config.app import app_theme, SETTINGS_DRAWER_WIDTH
 from dashboard.config.id import *
 from dashboard.config.map import *
@@ -106,18 +106,7 @@ app_content = [
             )
         ],
     ),
-    dmc.Drawer(
-        id=ID_SETTINGS_DRAWER,
-        title=dmc.Title("Mitwelten Discover", align="center", order=1, style={"margin-left":"20px"}),
-        children=settings_content(deployments, tags, deployment_markers),
-        opened=True,
-        size=SETTINGS_DRAWER_WIDTH,
-        padding="md",
-        closeOnClickOutside=False,
-        closeOnEscape=False,
-        withOverlay=False,
-        zIndex=90000,
-    ),
+    settings_drawer(deployments, tags, deployment_markers)
 ]
 
 
@@ -213,14 +202,6 @@ def open_bottom_drawer(_1, _2):
     return False, "bottom"
 
 
-@app.callback(
-    Output(ID_SETTINGS_DRAWER, "opened"),
-    Output(ID_SETTINGS_DRAWER, "position"),
-    Input(ID_OPEN_LEFT_DRAWER_BUTTON, "n_clicks"),
-    prevent_initial_call=True,
-)
-def open_left_drawer(_):
-    return True, "left"
 
 
 @app.callback(
@@ -229,7 +210,6 @@ def open_left_drawer(_):
     Input(ID_SETTINGS_DRAWER, "opened")
 )
 def settings_drawer_state(state):
-    print("opend drawer", state)
     width_reduced = {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
     full_width = {"width": "100vw"}
     if state:
@@ -279,7 +259,7 @@ def marker_click(n_clicks, data, chart_data):
 )
 def display_chart(data, theme):
     deployment_id = data["id"]
-    new_figure = dmc.Center(dmc.Text("No Data available", color="dimmed"))
+    new_figure = html.Div()
     device_type = data["role"]
     if device_type in chart_supported_devices.keys():
         fn = chart_supported_devices[device_type]
