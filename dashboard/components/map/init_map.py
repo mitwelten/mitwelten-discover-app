@@ -1,7 +1,13 @@
+from urllib.parse import urlparse, parse_qs
+
 import dash_leaflet as dl
+from dash import Output, Input
+
 from dashboard.config import map as map_config
 from dashboard.config.id import *
+from dashboard.config.map import *
 from dashboard.config.map import DEFAULT_MAX_ZOOM
+from dashboard.maindash import app
 
 initial_map = map_config.MAPS[0]
 map_figure = dl.Map(
@@ -49,3 +55,23 @@ map_figure = dl.Map(
         "zIndex": 0,
     },
 )
+
+
+@app.callback(
+    Output(ID_MAP, 'center', allow_duplicate=True),
+    Output(ID_MAP, 'zoom', allow_duplicate=True),
+    Input(ID_URL_LOCATION, 'href'),
+    prevent_initial_call=True
+)
+def display_page(href):
+    lat = DEFAULT_LAT
+    lon = DEFAULT_LON
+    zoom = DEFAULT_ZOOM
+    query = urlparse(href).query
+    query_params: dict = parse_qs(query)
+    if query_params:
+        lat = query_params["lat"][0]
+        lon = query_params["lon"][0]
+        zoom = query_params["zoom"][0]
+
+    return (lat, lon), zoom

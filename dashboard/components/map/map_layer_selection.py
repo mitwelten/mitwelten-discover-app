@@ -2,7 +2,7 @@ import dash
 import dash_mantine_components as dmc
 from dash import html, Output, Input, ALL, State
 
-from dashboard.components.button.action_button import action_button
+from dashboard.components.button.components.action_button import action_button
 from dashboard.config.id import *
 from dashboard.config.map import MAPS, OVERLAYS
 from dashboard.maindash import app

@@ -1,24 +1,23 @@
 from functools import partial
-from urllib.parse import urlparse, parse_qs
 
 import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import Output, Input, html, dcc, ALL, State, clientside_callback
+from dash import Output, Input, html, dcc, ALL, State
 from dash_iconify import DashIconify
 
-from dashboard.components.button.action_button import action_button
-from dashboard.components.data_chart.types.audio import create_audio_chart
-from dashboard.components.data_chart.types.env import create_env_chart
-from dashboard.components.data_chart.types.environment import create_environment_chart
-from dashboard.components.data_chart.types.pax import create_pax_chart
-from dashboard.components.data_chart.types.pollinator import create_pollinator_chart
+from dashboard.components.button.buttons import control_buttons
+from dashboard.components.chart_drawer.drawer import chart_drawer
+from dashboard.components.chart_drawer.types.audio import create_audio_chart
+from dashboard.components.chart_drawer.types.env import create_env_chart
+from dashboard.components.chart_drawer.types.environment import create_environment_chart
+from dashboard.components.chart_drawer.types.pax import create_pax_chart
+from dashboard.components.chart_drawer.types.pollinator import create_pollinator_chart
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.map_layer_selection import map_menu_popup, map_menu_drawer
 from dashboard.components.settings_drawer.drawer import settings_drawer
 from dashboard.config.app import app_theme, SETTINGS_DRAWER_WIDTH
 from dashboard.config.id import *
-from dashboard.config.map import *
 from dashboard.init import init_deployment_data, init_environment_data
 from dashboard.maindash import app
 from util.functions import safe_reduce
@@ -70,42 +69,21 @@ app_content = [
         ),
         id=ID_MAP_CONTAINER,
     ),
-    html.Div(id="helo"),
     map_figure,
-    dmc.MediaQuery(
-        action_button(button_id=ID_BOTTOM_DRAWER_BUTTON, icon="material-symbols:layers-outline"),
-        largerThan="sm",
-        styles=style_hidden
-    ),
     dmc.MediaQuery(
         map_menu_popup("menu"),
         smallerThan="sm",
         styles=style_hidden
     ),
 
-    action_button(button_id=ID_OPEN_LEFT_DRAWER_BUTTON, icon="material-symbols:menu"),
     dmc.Drawer(
         map_menu_drawer("drawer"),
         id=ID_BOTTOM_DRAWER,
         size="lg",
         zIndex=90000,
     ),
-    dmc.Drawer(
-        opened=False,
-        id=ID_CHART_DRAWER,
-        zIndex=20000,
-        size="50%",
-        closeOnClickOutside=False,
-        closeOnEscape=False,
-        withOverlay=False,
-        className="chart-drawer",
-        children=[
-            dmc.LoadingOverlay(
-                html.Div(id=ID_CHART_CONTAINER, className="measurement-chart", style={"margin": "20px"}),
-                loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
-            )
-        ],
-    ),
+    *control_buttons(),
+    chart_drawer(),
     settings_drawer(deployments, tags, deployment_markers)
 ]
 
@@ -129,24 +107,7 @@ discover_app = dmc.MantineProvider(
 app.layout = discover_app
 
 
-@app.callback(
-    Output(ID_MAP, 'center', allow_duplicate=True),
-    Output(ID_MAP, 'zoom', allow_duplicate=True),
-    Input(ID_URL_LOCATION, 'href'),
-    prevent_initial_call=True
-)
-def display_page(href):
-    lat = DEFAULT_LAT
-    lon = DEFAULT_LON
-    zoom = DEFAULT_ZOOM
-    query = urlparse(href).query
-    query_params: dict = parse_qs(query)
-    if query_params:
-        lat = query_params["lat"][0]
-        lon = query_params["lon"][0]
-        zoom = query_params["zoom"][0]
 
-    return (lat, lon), zoom
 
 
 @app.callback(
