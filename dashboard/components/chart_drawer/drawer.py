@@ -1,7 +1,8 @@
 import dash_mantine_components as dmc
-from dash import html
+from dash import Output, Input, html, ALL
 
 from dashboard.config.id import *
+from dashboard.maindash import app
 
 
 def chart_drawer():
@@ -21,3 +22,24 @@ def chart_drawer():
             )
         ],
     )
+
+
+@app.callback(
+    Output(ID_BOTTOM_DRAWER, "opened", allow_duplicate=True),
+    Output(ID_BOTTOM_DRAWER, "position", allow_duplicate=True),
+    Input(ID_BOTTOM_DRAWER_BUTTON, "n_clicks"),
+    prevent_initial_call=True,
+)
+def open_bottom_drawer(_):
+    return True, "bottom"
+
+
+@app.callback(
+    Output(ID_BOTTOM_DRAWER, "opened", allow_duplicate=True),
+    Output(ID_BOTTOM_DRAWER, "position", allow_duplicate=True),
+    Input(ID_MAP, "click_lat_lng"),
+    Input({'role': ALL, 'index': ALL, 'place': "drawer"}, 'n_clicks'),
+    prevent_initial_call=True,
+)
+def open_bottom_drawer(_1, _2):
+    return False, "bottom"

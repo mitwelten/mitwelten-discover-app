@@ -107,9 +107,6 @@ discover_app = dmc.MantineProvider(
 app.layout = discover_app
 
 
-
-
-
 @app.callback(
     Output(ID_NOTES_LAYER_GROUP, "children"),
     Input(ID_MAP, "dbl_click_lat_lng"),
@@ -118,8 +115,6 @@ app.layout = discover_app
     prevent_initial_call=True
 )
 def handle_double_click(click, bounds, markers):
-    print("double clicked", click)
-    print("bounds", bounds)
     marker = dl.Marker(
         position=[click[0], click[1]],
         icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
@@ -140,29 +135,6 @@ def map_click(click_lat_lng, zoom):
     if click_lat_lng is not None:
         loc = [f"?lat={click_lat_lng[0]}&lon={click_lat_lng[1]}&zoom={zoom}"]
     return loc
-
-
-@app.callback(
-    Output(ID_BOTTOM_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_BOTTOM_DRAWER, "position", allow_duplicate=True),
-    Input(ID_BOTTOM_DRAWER_BUTTON, "n_clicks"),
-    prevent_initial_call=True,
-)
-def open_bottom_drawer(_):
-    return True, "bottom"
-
-
-@app.callback(
-    Output(ID_BOTTOM_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_BOTTOM_DRAWER, "position", allow_duplicate=True),
-    Input(ID_MAP, "click_lat_lng"),
-    Input({'role': ALL, 'index': ALL, 'place': "drawer"}, 'n_clicks'),
-    prevent_initial_call=True,
-)
-def open_bottom_drawer(_1, _2):
-    return False, "bottom"
-
-
 
 
 @app.callback(
