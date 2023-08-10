@@ -3,6 +3,7 @@ DEFAULT_LON = 7.606299048260731
 DEFAULT_ZOOM = 11.5
 DEFAULT_MAX_ZOOM = 20.9
 DEFAULT_MAP_INDEX = 1
+MAP_TYPES = ["base", "overlay"]
 DEFAULT_MARKER_COLORS = [
     "#FF5733",  # (Pastell Orange)
     "#9B59B6",  # (Lavendelviolett)

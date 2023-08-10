@@ -14,7 +14,8 @@ from dashboard.components.chart_drawer.types.environment import create_environme
 from dashboard.components.chart_drawer.types.pax import create_pax_chart
 from dashboard.components.chart_drawer.types.pollinator import create_pollinator_chart
 from dashboard.components.map.init_map import map_figure
-from dashboard.components.map.map_layer_selection import map_menu_popup, map_menu_drawer
+from dashboard.components.map.layer_selection.drawer import map_menu_drawer
+from dashboard.components.map.layer_selection.popup import map_menu_popup
 from dashboard.components.settings_drawer.drawer import settings_drawer
 from dashboard.config.app import app_theme, SETTINGS_DRAWER_WIDTH
 from dashboard.config.id import *
