@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import dash_mantine_components as dmc
 import plotly.graph_objects as go
-from dash import Output, Input, dcc, State, html
+from dash import Output, Input, dcc, State, html, callback
 from dashboard.config.id import *
 
 from dashboard.api.api_client import get_pollinator_timeseries
@@ -77,8 +77,7 @@ def create_pollinator_chart(_1, _2):
         variant="outline",
     )
 
-
-@app.callback(
+@callback(
     Output("tabs-content", "children"),
     Input("tabs-example", "value"),
     Input(ID_CURRENT_CHART_DATA_STORE, "data"),

@@ -105,3 +105,21 @@ def marker_click(n_clicks, data, chart_data):
             open_drawer = True
 
     return open_drawer, "bottom", data, chart_data, notification
+
+
+@app.callback(
+    Output(ID_CHART_CONTAINER, "children"),
+    Input(ID_CURRENT_CHART_DATA_STORE, "data"),
+    State(ID_APP_THEME, "theme"),
+    State(ID_ENVIRONMENT_LEGEND_STORE, "data"),
+    prevent_initial_call=True
+)
+def display_chart(data, theme, legend):
+    deployment_id = data["id"]
+    new_figure = html.Div()
+    device_type = data["role"]
+    if device_type in get_supported_chart_types().keys():
+        fn = get_supported_chart_types(legend)[device_type]
+        new_figure = fn(deployment_id, theme)
+
+    return new_figure
