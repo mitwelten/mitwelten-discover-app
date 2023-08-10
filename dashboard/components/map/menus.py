@@ -15,7 +15,7 @@ def map_layer_menus():
 
         dmc.Drawer(
             map_menu_drawer("drawer"),
-            id=ID_BOTTOM_DRAWER,
+            id=ID_MAP_LAYER_BOTTOM_DRAWER,
             size="lg",
             zIndex=90000,
         )

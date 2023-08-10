@@ -1,6 +1,8 @@
+from pprint import pprint
+
 import dash
 import dash_mantine_components as dmc
-from dash import Output, Input, html, ALL, State
+from dash import Output, Input, html, ALL, State, MATCH
 from dash_iconify import DashIconify
 
 from dashboard.config.app import SETTINGS_DRAWER_WIDTH
@@ -51,27 +53,7 @@ def settings_drawer_state(state):
         return width_reduced, {"drawer": {"left": "400px", "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}}
     return full_width, {"drawer": {"left": "0", "width": "100vw"}}
 
-
-@app.callback(
-    Output(ID_BOTTOM_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_BOTTOM_DRAWER, "position", allow_duplicate=True),
-    Input(ID_BOTTOM_DRAWER_BUTTON, "n_clicks"),
-    prevent_initial_call=True,
-)
-def open_bottom_drawer(_):
-    return True, "bottom"
-
-
-@app.callback(
-    Output(ID_BOTTOM_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_BOTTOM_DRAWER, "position", allow_duplicate=True),
-    Input(ID_MAP, "click_lat_lng"),
-    Input({'role': ALL, 'index': ALL, 'place': "drawer"}, 'n_clicks'),
-    prevent_initial_call=True,
-)
-def open_bottom_drawer(_1, _2):
-    return False, "bottom"
-
+# idee => separates callback mit pattern matching und ein store, der die seleben id's hat, damit man den getriggerten marker herausfinden kann
 
 @app.callback(
     Output(ID_CHART_DRAWER, "opened"),
@@ -79,12 +61,18 @@ def open_bottom_drawer(_1, _2):
     Output(ID_MARKER_CLICK_STORE, "data"),
     Output(ID_CURRENT_CHART_DATA_STORE, "data"),
     Output(ID_NOTIFICATION_CONTAINER, "children"),
+    Output(ID_MAP, "center"),
     Input({"role": ALL, "id": ALL, "label": ALL}, "n_clicks"),
+    State(ID_DEPLOYMENT_DATA_STORE, "data"),
     State(ID_MARKER_CLICK_STORE, "data"),
     State(ID_CURRENT_CHART_DATA_STORE, "data"),
+    State(ID_MAP, "bounds"),
+    State(ID_MAP, "center"),
     prevent_initial_call=True,
 )
-def marker_click(n_clicks, data, chart_data):
+def marker_click(n_clicks, pos, data, chart_data, bounds, map_center):
+    # print("marker click: " ,pos)
+    print("trigger", dash.ctx.triggered_id)
     # determine whether the callback is triggered by a click
     # necessary, because adding markers to the map triggers the callback
     click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
@@ -101,10 +89,25 @@ def marker_click(n_clicks, data, chart_data):
         if trigger_id["role"] not in get_supported_chart_types().keys():
             notification = create_notification(trigger_id["role"], "No further data available!")
         else:
+            de = list(filter(lambda d: d["deployment_id"] == trigger_id["id"], pos[trigger_id["role"]]))
+            if de:
+                location = de[0]["location"]
+                lat = location["lat"]
+                lon = location["lon"]
+                lower_lat = bounds[0][0]
+                upper_lat = bounds[1][0]
+                screen_width = upper_lat - lower_lat
+                pos_lat = lat - lower_lat
+                screen_pos_percent = (100.0 / screen_width) * pos_lat
+                screen_target_pos = ((screen_width / 100.0) * 75.0) + lower_lat
+                delta_move = screen_target_pos - map_center[0]
+                if screen_pos_percent < 60:
+                    map_center = (lat - delta_move, lon)
+
             chart_data = dict(role=trigger_id["role"], id=trigger_id["id"])
             open_drawer = True
 
-    return open_drawer, "bottom", data, chart_data, notification
+    return open_drawer, "bottom", data, chart_data, notification, map_center
 
 
 @app.callback(

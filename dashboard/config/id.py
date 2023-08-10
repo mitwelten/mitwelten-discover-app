@@ -8,7 +8,7 @@ ID_MAP_CONTAINER = "id-map-container"
 # UI elements
 ID_APP_CONTAINER = "id-app-container"
 ID_SETTINGS_DRAWER = "id-settings-drawer"
-ID_BOTTOM_DRAWER = "id-bottom-drawer"
+ID_MAP_LAYER_BOTTOM_DRAWER = "id-map-layer-bottom-drawer"
 ID_OPEN_LEFT_DRAWER_BUTTON = "id-left-drawer-btn"
 ID_BOTTOM_DRAWER_BUTTON = "id-bottom-drawer-btn"
 ID_MAP_SELECTOR_BUTTON = "id-map-selector-btn"

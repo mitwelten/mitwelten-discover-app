@@ -23,7 +23,7 @@ body {
     width: 100vw;
     height: 20px;
     text-align: center;
-    z-index: 90000;
+    z-index: 900;
 }
 
 #id-bottom-drawer-btn {
