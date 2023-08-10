@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
-import plotly.graph_objects as go
 
+import plotly.graph_objects as go
 from dash import dcc
 
 from dashboard.api.api_client import get_audio_timeseries
