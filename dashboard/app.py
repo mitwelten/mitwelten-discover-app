@@ -2,13 +2,13 @@ import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import Output, Input, html, dcc, State
 
+from dashboard.config.id import *
 from dashboard.components.button.buttons import control_buttons
 from dashboard.components.chart_drawer.drawer import chart_drawer
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.map.menus import map_layer_menus
 from dashboard.components.settings_drawer.drawer import settings_drawer
 from dashboard.config.app import app_theme
-from dashboard.config.id import *
 from dashboard.init import init_deployment_data, init_environment_data
 from dashboard.maindash import app
 
@@ -20,7 +20,6 @@ app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployments),
     dcc.Store(id=ID_TAG_DATA_STORE, data=tags),
-    dcc.Store(id=ID_DATE_RANGE_STORE, data=dict()),
     dcc.Store(id=ID_ENV_DATA_STORE, data=environments),
     dcc.Store(id=ID_DEPLOYMENT_MARKER_STORE, data=deployment_markers),
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),

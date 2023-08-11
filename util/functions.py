@@ -45,7 +45,6 @@ def was_deployed(deployment: Deployment, start_date: str, end_date: str):
 
 
 def ensure_marker_visibility(map_center, map_bounds, marker_position, target_horizontal=60, target_vertical=75):
-    print(marker_position)
     map_lat = map_center[0]
     map_lon = map_center[1]
     marker_lat = marker_position["lat"]
@@ -56,11 +55,11 @@ def ensure_marker_visibility(map_center, map_bounds, marker_position, target_hor
     right_lon = map_bounds[1][1]
 
     # lat
-    screen_height = upper_lat - lower_lat # 10
-    marker_lat_normalized = marker_lat - lower_lat # 1
-    percentage_marker_lat_on_screen = (100.0 / screen_height) * marker_lat_normalized # 10
-    center_target_lat = ((screen_height / 100.0) * target_vertical) + lower_lat # 52.5
-    delta_lat_move = center_target_lat - map_lat # 52.5 - 50
+    screen_height = upper_lat - lower_lat
+    marker_lat_normalized = marker_lat - lower_lat
+    percentage_marker_lat_on_screen = (100.0 / screen_height) * marker_lat_normalized
+    center_target_lat = ((screen_height / 100.0) * target_vertical) + lower_lat
+    delta_lat_move = center_target_lat - map_lat
 
     # lon
     screen_width = right_lon - left_lon
