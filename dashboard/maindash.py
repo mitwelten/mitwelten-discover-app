@@ -23,3 +23,7 @@ app = Dash(
         {"name": "viewport", "content": "width=device-width, initial-scale=1"}
     ]
 )
+app.enable_dev_tools(
+    dev_tools_ui=True,
+    dev_tools_serve_dev_bundles=True,
+)
