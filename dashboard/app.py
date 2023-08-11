@@ -26,7 +26,7 @@ app_content = [
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(), storage_type="local"),
-    dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None)),
+    dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None, lat=None, lon=None)),
     dcc.Store(id=ID_ENVIRONMENT_LEGEND_STORE, data=environment_legend),
 
     html.Div(id=ID_NOTIFICATION_CONTAINER),

@@ -9,7 +9,7 @@ from dashboard.config.app import SETTINGS_DRAWER_WIDTH
 from dashboard.config.chart import get_supported_chart_types
 from dashboard.config.id import *
 from dashboard.maindash import app
-from util.functions import safe_reduce
+from util.functions import safe_reduce, ensure_marker_visibility
 
 
 def create_notification(title, message):
@@ -61,18 +61,16 @@ def settings_drawer_state(state):
     Output(ID_MARKER_CLICK_STORE, "data"),
     Output(ID_CURRENT_CHART_DATA_STORE, "data"),
     Output(ID_NOTIFICATION_CONTAINER, "children"),
-    Output(ID_MAP, "center"),
-    Input({"role": ALL, "id": ALL, "label": ALL}, "n_clicks"),
-    State(ID_DEPLOYMENT_DATA_STORE, "data"),
+    Output(ID_MAP, "center", allow_duplicate=True),
+    Input({"role": ALL, "id": ALL, "label": ALL, "lat": ALL, "lon": ALL}, "n_clicks"),
     State(ID_MARKER_CLICK_STORE, "data"),
     State(ID_CURRENT_CHART_DATA_STORE, "data"),
     State(ID_MAP, "bounds"),
     State(ID_MAP, "center"),
     prevent_initial_call=True,
 )
-def marker_click(n_clicks, pos, data, chart_data, bounds, map_center):
-    # print("marker click: " ,pos)
-    print("trigger", dash.ctx.triggered_id)
+def marker_click(n_clicks, data, chart_data, bounds, map_center):
+    print(dash.ctx.triggered_id)
     # determine whether the callback is triggered by a click
     # necessary, because adding markers to the map triggers the callback
     click_sum = safe_reduce(lambda x, y: x + y, n_clicks)
@@ -89,22 +87,13 @@ def marker_click(n_clicks, pos, data, chart_data, bounds, map_center):
         if trigger_id["role"] not in get_supported_chart_types().keys():
             notification = create_notification(trigger_id["role"], "No further data available!")
         else:
-            de = list(filter(lambda d: d["deployment_id"] == trigger_id["id"], pos[trigger_id["role"]]))
-            if de:
-                location = de[0]["location"]
-                lat = location["lat"]
-                lon = location["lon"]
-                lower_lat = bounds[0][0]
-                upper_lat = bounds[1][0]
-                screen_width = upper_lat - lower_lat
-                pos_lat = lat - lower_lat
-                screen_pos_percent = (100.0 / screen_width) * pos_lat
-                screen_target_pos = ((screen_width / 100.0) * 75.0) + lower_lat
-                delta_move = screen_target_pos - map_center[0]
-                if screen_pos_percent < 60:
-                    map_center = (lat - delta_move, lon)
-
-            chart_data = dict(role=trigger_id["role"], id=trigger_id["id"])
+            map_center = ensure_marker_visibility(map_center, bounds, trigger_id)
+            chart_data = dict(
+                role=trigger_id["role"],
+                id=trigger_id["id"],
+                lat=trigger_id["lat"],
+                lon=trigger_id["lon"]
+            )
             open_drawer = True
 
     return open_drawer, "bottom", data, chart_data, notification, map_center

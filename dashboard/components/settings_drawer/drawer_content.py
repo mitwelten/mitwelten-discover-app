@@ -108,7 +108,7 @@ def filter_map_data(checkboxes, tags, fs_tag, time_range, colors, deployment_dat
                         ),
                     ],
                     icon=dict(iconUrl=colors[d.node_type]['svgPath'], iconAnchor=[15, 6], iconSize=30),
-                    id={"role": f"{d.node_type}", "id": d.deployment_id, "label": d.node_label},
+                    id={"role": f"{d.node_type}", "id": d.deployment_id, "label": d.node_label, "lat": d.lat,  "lon": d.lon},
                 )
             )
     return markers
