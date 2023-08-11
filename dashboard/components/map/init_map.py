@@ -45,7 +45,6 @@ map_figure = dl.Map(
     ],
     doubleClickZoom=False,
     useFlyTo=False,
-    zoomControl={"position": "bottomright"},
     zoom=15,
     id=ID_MAP,
     className="id-map",
@@ -70,8 +69,8 @@ def display_page(href):
     query = urlparse(href).query
     query_params: dict = parse_qs(query)
     if query_params:
-        lat = query_params["lat"][0]
-        lon = query_params["lon"][0]
-        zoom = query_params["zoom"][0]
+        lat = float(query_params["lat"][0])
+        lon = float(query_params["lon"][0])
+        zoom = float(query_params["zoom"][0])
 
     return (lat, lon), zoom
