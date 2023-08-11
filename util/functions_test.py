@@ -3,8 +3,7 @@ import unittest
 from parameterized import parameterized
 
 from dashboard.model.deployment import Deployment
-from util.functions import safe_reduce, was_deployed
-
+from util.functions import safe_reduce, was_deployed, ensure_marker_visibility
 
 deployment_data: dict = {
     'deployment_id': 2099,
@@ -53,7 +52,7 @@ class FunctionsTestSuite(unittest.TestCase):
         ("2019-01-01", "2020-01-01", False),  # start and end before range
         ("2020-01-11", "2020-01-15", False),  # start and end after range
     ])
-    def test_typical_case(self, start, end, expected):
+    def test_typical_case_was_deployed(self, start, end, expected):
         time_range = ["2020-01-02", "2020-01-10"]
         deployment = Deployment(deployment_data)
         deployment.period_start = start
@@ -62,6 +61,21 @@ class FunctionsTestSuite(unittest.TestCase):
         actual = was_deployed(deployment, time_range[0], time_range[1])
         self.assertEqual(actual, expected)
 
+    def test_typical_case_lat_ensure_marker_visibility(self):
+        map_center = [50, 50]
+        map_bounds = [[45, 45], [55, 55]]
+        marker_position = {"lat": 46, "lon": 50}
+        expected = (43.5, 50.0)
+        actual = ensure_marker_visibility(map_center, map_bounds, marker_position)
+        self.assertEqual(actual, expected)
+
+    def test_typical_case_lon_ensure_marker_visibility(self):
+        map_center = [50, 50]
+        map_bounds = [[45, 45], [55, 55]]
+        marker_position = {"lat": 54, "lon": 46}
+        expected = (50.0, 45.0)
+        actual = ensure_marker_visibility(map_center, map_bounds, marker_position)
+        self.assertEqual(expected, actual)
 
 if __name__ == '__main__':
     unittest.main()
