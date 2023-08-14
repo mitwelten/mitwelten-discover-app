@@ -1,25 +1,13 @@
-from pprint import pprint
-
 import dash
 import dash_mantine_components as dmc
-from dash import Output, Input, html, ALL, State, MATCH
-from dash_iconify import DashIconify
+from dash import Output, Input, html, ALL, State
 
+from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.app import SETTINGS_DRAWER_WIDTH
 from dashboard.config.chart import get_supported_chart_types
 from dashboard.config.id import *
 from dashboard.maindash import app
 from util.functions import safe_reduce, ensure_marker_visibility
-
-
-def create_notification(title, message):
-    return dmc.Notification(
-        title=title,
-        id=f"id-notification-{title}",
-        action="show",
-        message=message,
-        icon=DashIconify(icon="material-symbols:circle-notifications", height=24),
-    )
 
 
 def chart_drawer():
@@ -60,7 +48,7 @@ def settings_drawer_state(state):
     Output(ID_CHART_DRAWER, "position"),
     Output(ID_MARKER_CLICK_STORE, "data"),
     Output(ID_CURRENT_CHART_DATA_STORE, "data"),
-    Output(ID_NOTIFICATION_CONTAINER, "children"),
+    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
     Output(ID_MAP, "center", allow_duplicate=True),
     Input({"role": ALL, "id": ALL, "label": ALL, "lat": ALL, "lon": ALL}, "n_clicks"),
     State(ID_MARKER_CLICK_STORE, "data"),
@@ -85,7 +73,11 @@ def marker_click(n_clicks, data, chart_data, bounds, map_center):
     if has_click_triggered and dash.ctx.triggered_id is not None:
         trigger_id = dash.ctx.triggered_id
         if trigger_id["role"] not in get_supported_chart_types().keys():
-            notification = create_notification(trigger_id["role"], "No further data available!")
+            notification = create_notification(
+                trigger_id["role"],
+                "No further data available!",
+                NotificationType.INFO
+            )
         else:
             map_center = ensure_marker_visibility(map_center, bounds, trigger_id)
             chart_data = dict(
