@@ -49,6 +49,8 @@ def ensure_marker_visibility(map_center, map_bounds, marker_position, target_hor
     map_lon = map_center[1]
     marker_lat = marker_position["lat"]
     marker_lon = marker_position["lon"]
+    if marker_lat is None or marker_lon is None:
+        return map_center
     lower_lat = map_bounds[0][0]
     upper_lat = map_bounds[1][0]
     left_lon = map_bounds[0][1]

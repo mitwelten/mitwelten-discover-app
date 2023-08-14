@@ -17,6 +17,8 @@ ID_MAP = "id-map"
 ID_URL_LOCATION = 'id-url-location'
 ID_SEARCH_DEPLOYMENT_BUTTON = "id-search-deployment-button"
 ID_DEPLOYMENT_SELECT = "id-deployment-select"
+ID_LOGOUT_BUTTON = "id-logout-btn"
+ID_LOGIN_AVATAR_CONTAINER = "login-avatar-container"
 
 # stores
 ID_DEPLOYMENT_DATA_STORE = "id-deployment-data-store"

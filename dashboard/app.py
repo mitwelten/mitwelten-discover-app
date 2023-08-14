@@ -65,6 +65,20 @@ app.layout = discover_app
 
 
 @app.callback(
+    Output(ID_URL_LOCATION, "search"),
+    Input(ID_MAP, "click_lat_lng"),
+    Input(ID_MAP, "zoom"),
+    prevent_initial_call=True
+)
+def map_click(click_lat_lng, zoom):
+    print("click on map")
+    loc = ""
+    if click_lat_lng is not None:
+        loc = f"?lat={click_lat_lng[0]}&lon={click_lat_lng[1]}&zoom={zoom}"
+    return loc
+
+
+@app.callback(
     Output(ID_NOTES_LAYER_GROUP, "children"),
     Input(ID_MAP, "dbl_click_lat_lng"),
     State(ID_MAP, "boundsOptions"),
@@ -81,14 +95,3 @@ def handle_double_click(click, bounds, markers):
     return [*markers, marker]
 
 
-@app.callback(
-    Output(ID_URL_LOCATION, "search"),
-    Input(ID_MAP, "click_lat_lng"),
-    Input(ID_MAP, "zoom"),
-    prevent_initial_call=True
-)
-def map_click(click_lat_lng, zoom):
-    loc = ""
-    if click_lat_lng is not None:
-        loc = [f"?lat={click_lat_lng[0]}&lon={click_lat_lng[1]}&zoom={zoom}"]
-    return loc

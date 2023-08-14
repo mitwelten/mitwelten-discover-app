@@ -4,6 +4,7 @@ import jwt
 from dash import Output, Input, State
 from dash_iconify import DashIconify
 
+from configuration import DOMAIN_NAME
 from dashboard.components.button.components.action_button import action_button
 from dashboard.components.map.layer_selection.drawer import map_menu_drawer
 from dashboard.components.map.layer_selection.popup import map_menu_popup
@@ -13,7 +14,7 @@ from dashboard.model.user import User
 
 login_button = dmc.Anchor(
     action_button(button_id="id-login-btn", icon="material-symbols:login"),
-    href="http://localhost:8000/login"
+    href=f"{DOMAIN_NAME}/login"
 )
 
 
@@ -26,12 +27,16 @@ def create_avatar(user):
                 dmc.Text(user.full_name),
                 dmc.Text(user.username, color="dimmed"),
                 dmc.Divider(size="md", color="black"),
-                dmc.Button(
-                    "Logout",
-                    rightIcon=DashIconify(icon="material-symbols:logout"),
-                    variant="light",
-                    fullWidth=True,
-                ),
+                dmc.Anchor(
+                    dmc.Button(
+                        "Logout",
+                        rightIcon=DashIconify(icon="material-symbols:logout"),
+                        variant="light",
+                        fullWidth=True,
+                    ),
+                    href="/logout",
+                    refresh=True
+                )
             ],
                 align="center"
             )
@@ -71,18 +76,17 @@ def control_buttons():
             ),
 
         ],
-            id="login-avatar-container"
+            id=ID_LOGIN_AVATAR_CONTAINER
         )
     ]
 
 
 @app.callback(
-    Output("login-avatar-container", "children"),
-    Input("login-avatar-container", "n_clicks"),
-    State("login-avatar-container", "children")
+    Output(ID_LOGIN_AVATAR_CONTAINER, "children"),
+    Input(ID_LOGIN_AVATAR_CONTAINER, "n_clicks"),
+    State(ID_LOGIN_AVATAR_CONTAINER, "children")
 )
 def login(_, children):
-
     cookies = flask.request.cookies
     try:
         decoded_cookie = jwt.decode(

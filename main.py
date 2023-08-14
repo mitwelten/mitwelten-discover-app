@@ -81,15 +81,14 @@ KEYCLOAK_PUBLIC_KEY = (
 #
 def get_auth_url(state):
     return keycloak_openid.auth_url(
-        redirect_uri=f"http://{DOMAIN_NAME}/callback",
+        redirect_uri=f"{DOMAIN_NAME}/callback",
         scope="email",
         state=state,
     )
 
 @app.get("/login")
 def login_redirect():
-    print("Endpoint: /login")
-    return RedirectResponse(get_auth_url(f"http://{DOMAIN_NAME}/app"))
+    return RedirectResponse(get_auth_url(f"{DOMAIN_NAME}/app"))
 
 # @app.get("/login")
 # def login_redirect(state=f"{DOMAIN_NAME}/app"):
@@ -97,26 +96,25 @@ def login_redirect():
 #     return RedirectResponse(get_auth_url(state))
 #
 #
-# @app.get("/logout")
-# def logout(request: Request):
-#     cookies = request.cookies
-#     auth_r_cookie = cookies.get("auth_r")
-#     response = RedirectResponse(f"{DOMAIN_NAME}/login")
-#     keycloak_openid.logout(auth_r_cookie)
-#     response.delete_cookie("auth")
-#     response.delete_cookie("auth_r")
-#     return response
-#
+@app.get("/logout")
+def logout(request: Request):
+    cookies = request.cookies
+    auth_r_cookie = cookies.get("auth_r")
+    response = RedirectResponse(f"{DOMAIN_NAME}/app")
+    keycloak_openid.logout(auth_r_cookie)
+    response.delete_cookie("auth")
+    response.delete_cookie("auth_r")
+    return response
+
 
 @app.get("/callback")
 def callback(code, state=None):
-    print("Endpoint: /callback")
     state = state if state is not None else f"{DOMAIN_NAME}/app"
 
     access_token = keycloak_openid.token(
         grant_type="authorization_code",
         code=code,
-        redirect_uri=f"http://{DOMAIN_NAME}/callback",
+        redirect_uri=f"{DOMAIN_NAME}/callback",
     )
     response = RedirectResponse(url=state)
     response.set_cookie("auth", access_token.get("access_token"))
