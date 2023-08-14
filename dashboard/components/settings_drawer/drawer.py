@@ -11,7 +11,7 @@ from util.functions import ensure_marker_visibility
 def settings_drawer(deployments, tags, deployment_markers):
     return dmc.Drawer(
         id=ID_SETTINGS_DRAWER,
-        title=dmc.Title("Mitwelten Discover", align="center", order=1, style={"margin-left":"20px"}),
+        title=dmc.Title("Mitwelten Discover", align="center", order=1, style={"marginLeft":"20px"}),
         children=drawer_content(deployments, tags, deployment_markers),
         opened=True,
         size=SETTINGS_DRAWER_WIDTH,
