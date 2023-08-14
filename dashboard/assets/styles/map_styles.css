@@ -97,9 +97,3 @@ body {
     text-align: center;
     word-wrap: break-word;
 }
-
-.map-menu {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-}

@@ -84,24 +84,17 @@
     }
 }
 
-#id-bottom-drawer-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-}
-
 #id-left-drawer-btn {
     position: absolute;
     top: 20px;
     left: 20px;
 }
 
-#id-login-btn {
+#login-avatar-container{
     position: absolute;
     top: 20px;
-    right: 60px;
+    right: 40px;
 }
-
 
 .mitwelten-logo {
     margin: 10px;
