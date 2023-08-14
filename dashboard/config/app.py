@@ -1,4 +1,4 @@
-from configuration import PRIMARY_COLOR
+from configuration import PRIMARY_COLOR, SECONDARY_COLOR
 
 SETTINGS_DRAWER_WIDTH = 400
 app_theme = {

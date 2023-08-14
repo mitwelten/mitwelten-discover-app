@@ -1,16 +1,18 @@
+import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import Output, Input, html, dcc, State
 
+from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id import *
 from dashboard.components.button.buttons import control_buttons
 from dashboard.components.chart_drawer.drawer import chart_drawer
 from dashboard.components.map.init_map import map_figure
-from dashboard.components.map.menus import map_layer_menus
 from dashboard.components.settings_drawer.drawer import settings_drawer
 from dashboard.config.app import app_theme
 from dashboard.init import init_deployment_data, init_environment_data
 from dashboard.maindash import app
+from dashboard.util.user_validation import get_user_from_cookies
 
 deployments, deployment_markers, tags = init_deployment_data()
 environments, environment_legend = init_environment_data()
@@ -56,12 +58,13 @@ discover_app = dmc.MantineProvider(
             html.Div(
                 children=app_content,
                 id=ID_APP_CONTAINER,
-            )
+            ),
         ),
     ]
 )
 
 app.layout = discover_app
+
 
 
 @app.callback(
@@ -80,18 +83,29 @@ def map_click(click_lat_lng, zoom):
 
 @app.callback(
     Output(ID_NOTES_LAYER_GROUP, "children"),
+    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
     Input(ID_MAP, "dbl_click_lat_lng"),
     State(ID_MAP, "boundsOptions"),
     State(ID_NOTES_LAYER_GROUP, "children"),
     prevent_initial_call=True
 )
 def handle_double_click(click, bounds, markers):
+    user = get_user_from_cookies()
+    print(user)
+    if user is None:
+        notification = create_notification(
+            "Operation not permitted",
+            "Log in to create notes!",
+            NotificationType.WARN
+        )
+        return dash.no_update, notification
+
     marker = dl.Marker(
         position=[click[0], click[1]],
         icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
     )
     if markers is None:
         markers = []
-    return [*markers, marker]
+    return [*markers, marker], ""
 
 

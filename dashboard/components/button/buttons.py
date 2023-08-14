@@ -11,7 +11,7 @@ from dashboard.components.map.layer_selection.popup import map_menu_popup
 from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.model.user import User
-
+from dashboard.util.user_validation import get_user_from_cookies
 
 login_button = dmc.Anchor(
     action_button(button_id="id-login-btn", icon="material-symbols:login"),
@@ -41,8 +41,7 @@ def create_avatar(user):
             ],
                 align="center"
             )
-        ],
-        )
+        ])
     ],
         transition="scale-y",
         transitionDuration=100,
@@ -88,15 +87,7 @@ def control_buttons():
     State(ID_LOGIN_AVATAR_CONTAINER, "children")
 )
 def login(_, children):
-    cookies = flask.request.cookies
-    try:
-        decoded_cookie = jwt.decode(
-            cookies.get("auth"), options={"verify_signature": False}
-        )
-        user = User(decoded_cookie)
-
-    except Exception as e:
-        print("No user found!")
+    user = get_user_from_cookies()
+    if user is None:
         return [login_button, *children]
     return [create_avatar(user), *children]
-
