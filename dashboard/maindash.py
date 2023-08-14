@@ -19,6 +19,7 @@ app = Dash(
     external_stylesheets=external_stylesheets,
     long_callback_manager=long_callback_manager,
     suppress_callback_exceptions=True,
+    requests_pathname_prefix="/app/",
     meta_tags=[
         {"name": "viewport", "content": "width=device-width, initial-scale=1"}
     ]
