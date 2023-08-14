@@ -15,7 +15,6 @@ from dashboard.maindash import app
 deployments, deployment_markers, tags = init_deployment_data()
 environments, environment_legend = init_environment_data()
 
-
 app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployments),
@@ -40,7 +39,6 @@ app_content = [
         id=ID_MAP_CONTAINER,
     ),
     map_figure,
-    *map_layer_menus(),
     *control_buttons(),
     chart_drawer(),
     settings_drawer(deployments, tags, deployment_markers)
