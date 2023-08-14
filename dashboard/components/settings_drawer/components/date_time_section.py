@@ -15,6 +15,7 @@ from dashboard.util.decorators import spaced_section
 @spaced_section
 def date_time_section():
     return html.Div([
+        dcc.Store(id=ID_DATE_RANGE_STORE, data=dict()),
         dmc.SegmentedControl(
             id=ID_DATE_RANGE_SEGMENT,
             color="mitwelten_green",
