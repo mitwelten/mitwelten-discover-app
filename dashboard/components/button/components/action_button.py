@@ -1,13 +1,15 @@
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
+from configuration import PRIMARY_COLOR
+
 
 def action_button(button_id: str = None, icon: str = None):
     return dmc.ActionIcon(
         DashIconify(
             icon=icon,
             width=20,
-            color="mitwelten_green",
+            color=PRIMARY_COLOR,
         ),
         variant="light",
         size="lg",

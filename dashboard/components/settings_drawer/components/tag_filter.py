@@ -7,6 +7,7 @@ import dash_mantine_components as dmc
 from dash import html, Input, Output, State
 from dash_iconify import DashIconify
 
+from configuration import PRIMARY_COLOR
 from dashboard.config.id import *
 from dashboard.maindash import app
 
@@ -24,7 +25,7 @@ def tag_filter(all_tags):
                  ),
         dmc.Center([
             dmc.SegmentedControl(
-                color="mitwelten_green",
+                color=PRIMARY_COLOR,
                 id=ID_FS_TAG_CHIPS_GROUP,
                 data=["All"] + fs_tags,
                 persistence=True,
@@ -41,7 +42,7 @@ def tag_filter(all_tags):
                 dmc.ActionIcon(
                     DashIconify(
                         icon="material-symbols:add",
-                        color="mitwelten_green",
+                        color=PRIMARY_COLOR,
                     ),
                     variant="light",
                     id=ID_OPEN_CHIP_MODAL_BUTTON,

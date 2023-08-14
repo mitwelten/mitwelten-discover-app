@@ -4,13 +4,14 @@ import jwt
 from dash import Output, Input, State
 from dash_iconify import DashIconify
 
-from configuration import DOMAIN_NAME
+from configuration import DOMAIN_NAME, PRIMARY_COLOR
 from dashboard.components.button.components.action_button import action_button
 from dashboard.components.map.layer_selection.drawer import map_menu_drawer
 from dashboard.components.map.layer_selection.popup import map_menu_popup
 from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.model.user import User
+
 
 login_button = dmc.Anchor(
     action_button(button_id="id-login-btn", icon="material-symbols:login"),
@@ -23,7 +24,7 @@ def create_avatar(user):
         dmc.HoverCardTarget(dmc.Avatar(user.initials, size="md", radius="xl")),
         dmc.HoverCardDropdown([
             dmc.Stack([
-                dmc.Avatar(user.initials, size="60px", radius="xl", color="mitwelten_green"),
+                dmc.Avatar(user.initials, size="60px", radius="xl", color=PRIMARY_COLOR),
                 dmc.Text(user.full_name),
                 dmc.Text(user.username, color="dimmed"),
                 dmc.Divider(size="md", color="black"),

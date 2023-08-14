@@ -6,6 +6,7 @@ import dash_mantine_components as dmc
 from dash import html, dcc, Output, Input, State
 from dash_iconify import DashIconify
 
+from configuration import PRIMARY_COLOR
 from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.util.decorators import spaced_section
@@ -63,7 +64,7 @@ def source_filter(data, depl_markers):
                     variant="subtle",
                     id=ID_SEARCH_DEPLOYMENT_BUTTON,
                     n_clicks=0,
-                    color="mitwelten_green",
+                    color=PRIMARY_COLOR,
                 ),
             ),
         ],

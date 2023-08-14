@@ -5,6 +5,7 @@ import dash
 import dash_mantine_components as dmc
 from dash import html, Output, Input, dcc, State
 
+from configuration import PRIMARY_COLOR
 from dashboard.config.id import *
 from dashboard.config.settings import DEFAULT_DATE_RANGES
 from dashboard.config.settings import FIRST_DEPLOYMENT_WEEKS_AGO
@@ -18,7 +19,7 @@ def date_time_section():
         dcc.Store(id=ID_DATE_RANGE_STORE, data=dict()),
         dmc.SegmentedControl(
             id=ID_DATE_RANGE_SEGMENT,
-            color="mitwelten_green",
+            color=PRIMARY_COLOR,
             # value=f"{FIRST_DEPLOYMENT_WEEKS_AGO}",
             fullWidth=True,
             data=DEFAULT_DATE_RANGES,

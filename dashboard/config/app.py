@@ -1,8 +1,10 @@
+from configuration import PRIMARY_COLOR
+
 SETTINGS_DRAWER_WIDTH = 400
 app_theme = {
     "colorScheme": "light",
     "colors": {
-        "mitwelten_green":
+        PRIMARY_COLOR:
             [
                 "#E8F5E9",
                 "#C8E6C9",
@@ -15,7 +17,7 @@ app_theme = {
                 "#2E7D32",
                 "#1B5E20",
             ],
-        "mitwelten_pink":
+        SECONDARY_COLOR:
             [
                 "#FCE4EC",
                 "#F8BBD0",
@@ -29,7 +31,7 @@ app_theme = {
                 "#880E4F",
             ],
     },
-    "primaryColor": "mitwelten_green",
+    "primaryColor": PRIMARY_COLOR,
     "shadows": {
         # other shadows (xs, sm, lg) will be merged from default theme
         "md": "1px 1px 3px rgba(0,0,0,.25)",
