@@ -4,7 +4,7 @@ from dash import Output, Input, html, ALL, State
 
 from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.app import SETTINGS_DRAWER_WIDTH
-from dashboard.config.chart import get_supported_chart_types
+from dashboard.config.chart import get_display_supported_types
 from dashboard.config.id import *
 from dashboard.maindash import app
 from util.functions import safe_reduce, ensure_marker_visibility
@@ -72,7 +72,7 @@ def marker_click(n_clicks, data, chart_data, bounds, map_center):
     notification = None
     if has_click_triggered and dash.ctx.triggered_id is not None:
         trigger_id = dash.ctx.triggered_id
-        if trigger_id["role"] not in get_supported_chart_types().keys():
+        if trigger_id["role"] not in get_display_supported_types().keys():
             notification = create_notification(
                 trigger_id["role"],
                 "No further data available!",
@@ -102,8 +102,8 @@ def display_chart(data, theme, legend):
     deployment_id = data["id"]
     new_figure = html.Div()
     device_type = data["role"]
-    if device_type in get_supported_chart_types().keys():
-        fn = get_supported_chart_types(legend)[device_type]
+    if device_type in get_display_supported_types().keys():
+        fn = get_display_supported_types(legend)[device_type]
         new_figure = fn(deployment_id, theme)
 
     return new_figure

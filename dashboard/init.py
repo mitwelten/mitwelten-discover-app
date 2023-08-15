@@ -3,7 +3,7 @@ from datetime import datetime
 from functools import reduce
 
 from dashboard.config.map import DEFAULT_MARKER_COLORS
-from dashboard.api.api_client import get_environment_data, get_environment_legend, get_deployments
+from dashboard.api.api_client import get_environment_data, get_environment_legend, get_deployments, get_all_fake_notes
 from dashboard.model.deployment import Deployment
 
 
@@ -42,3 +42,8 @@ def init_environment_data():
     environment_legend = get_environment_legend()
 
     return all_environments_json, environment_legend
+
+
+def init_notes():
+    all_notes = get_all_fake_notes()
+    return all_notes

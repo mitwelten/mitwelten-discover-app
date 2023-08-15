@@ -15,3 +15,18 @@ class Note:
         self.created_at = json_note.get("created_at")
         self.updated_at = json_note.get("updated_at")
         self.file_ids = json_note.get("file_ids")
+        # TODO: creator ???
+
+    def to_dict(self):
+        return dict(
+            note_id=self.note_id,
+            title=self.title,
+            description=self.description,
+            note_label=self.node_label,
+            lat=self.lat,
+            lon=self.lon,
+            tags=self.tags,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+            file_ids=self.file_ids,
+        )

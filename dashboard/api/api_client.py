@@ -1,7 +1,9 @@
+import json
 from urllib.parse import urlencode
 
 import requests
 
+from dashboard.model.note import Note
 
 DATA_API_URL = "https://data.mitwelten.org/api/v3/"
 
@@ -115,3 +117,87 @@ def get_environment_legend():
     if response.status_code == 200:
         return response.json()
     return None
+
+
+def get_fake_note_by_id(note_id):
+    json_note = json.loads("""
+       {
+		"note_id": 0,
+		"node_label": "1000-0001",
+		"title": "This is the Title of the Note",
+		"description": "Awesome description of the note",
+		"location": {
+			"lat": 47.53514,
+			"lon": 7.61467
+		},
+		"created_at": "2021-03-15T23:00:00+00:00",
+		"updated_at": "2021-04-20T22:00:00+00:00",
+		"tags": [{
+			"tag_id": 135,
+			"name": "FS1"
+		}],
+		"file_ids": [20, 34]
+	}
+    """)
+    return json_note
+
+
+def get_all_fake_notes():
+    json_note = json.loads("""
+    [
+       {
+		"note_id": 0,
+		"node_label": "1000-0001",
+		"title": "This is the Title of the Note",
+		"description": "Awesome description of the note",
+		"location": {
+			"lat": 47.53514,
+			"lon": 7.61467
+		},
+		"created_at": "2021-03-15T23:00:00+00:00",
+		"updated_at": "2021-04-20T22:00:00+00:00",
+		"tags": [{
+			"tag_id": 135,
+			"name": "FS1"
+		}],
+		"file_ids": [20, 34]
+	},
+    {
+        "note_id": 1,
+        "node_label": "2000-0002",
+        "title": "This is the Title of second the Note",
+        "description": "Awesome description of the second note",
+        "location": {
+            "lat": 47.534514,
+            "lon": 7.61467
+        },
+        "created_at": "2023-03-15T23:00:00+00:00",
+        "updated_at": "2023-04-20T22:00:00+00:00",
+        "tags": [{
+            "tag_id": 128,
+            "name": "z50cm"
+        },
+            {
+                "tag_id": 135,
+                "name": "FS1"
+            },
+            {
+                "tag_id": 32,
+                "name": "Villa"
+            }
+        ],
+        "file_ids": [10, 13]
+    }
+    ]
+    """)
+    return json_note
+
+
+def get_note_by_id_2(note_id):
+    url = construct_url(f"note/{note_id}")
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    return None
+
+

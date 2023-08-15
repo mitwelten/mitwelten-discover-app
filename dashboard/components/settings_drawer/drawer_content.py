@@ -11,6 +11,7 @@ from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
 from dashboard.model.environment import Environment
+from dashboard.model.note import Note
 from util.functions import was_deployed
 
 
@@ -54,7 +55,7 @@ def drawer_content(node_types, tags_data, depl_markers):
     State(ID_DEPLOYMENT_MARKER_STORE, "data"),
     State(ID_DEPLOYMENT_DATA_STORE, "data"),
 )
-def filter_map_data(checkboxes, tags, fs_tag, time_range, colors, deployment_data):
+def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_data):
     checkboxes = list(filter(lambda c: c in deployment_data.keys(), checkboxes))
 
     # parse to json objects
@@ -140,7 +141,40 @@ def add_environment_markers(values, data):
                     ),
                 ],
                 icon=dict(iconUrl="assets/markers/environment.svg", iconAnchor=[15, 6], iconSize=30),
-                id={"role": "Environment", "id": e.environment_id, "label": ""},
+                id={"role": "Environment", "id": e.environment_id, "label": "", "lat": e.lat,  "lon": e.lon},
+            )
+        )
+    return markers
+
+
+@app.callback(
+    Output(ID_NOTES_LAYER_GROUP, "children"),
+    Input(ID_TYPE_CHECKBOX_GROUP, "value"),
+    State(ID_NOTES_STORE, "data"),
+)
+def add_note_markers(values, data):
+    if "Notes" not in values:
+        return []
+    markers = []
+
+    for n in data:
+        n = Note(n)
+        markers.append(
+            dl.Marker(
+                position=[n.lat, n.lon],
+                children=[
+                    dl.Popup(
+                        # children=[environment_popup(n)],
+                        closeButton=False
+                    ),
+                    dl.Tooltip(
+                        children=f"Note: {n.note_id}",
+                        offset={"x": -10, "y": 2},
+                        direction="left",
+                    ),
+                ],
+                icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
+                id={"role": "Note", "id": n.note_id, "label": "", "lat": n.lat,  "lon": n.lon},
             )
         )
     return markers

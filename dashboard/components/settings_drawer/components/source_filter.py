@@ -37,6 +37,10 @@ def source_filter(data, depl_markers):
             get_checkbox_by_type(
                 "Environment Data Point", 
                 {"Environment Data Point": {"color": "#946000"}},
+            ),
+            get_checkbox_by_type(
+                "Notes",
+                {"Notes": {"color": "#ffd800"}},
             )
          ])
 

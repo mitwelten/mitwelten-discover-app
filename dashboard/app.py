@@ -3,23 +3,27 @@ import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import Output, Input, html, dcc, State
 
+from dashboard.components.data_drawer.types.note import create_note_form
+from dashboard.components.notes.notes import note_modal
 from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id import *
 from dashboard.components.button.buttons import control_buttons
-from dashboard.components.chart_drawer.drawer import chart_drawer
+from dashboard.components.data_drawer.drawer import chart_drawer
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.drawer import settings_drawer
 from dashboard.config.app import app_theme
-from dashboard.init import init_deployment_data, init_environment_data
+from dashboard.init import init_deployment_data, init_environment_data, init_notes
 from dashboard.maindash import app
 from dashboard.util.user_validation import get_user_from_cookies
 
 deployments, deployment_markers, tags = init_deployment_data()
 environments, environment_legend = init_environment_data()
+notes = init_notes()
 
 app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployments),
+    dcc.Store(id=ID_NOTES_STORE, data=notes),
     dcc.Store(id=ID_TAG_DATA_STORE, data=tags),
     dcc.Store(id=ID_ENV_DATA_STORE, data=environments),
     dcc.Store(id=ID_DEPLOYMENT_MARKER_STORE, data=deployment_markers),
@@ -28,8 +32,8 @@ app_content = [
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(), storage_type="local"),
     dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None, lat=None, lon=None)),
     dcc.Store(id=ID_ENVIRONMENT_LEGEND_STORE, data=environment_legend),
+    dcc.Store(id=ID_NEW_NOTE_STORE, data=dict()),
 
-    html.Div(id=ID_NOTIFICATION_CONTAINER),
     html.Div(
         html.A(
             "MITWELTEN",
@@ -43,7 +47,8 @@ app_content = [
     map_figure,
     *control_buttons(),
     chart_drawer(),
-    settings_drawer(deployments, tags, deployment_markers)
+    settings_drawer(deployments, tags, deployment_markers),
+    note_modal()
 ]
 
 
@@ -54,17 +59,18 @@ discover_app = dmc.MantineProvider(
     withGlobalStyles=True,
     withNormalizeCSS=True,
     children=[
-        dmc.NotificationsProvider(
+        dmc.NotificationsProvider([
             html.Div(
                 children=app_content,
                 id=ID_APP_CONTAINER,
             ),
+            html.Div(id=ID_NOTIFICATION_CONTAINER),
+        ]
         ),
     ]
 )
 
 app.layout = discover_app
-
 
 
 @app.callback(
@@ -74,38 +80,13 @@ app.layout = discover_app
     prevent_initial_call=True
 )
 def map_click(click_lat_lng, zoom):
-    print("click on map")
     loc = ""
     if click_lat_lng is not None:
         loc = f"?lat={click_lat_lng[0]}&lon={click_lat_lng[1]}&zoom={zoom}"
     return loc
 
 
-@app.callback(
-    Output(ID_NOTES_LAYER_GROUP, "children"),
-    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
-    Input(ID_MAP, "dbl_click_lat_lng"),
-    State(ID_MAP, "boundsOptions"),
-    State(ID_NOTES_LAYER_GROUP, "children"),
-    prevent_initial_call=True
-)
-def handle_double_click(click, bounds, markers):
-    user = get_user_from_cookies()
-    print(user)
-    if user is None:
-        notification = create_notification(
-            "Operation not permitted",
-            "Log in to create notes!",
-            NotificationType.WARN
-        )
-        return dash.no_update, notification
 
-    marker = dl.Marker(
-        position=[click[0], click[1]],
-        icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
-    )
-    if markers is None:
-        markers = []
-    return [*markers, marker], ""
+
 
 
