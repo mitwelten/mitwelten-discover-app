@@ -106,3 +106,7 @@
     text-decoration: none;
     /*background: radial-gradient( rgba(255,255,255,0.3) 10%, rgba(0,0,0,0) 50%);*/
 }
+
+input:invalid {
+    outline: none !important;
+}
