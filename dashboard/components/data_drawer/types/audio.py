@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from dash import dcc
 
 from dashboard.api.api_client import get_audio_timeseries
-from dashboard.components.chart_drawer.charts import create_themed_figure
+from dashboard.components.data_drawer.charts import create_themed_figure
 
 
 def create_audio_chart(trigger_id, light_mode=True):

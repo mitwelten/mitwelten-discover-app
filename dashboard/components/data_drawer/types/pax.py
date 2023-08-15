@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from dash import dcc
 
 from dashboard.api.api_client import get_pax_timeseries
-from dashboard.components.chart_drawer.charts import create_themed_figure
+from dashboard.components.data_drawer.charts import create_themed_figure
 import plotly.graph_objects as go
 
 

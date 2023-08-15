@@ -1,7 +1,7 @@
 from dash import dcc
 
 from dashboard.api.api_client import get_environment_data_by_id
-from dashboard.components.chart_drawer.charts import spider_chart
+from dashboard.components.data_drawer.charts import spider_chart
 
 
 def create_environment_chart(legend, trigger_id, light_mode=True):
