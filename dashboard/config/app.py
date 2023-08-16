@@ -1,5 +1,7 @@
 from configuration import PRIMARY_COLOR, SECONDARY_COLOR
 
+DATA_SOURCES_WITHOUT_CHART_SUPPORT = ["Wild Cam", "Access Point"]
+
 SETTINGS_DRAWER_WIDTH = 400
 app_theme = {
     "colorScheme": "light",
