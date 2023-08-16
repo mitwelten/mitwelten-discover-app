@@ -163,7 +163,7 @@ def get_all_fake_notes():
 		"note_id": 0,
 		"node_label": "1000-0001",
 		"title": "This is the Title of the Note",
-		"description": "Awesome description of the note",
+		"description": "Awesome description of the note Awesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the note",
 		"location": {
 			"lat": 47.53514,
 			"lon": 7.61467

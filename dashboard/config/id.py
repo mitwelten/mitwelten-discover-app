@@ -33,7 +33,6 @@ ID_OVERLAY_MAP_STORE = {"role": "map_store", "type": "overlay"}
 ID_CURRENT_CHART_DATA_STORE = "id-current-chart-data"
 ID_DATE_RANGE_STORE = "id-date-range-store"
 ID_ENVIRONMENT_LEGEND_STORE = "id-environment-legend-store"
-ID_NOTE_MODAL = "id-note-modal"
 ID_NEW_NOTE_STORE = "id-new-note-store"
 
 # node types

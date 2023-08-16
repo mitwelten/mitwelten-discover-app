@@ -84,7 +84,7 @@ def open_drawer(marker_click, bounds, map_center, data):
 
 
 @app.callback(
-    Output(ID_CHART_CONTAINER, "children"),
+    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
     Input(ID_CURRENT_CHART_DATA_STORE, "data"),
     State(ID_ENVIRONMENT_LEGEND_STORE, "data"),

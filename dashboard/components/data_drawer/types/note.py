@@ -9,6 +9,7 @@ import dash_leaflet as dl
 from dash import Output, Input, State, html, dcc
 
 import dash_mantine_components as dmc
+from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
 from dashboard.components.button.components.action_button import action_button
@@ -22,6 +23,75 @@ from dashboard.api.api_client import get_fake_note_by_id
 from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.model.note import Note
+
+
+def note_form_non_editable(note: Note):
+    return dmc.Container([
+        dmc.Grid([
+            dmc.Col(dmc.Title(f"Note - {note.node_label}", order=3), span="content"),
+            dmc.Col(dmc.Group([
+                action_button("id-note-attachment-button", "material-symbols:attach-file"),
+                action_button("id-edit-note-attachment-button", "material-symbols:edit")
+                ]),
+                span="content"
+            ),
+        ],
+            justify="space-between",
+        ),
+        dmc.Grid([
+            dmc.Col(dmc.Title(note.title, order=5), span=12),
+            dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span=12),
+            dmc.Col(dmc.Divider(size="xs")),
+            dmc.Col(
+                dmc.Spoiler(
+                    dmc.Text(note.description),
+                    showLabel="Show more",
+                    hideLabel="Hide",
+                    maxHeight=50,
+                ),
+                span=12
+            ),
+            dmc.Col(dmc.Divider(size="xs")),
+            dmc.Col(
+                dmc.List(
+                    size="md",
+                    spacing="sm",
+                    children=[
+                        dmc.ListItem(
+                            f"Location: {note.lat} / {note.lon}",
+                            icon=dmc.ThemeIcon(
+                                DashIconify(icon="material-symbols:location-on-rounded", width=16),
+                                radius="xl",
+                                color=PRIMARY_COLOR,
+                                size=24,
+                            ),
+                        ),
+                        dmc.ListItem(
+                            f"Created at: {note.created_at}",
+                            icon=dmc.ThemeIcon(
+                                DashIconify(icon="material-symbols:clock-loader-40", width=16),
+                                radius="xl",
+                                color=PRIMARY_COLOR,
+                                size=24,
+                            ),
+                        ),
+                        dmc.ListItem(
+                            f"Updated at: {note.updated_at}",
+                            icon=dmc.ThemeIcon(
+                                DashIconify(icon="material-symbols:update-rounded", width=16),
+                                radius="xl",
+                                color=PRIMARY_COLOR,
+                                size=24,
+                            ),
+                        ),
+                    ],
+                ),
+                span="content"
+            )
+        ]),
+    ],
+    )
+
 
 
 def note_form_editable(note: Note):
@@ -53,11 +123,9 @@ def note_form_editable(note: Note):
 
 
 def create_note_form(notes, note_id, theme):
-    print(notes)
     for note in notes:
         if note["note_id"] == note_id:
-            print(Note(note).to_dict())
-            return note_form_editable(Note(note))
+            return note_form_non_editable(Note(note))
 
 
 def create_form(note):
@@ -167,3 +235,18 @@ def show_new_notes_from_store(data):
         all_note_titles.append(html.Div(note["name"]))
     return all_note_titles
 
+
+@app.callback(
+    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
+    Input("id-edit-note-attachment-button", "n_clicks"),
+    State(ID_CURRENT_CHART_DATA_STORE, "data"),
+    State(ID_NOTES_STORE, "data"),
+    State(ID_APP_THEME, "theme"),
+    prevent_initial_call=True
+)
+def create_editable_note_form(click, chart_data, notes, light_mode):
+    if click == 0:
+        return dash.no_update
+    for note in notes:
+        if note["note_id"] == chart_data["id"]:
+            return note_form_editable(Note(note))
