@@ -4,9 +4,8 @@ from dashboard.components.button.buttons import control_buttons
 from dashboard.components.data_drawer.drawer import chart_drawer
 from dashboard.components.data_drawer.types.devices.pollinator import *
 from dashboard.components.map.init_map import map_figure
-from dashboard.components.notes.notes import note_modal
 from dashboard.components.settings_drawer.drawer import settings_drawer
-from dashboard.config.app import app_theme
+from dashboard.config.app import app_theme, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from dashboard.config.map import DEFAULT_LAT, DEFAULT_LON
 from dashboard.init import init_deployment_data, init_environment_data, init_notes
 
@@ -20,7 +19,7 @@ app_content = [
     chart_drawer(),
     *control_buttons(),
     settings_drawer(deployments, tags, data_sources),
-    note_modal(),
+    dmc.Modal(id="id-note-attachment-modal", size="lg", opened=False, zIndex=30000),
 
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployments),
@@ -34,6 +33,7 @@ app_content = [
     dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None, location=None)),
     dcc.Store(id=ID_ENVIRONMENT_LEGEND_STORE, data=environment_legend),
     dcc.Store(id=ID_NEW_NOTE_STORE, data=dict()),
+    dcc.Store(id=ID_FOCUS_ON_MAP_LOCATION, data=dict(lat=DEFAULT_LAT, lon=DEFAULT_LON)),
 
     html.Div(
         html.A(
@@ -47,7 +47,6 @@ app_content = [
     ),
 
 
-    dcc.Store(id=ID_FOCUS_ON_MAP_LOCATION, data=dict(lat=DEFAULT_LAT, lon=DEFAULT_LON)),
 ]
 
 
