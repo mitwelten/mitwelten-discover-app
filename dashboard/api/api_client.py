@@ -136,7 +136,21 @@ def get_fake_note_by_id(note_id):
 			"tag_id": 135,
 			"name": "FS1"
 		}],
-		"file_ids": [20, 34]
+		"files": [
+		    {
+		        "id": 20,
+		        "name": "The Book",
+		        "type": "pdf",
+		        "last_modified": "2021-03-15T23:00:00+00:00"
+		    },
+		    {
+		        "id": 23,
+		        "name": "Mitwelten Logo",
+		        "type": "png",
+		        "last_modified": "2021-03-12T23:00:00+00:00"
+		    }
+		    ] 
+
 	}
     """)
     return json_note
@@ -160,7 +174,20 @@ def get_all_fake_notes():
 			"tag_id": 135,
 			"name": "FS1"
 		}],
-		"file_ids": [20, 34]
+		"files": [
+		    {
+		        "id": 20,
+		        "name": "The Book",
+		        "type": "pdf",
+		        "last_modified": "2021-03-15T23:00:00+00:00"
+		    },
+		    {
+		        "id": 23,
+		        "name": "Mitwelten Logo",
+		        "type": "png",
+		        "last_modified": "2021-03-12T23:00:00+00:00"
+		    }
+		    ] 
 	},
     {
         "note_id": 1,
@@ -186,7 +213,21 @@ def get_all_fake_notes():
                 "name": "Villa"
             }
         ],
-        "file_ids": [10, 13]
+		"files": [
+		    {
+		        "id": 10,
+		        "name": "Documentation",
+		        "type": "pdf",
+		        "last_modified": "2021-23-15T23:00:00+00:00"
+		    },
+		    {
+		        "id": 21,
+		        "name": "Foto vom Wasser",
+		        "type": "png",
+		        "last_modified": "2021-13-12T23:00:00+00:00"
+		    }
+		    ] 
+
     }
     ]
     """)
