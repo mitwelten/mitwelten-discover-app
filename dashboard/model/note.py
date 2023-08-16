@@ -1,3 +1,6 @@
+from dashboard.model.file import File
+
+
 class Note:
     def __init__(self, json_note):
         self.note_id = json_note.get("note_id")
@@ -12,9 +15,13 @@ class Note:
             if json_note.get("tags") is not None
             else []
         )
+        self.files = (
+            [File(t) for t in json_note.get("files")]
+            if json_note.get("files") is not None
+            else []
+        )
         self.created_at = json_note.get("created_at")
         self.updated_at = json_note.get("updated_at")
-        self.file_ids = json_note.get("file_ids")
         # TODO: creator ???
 
     def to_dict(self):
@@ -28,5 +35,5 @@ class Note:
             tags=self.tags,
             created_at=self.created_at,
             updated_at=self.updated_at,
-            file_ids=self.file_ids,
+            files=[f.to_dict() for f in self.files] if self.files is not None else []
         )
