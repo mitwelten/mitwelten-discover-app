@@ -108,7 +108,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_
                         ),
                     ],
                     icon=dict(iconUrl=colors[d.node_type]['svgPath'], iconAnchor=[15, 6], iconSize=30),
-                    id={"role": f"{d.node_type}", "id": d.deployment_id, "label": d.node_label, "lat": d.lat,  "lon": d.lon},
+                    id={"role": f"{d.node_type}", "id": d.deployment_id, "label": "Node"},
                 )
             )
     return markers
@@ -141,7 +141,7 @@ def add_environment_markers(values, data):
                     ),
                 ],
                 icon=dict(iconUrl="assets/markers/environment.svg", iconAnchor=[15, 6], iconSize=30),
-                id={"role": "Environment", "id": e.environment_id, "label": "", "lat": e.lat,  "lon": e.lon},
+                id={"role": "Environment", "id": e.environment_id, "label": "Node"},
             )
         )
     return markers
@@ -174,7 +174,7 @@ def add_note_markers(values, data):
                     ),
                 ],
                 icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
-                id={"role": "Note", "id": n.note_id, "label": "", "lat": n.lat,  "lon": n.lon},
+                id={"role": "Note", "id": n.note_id, "label": "Node"},
             )
         )
     return markers

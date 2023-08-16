@@ -1,10 +1,14 @@
+import dash
 import dash_mantine_components as dmc
-from dash import dcc
 import plotly.graph_objects as go
+from dash import Output, Input, ALL, State
+from dash import dcc
 
 from dashboard.api.api_client import get_env_timeseries
 from dashboard.components.data_drawer.charts import create_themed_figure
 from dashboard.config.api import *
+from dashboard.config.id import *
+from dashboard.maindash import app
 from util.validations import cleanup_timeseries
 
 
@@ -78,3 +82,31 @@ def create_env_chart(trigger_id, light_mode=True):
         persistence=True,
         variant="outline",
     )
+
+
+@app.callback(
+    Output({"role": "Env Sensor", "label": "Store"}, "data"),
+    Output(ID_FOCUS_ON_MAP_LOCATION, "data", allow_duplicate=True),
+    Input({"role": "Env. Sensor", "id": ALL, "label": "Node"}, "n_clicks"),
+    State(ID_DEPLOYMENT_DATA_STORE, "data"),
+    prevent_initial_call=True
+)
+def handle_env_click(_, data):
+    data = data["Env. Sensor"]
+    if dash.ctx.triggered_id is not None:
+        for note in data:
+            if note["deployment_id"] == dash.ctx.triggered_id["id"]:
+                return note, note["location"]
+
+    return dash.no_update, dash.no_update
+
+
+@app.callback(
+    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
+    Input({"role": "Env Sensor", "label": "Store"}, "data"),
+    State(ID_APP_THEME, "theme"),
+    prevent_initial_call=True
+)
+def create_figure_from_store(data, light_mode):
+    print("create env chart")
+    return create_env_chart(data["deployment_id"], light_mode)

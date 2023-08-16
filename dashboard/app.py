@@ -1,20 +1,23 @@
-import dash
-import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import Output, Input, html, dcc, State
+from dash import html, dcc
 
-from dashboard.components.data_drawer.types.note import create_note_form
-from dashboard.components.notes.notes import note_modal
-from dashboard.components.notifications.notification import create_notification, NotificationType
-from dashboard.config.id import *
+
+from dashboard.components.data_drawer.types.devices.audio import *
+from dashboard.components.data_drawer.types.note import *
+from dashboard.components.data_drawer.types.devices.wild_cam import *
+from dashboard.components.data_drawer.types.devices.env import *
+from dashboard.components.data_drawer.types.devices.pax import *
+from dashboard.components.data_drawer.types.devices.pollinator import *
+from dashboard.components.data_drawer.types.environment_point import *
 from dashboard.components.button.buttons import control_buttons
 from dashboard.components.data_drawer.drawer import chart_drawer
 from dashboard.components.map.init_map import map_figure
+from dashboard.components.notes.notes import note_modal
 from dashboard.components.settings_drawer.drawer import settings_drawer
 from dashboard.config.app import app_theme
+from dashboard.config.id import *
 from dashboard.init import init_deployment_data, init_environment_data, init_notes
 from dashboard.maindash import app
-from dashboard.util.user_validation import get_user_from_cookies
 
 deployments, deployment_markers, tags = init_deployment_data()
 environments, environment_legend = init_environment_data()
@@ -33,6 +36,11 @@ app_content = [
     dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None, lat=None, lon=None)),
     dcc.Store(id=ID_ENVIRONMENT_LEGEND_STORE, data=environment_legend),
     dcc.Store(id=ID_NEW_NOTE_STORE, data=dict()),
+    dcc.Store(id=ID_FOCUS_ON_MAP_LOCATION, data=dict()),
+    dcc.Store(id={"role": "Note", "label": "Store"}, data=None),
+    dcc.Store(id={"role": "Environment", "label": "Store"}, data=None),
+    dcc.Store(id={"role": "Env Sensor", "label": "Store"}, data=None),
+    *[dcc.Store(id={"role": key, "label": "Store"}, data=None, storage_type="local") for key in deployments.keys()],
 
     html.Div(
         html.A(

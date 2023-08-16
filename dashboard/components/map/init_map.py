@@ -1,13 +1,16 @@
+from pprint import pprint
 from urllib.parse import urlparse, parse_qs
 
+import dash
 import dash_leaflet as dl
-from dash import Output, Input
+from dash import Output, Input, State, ALL, MATCH
 
 from dashboard.config import map as map_config
 from dashboard.config.id import *
 from dashboard.config.map import *
 from dashboard.config.map import DEFAULT_MAX_ZOOM
 from dashboard.maindash import app
+from util.functions import ensure_marker_visibility
 
 initial_map = map_config.MAPS[0]
 map_figure = dl.Map(
@@ -74,3 +77,18 @@ def display_page(href):
         zoom = float(query_params["zoom"][0])
 
     return (lat, lon), zoom
+
+
+@app.callback(
+    Output(ID_MAP, "center", allow_duplicate=True),
+    Input(ID_FOCUS_ON_MAP_LOCATION, "data"),
+    State(ID_MAP, "bounds"),
+    State(ID_MAP, "center"),
+    prevent_initial_call=True
+)
+def update_map_center(data, bounds, center):
+    print("ensure center", data)
+    if data is None:
+        return dash.no_update
+    return ensure_marker_visibility(center, bounds, data)
+
