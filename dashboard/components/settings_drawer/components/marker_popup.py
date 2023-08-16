@@ -69,7 +69,7 @@ def environment_popup(environment):
                 className="color-point",
                 style={"background": "#abde00"}
             ),
-            dmc.Text("Environment Datapoint", weight=700, size="sm"),
+            dmc.Text("Environment Data Point", weight=700, size="sm"),
         ],
             position="left",
             spacing="sm"

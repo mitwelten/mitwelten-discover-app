@@ -4,9 +4,9 @@ from dash import html, Output, Input, State
 
 from dashboard.components.settings_drawer.components.date_time_section import date_time_section
 from dashboard.components.settings_drawer.components.general_controls import general_controls
-from dashboard.components.settings_drawer.components.tag_filter import tag_filter
-from dashboard.components.settings_drawer.components.source_filter import source_filter
 from dashboard.components.settings_drawer.components.marker_popup import environment_popup, marker_popup
+from dashboard.components.settings_drawer.components.source_filter import source_filter
+from dashboard.components.settings_drawer.components.tag_filter import tag_filter
 from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
@@ -19,7 +19,7 @@ def divider(title: str):
     return dmc.Divider(label=title, labelPosition="center", size="md")
 
 
-def drawer_content(node_types, tags_data, depl_markers):
+def drawer_content(deployments, tags_data, depl_markers):
     return dmc.Container(
         children=[
             dmc.Space(h=30),
@@ -28,7 +28,7 @@ def drawer_content(node_types, tags_data, depl_markers):
                     divider("Date Range"),
                     date_time_section(),
                     divider("Data Source"),
-                    source_filter(node_types, depl_markers),
+                    source_filter(deployments, depl_markers),
                     divider("Tags"),
                     tag_filter(tags_data),
                     divider("Settings"),
@@ -108,7 +108,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_
                         ),
                     ],
                     icon=dict(iconUrl=colors[d.node_type]['svgPath'], iconAnchor=[15, 6], iconSize=30),
-                    id={"role": f"{d.node_type}", "id": d.deployment_id, "label": "Node"},
+                    id={"role": f"{d.node_type}", "id": d.deployment_id, "label": "Node", "lat": d.lat, "lon": d.lon},
                 )
             )
     return markers
@@ -120,7 +120,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_
     State(ID_ENV_DATA_STORE, "data"),
 )
 def add_environment_markers(values, data):
-    if "Environment Data Point" not in values:
+    if "Environment Data Points" not in values:
         return []
     markers = []
 
@@ -141,7 +141,7 @@ def add_environment_markers(values, data):
                     ),
                 ],
                 icon=dict(iconUrl="assets/markers/environment.svg", iconAnchor=[15, 6], iconSize=30),
-                id={"role": "Environment", "id": e.environment_id, "label": "Node"},
+                id={"role": "Environment Data Points", "id": e.environment_id, "label": "Node", "lat": e.lat, "lon": e.lon},
             )
         )
     return markers
@@ -174,7 +174,7 @@ def add_note_markers(values, data):
                     ),
                 ],
                 icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
-                id={"role": "Note", "id": n.note_id, "label": "Node"},
+                id={"role": "Notes", "id": n.note_id, "label": "Node", "lat": n.lat, "lon": n.lon},
             )
         )
     return markers

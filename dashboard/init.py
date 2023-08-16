@@ -19,7 +19,11 @@ def init_deployment_data():
 
     # {type: color}
     deployment_markers = {}
-    idx_list = enumerate(sorted(all_types))
+    all_types = sorted(all_types)
+
+    all_types = [*all_types, "Notes", "Environment Data Points"]
+
+    idx_list = enumerate(all_types)
     for (idx, node_type) in idx_list:
         deployment_markers[node_type] = dict(
             color=DEFAULT_MARKER_COLORS[idx],

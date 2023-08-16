@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from pprint import pprint
 
 import dash
 import plotly.graph_objects as go
@@ -34,28 +33,4 @@ def create_audio_chart(trigger_id, light_mode=True):
     return graph
 
 
-@app.callback(
-    Output({"role": "Audio Logger", "label": "Store"}, "data"),
-    Output(ID_FOCUS_ON_MAP_LOCATION, "data", allow_duplicate=True),
-    Input({"role": "Audio Logger", "id": ALL, "label": "Node"}, "n_clicks"),
-    State(ID_DEPLOYMENT_DATA_STORE, "data"),
-    prevent_initial_call=True
-)
-def handle_audio_logger_click(_, data):
-    data = data["Audio Logger"]
-    if dash.ctx.triggered_id is not None:
-        for note in data:
-            if note["deployment_id"] == dash.ctx.triggered_id["id"]:
-                return note, note["location"]
 
-    return dash.no_update, dash.no_update
-
-
-@app.callback(
-    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
-    Input({"role": "Audio Logger", "label": "Store"}, "data"),
-    State(ID_APP_THEME, "theme"),
-    prevent_initial_call=True
-)
-def create_figure_from_store(data, light_mode):
-    return create_audio_chart(data["deployment_id"], light_mode)

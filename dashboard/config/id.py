@@ -55,7 +55,7 @@ ID_TAG_RESET_BUTTON = "id-tag-reset-button"
 
 # left drawer
 ID_LEFT_DRAWER_CONTENT_SCROLL_AREA = "id-scroll-div-container"
-ID_CHART_CONTAINER = "id-measurement-chart"
+ID_CHART_CONTAINER = "id-chart-container"
 ID_CHART_DRAWER = "id-chart-drawer"
 ID_ENVIRONMENT_CHECKBOX = "id-environment-checkbox"
 
@@ -69,3 +69,4 @@ ID_OVERLAY_MAP = "id-map-overlay"
 ID_MINIMAP_LABEL = "id-minimap-label"
 ID_MINIMAP_LAYER_BUTTON = "id-minimap-layer-button"
 ID_FOCUS_ON_MAP_LOCATION = "id-focus-on-map-position"
+ID_MAP_IN_PROGRES = "id-map-in-progres"

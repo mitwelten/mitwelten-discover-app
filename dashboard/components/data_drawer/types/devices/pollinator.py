@@ -4,12 +4,11 @@ import dash
 import dash_mantine_components as dmc
 import plotly.graph_objects as go
 from dash import Output, Input, dcc, State, html, callback, ALL
-from dashboard.config.id import *
 
 from dashboard.api.api_client import get_pollinator_timeseries
 from dashboard.components.data_drawer.charts import create_themed_figure
+from dashboard.config.id import *
 from dashboard.maindash import app
-
 
 tabs = [
     dict(
@@ -82,35 +81,9 @@ def create_pollinator_chart(_1, _2):
 @callback(
     Output("tabs-content", "children"),
     Input("tabs-example", "value"),
-    Input({"role": "Pollinator Cam", "label": "Store"}, "data"),
+    Input(ID_CURRENT_CHART_DATA_STORE, "data"),
     State(ID_APP_THEME, "theme"),
 )
 def render_content(active, data, theme):
-    return create_graph(tabs[int(active)]["pollinator_class"], data["deployment_id"], theme)
+    return create_graph(tabs[int(active)]["pollinator_class"], data["id"], theme)
 
-
-@app.callback(
-    Output({"role": "Pollinator Cam", "label": "Store"}, "data"),
-    Output(ID_FOCUS_ON_MAP_LOCATION, "data", allow_duplicate=True),
-    Input({"role": "Pollinator Cam", "id": ALL, "label": "Node"}, "n_clicks"),
-    State(ID_DEPLOYMENT_DATA_STORE, "data"),
-    prevent_initial_call=True
-)
-def handle_pollinator_cam_click(_, data):
-    data = data["Pollinator Cam"]
-    if dash.ctx.triggered_id is not None:
-        for note in data:
-            if note["deployment_id"] == dash.ctx.triggered_id["id"]:
-                return note, note["location"]
-
-    return dash.no_update, dash.no_update
-
-
-@app.callback(
-    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
-    Input({"role": "Pollinator Cam", "label": "Store"}, "data"),
-    State(ID_APP_THEME, "theme"),
-    prevent_initial_call=True
-)
-def create_figure_from_store(data, light_mode):
-    return create_pollinator_chart(data["deployment_id"], light_mode)

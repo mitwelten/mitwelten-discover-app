@@ -31,18 +31,9 @@ def get_checkbox_by_type(node_type: str, depl_markers: dict):
 def source_filter(data, depl_markers):
     brick_types = reduce(
         list.__add__,
-        [list(map(lambda x: get_checkbox_by_type(x, depl_markers), (sorted(data.keys()))))],
-        [
-            dmc.Checkbox(label="All", value="all", size="xs"),
-            get_checkbox_by_type(
-                "Environment Data Point", 
-                {"Environment Data Point": {"color": "#946000"}},
-            ),
-            get_checkbox_by_type(
-                "Notes",
-                {"Notes": {"color": "#ffd800"}},
-            )
-         ])
+        [list(map(lambda x: get_checkbox_by_type(x, depl_markers), data.keys()))],
+        [dmc.Checkbox(label="All", value="all", size="xs")]
+    )
 
     deployment_ids = []
     for key in data.keys():

@@ -29,30 +29,3 @@ def create_pax_chart(trigger_id, light_mode=True):
         className="chart-graph",
     )
     return graph
-
-
-@app.callback(
-    Output({"role": "Pax Counter", "label": "Store"}, "data"),
-    Output(ID_FOCUS_ON_MAP_LOCATION, "data", allow_duplicate=True),
-    Input({"role": "Pax Counter", "id": ALL, "label": "Node"}, "n_clicks"),
-    State(ID_DEPLOYMENT_DATA_STORE, "data"),
-    prevent_initial_call=True
-)
-def handle_pax_click(_, data):
-    data = data["Pax Counter"]
-    if dash.ctx.triggered_id is not None:
-        for note in data:
-            if note["deployment_id"] == dash.ctx.triggered_id["id"]:
-                return note, note["location"]
-
-    return dash.no_update, dash.no_update
-
-
-@app.callback(
-    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
-    Input({"role": "Pax Counter", "label": "Store"}, "data"),
-    State(ID_APP_THEME, "theme"),
-    prevent_initial_call=True
-)
-def create_figure_from_store(data, light_mode):
-    return create_pax_chart(data["deployment_id"], light_mode)
