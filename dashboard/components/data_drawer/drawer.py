@@ -10,7 +10,8 @@ from dashboard.components.data_drawer.types.devices.pax import create_pax_chart
 from dashboard.components.data_drawer.types.devices.pollinator import create_pollinator_chart
 from dashboard.components.data_drawer.types.environment_point import create_environment_point_chart
 from dashboard.components.data_drawer.types.note import create_note_form
-from dashboard.config.app import SETTINGS_DRAWER_WIDTH
+from dashboard.components.notifications.notification import NotificationType, create_notification
+from dashboard.config.app import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from dashboard.config.id import *
 from dashboard.maindash import app
 from util.functions import safe_reduce, ensure_marker_visibility
@@ -75,13 +76,16 @@ def open_drawer(marker_click, bounds, map_center, data):
             bounds,
             dict(lat=trigger["lat"], lon=trigger["lon"])
         )
-        return True, "bottom", data, new_center
+        if trigger["role"] not in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
+            return True, "bottom", data, new_center
+        return dash.no_update, dash.no_update, data, new_center
 
     return dash.no_update, dash.no_update, data, map_center
 
 
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
+    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
     Input(ID_CURRENT_CHART_DATA_STORE, "data"),
     State(ID_ENVIRONMENT_LEGEND_STORE, "data"),
     State(ID_NOTES_STORE, "data"),
@@ -90,12 +94,14 @@ def open_drawer(marker_click, bounds, map_center, data):
 )
 def create_figure_from_store(chart_data, legend, notes, light_mode):
     match chart_data["role"]:
-        case "Audio Logger": return create_audio_chart(chart_data["id"], light_mode)
-        case "Env. Sensor": return create_env_chart(chart_data["id"], light_mode)
-        case "Pax Counter": return create_pax_chart(chart_data["id"], light_mode)
-        case "Pollinator Cam": return create_pollinator_chart(chart_data["id"], light_mode)
-        case "Notes": return create_note_form(chart_data["id"], light_mode)
-        case "Environment Data Points": return create_environment_point_chart(legend, chart_data["id"], light_mode)
-    return dash.no_update
+        case "Audio Logger": chart_children = create_audio_chart(chart_data["id"], light_mode)
+        case "Env. Sensor": chart_children = create_env_chart(chart_data["id"], light_mode)
+        case "Pax Counter": chart_children = create_pax_chart(chart_data["id"], light_mode)
+        case "Pollinator Cam": chart_children = create_pollinator_chart(chart_data["id"], light_mode)
+        case "Notes": chart_children = create_note_form(notes, chart_data["id"], light_mode)
+        case "Environment Data Points": chart_children = create_environment_point_chart(legend, chart_data["id"], light_mode)
+        case x: return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO)
+    return chart_children, dash.no_update
+
 
 
