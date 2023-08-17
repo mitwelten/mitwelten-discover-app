@@ -88,6 +88,11 @@ def note_popup(note):
     return dmc.Container([
         *header(note.note_id, "Note", note.node_label, "#ffd800"),
         *time_section("Created", created_at, "Updated", updated_at),
+        dmc.Space(h=10),
+        dmc.Group(
+            children=[dmc.Badge(t, size="sm", variant="outline") for t in note.tags],
+            spacing="xs"
+        ),
     ],
         fluid=True,
         style={"width": "220px"}

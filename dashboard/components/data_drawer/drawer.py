@@ -1,5 +1,3 @@
-from pprint import pprint
-
 import dash
 import dash_mantine_components as dmc
 from dash import Output, Input, html, ALL, State

@@ -58,6 +58,7 @@ map_figure = dl.Map(
 
 @app.callback(
     Output(ID_MAP, "viewport"),
+    Output(ID_MAP, "zoom"),
     Input(ID_URL_LOCATION, 'href'),
     State(ID_MAP, "bounds"),
     prevent_initial_call=True
@@ -74,4 +75,4 @@ def display_page(href, bounds):
         lon = float(query_params["lon"][0])
         zoom = float(query_params["zoom"][0])
 
-    return dict(center=(lat, lon), zoom=zoom)
+    return dict(center=(lat, lon), zoom=zoom), zoom
