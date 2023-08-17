@@ -1,14 +1,6 @@
-from datetime import datetime
-from pprint import pprint
-
 import dash
 import dash_mantine_components as dmc
-from dash import Output, Input, ALL, State
-import dash
-import dash_leaflet as dl
 from dash import Output, Input, State, html, dcc
-
-import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
@@ -17,12 +9,8 @@ from dashboard.components.notifications.notification import create_notification,
 from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.model.file import File
-from dashboard.util.user_validation import get_user_from_cookies
-
-from dashboard.api.api_client import get_fake_note_by_id
-from dashboard.config.id import *
-from dashboard.maindash import app
 from dashboard.model.note import Note
+from dashboard.util.user_validation import get_user_from_cookies
 from dashboard.util.util import pretty_date
 
 
@@ -41,6 +29,7 @@ def list_item(text, icon):
 def note_form_non_editable(note: Note):
     user = get_user_from_cookies()
     return dmc.Container([
+        dcc.Store("id-is-editable-store", data=dict(state=False)),
         dmc.Grid([
             dmc.Col(dmc.Title(note.title, order=5), span="content"),
             dmc.Col(dmc.Group([
@@ -85,6 +74,7 @@ def note_form_non_editable(note: Note):
 
 def note_form_editable(note: Note):
     return dmc.Container([
+        dcc.Store("id-is-editable-store", data=dict(state=True)),
         dmc.Grid([
             dmc.Col(dmc.Title(f"Note - {note.node_label}", order=3), span="content"),
             dmc.Col(action_button(ID_NOTE_OPEN_MODAL_BUTTON, "material-symbols:attach-file"), span="content"),
@@ -115,8 +105,9 @@ def create_note_form(notes, note_id, theme):
             return note_form_non_editable(Note(note))
 
 
-
-def attachment_table(note):
+def attachment_table(note, is_editable=False):
+    print("table: ", is_editable)
+    user = get_user_from_cookies()
     header = [
         html.Thead(
             html.Tr(
@@ -139,13 +130,30 @@ def attachment_table(note):
                 html.Td(file.type),
                 html.Td(file.last_modified),
                 html.Td(dmc.Group([
-                    action_button("id-attachment-delete-button", "material-symbols:delete", size="sm"),
+                    (action_button("id-attachment-delete-button", "material-symbols:delete", size="sm")
+                        if user is not None and is_editable else {}),
                     action_button("id-attachment-download-button", "material-symbols:download", size="sm")
                 ])),
             ])
         )
 
     body = [html.Tbody(rows)]
+    drag_n_dop = dcc.Upload(
+        id='upload-image',
+        children="Click or Drag and Drop",
+        style={
+            'width': '100%',
+            'height': '60px',
+            'lineHeight': '60px',
+            'borderWidth': '1px',
+            'borderStyle': 'dashed',
+            'borderRadius': '5px',
+            'textAlign': 'center',
+            'margin': '10px'
+        },
+        multiple=True
+    )
+    html.Div(id='output-image-upload'),
     return dmc.Container(
         dmc.Stack([
             dmc.Table(
@@ -155,22 +163,7 @@ def attachment_table(note):
                 withBorder=False,
                 withColumnBorders=False,
                 ),
-            dcc.Upload(
-                id='upload-image',
-                children="Click or Drag and Drop",
-                style={
-                    'width': '100%',
-                    'height': '60px',
-                    'lineHeight': '60px',
-                    'borderWidth': '1px',
-                    'borderStyle': 'dashed',
-                    'borderRadius': '5px',
-                    'textAlign': 'center',
-                    'margin': '10px'
-                },
-                multiple=True
-            ),
-            html.Div(id='output-image-upload'),
+            drag_n_dop if is_editable else {}
         ]
         )
     )
@@ -203,13 +196,14 @@ def update_output(list_of_contents, list_of_names, list_of_dates, store):
     Input(ID_NOTE_OPEN_MODAL_BUTTON, "n_clicks"),
     State(ID_CURRENT_CHART_DATA_STORE, "data"),
     State(ID_NOTES_STORE, "data"),
+    State("id-is-editable-store", "data"),
     prevent_initial_call=True
 )
-def open_attachment_modal(click, chart_data, notes):
+def open_attachment_modal(click, chart_data, notes, is_editable):
     if click != 0:
         for note in notes:
             if note["note_id"] == chart_data["id"]:
-                return True, attachment_table(note)
+                return True, attachment_table(note, is_editable["state"])
     return dash.no_update, dash.no_update
 
 
