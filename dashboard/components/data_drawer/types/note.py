@@ -106,7 +106,6 @@ def create_note_form(notes, note_id, theme):
 
 
 def attachment_table(note, is_editable=False):
-    print("table: ", is_editable)
     user = get_user_from_cookies()
     header = [
         html.Thead(

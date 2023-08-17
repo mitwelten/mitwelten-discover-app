@@ -64,7 +64,6 @@ map_figure = dl.Map(
     prevent_initial_call=True
 )
 def display_page(href, bounds):
-    print(bounds)
     lat = DEFAULT_LAT
     lon = DEFAULT_LON
     zoom = DEFAULT_ZOOM
