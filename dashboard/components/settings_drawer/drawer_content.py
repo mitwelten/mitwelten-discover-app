@@ -51,7 +51,7 @@ def drawer_content(deployments, tags_data, depl_markers):
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_TAG_CHIPS_GROUP, "value"),
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
-    Input(ID_DATE_RANGE_PICKER, "value"),
+    Input(ID_DATE_RANGE_STORE, "data"),
     State(ID_DEPLOYMENT_MARKER_STORE, "data"),
     State(ID_DEPLOYMENT_DATA_STORE, "data"),
 )
@@ -86,7 +86,8 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_
 
     # time filter
     for key in depl_to_show.keys():
-        depl_to_show[key] = list(filter(lambda x: was_deployed(x, time_range[0], time_range[1]), depl_to_show[key]))
+        depl_to_show[key] = list(filter(lambda x: was_deployed(x, time_range["start"], time_range["end"]), depl_to_show[key]))
+
 
     markers = []
 
