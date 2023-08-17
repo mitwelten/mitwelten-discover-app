@@ -19,7 +19,7 @@ def divider(title: str):
     return dmc.Divider(label=title, labelPosition="center", size="md")
 
 
-def drawer_content(deployments, tags_data, depl_markers):
+def drawer_content(deployments, tags_data, data_sources):
     return dmc.Container(
         children=[
             dmc.Space(h=30),
@@ -28,7 +28,7 @@ def drawer_content(deployments, tags_data, depl_markers):
                     divider("Date Range"),
                     date_time_section(),
                     divider("Data Source"),
-                    source_filter(deployments, depl_markers),
+                    source_filter(deployments, data_sources),
                     divider("Tags"),
                     tag_filter(tags_data),
                     divider("Settings"),
@@ -52,7 +52,7 @@ def drawer_content(deployments, tags_data, depl_markers):
     Input(ID_TAG_CHIPS_GROUP, "value"),
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
-    State(ID_DEPLOYMENT_MARKER_STORE, "data"),
+    State(ID_DATA_SOURCE_STORE, "data"),
     State(ID_DEPLOYMENT_DATA_STORE, "data"),
 )
 def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_data):

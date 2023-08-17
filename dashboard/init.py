@@ -18,17 +18,8 @@ def init_deployment_data():
     tags = json.dumps(all_tags)
 
     # {type: color}
-    deployment_markers = {}
+    data_sources = {}
     all_types = sorted(all_types)
-
-    all_types = [*all_types, "Notes", "Environment Data Points"]
-
-    idx_list = enumerate(all_types)
-    for (idx, node_type) in idx_list:
-        deployment_markers[node_type] = dict(
-            color=DEFAULT_MARKER_COLORS[idx],
-            svgPath=f"assets/markers/location-{idx}.svg"
-        )
 
     # {type: deployment}
     deployment_dict = {}
@@ -38,7 +29,17 @@ def init_deployment_data():
             if node_type.lower().strip() in d["node"]["type"].lower()
         ]
 
-    return deployment_dict, deployment_markers, tags
+    idx_list = enumerate(all_types)
+    for (idx, node_type) in idx_list:
+        data_sources[node_type] = dict(
+            color=DEFAULT_MARKER_COLORS[idx],
+            svgPath=f"assets/markers/location-{idx}.svg"
+        )
+
+    data_sources["Notes"] = dict(color="#ffd800", svgPath="assets/markers/note.svg")
+    data_sources["Environment Data Points"] = dict(color="#946000", svgPath="assets/markers/environment.svg")
+
+    return deployment_dict, data_sources, tags
 
 
 def init_environment_data():

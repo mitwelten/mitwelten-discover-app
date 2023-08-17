@@ -14,15 +14,12 @@ environments, environment_legend = init_environment_data()
 notes = init_notes()
 
 app_content = [
-
-
-
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployments),
     dcc.Store(id=ID_NOTES_STORE, data=notes),
     dcc.Store(id=ID_TAG_DATA_STORE, data=tags),
     dcc.Store(id=ID_ENV_DATA_STORE, data=environments),
-    dcc.Store(id=ID_DEPLOYMENT_MARKER_STORE, data=data_sources),
+    dcc.Store(id=ID_DATA_SOURCE_STORE, data=data_sources),
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(), storage_type="local"),
