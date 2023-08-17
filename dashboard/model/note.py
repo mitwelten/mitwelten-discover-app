@@ -22,7 +22,7 @@ class Note:
         )
         self.created_at = json_note.get("created_at")
         self.updated_at = json_note.get("updated_at")
-        # TODO: creator ???
+        self.creator = json_note.get("creator")
 
     def to_dict(self):
         return dict(
@@ -35,5 +35,6 @@ class Note:
             tags=self.tags,
             created_at=self.created_at,
             updated_at=self.updated_at,
+            creator=self.creator,
             files=[f.to_dict() for f in self.files] if self.files is not None else []
         )

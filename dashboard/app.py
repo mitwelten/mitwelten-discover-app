@@ -19,7 +19,7 @@ app_content = [
     chart_drawer(),
     *control_buttons(),
     settings_drawer(deployments, tags, data_sources),
-    dmc.Modal(id="id-note-attachment-modal", size="lg", opened=False, zIndex=30000),
+    dmc.Modal(id=ID_NOTE_ATTACHMENT_MODAL, size="lg", opened=False, zIndex=30000),
 
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployments),
@@ -32,8 +32,8 @@ app_content = [
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(), storage_type="local"),
     dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None, location=None)),
     dcc.Store(id=ID_ENVIRONMENT_LEGEND_STORE, data=environment_legend),
-    dcc.Store(id=ID_NEW_NOTE_STORE, data=dict()),
     dcc.Store(id=ID_FOCUS_ON_MAP_LOCATION, data=dict(lat=DEFAULT_LAT, lon=DEFAULT_LON)),
+    dcc.Store(id=ID_NEW_NOTE_STORE, data=[]),
 
     html.Div(
         html.A(
@@ -61,7 +61,8 @@ discover_app = dmc.MantineProvider(
                 id=ID_APP_CONTAINER,
             ),
             html.Div(id=ID_NOTIFICATION_CONTAINER),
-        ]
+        ],
+            zIndex=9999999
         ),
     ]
 )

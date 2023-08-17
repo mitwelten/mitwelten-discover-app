@@ -132,6 +132,7 @@ def get_fake_note_by_id(note_id):
 		},
 		"created_at": "2021-03-15T23:00:00+00:00",
 		"updated_at": "2021-04-20T22:00:00+00:00",
+		"creator": "Andri Wild",
 		"tags": [{
 			"tag_id": 135,
 			"name": "FS1"
@@ -170,6 +171,7 @@ def get_all_fake_notes():
 		},
 		"created_at": "2021-03-15T23:00:00+00:00",
 		"updated_at": "2021-04-20T22:00:00+00:00",
+		"creator": "Andri Wild",
 		"tags": [{
 			"tag_id": 135,
 			"name": "FS1"
@@ -200,6 +202,7 @@ def get_all_fake_notes():
         },
         "created_at": "2023-03-15T23:00:00+00:00",
         "updated_at": "2023-04-20T22:00:00+00:00",
+		"creator": "Andri Wild",
         "tags": [{
             "tag_id": 128,
             "name": "z50cm"

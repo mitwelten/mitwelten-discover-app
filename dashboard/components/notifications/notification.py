@@ -10,14 +10,15 @@ class NotificationType(Enum):
     ERROR = ""
 
 
-def create_notification(title, message, type: NotificationType):
-    match type:
-        case NotificationType.WARN:
-            icon = "material-symbols:warning-outline-rounded"
-        case NotificationType.ERROR:
-            icon = "material-symbols:error-outline-rounded"
-        case _:
-            icon = "material-symbols:circle-notifications"
+def create_notification(title, message, type: NotificationType, icon = None):
+    if icon is None:
+        match type:
+            case NotificationType.WARN:
+                icon = "material-symbols:warning-outline-rounded"
+            case NotificationType.ERROR:
+                icon = "material-symbols:error-outline-rounded"
+            case _:
+                icon = "material-symbols:circle-notifications"
 
     return dmc.Notification(
         title=title,

@@ -48,7 +48,7 @@ def settings_drawer_state(state):
 
 
 @app.callback(
-    Output(ID_CHART_DRAWER, "opened"),
+    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "position"),
     Output(ID_MARKER_CLICK_STORE, "data"),
     Output(ID_MAP, "center", allow_duplicate=True),

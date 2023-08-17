@@ -69,3 +69,12 @@ ID_MINIMAP_LABEL = "id-minimap-label"
 ID_MINIMAP_LAYER_BUTTON = "id-minimap-layer-button"
 ID_FOCUS_ON_MAP_LOCATION = "id-focus-on-map-position"
 ID_MAP_IN_PROGRES = "id-map-in-progres"
+
+# notes
+ID_NOTE_ATTACHMENT_MODAL = "id-note-attachment-modal"
+ID_NOTE_OPEN_MODAL_BUTTON = "id-note-open-modal-button"
+ID_NOTE_EDIT_BUTTON = "id-note-edit-button"
+ID_NOTE_CANCEL_EDIT_BUTTON = "id-note-cancel-edit-button"
+ID_NOTE_SAVE_EDIT_BUTTON = "id-note-save-edit-button"
+ID_NOTE_EDIT_TITLE = "id-note-edit-title"
+ID_NOTE_EDIT_DESCRIPTION = "id-note-edit-description"

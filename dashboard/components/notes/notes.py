@@ -12,8 +12,6 @@ from dashboard.util.user_validation import get_user_from_cookies
 
 
 
-
-
 @app.callback(
     # Output(ID_NOTES_LAYER_GROUP, "children"),
     Output(ID_NEW_NOTE_STORE, "data"),
