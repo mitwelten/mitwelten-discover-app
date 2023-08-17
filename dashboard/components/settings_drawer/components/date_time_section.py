@@ -11,6 +11,7 @@ from dashboard.config.settings import DEFAULT_DATE_RANGES
 from dashboard.config.settings import FIRST_DEPLOYMENT_WEEKS_AGO
 from dashboard.maindash import app
 from dashboard.util.decorators import spaced_section
+from dashboard.util.util import pretty_date
 
 
 @spaced_section
@@ -30,20 +31,26 @@ def date_time_section():
             fullWidth=True,
             data=DEFAULT_DATE_RANGES,
             mt=10,
-            persistence=True
         ),
         dmc.Space(h=20),
-        dmc.Center(
+        dmc.Center([
             dmc.DateRangePicker(
                 id=ID_DATE_RANGE_PICKER,
                 inputFormat="DD MMMM, YY",
                 description="",
                 minDate=date(2020, 8, 5),
                 value=[datetime.now().date() - timedelta(weeks=FIRST_DEPLOYMENT_WEEKS_AGO), datetime.now().date()],
-                styles={"root": {"width": 280}},
+                styles={"root": {"width": 260}},
             ),
-        )
-
+            dmc.Text(
+                id="id-date-range-label",
+                color="dimmed",
+                size="sm",
+                style={"display": "none"},
+            )
+            ],
+            style={"height": "40px"}
+        ),
 
     ])
 
@@ -60,20 +67,25 @@ def change_visibility_of_date_range_picker(value):
 @app.callback(
     Output(ID_DATE_RANGE_STORE, "data", allow_duplicate=True),
     Output(ID_DATE_RANGE_PICKER, "style"),
+    Output("id-date-range-label", "style"),
+    Output("id-date-range-label", "children"),
     Input(ID_DATE_RANGE_SEGMENT, "value"),
     State(ID_DATE_RANGE_PICKER, "value"),
     prevent_initial_call=True
 )
 def update_picker_from_segment(segment_data, picker_value):
     if segment_data == "":
-        return dash.no_update, dash.no_update
+        return dash.no_update, dash.no_update, dash.no_update, dash.no_update
     if segment_data == "custom":
-        return dict(start=picker_value[0], end=picker_value[1]), {"display": "block"}
+        return dict(start=picker_value[0], end=picker_value[1]), {"display": "block"}, {"display": "none"}, dash.no_update
 
     if not segment_data:
         seg_time_range = 7
     else:
         seg_time_range = int(segment_data)
 
-    return dict(start=datetime.now().date() - timedelta(weeks=seg_time_range), end=datetime.now().date()), {"display": "none"}
+    store_data = dict(start=datetime.now().date() - timedelta(weeks=seg_time_range), end=datetime.now().date())
+    label_data_start = pretty_date(datetime.isoformat(datetime.now() - timedelta(weeks=seg_time_range)), "%d %b %Y")
+    label_data_end = pretty_date(datetime.isoformat(datetime.now()),"%d %b %Y")
+    return store_data, {"display": "none"}, {"display": "block"}, f"{label_data_start} - {label_data_end}"
 
