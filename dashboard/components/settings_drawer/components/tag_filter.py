@@ -28,6 +28,7 @@ def tag_filter(all_tags):
                 color=PRIMARY_COLOR,
                 id=ID_FS_TAG_CHIPS_GROUP,
                 data=fs_tags,
+                value="FS1",
                 persistence=True,
             ),
         ]),
