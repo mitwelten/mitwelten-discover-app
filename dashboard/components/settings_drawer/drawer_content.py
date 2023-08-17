@@ -4,7 +4,7 @@ from dash import html, Output, Input, State
 
 from dashboard.components.settings_drawer.components.date_time_section import date_time_section
 from dashboard.components.settings_drawer.components.general_controls import general_controls
-from dashboard.components.settings_drawer.components.marker_popup import environment_popup, marker_popup
+from dashboard.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_popup
 from dashboard.components.settings_drawer.components.source_filter import source_filter
 from dashboard.components.settings_drawer.components.tag_filter import tag_filter
 from dashboard.config.id import *
@@ -97,7 +97,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_
                     position=[d.lat, d.lon],
                     children=[
                         dl.Popup(
-                            children=[marker_popup(d, colors[d.node_type]['color'])],
+                            children=[device_popup(d, colors[d.node_type]['color'])],
                             closeButton=False,
                             id=f"{d.deployment_id}"
                         ),
@@ -164,7 +164,7 @@ def add_note_markers(values, data):
                 position=[n.lat, n.lon],
                 children=[
                     dl.Popup(
-                        # children=[environment_popup(n)],
+                        children=[note_popup(n)],
                         closeButton=False
                     ),
                     dl.Tooltip(
