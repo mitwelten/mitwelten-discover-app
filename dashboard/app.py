@@ -15,11 +15,7 @@ notes = init_notes()
 
 app_content = [
 
-    map_figure,
-    chart_drawer(),
-    *control_buttons(),
-    settings_drawer(deployments, tags, data_sources),
-    dmc.Modal(id=ID_NOTE_ATTACHMENT_MODAL, size="lg", opened=False, zIndex=30000),
+
 
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployments),
@@ -30,7 +26,7 @@ app_content = [
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(), storage_type="local"),
-    dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None, location=None)),
+    dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None, location=None), storage_type="local"),
     dcc.Store(id=ID_ENVIRONMENT_LEGEND_STORE, data=environment_legend),
     dcc.Store(id=ID_FOCUS_ON_MAP_LOCATION, data=dict(lat=DEFAULT_LAT, lon=DEFAULT_LON)),
     dcc.Store(id=ID_NEW_NOTE_STORE, data=[]),
@@ -45,6 +41,12 @@ app_content = [
         ),
         id=ID_MAP_CONTAINER,
     ),
+
+    map_figure,
+    chart_drawer(),
+    *control_buttons(),
+    settings_drawer(deployments, tags, data_sources),
+    dmc.Modal(id=ID_NOTE_ATTACHMENT_MODAL, size="lg", opened=False, zIndex=30000),
 ]
 
 
@@ -85,6 +87,8 @@ def map_click(click_lat_lng, zoom):
 
 def handle_marker_click(data_source, _):
     trigger = dash.ctx.triggered_id
+    if trigger is None:
+        return dash.no_update
     return dict(role=data_source, id=trigger["id"], lat=trigger["lat"], lon=trigger["lon"])
 
 
