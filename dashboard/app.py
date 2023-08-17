@@ -45,8 +45,6 @@ app_content = [
         ),
         id=ID_MAP_CONTAINER,
     ),
-
-
 ]
 
 

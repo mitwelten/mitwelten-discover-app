@@ -56,12 +56,12 @@ def settings_drawer_state(state):
     Output(ID_MAP, "center", allow_duplicate=True),
     Input({"role": ALL, "id": ALL, "label": "Node", "lat": ALL, "lon": ALL}, "n_clicks"),
     State(ID_MAP, "bounds"),
-    State(ID_MAP, "center"),
+    State(ID_MAP, "viewport"),
     State(ID_MARKER_CLICK_STORE, "data"),
     prevent_initial_call=True
 )
-def open_drawer(marker_click, bounds, map_center, data):
-
+def open_drawer(marker_click, bounds, viewport, data):
+    map_center = viewport["center"]
     click_sum = safe_reduce(lambda x, y: x + y, marker_click)
     has_click_triggered = False
 
@@ -80,7 +80,7 @@ def open_drawer(marker_click, bounds, map_center, data):
             return True, "bottom", data, new_center
         return dash.no_update, dash.no_update, data, new_center
 
-    return dash.no_update, dash.no_update, data, map_center
+    return dash.no_update, dash.no_update, data, dash.no_update
 
 
 @app.callback(

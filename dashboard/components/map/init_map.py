@@ -1,7 +1,8 @@
 from urllib.parse import urlparse, parse_qs
 
+import dash
 import dash_leaflet as dl
-from dash import Output, Input
+from dash import Output, Input, State
 
 from dashboard.config import map as map_config
 from dashboard.config.id import *
@@ -45,7 +46,6 @@ map_figure = dl.Map(
     ],
     doubleClickZoom=False,
     useFlyTo=False,
-    zoom=15,
     id=ID_MAP,
     className="id-map",
     style={
@@ -57,12 +57,13 @@ map_figure = dl.Map(
 
 
 @app.callback(
-    Output(ID_MAP, 'center', allow_duplicate=True),
-    Output(ID_MAP, 'zoom', allow_duplicate=True),
+    Output(ID_MAP, "viewport"),
     Input(ID_URL_LOCATION, 'href'),
+    State(ID_MAP, "bounds"),
     prevent_initial_call=True
 )
-def display_page(href):
+def display_page(href, bounds):
+    print(bounds)
     lat = DEFAULT_LAT
     lon = DEFAULT_LON
     zoom = DEFAULT_ZOOM
@@ -73,7 +74,4 @@ def display_page(href):
         lon = float(query_params["lon"][0])
         zoom = float(query_params["zoom"][0])
 
-    return (lat, lon), zoom
-
-
-
+    return dict(center=(lat, lon), zoom=zoom)
