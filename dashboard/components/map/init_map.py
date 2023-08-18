@@ -45,7 +45,7 @@ map_figure = dl.Map(
         ),
     ],
     doubleClickZoom=False,
-    useFlyTo=False,
+    useFlyTo=True,
     id=ID_MAP,
     className="id-map",
     style={

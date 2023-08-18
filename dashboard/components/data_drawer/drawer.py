@@ -50,35 +50,22 @@ def settings_drawer_state(state):
 @app.callback(
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "position"),
-    Output(ID_MARKER_CLICK_STORE, "data"),
     Output(ID_MAP, "center", allow_duplicate=True),
-    Input({"role": ALL, "id": ALL, "label": "Node", "lat": ALL, "lon": ALL}, "n_clicks"),
+    Input(ID_CURRENT_CHART_DATA_STORE, "data"),
     State(ID_MAP, "bounds"),
     State(ID_MAP, "viewport"),
-    State(ID_MARKER_CLICK_STORE, "data"),
     prevent_initial_call=True
 )
-def open_drawer(marker_click, bounds, viewport, data):
+def open_drawer(data, bounds, viewport):
     map_center = viewport["center"]
-    click_sum = safe_reduce(lambda x, y: x + y, marker_click)
-    has_click_triggered = False
-
-    if click_sum is not None:
-        has_click_triggered = click_sum != data["clicks"]
-        data["clicks"] = click_sum
-
-    if has_click_triggered and dash.ctx.triggered_id is not None:
-        trigger = dash.ctx.triggered_id
-        new_center = ensure_marker_visibility(
-            map_center,
-            bounds,
-            dict(lat=trigger["lat"], lon=trigger["lon"])
-        )
-        if trigger["role"] not in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
-            return True, "bottom", data, new_center
-        return dash.no_update, dash.no_update, data, new_center
-
-    return dash.no_update, dash.no_update, data, dash.no_update
+    new_center = ensure_marker_visibility(
+        map_center,
+        bounds,
+        dict(lat=data["lat"], lon=data["lon"])
+    )
+    if data["role"] not in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
+        return True, "bottom", new_center
+    return dash.no_update, dash.no_update, new_center
 
 
 @app.callback(

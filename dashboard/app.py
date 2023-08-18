@@ -1,5 +1,7 @@
 from functools import partial
 
+import dash
+
 from dashboard.components.button.buttons import control_buttons
 from dashboard.components.data_drawer.drawer import chart_drawer
 from dashboard.components.data_drawer.types.devices.pollinator import *
@@ -8,6 +10,7 @@ from dashboard.components.settings_drawer.drawer import settings_drawer
 from dashboard.config.app import app_theme, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from dashboard.config.map import DEFAULT_LAT, DEFAULT_LON
 from dashboard.init import init_deployment_data, init_environment_data, init_notes
+from util.functions import safe_reduce
 
 deployments, data_sources, tags = init_deployment_data()
 environments, environment_legend = init_environment_data()
@@ -23,7 +26,7 @@ app_content = [
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(), storage_type="local"),
-    dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None, location=None), storage_type="local"),
+    dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None, location=None)),
     dcc.Store(id=ID_ENVIRONMENT_LEGEND_STORE, data=environment_legend),
     dcc.Store(id=ID_FOCUS_ON_MAP_LOCATION, data=dict(lat=DEFAULT_LAT, lon=DEFAULT_LON)),
     dcc.Store(id=ID_NEW_NOTE_STORE, data=[]),
@@ -82,17 +85,31 @@ def map_click(click_lat_lng, zoom):
     return loc
 
 
-def handle_marker_click(data_source, _):
+def handle_marker_click(data_source, marker_click, data):
     trigger = dash.ctx.triggered_id
+
     if trigger is None:
         return dash.no_update
-    return dict(role=data_source, id=trigger["id"], lat=trigger["lat"], lon=trigger["lon"])
+
+    # required to determine if a click occurred (callback is fired when a marker is added to the map as well)
+    click_sum = safe_reduce(lambda x, y: x + y, marker_click)
+    has_click_triggered = False
+    if click_sum is not None:
+        has_click_triggered = click_sum != data["clicks"]
+        data["clicks"] = click_sum
+
+    if has_click_triggered:
+        return data, dict(role=data_source, id=trigger["id"], lat=trigger["lat"], lon=trigger["lon"])
+
+    return dash.no_update, dash.no_update
 
 
 for source in data_sources:
     app.callback(
+        Output(ID_MARKER_CLICK_STORE, "data", allow_duplicate=True),
         Output(ID_CURRENT_CHART_DATA_STORE, "data", allow_duplicate=True),
         Input({"role": source, "id": ALL, "label": "Node", "lat": ALL, "lon": ALL}, "n_clicks"),
+        State(ID_MARKER_CLICK_STORE, "data"),
         prevent_initial_call=True
     )(partial(handle_marker_click, source))
 
