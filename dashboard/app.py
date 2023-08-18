@@ -1,6 +1,7 @@
 from functools import partial
 
 import dash
+from dash.exceptions import PreventUpdate
 
 from dashboard.components.button.buttons import control_buttons
 from dashboard.components.data_drawer.drawer import chart_drawer
@@ -24,12 +25,13 @@ app_content = [
     dcc.Store(id=ID_ENV_DATA_STORE, data=environments),
     dcc.Store(id=ID_DATA_SOURCE_STORE, data=data_sources),
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
-    dcc.Store(id=ID_BASE_MAP_STORE, data=dict(), storage_type="local"),
-    dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(), storage_type="local"),
+    dcc.Store(id=ID_BASE_MAP_STORE, data=dict(index=0), storage_type="local"),
+    dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None, location=None)),
     dcc.Store(id=ID_ENVIRONMENT_LEGEND_STORE, data=environment_legend),
     dcc.Store(id=ID_FOCUS_ON_MAP_LOCATION, data=dict(lat=DEFAULT_LAT, lon=DEFAULT_LON)),
     dcc.Store(id=ID_NEW_NOTE_STORE, data=[]),
+    dcc.Store(id=ID_PREVENT_MARKER_EVENT, data=dict(state=False)),
 
     html.Div(
         html.A(
@@ -85,9 +87,12 @@ def map_click(click_lat_lng, zoom):
     return loc
 
 
-def handle_marker_click(data_source, marker_click, data):
-    trigger = dash.ctx.triggered_id
+def handle_marker_click(data_source, marker_click, data, prevent_event):
+    print("handle marker click")
+    if prevent_event["state"]:
+        return dash.no_update
 
+    trigger = dash.ctx.triggered_id
     if trigger is None:
         return dash.no_update
 
@@ -110,6 +115,7 @@ for source in data_sources:
         Output(ID_CURRENT_CHART_DATA_STORE, "data", allow_duplicate=True),
         Input({"role": source, "id": ALL, "label": "Node", "lat": ALL, "lon": ALL}, "n_clicks"),
         State(ID_MARKER_CLICK_STORE, "data"),
+        State(ID_PREVENT_MARKER_EVENT, "data"),
         prevent_initial_call=True
     )(partial(handle_marker_click, source))
 

@@ -19,7 +19,6 @@ def update_store(store, collection):
     Output(ID_BASE_LAYER_MAP, "url"),
     Output(ID_BASE_LAYER_MAP, "attribution"),
     Input(ID_BASE_MAP_STORE, "data"),
-    prevent_initial_call=True
 )
 def handle_map_store_update(store):
     print("update base map: ", store)
@@ -30,7 +29,6 @@ def handle_map_store_update(store):
     Output(ID_OVERLAY_MAP, "url"),
     Output(ID_OVERLAY_MAP, "attribution"),
     Input(ID_OVERLAY_MAP_STORE, "data"),
-    prevent_initial_call=True
 )
 def handle_overlay_store_update(store):
     return update_store(store, OVERLAYS)
@@ -90,5 +88,4 @@ for map_type in MAP_TYPES:
             Input({'role': "map_store", 'type': map_type}, "data"),
             State({'role':  map_type, 'index': ALL, 'place': "drawer"}, 'children'),
             State({'role':  map_type, 'index': ALL, 'place': "menu"}, 'icon'),
-            prevent_initial_call=True
     )(update_map_icon)
