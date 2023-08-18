@@ -1,6 +1,9 @@
+from pprint import pprint
+
 import dash
 import dash_mantine_components as dmc
-from dash import Output, Input, State, html, dcc
+from dash import Output, Input, State, html, dcc, ALL, MATCH
+from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
@@ -12,6 +15,7 @@ from dashboard.model.file import File
 from dashboard.model.note import Note
 from dashboard.util.user_validation import get_user_from_cookies
 from dashboard.util.util import pretty_date
+from util.functions import safe_reduce
 
 
 def list_item(text, icon):
@@ -26,15 +30,40 @@ def list_item(text, icon):
     )
 
 
-def note_form_non_editable(note: Note):
+def create_note_form_container(note: Note):
     user = get_user_from_cookies()
     return dmc.Container([
-        dcc.Store("id-is-editable-store", data=dict(state=False)),
-        dmc.Grid([
+        dcc.Store({"role": "Notes", "id": note.note_id, "label": "Edit Store"}, data=dict(state=False), storage_type="local"),
+        html.Div(
+            id={"role": "Notes", "id": note.note_id, "label": "Form"},
+            children=note_form_non_editable(note, user),
+        ),
+        html.Div(
+            id={"role": "Notes", "id": note.note_id, "label": "Editable Form"},
+            children=note_form_editable(note, user),
+            style={"display": "none"}
+        )
+    ])
+
+
+@app.callback(
+    Output({"role": "Notes", "id": MATCH, "label": "Form"}, "style"),
+    Output({"role": "Notes", "id": MATCH, "label": "Editable Form"}, "style"),
+    Input({"role": "Notes", "id": MATCH, "label": "Edit Store"}, "data"),
+    prevent_initial_call=True
+)
+def update_form_container(store_data):
+    if store_data["state"]:
+        return {"display": "none"}, {"display": "block"}
+    return {"display": "block"}, {"display": "none"}
+
+
+def note_form_non_editable(note: Note, user=None):
+    return [dmc.Grid([
             dmc.Col(dmc.Title(note.title, order=5), span="content"),
             dmc.Col(dmc.Group([
-                action_button(ID_NOTE_OPEN_MODAL_BUTTON, "material-symbols:attach-file"),
-                action_button(ID_NOTE_EDIT_BUTTON, "material-symbols:edit") if user is not None else {}
+                action_button({"role": "Notes", "id": note.note_id, "label": "Attachment Button"}, "material-symbols:attach-file"),
+                action_button({"role": "Notes", "id": note.note_id, "label": "Edit Button"}, "material-symbols:edit") if user is not None else {}
                 ]),
                 span="content"
             ),
@@ -67,17 +96,15 @@ def note_form_non_editable(note: Note):
                 ),
                 span="content"
             )
-        ]),
-    ],
-    )
+        ])
+    ]
 
 
-def note_form_editable(note: Note):
-    return dmc.Container([
-        dcc.Store("id-is-editable-store", data=dict(state=True)),
+def note_form_editable(note: Note, user):
+    return [
         dmc.Grid([
             dmc.Col(dmc.Title(f"Note - {note.node_label}", order=3), span="content"),
-            dmc.Col(action_button(ID_NOTE_OPEN_MODAL_BUTTON, "material-symbols:attach-file"), span="content"),
+            dmc.Col(action_button({"role": "Notes", "id": note.note_id, "label": "Attachment Store"}, "material-symbols:attach-file"), span="content"),
         ],
             justify="space-between",
         ),
@@ -90,19 +117,18 @@ def note_form_editable(note: Note):
             dmc.Col(dmc.TextInput(label="Longitude", value=note.lon, variant="filled"), span=6),
         ]),
         dmc.Grid([
-            dmc.Col(dmc.Button("Cancel", id=ID_NOTE_CANCEL_EDIT_BUTTON, type="reset", color="gray"), span="content"),
-            dmc.Col(dmc.Button("Save", id=ID_NOTE_SAVE_EDIT_BUTTON, type="submit"), span="content"),
+            dmc.Col(dmc.Button("Cancel", id={"role": "Notes", "id": note.note_id, "label": "Cancel Button"}, type="reset", color="gray"), span="content"),
+            dmc.Col(dmc.Button("Save", id={"role": "Notes", "id": note.note_id, "label": "Save Button"}, type="submit"), span="content"),
         ],
             justify="flex-end"
         )
-    ],
-    )
+    ]
 
 
 def create_note_form(notes, note_id, theme):
     for note in notes:
         if note["note_id"] == note_id:
-            return note_form_non_editable(Note(note))
+            return create_note_form_container(Note(note))
 
 
 def attachment_table(note, is_editable=False):
@@ -190,23 +216,6 @@ def update_output(list_of_contents, list_of_names, list_of_dates, store):
 
 
 @app.callback(
-    Output(ID_NOTE_ATTACHMENT_MODAL, "opened"),
-    Output(ID_NOTE_ATTACHMENT_MODAL, "children"),
-    Input(ID_NOTE_OPEN_MODAL_BUTTON, "n_clicks"),
-    State(ID_CURRENT_CHART_DATA_STORE, "data"),
-    State(ID_NOTES_STORE, "data"),
-    State("id-is-editable-store", "data"),
-    prevent_initial_call=True
-)
-def open_attachment_modal(click, chart_data, notes, is_editable):
-    if click != 0:
-        for note in notes:
-            if note["note_id"] == chart_data["id"]:
-                return True, attachment_table(note, is_editable["state"])
-    return dash.no_update, dash.no_update
-
-
-@app.callback(
     Output('output-image-upload', "children"),
     Input(ID_NEW_NOTE_STORE, "data"),
     prevent_initial_call=True
@@ -219,47 +228,134 @@ def show_new_notes_from_store(data):
 
 
 @app.callback(
-    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
-    Input(ID_NOTE_EDIT_BUTTON, "n_clicks"),
-    State(ID_CURRENT_CHART_DATA_STORE, "data"),
-    State(ID_NOTES_STORE, "data"),
+    Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
+    Input({"role": "Notes", "id": ALL, "label": "Edit Button"}, "n_clicks"),
     prevent_initial_call=True
 )
-def create_editable_note_form(click, chart_data, notes):
+def activate_preventing_marker_clicks(click):
+    print("activate prevent marker click: ", click)
+    return dict(state=True)
+
+
+@app.callback(
+    Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
+    Input({"role": "Notes", "id": ALL, "label": "Cancel Button"}, "n_clicks"),
+    prevent_initial_call=True
+)
+def activate_preventing_marker_clicks(click):
+    print("activate prevent marker click: ", click)
+    return dict(state=False)
+
+
+@app.callback(
+    Output({"role": "Notes", "id": MATCH, "label": "Edit Store"}, "data", allow_duplicate=True),
+    Input({"role": "Notes", "id": MATCH, "label": "Edit Button"}, "n_clicks"),
+    prevent_initial_call=True
+)
+def update_edit_store_by_click(click):
     if click == 0:
-        return dash.no_update
-    for note in notes:
-        if note["note_id"] == chart_data["id"]:
-            return note_form_editable(Note(note))
+        raise PreventUpdate
+    return dict(state=True)
 
 
 @app.callback(
-    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
-    Input(ID_NOTE_CANCEL_EDIT_BUTTON, "n_clicks"),
-    State(ID_CURRENT_CHART_DATA_STORE, "data"),
-    State(ID_NOTES_STORE, "data"),
+    Output({"role": "Notes", "id": MATCH, "label": "Edit Store"}, "data", allow_duplicate=True),
+    Input({"role": "Notes", "id": MATCH, "label": "Cancel Button"}, "n_clicks"),
     prevent_initial_call=True
 )
-def create_editable_note_form(click, chart_data, notes):
-    if click is None:
-        return dash.no_update
-    for note in notes:
-        if note["note_id"] == chart_data["id"]:
-            return note_form_non_editable(Note(note))
+def update_edit_store_by_click(click):
+    if click == 0:
+        raise PreventUpdate
+    return dict(state=False)
 
 
 @app.callback(
-    Output(ID_NOTIFICATION_CONTAINER, "children"),
-    Input(ID_NOTE_SAVE_EDIT_BUTTON, "n_clicks"),
+    Output({"role": "Notes", "id": MATCH, "label": "Node", "lat": ALL, "lon": ALL}, "icon"),
+    Output({"role": "Notes", "id": MATCH, "label": "Node", "lat": ALL, "lon": ALL}, "draggable"),
+    Input({"role": "Notes", "id": MATCH, "label": "Edit Store"}, "data"),
     prevent_initial_call=True
 )
-def save_edited_note(click):
-    print(click)
-    if click is not None:
-        return create_notification(
-            "Save Note",
-            "Operation under construction",
-            NotificationType.ERROR,
-            "material-symbols:construction"
+def change_note_icon(store_data):
+    if store_data["state"]:
+        return [dict(iconUrl="assets/markers/note_move.svg", iconAnchor=[60, 50], iconSize=120)], [True]
+    return [dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30)], [False]
+
+
+
+
+# @app.callback(
+#     Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
+#     Input({"role": "note-edit-button", "id": ALL}, "n_clicks"),
+#     State(ID_CURRENT_CHART_DATA_STORE, "data"),
+#     State(ID_NOTES_STORE, "data"),
+#     prevent_initial_call=True
+# )
+# def create_editable_note_form(click, chart_data, notes):
+#     click_sum = safe_reduce(lambda x, y: x + y, click)
+#     if click_sum is None or click_sum == 0:
+#         return dash.no_update
+#
+#     for note in notes:
+#         if note["note_id"] == chart_data["id"]:
+#             return note_form_editable(Note(note))
+
+
+# @app.callback(
+#     Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
+#     Input({"role": "note-cancel-button", "id": ALL}, "n_clicks"),
+#     State(ID_CURRENT_CHART_DATA_STORE, "data"),
+#     State(ID_NOTES_STORE, "data"),
+#     prevent_initial_call=True
+# )
+# def create_editable_note_form(click, chart_data, notes):
+#     click_sum = safe_reduce(lambda x, y: x + y, click)
+#     if click_sum is None or click_sum == 0:
+#         return dash.no_update
+#     for note in notes:
+#         if note["note_id"] == chart_data["id"]:
+#             return note_form_non_editable(Note(note))
+
+
+# @app.callback(
+#     Output(ID_NOTIFICATION_CONTAINER, "children"),
+#     Input({"role": "note-save-button", "id": ALL}, "n_clicks"),
+#     prevent_initial_call=True
+# )
+# def save_edited_note(click):
+#     click = safe_reduce(lambda x, y: x + y, click)
+#     if click is not None:
+#         return create_notification(
+#             "Save Note",
+#             "Operation under construction",
+#             NotificationType.ERROR,
+#             "material-symbols:construction"
+#         )
+#     return dash.no_update
+
+
+@app.callback(
+    # Output(ID_NOTES_LAYER_GROUP, "children"),
+    Output(ID_NEW_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
+    Input(ID_MAP, "dbl_click_lat_lng"),
+    # State(ID_NOTES_LAYER_GROUP, "children"),
+    prevent_initial_call=True
+)
+def handle_double_click(click):
+    user = get_user_from_cookies()
+    if user is None:
+        notification = create_notification(
+            "Operation not permitted",
+            "Log in to create notes!",
+            NotificationType.WARN
         )
-    return dash.no_update
+        return dash.no_update, notification
+
+    # marker = dl.Marker(
+    #     position=[click[0], click[1]],
+    #     icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
+    # )
+    # if markers is None:
+    #     markers = []
+    # return [*markers, marker], dict(lat=click[0], lon=click[1]), dash.no_update,
+    return dict(lat=click[0], lon=click[1]), dash.no_update

@@ -4,7 +4,7 @@ from dash_iconify import DashIconify
 from configuration import PRIMARY_COLOR
 
 
-def action_button(button_id: str = None, icon: str = None, size="lg"):
+def action_button(button_id = None, icon: str = None, size="lg"):
     return dmc.ActionIcon(
         DashIconify(
             icon=icon,
