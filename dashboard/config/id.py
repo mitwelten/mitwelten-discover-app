@@ -34,6 +34,7 @@ ID_CURRENT_CHART_DATA_STORE = "id-current-chart-data-store"
 ID_DATE_RANGE_STORE = "id-date-range-store"
 ID_ENVIRONMENT_LEGEND_STORE = "id-environment-legend-store"
 ID_NEW_NOTE_STORE = "id-new-note-store"
+ID_PREVENT_MARKER_EVENT = "id-prevent-marker-event"
 
 # node types
 ID_ALL_ACTIVE_STORE = "id-active-all-checkbox"
