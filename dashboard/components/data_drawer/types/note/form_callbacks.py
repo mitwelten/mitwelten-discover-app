@@ -29,7 +29,6 @@ def set_marker_icon_draggable(click):
     raise PreventUpdate
 
 
-
 # change the note marker icon to display move support
 @app.callback(
     Output({"role": "Notes", "id": MATCH, "label": "Node", "lat": ALL, "lon": ALL}, "icon"),

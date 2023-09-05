@@ -100,7 +100,8 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_
                         dl.Popup(
                             children=[device_popup(d, colors[d.node_type]['color'])],
                             closeButton=False,
-                            id=f"{d.deployment_id}"
+                            id=f"{d.deployment_id}",
+                            autoPan=False
                         ),
                         dl.Tooltip(
                             children=f"{d.node_type}\n{d.node_label}",
@@ -133,7 +134,8 @@ def add_environment_markers(values, data):
                 children=[
                     dl.Popup(
                         children=[environment_popup(e)],
-                        closeButton=False
+                        closeButton=False,
+                        autoPan=False
                     ),
                     dl.Tooltip(
                         children=f"Environment Data: {e.environment_id}",
@@ -166,7 +168,8 @@ def add_note_markers(values, data):
                 children=[
                     dl.Popup(
                         children=[note_popup(n)],
-                        closeButton=False
+                        closeButton=False,
+                        autoPan=False
                     ),
                     dl.Tooltip(
                         children=f"Note: {n.note_id}",
