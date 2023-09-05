@@ -1,11 +1,12 @@
 from functools import partial
 
 import dash
+from dash import dcc
 from dash.exceptions import PreventUpdate
 
 from dashboard.components.button.buttons import control_buttons
 from dashboard.components.data_drawer.drawer import chart_drawer
-from dashboard.components.data_drawer.types.devices.pollinator import *
+from dashboard.components.data_drawer.types.pollinator import *
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.drawer import settings_drawer
 from dashboard.config.app import app_theme, DATA_SOURCES_WITHOUT_CHART_SUPPORT
@@ -27,7 +28,7 @@ app_content = [
     dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=0), storage_type="local"),
-    dcc.Store(id=ID_CURRENT_CHART_DATA_STORE, data=dict(role=None, id=None, location=None)),
+    dcc.Store(id=ID_CURRENT_DRAWER_DATA_STORE, data=dict(role=None, id=None, location=None)),
     dcc.Store(id=ID_ENVIRONMENT_LEGEND_STORE, data=environment_legend),
     dcc.Store(id=ID_FOCUS_ON_MAP_LOCATION, data=dict(lat=DEFAULT_LAT, lon=DEFAULT_LON)),
     dcc.Store(id=ID_NEW_NOTE_STORE, data=[]),
@@ -88,13 +89,12 @@ def map_click(click_lat_lng, zoom):
 
 
 def handle_marker_click(data_source, marker_click, data, prevent_event):
-    print("handle marker click")
     if prevent_event["state"]:
-        return dash.no_update
+        raise PreventUpdate
 
     trigger = dash.ctx.triggered_id
     if trigger is None:
-        return dash.no_update
+        raise PreventUpdate
 
     # required to determine if a click occurred (callback is fired when a marker is added to the map as well)
     click_sum = safe_reduce(lambda x, y: x + y, marker_click)
@@ -112,7 +112,7 @@ def handle_marker_click(data_source, marker_click, data, prevent_event):
 for source in data_sources:
     app.callback(
         Output(ID_MARKER_CLICK_STORE, "data", allow_duplicate=True),
-        Output(ID_CURRENT_CHART_DATA_STORE, "data", allow_duplicate=True),
+        Output(ID_CURRENT_DRAWER_DATA_STORE, "data", allow_duplicate=True),
         Input({"role": source, "id": ALL, "label": "Node", "lat": ALL, "lon": ALL}, "n_clicks"),
         State(ID_MARKER_CLICK_STORE, "data"),
         State(ID_PREVENT_MARKER_EVENT, "data"),
