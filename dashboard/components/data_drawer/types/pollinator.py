@@ -81,7 +81,7 @@ def create_pollinator_chart(_1, _2):
 @callback(
     Output("tabs-content", "children"),
     Input("tabs-example", "value"),
-    Input(ID_CURRENT_CHART_DATA_STORE, "data"),
+    Input(ID_CURRENT_DRAWER_DATA_STORE, "data"),
     State(ID_APP_THEME, "theme"),
 )
 def render_content(active, data, theme):
