@@ -31,23 +31,9 @@ def list_item(text, icon):
     )
 
 
-def note_detail_view(note):
-    note = Note(note)
-    user = get_user_from_cookies()
-    print("note parsed", note)
-    return [
-        dmc.Grid([
+def note_detail_view(note: Note):
+    return dmc.Grid([
             dmc.Col(dmc.Title(note.title, order=5), span="content"),
-            dmc.Col(dmc.Group([
-                action_button({"role": "Notes", "id": note.note_id, "label": "Attachment Button"}, "material-symbols:attach-file"),
-                action_button({"role": "Notes", "id": note.note_id, "label": "Edit Button"}, "material-symbols:edit") if user is not None else {}
-            ]),
-                span="content"
-            ),
-        ],
-            justify="space-between",
-        ),
-        dmc.Grid([
             dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span=12),
             dmc.Col(dmc.Divider(size="xs")),
             dmc.Col(
@@ -74,4 +60,12 @@ def note_detail_view(note):
                 span="content"
             )
         ])
-    ]
+
+
+@app.callback(
+    Output(ID_NOTE_DETAIL_VIEW, "children"),
+    Input(ID_CURRENT_NOTE_STORE, "data"),
+)
+def update_content_from_store(data):
+    note = Note(data)
+    return note_detail_view(note)
