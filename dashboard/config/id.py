@@ -35,8 +35,9 @@ ID_DATE_RANGE_STORE = "id-date-range-store"
 ID_ENVIRONMENT_LEGEND_STORE = "id-environment-legend-store"
 ID_NEW_NOTE_STORE = "id-new-note-store"
 ID_PREVENT_MARKER_EVENT = "id-prevent-marker-event"
-ID_CURRENT_NOTE_STORE = "id-current-note-store"
+ID_SELECTED_NOTE_STORE = "id-current-note-store"
 ID_EDIT_NOTE_STORE = "id-edit-note-store"
+ID_SELECTED_NOTE_STORE = "id-selected-note-store"
 
 # node types
 ID_ALL_ACTIVE_STORE = "id-active-all-checkbox"
