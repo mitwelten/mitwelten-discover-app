@@ -34,6 +34,7 @@ app_content = [
     dcc.Store(id=ID_NEW_NOTE_STORE, data=[]),
     dcc.Store(id=ID_PREVENT_MARKER_EVENT, data=dict(state=False)),
     dcc.Store(id=ID_EDIT_NOTE_STORE, data=dict(id=None)),
+    dcc.Store(id=ID_SELECTED_NOTE_STORE, data=None),
 
     html.Div(
         html.A(

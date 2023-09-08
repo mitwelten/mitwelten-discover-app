@@ -29,7 +29,7 @@ def note_form(note: Note):
 
 @app.callback(
     Output(ID_NOTE_FORM_VIEW, "children"),
-    Input(ID_CURRENT_NOTE_STORE, "data"),
+    Input(ID_SELECTED_NOTE_STORE, "data"),
 )
 def update_content_from_store(data):
     note = Note(data)

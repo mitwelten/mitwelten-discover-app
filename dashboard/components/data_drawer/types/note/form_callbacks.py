@@ -8,7 +8,7 @@ from dashboard.maindash import app
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_EDIT_BUTTON, "n_clicks"),
-    State(ID_CURRENT_NOTE_STORE, "data"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
 def store_edited_note_id(edit_click, data):
@@ -20,7 +20,7 @@ def store_edited_note_id(edit_click, data):
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
-    State(ID_CURRENT_NOTE_STORE, "data"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
 def store_edited_note_id(save_click, _):
@@ -32,7 +32,7 @@ def store_edited_note_id(save_click, _):
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
-    State(ID_CURRENT_NOTE_STORE, "data"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
 def store_edited_note_id(cancel_click, _):
@@ -43,10 +43,10 @@ def store_edited_note_id(cancel_click, _):
 
 @app.callback(
     Output(ID_NOTES_STORE, "data"),
-    Output(ID_CURRENT_NOTE_STORE, "data"),
+    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State(ID_NOTES_STORE, "data"),
-    State(ID_CURRENT_NOTE_STORE, "data"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
     State(ID_NOTE_EDIT_TITLE, "value"),
     State(ID_NOTE_EDIT_DESCRIPTION, "value"),
     prevent_initial_call=True
