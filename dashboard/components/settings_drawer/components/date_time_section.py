@@ -36,11 +36,11 @@ def date_time_section():
         dmc.Center([
             dmc.DateRangePicker(
                 id=ID_DATE_RANGE_PICKER,
-                inputFormat="DD MMMM, YY",
+                inputFormat="DD MMM, YY",
                 description="",
                 minDate=date(2020, 8, 5),
                 value=[datetime.now().date() - timedelta(weeks=FIRST_DEPLOYMENT_WEEKS_AGO), datetime.now().date()],
-                styles={"root": {"width": 260}},
+                styles={"root": {"width": 220}},
             ),
             dmc.Text(
                 id="id-date-range-label",
