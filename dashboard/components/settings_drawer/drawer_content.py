@@ -121,64 +121,72 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     State(ID_ENV_DATA_STORE, "data"),
 )
-def add_environment_markers(values, data):
-    if "Environment Data Points" not in values:
+def add_environment_markers(active_checkboxes, all_environments):
+    if "Environment Data Points" not in active_checkboxes:
         return []
     markers = []
 
-    for e in data:
-        e = Environment(e)
+    for env in all_environments:
+        env = Environment(env)
         markers.append(
             dl.Marker(
-                position=[e.lat, e.lon],
+                position=[env.lat, env.lon],
                 children=[
                     dl.Popup(
-                        children=[environment_popup(e)],
+                        children=[environment_popup(env)],
                         closeButton=False,
                         autoPan=False
                     ),
                     dl.Tooltip(
-                        children=f"Environment Data: {e.environment_id}",
+                        children=f"Environment Data: {env.environment_id}",
                         offset={"x": -10, "y": 2},
                         direction="left",
                     ),
                 ],
                 icon=dict(iconUrl="assets/markers/environment.svg", iconAnchor=[15, 6], iconSize=30),
-                id={"role": "Environment Data Points", "id": e.environment_id, "label": "Node", "lat": e.lat, "lon": e.lon},
+                id={"role": "Environment Data Points", "id": env.environment_id, "label": "Node", "lat": env.lat, "lon": env.lon},
             )
         )
     return markers
 
 
 @app.callback(
-    Output(ID_NOTES_LAYER_GROUP, "children"),
+    Output(ID_NOTES_LAYER_GROUP, "children", allow_duplicate=True),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
+    Input(ID_EDIT_NOTE_STORE, "data"),
     State(ID_NOTES_STORE, "data"),
+    prevent_initial_call=True
 )
-def add_note_markers(values, data):
-    if "Notes" not in values:
+def add_note_markers(active_checkboxes, edit_note, all_notes):
+    if "Notes" not in active_checkboxes:
         return []
-    markers = []
 
-    for n in data:
-        n = Note(n)
+    marker_icon = dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30)
+    marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg", iconAnchor=[61, 50], iconSize=120)
+
+    markers = []
+    for note in all_notes:
+        note = Note(note)
+        is_note_in_edit_mode = note.note_id == edit_note["id"]
+
         markers.append(
             dl.Marker(
-                position=[n.lat, n.lon],
+                position=[note.lat, note.lon],
                 children=[
                     dl.Popup(
-                        children=[note_popup(n)],
+                        children=[note_popup(note)],
                         closeButton=False,
                         autoPan=False
                     ),
                     dl.Tooltip(
-                        children=f"Note: {n.note_id}",
+                        children=f"Note: {note.note_id}",
                         offset={"x": -10, "y": 2},
                         direction="left",
                     ),
                 ],
-                icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
-                id={"role": "Notes", "id": n.note_id, "label": "Node", "lat": n.lat, "lon": n.lon},
+                icon=marker_icon if not is_note_in_edit_mode else marker_icon_draggable,
+                draggable=is_note_in_edit_mode,
+                id={"role": "Notes", "id": note.note_id, "label": "Node", "lat": note.lat, "lon": note.lon},
             )
         )
     return markers
