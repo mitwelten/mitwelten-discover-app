@@ -5,7 +5,7 @@ from dash import dcc
 from dash.exceptions import PreventUpdate
 
 from dashboard.components.button.buttons import control_buttons
-from dashboard.components.data_drawer.drawer import chart_drawer
+from dashboard.components.data_drawer.data_drawer import chart_drawer
 from dashboard.components.data_drawer.types.pollinator import *
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.drawer import settings_drawer
@@ -21,11 +21,11 @@ notes = init_notes()
 app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE, data=deployments),
-    dcc.Store(id=ID_NOTES_STORE, data=notes),
+    dcc.Store(id=ID_NOTES_STORE, data=notes, storage_type="local"),
     dcc.Store(id=ID_TAG_DATA_STORE, data=tags),
     dcc.Store(id=ID_ENV_DATA_STORE, data=environments),
     dcc.Store(id=ID_DATA_SOURCE_STORE, data=data_sources),
-    dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None)),
+    dcc.Store(id=ID_MARKER_CLICK_STORE, data=dict(clicks=None), storage_type="local"),
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_CURRENT_DRAWER_DATA_STORE, data=dict(role=None, id=None, location=None)),
@@ -33,6 +33,7 @@ app_content = [
     dcc.Store(id=ID_FOCUS_ON_MAP_LOCATION, data=dict(lat=DEFAULT_LAT, lon=DEFAULT_LON)),
     dcc.Store(id=ID_NEW_NOTE_STORE, data=[]),
     dcc.Store(id=ID_PREVENT_MARKER_EVENT, data=dict(state=False)),
+    dcc.Store(id=ID_EDIT_NOTE_STORE, data=dict(id=None)),
 
     html.Div(
         html.A(
