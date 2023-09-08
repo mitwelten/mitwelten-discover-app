@@ -85,7 +85,7 @@ def update_drawer_content_from_store(chart_data, legend, notes, light_mode):
         case "Pax Counter": chart_children = create_pax_chart(chart_data["id"], light_mode)
         case "Pollinator Cam": chart_children = create_pollinator_chart(chart_data["id"], light_mode)
         case "Notes": chart_children = create_note_view(notes, chart_data["id"], light_mode)
-        case "Environment Data Points": chart_children = create_environment_point_chart(legend, chart_data["id"], light_mode)
+        case "Environment Data Points": chart_children = create_environment_point_chart(legend, chart_data["id"])
         case x: return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO)
     return chart_children, dash.no_update
 
