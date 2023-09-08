@@ -1,22 +1,12 @@
-from pprint import pprint
-
-import dash
 import dash_mantine_components as dmc
-from dash import Output, Input, State, html, dcc, ALL, MATCH
-from dash.exceptions import PreventUpdate
+from dash import Output, Input
 from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
-from dashboard.components.button.components.action_button import action_button
-from dashboard.components.data_drawer.types.note.form_view import note_form
-from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id import *
 from dashboard.maindash import app
-from dashboard.model.file import File
 from dashboard.model.note import Note
-from dashboard.util.user_validation import get_user_from_cookies
 from dashboard.util.util import pretty_date
-from util.functions import safe_reduce
 
 
 def list_item(text, icon):

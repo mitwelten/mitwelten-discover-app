@@ -1,58 +1,69 @@
-import dash
-from dash import Output, Input, State, html, ALL, MATCH
+from dash import Output, Input
 from dash.exceptions import PreventUpdate
 
-from dashboard.components.data_drawer.types.note.detail_view import note_detail_view
-from dashboard.components.data_drawer.types.note.form_view import note_form
-from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id import *
 from dashboard.maindash import app
-from dashboard.util.user_validation import get_user_from_cookies
 
 
+# switch drawer content to detail view
 @app.callback(
-    Output("id-note-container", "children", allow_duplicate=True),
+    Output(ID_NOTE_FORM_VIEW, "style", allow_duplicate=True),
+    Output(ID_NOTE_DETAIL_VIEW, "style", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
-    Input({"role": "Notes", "id": ALL, "label": ALL}, "n_clicks"),
-    State("id-current-note-store", "data"),
+    Input(ID_NOTE_EDIT_BUTTON, "n_clicks"),
     prevent_initial_call=True
 )
-def update_note_container_content(click, data):
-    trigger = dash.ctx.triggered_id
-    match trigger["label"]:
-        case "Edit Button":
-            return note_form(data["note"]), False, dict(state=True)
-        case _:
-            return note_detail_view(data["note"]), True, dict(state=False)
+def update_note_container_content(click):
+    if click is None or click == 0:
+        raise PreventUpdate
+    return {"display": "block"}, {"display": "none"}, False, dict(state=True)
 
 
+# switch drawer content to note form
 @app.callback(
-    # Output(ID_NOTES_LAYER_GROUP, "children"),
-    Output(ID_NEW_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
-    Input(ID_MAP, "dbl_click_lat_lng"),
-    # State(ID_NOTES_LAYER_GROUP, "children"),
+    Output(ID_NOTE_FORM_VIEW, "style", allow_duplicate=True),
+    Output(ID_NOTE_DETAIL_VIEW, "style", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
+    Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
+    Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
+    Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     prevent_initial_call=True
 )
-def handle_double_click(click):
-    user = get_user_from_cookies()
-    if user is None:
-        notification = create_notification(
-            "Operation not permitted",
-            "Log in to create notes!",
-            NotificationType.WARN
-        )
-        return dash.no_update, notification
+def update_layout_from_save_button_click(save_click, cancel_click):
+    if save_click is None or save_click == 0:
+        if cancel_click is None or cancel_click == 0:
+            raise PreventUpdate
+    return {"display": "none"}, {"display": "block"}, True, dict(state=False)
 
-    # marker = dl.Marker(
-    #     position=[click[0], click[1]],
-    #     icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
-    # )
-    # if markers is None:
-    #     markers = []
-    # return [*markers, marker], dict(lat=click[0], lon=click[1]), dash.no_update,
-    return dict(lat=click[0], lon=click[1]), dash.no_update
+
+
+# @app.callback(
+#     # Output(ID_NOTES_LAYER_GROUP, "children"),
+#     Output(ID_NEW_NOTE_STORE, "data", allow_duplicate=True),
+#     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
+#     Input(ID_MAP, "dbl_click_lat_lng"),
+#     # State(ID_NOTES_LAYER_GROUP, "children"),
+#     prevent_initial_call=True
+# )
+# def handle_double_click(click):
+#     user = get_user_from_cookies()
+#     if user is None:
+#         notification = create_notification(
+#             "Operation not permitted",
+#             "Log in to create notes!",
+#             NotificationType.WARN
+#         )
+#         return dash.no_update, notification
+#
+#     # marker = dl.Marker(
+#     #     position=[click[0], click[1]],
+#     #     icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
+#     # )
+#     # if markers is None:
+#     #     markers = []
+#     # return [*markers, marker], dict(lat=click[0], lon=click[1]), dash.no_update,
+#     return dict(lat=click[0], lon=click[1]), dash.no_update
 
 
 
@@ -72,3 +83,6 @@ def handle_double_click(click):
 #             "material-symbols:construction"
 #         )
 #     return dash.no_update
+
+
+

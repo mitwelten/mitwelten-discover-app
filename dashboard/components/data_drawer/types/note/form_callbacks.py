@@ -1,44 +1,66 @@
-import dash
-from dash import Output, Input, State, html, ALL, MATCH
+from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
-from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id import *
 from dashboard.maindash import app
-from dashboard.util.user_validation import get_user_from_cookies
 
 
-# enable and disable marker clicks to the notes marker to support move operations
 @app.callback(
-    Output({"role": "Notes", "id": MATCH, "label": "Prevent Marker Event"}, "data"),
-    Input({"role": "Notes", "id": MATCH, "label": ALL}, "n_clicks"),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
+    Input(ID_NOTE_EDIT_BUTTON, "n_clicks"),
+    State(ID_CURRENT_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def set_marker_icon_draggable(click):
-    print("set_marker_icon_draggable", dash.ctx.triggered_id)
-    print("activate prevent marker click: ", click)
-    trigger = dash.ctx.triggered_id
-    match trigger["label"]:
-        case "Edit Button":
-            print("Edit Button Pressed")
-            return dict(state=True)
-        case "Save Button":
-            return dict(state=False)
-        case "Cancel Button":
-            return dict(state=False)
-    raise PreventUpdate
+def store_edited_note_id(edit_click, data):
+    if edit_click is None or edit_click == 0:
+        raise PreventUpdate
+    return dict(id=data["note_id"])
 
 
-# change the note marker icon to display move support
 @app.callback(
-    Output({"role": "Notes", "id": MATCH, "label": "Node", "lat": ALL, "lon": ALL}, "icon"),
-    Output({"role": "Notes", "id": MATCH, "label": "Node", "lat": ALL, "lon": ALL}, "draggable"),
-    Input({"role": "Notes", "id": MATCH, "label": "Prevent Marker Event"}, "data"),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
+    Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
+    State(ID_CURRENT_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def change_note_icon(store_data):
-    print("change_note_icon", dash.ctx.triggered_id)
-    print("change note icon", store_data)
-    if store_data["state"]:
-        return [dict(iconUrl="assets/markers/note_move.svg", iconAnchor=[60, 50], iconSize=120)], [True]
-    return [dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30)], [False]
+def store_edited_note_id(save_click, _):
+    if save_click is None or save_click == 0:
+        raise PreventUpdate
+    return dict(id=None)
+
+
+@app.callback(
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
+    Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
+    State(ID_CURRENT_NOTE_STORE, "data"),
+    prevent_initial_call=True
+)
+def store_edited_note_id(cancel_click, _):
+    if cancel_click is None or cancel_click == 0:
+        raise PreventUpdate
+    return dict(id=None)
+
+
+@app.callback(
+    Output(ID_NOTES_STORE, "data"),
+    Output(ID_CURRENT_NOTE_STORE, "data"),
+    Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
+    State(ID_NOTES_STORE, "data"),
+    State(ID_CURRENT_NOTE_STORE, "data"),
+    State(ID_NOTE_EDIT_TITLE, "value"),
+    State(ID_NOTE_EDIT_DESCRIPTION, "value"),
+    prevent_initial_call=True
+)
+def save_note_changes(click, notes, current_note, title, description):
+    if click is None or click == 0:
+        raise PreventUpdate
+
+    note_id = current_note["note_id"]
+    for note in notes:
+        if note["note_id"] == note_id:
+            note["title"] = title
+            note["description"] = description
+
+    current_note["title"] = title
+    current_note["description"] = description
+    return notes, current_note
