@@ -4,13 +4,14 @@ from dash_iconify import DashIconify
 from configuration import PRIMARY_COLOR
 
 
-def action_button(button_id = None, icon: str = None, size="lg"):
+def action_button(button_id = None, icon: str = None, size="lg", disabled=False):
     return dmc.ActionIcon(
         DashIconify(
             icon=icon,
             width=20 if size == "lg" else 16,
             color=PRIMARY_COLOR,
         ),
+        disabled=disabled,
         variant="light",
         size=size,
         id=button_id if button_id else "",
