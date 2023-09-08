@@ -19,11 +19,12 @@ def chart_drawer():
     return dmc.Drawer(
         opened=False,
         id=ID_CHART_DRAWER,
-        zIndex=20000,
+        zIndex=90000,
         size="50%",
-        closeOnClickOutside=False,
-        closeOnEscape=False,
-        withOverlay=False,
+        closeOnClickOutside=True,
+        closeOnEscape=True,
+        withOverlay=True,
+        overlayOpacity=0,
         withCloseButton=True,
         className="chart-drawer",
         children=[
@@ -72,6 +73,7 @@ def open_drawer(data, bounds, viewport):
 @app.callback(
     Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_CURRENT_DRAWER_DATA_STORE, "data"),
     State(ID_ENVIRONMENT_LEGEND_STORE, "data"),
     State(ID_NOTES_STORE, "data"),
@@ -79,6 +81,11 @@ def open_drawer(data, bounds, viewport):
     prevent_initial_call=True
 )
 def update_drawer_content_from_store(chart_data, legend, notes, light_mode):
+    selected_note = None
+    for note in notes:
+        if note["note_id"] == chart_data["id"]:
+            selected_note = note
+
     match chart_data["role"]:
         case "Audio Logger": chart_children = create_audio_chart(chart_data["id"], light_mode)
         case "Env. Sensor": chart_children = create_env_chart(chart_data["id"], light_mode)
@@ -86,8 +93,8 @@ def update_drawer_content_from_store(chart_data, legend, notes, light_mode):
         case "Pollinator Cam": chart_children = create_pollinator_chart(chart_data["id"], light_mode)
         case "Notes": chart_children = create_note_view(notes, chart_data["id"], light_mode)
         case "Environment Data Points": chart_children = create_environment_point_chart(legend, chart_data["id"])
-        case x: return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO)
-    return chart_children, dash.no_update
+        case x: return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO), selected_note
+    return chart_children, dash.no_update, selected_note
 
 
 

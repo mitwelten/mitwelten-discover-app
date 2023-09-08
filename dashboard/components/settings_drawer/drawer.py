@@ -16,8 +16,6 @@ def settings_drawer(deployments, tags, data_sources):
         opened=True,
         size=SETTINGS_DRAWER_WIDTH,
         padding="md",
-        closeOnClickOutside=False,
-        closeOnEscape=False,
         withOverlay=False,
         zIndex=90000,
     )
