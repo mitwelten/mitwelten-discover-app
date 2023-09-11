@@ -161,7 +161,7 @@ def get_all_fake_notes():
     json_note = json.loads("""
     [
        {
-		"note_id": 0,
+		"id": 0,
 		"node_label": "1000-0001",
 		"title": "This is the Title of the Note",
 		"description": "Awesome description of the note Awesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the noteAwesome description of the note",
@@ -192,7 +192,7 @@ def get_all_fake_notes():
 		    ] 
 	},
     {
-        "note_id": 1,
+        "id": 1,
         "node_label": "2000-0002",
         "title": "This is the Title of second the Note",
         "description": "Awesome description of the second note",

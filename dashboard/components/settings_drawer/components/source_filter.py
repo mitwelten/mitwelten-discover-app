@@ -29,7 +29,7 @@ def get_checkbox_by_type(node_type: str, depl_markers: dict):
 
 @spaced_section
 def source_filter(deployments, data_sources):
-    brick_types = reduce(
+    source_types = reduce(
         list.__add__,
         [list(map(lambda x: get_checkbox_by_type(x, data_sources), data_sources.keys()))],
         [dmc.Checkbox(label="All", value="all", size="xs")]
@@ -71,7 +71,7 @@ def source_filter(deployments, data_sources):
             orientation="vertical",
             withAsterisk=False,
             offset="xs",
-            children=brick_types,
+            children=source_types,
             value=["all"],
         ),
     ])

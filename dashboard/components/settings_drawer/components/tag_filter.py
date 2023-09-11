@@ -18,9 +18,7 @@ def tag_filter(all_tags):
     fs_tags = [s for s in all_tags if p.match(s)]
     tags = [t for t in all_tags if t not in fs_tags]
     return html.Div([
-        dcc.Store(id=ID_CURRENT_TAG_DATA_STORE, data=[]),
         dmc.Text("Field Study",
-                 size="sm",
                  color="dimmed",
                  ),
         dmc.Center([
