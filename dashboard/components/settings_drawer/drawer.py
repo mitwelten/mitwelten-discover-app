@@ -26,11 +26,11 @@ def settings_drawer(deployments, tags, data_sources):
     Output(ID_SETTINGS_DRAWER, "position"),
     Output(ID_MAP, "center", allow_duplicate=True),
     Input(ID_OPEN_LEFT_DRAWER_BUTTON, "n_clicks"),
-    State(ID_FOCUS_ON_MAP_LOCATION, "data"),
+    State(ID_SELECTED_MARKER_STORE, "data"),
     State(ID_MAP, "bounds"),
     State(ID_MAP, "center"),
     prevent_initial_call=True,
 )
-def open_left_drawer(_, data, bounds, map_center):
-    map_center = ensure_marker_visibility(map_center, bounds, data)
+def open_left_drawer(_, selected_marker, bounds, map_center):
+    map_center = ensure_marker_visibility(map_center, bounds, selected_marker["data"]["location"])
     return True, "left", map_center
