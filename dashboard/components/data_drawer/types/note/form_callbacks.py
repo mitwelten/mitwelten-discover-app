@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
@@ -6,7 +8,7 @@ from dashboard.maindash import app
 
 
 @app.callback(
-    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_MODIFIED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_EDIT_BUTTON, "n_clicks"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
@@ -18,7 +20,7 @@ def store_edited_note_id(edit_click, data):
 
 
 @app.callback(
-    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_MODIFIED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
@@ -30,7 +32,7 @@ def store_edited_note_id(save_click, _):
 
 
 @app.callback(
-    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_MODIFIED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
@@ -55,6 +57,10 @@ def save_note_changes(click, notes, current_note, title, description):
     if click is None or click == 0:
         raise PreventUpdate
 
+    print("all notes:")
+    pprint(notes)
+    print("current notes:")
+    pprint(current_note)
     note_id = current_note["note_id"]
     for note in notes:
         if note["note_id"] == note_id:
