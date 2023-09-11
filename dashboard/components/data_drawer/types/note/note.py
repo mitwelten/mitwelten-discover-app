@@ -12,27 +12,18 @@ from dashboard.model.note import Note
 from dashboard.util.user_validation import get_user_from_cookies
 
 
-def drawer_content(note: Note):
-    user = get_user_from_cookies()
+def drawer_content():
     return dmc.Container([
-            dmc.Grid([
-                dmc.Col(dmc.Title(id=ID_NOTE_DRAWER_TITLE, order=5), span="content"),
-                dmc.Col(dmc.Group([
-                    action_button(ID_NOTE_ATTACHMENT_BUTTON, "material-symbols:attach-file"),
-                    action_button(ID_NOTE_EDIT_BUTTON, "material-symbols:edit", disabled=True if user is None else False)
-                ]),
-                    span="content"
-                ),
-            ],
-                justify="space-between",
-            ),
+            dmc.Title(id=ID_NOTE_DRAWER_TITLE, order=5),
             html.Div(id=ID_NOTE_DETAIL_VIEW),
             html.Div(id=ID_NOTE_FORM_VIEW, style={"display": "none"})
         ]),
 
 
-def create_note_view(notes, note_id, _):
+def create_note_view(notes, note_id):
+    selected_note = None
     for note in notes:
         if note["note_id"] == note_id:
-            return drawer_content(Note(note))
+            selected_note = note
+    return drawer_content(), selected_note
 
