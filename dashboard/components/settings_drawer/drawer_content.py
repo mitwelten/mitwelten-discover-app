@@ -1,6 +1,9 @@
+from pprint import pprint
+
+import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import html, Output, Input, State
+from dash import html, Output, Input, State, ALL
 
 from dashboard.components.settings_drawer.components.date_time_section import date_time_section
 from dashboard.components.settings_drawer.components.general_controls import general_controls
@@ -53,9 +56,13 @@ def drawer_content(deployments, tags_data, data_sources):
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
     State(ID_DATA_SOURCE_STORE, "data"),
-    State(ID_DEPLOYMENT_DATA_STORE, "data"),
+    State({"role": ALL, "label": "Store", "type": "physical"}, "data"),
 )
-def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_data):
+def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, sources):
+    deployment_data = {}
+    for source in sources:
+        deployment_data[source["type"]] = source["entries"]
+
     checkboxes = list(filter(lambda c: c in deployment_data.keys(), checkboxes))
 
     # parse to json objects
@@ -100,7 +107,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_
                         dl.Popup(
                             children=[device_popup(d, colors[d.node_type]['color'])],
                             closeButton=False,
-                            id=f"{d.deployment_id}",
+                            id=f"{d.id}",
                             autoPan=False
                         ),
                         dl.Tooltip(
@@ -110,7 +117,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_
                         ),
                     ],
                     icon=dict(iconUrl=colors[d.node_type]['svgPath'], iconAnchor=[15, 6], iconSize=30),
-                    id={"role": f"{d.node_type}", "id": d.deployment_id, "label": "Node", "lat": d.lat, "lon": d.lon},
+                    id={"role": f"{d.node_type}", "id": d.id, "label": "Node"},
                 )
             )
     return markers
@@ -119,14 +126,14 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, deployment_
 @app.callback(
     Output(ID_ENV_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-    State(ID_ENV_DATA_STORE, "data"),
+    State({"role": "Environment Data Points", "label": "Store", "type": "virtual"}, "data"),
 )
 def add_environment_markers(active_checkboxes, all_environments):
     if "Environment Data Points" not in active_checkboxes:
         return []
     markers = []
 
-    for env in all_environments:
+    for env in all_environments["entries"]:
         env = Environment(env)
         markers.append(
             dl.Marker(
@@ -138,13 +145,13 @@ def add_environment_markers(active_checkboxes, all_environments):
                         autoPan=False
                     ),
                     dl.Tooltip(
-                        children=f"Environment Data: {env.environment_id}",
+                        children=f"Environment Data: {env.id}",
                         offset={"x": -10, "y": 2},
                         direction="left",
                     ),
                 ],
                 icon=dict(iconUrl="assets/markers/environment.svg", iconAnchor=[15, 6], iconSize=30),
-                id={"role": "Environment Data Points", "id": env.environment_id, "label": "Node", "lat": env.lat, "lon": env.lon},
+                id={"role": "Environment Data Points", "id": env.id, "label": "Node"},
             )
         )
     return markers
@@ -153,8 +160,8 @@ def add_environment_markers(active_checkboxes, all_environments):
 @app.callback(
     Output(ID_NOTES_LAYER_GROUP, "children", allow_duplicate=True),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-    Input(ID_EDIT_NOTE_STORE, "data"),
-    State(ID_NOTES_STORE, "data"),
+    Input(ID_MODIFIED_NOTE_STORE, "data"),
+    State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )
 def add_note_markers(active_checkboxes, edit_note, all_notes):
@@ -165,9 +172,9 @@ def add_note_markers(active_checkboxes, edit_note, all_notes):
     marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg", iconAnchor=[61, 50], iconSize=120)
 
     markers = []
-    for note in all_notes:
+    for note in all_notes["entries"]:
         note = Note(note)
-        is_note_in_edit_mode = note.note_id == edit_note["id"]
+        is_note_in_edit_mode = note.id == edit_note["id"]
 
         markers.append(
             dl.Marker(
@@ -179,14 +186,14 @@ def add_note_markers(active_checkboxes, edit_note, all_notes):
                         autoPan=False
                     ),
                     dl.Tooltip(
-                        children=f"Note: {note.note_id}",
+                        children=f"Note: {note.id}",
                         offset={"x": -10, "y": 2},
                         direction="left",
                     ),
                 ],
                 icon=marker_icon if not is_note_in_edit_mode else marker_icon_draggable,
                 draggable=is_note_in_edit_mode,
-                id={"role": "Notes", "id": note.note_id, "label": "Node", "lat": note.lat, "lon": note.lon},
+                id={"role": "Notes", "id": note.id, "label": "Node"},
             )
         )
     return markers
