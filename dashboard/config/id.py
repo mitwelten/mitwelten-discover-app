@@ -28,7 +28,6 @@ ID_BASE_MAP_STORE = {"role": "map_store", "type": "base"}
 ID_OVERLAY_MAP_STORE = {"role": "map_store", "type": "overlay"}
 ID_DATE_RANGE_STORE = "id-date-range-store"
 ID_PREVENT_MARKER_EVENT = "id-prevent-marker-event"
-ID_MODIFIED_NOTE_STORE = "id-modified-note-store"
 ID_SELECTED_NOTE_STORE = "id-selected-note-store"
 
 # node types

@@ -160,11 +160,11 @@ def add_environment_markers(active_checkboxes, all_environments):
 @app.callback(
     Output(ID_NOTES_LAYER_GROUP, "children", allow_duplicate=True),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-    Input(ID_MODIFIED_NOTE_STORE, "data"),
+    Input(ID_SELECTED_NOTE_STORE, "data"),
     State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )
-def add_note_markers(active_checkboxes, edit_note, all_notes):
+def add_note_markers(active_checkboxes, selected_note, all_notes):
     if "Notes" not in active_checkboxes:
         return []
 
@@ -174,7 +174,9 @@ def add_note_markers(active_checkboxes, edit_note, all_notes):
     markers = []
     for note in all_notes["entries"]:
         note = Note(note)
-        is_note_in_edit_mode = note.id == edit_note["id"]
+        is_note_in_edit_mode = False
+        if selected_note["data"] is not None:
+            is_note_in_edit_mode = note.id == selected_note["data"]["id"] and selected_note["inEditMode"]
 
         markers.append(
             dl.Marker(

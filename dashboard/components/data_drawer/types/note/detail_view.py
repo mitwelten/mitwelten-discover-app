@@ -57,6 +57,6 @@ def note_detail_view(note: Note):
     Output(ID_NOTE_DETAIL_VIEW, "children"),
     Input(ID_SELECTED_NOTE_STORE, "data"),
 )
-def update_content_from_store(data):
-    note = Note(data)
+def update_content_from_store(selected_note):
+    note = Note(selected_note["data"])
     return note_detail_view(note)

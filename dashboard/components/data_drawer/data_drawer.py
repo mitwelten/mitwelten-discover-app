@@ -115,5 +115,5 @@ def add_selected_note_into_store(selected_marker):
     if selected_marker is None:
         return dash.no_update
     if selected_marker["type"] == "Notes":
-        return selected_marker["data"]
+        return dict(data=selected_marker["data"], inEditMode=False)
     return dash.no_update
