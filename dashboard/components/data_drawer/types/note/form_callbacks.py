@@ -16,7 +16,7 @@ from dashboard.maindash import app
 def store_edited_note_id(edit_click, data):
     if edit_click is None or edit_click == 0:
         raise PreventUpdate
-    return dict(id=data["note_id"])
+    return dict(id=data["id"])
 
 
 @app.callback(
@@ -44,10 +44,10 @@ def store_edited_note_id(cancel_click, _):
 
 
 @app.callback(
-    Output(ID_NOTES_STORE, "data"),
+    Output({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
-    State(ID_NOTES_STORE, "data"),
+    State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     State(ID_NOTE_EDIT_TITLE, "value"),
     State(ID_NOTE_EDIT_DESCRIPTION, "value"),
@@ -57,13 +57,9 @@ def save_note_changes(click, notes, current_note, title, description):
     if click is None or click == 0:
         raise PreventUpdate
 
-    print("all notes:")
-    pprint(notes)
-    print("current notes:")
-    pprint(current_note)
-    note_id = current_note["note_id"]
+    note_id = current_note["id"]
     for note in notes:
-        if note["note_id"] == note_id:
+        if note["id"] == note_id:
             note["title"] = title
             note["description"] = description
 
