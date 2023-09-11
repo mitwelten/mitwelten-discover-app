@@ -23,7 +23,7 @@ def drawer_content():
 def create_note_view(notes, note_id):
     selected_note = None
     for note in notes:
-        if note["note_id"] == note_id:
+        if note["id"] == note_id:
             selected_note = note
     return drawer_content(), selected_note
 
