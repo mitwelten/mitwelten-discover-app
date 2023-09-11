@@ -84,7 +84,7 @@ def open_drawer(selected_marker, bounds, viewport):
     State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
-def update_drawer_content_from_store(selected_marker, env, light_mode):
+def update_drawer_content_from_store(selected_marker, environment_data, light_mode):
     if selected_marker is None:
         raise PreventUpdate
 
@@ -98,7 +98,7 @@ def update_drawer_content_from_store(selected_marker, env, light_mode):
         case "Pollinator Cam":
             chart_children = create_pollinator_chart(selected_marker["data"]["id"], light_mode)
         case "Environment Data Points":
-            chart_children = create_environment_point_chart(env["legend"], selected_marker["data"]["id"])
+            chart_children = create_environment_point_chart(environment_data["legend"], selected_marker["data"]["id"])
         case "Notes": chart_children = create_note_view()
         case x:
             return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO)
