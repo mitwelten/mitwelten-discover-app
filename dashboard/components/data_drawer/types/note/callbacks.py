@@ -5,36 +5,41 @@ from dashboard.config.id import *
 from dashboard.maindash import app
 
 
-# switch drawer content to detail view
 @app.callback(
     Output(ID_NOTE_FORM_VIEW, "style", allow_duplicate=True),
     Output(ID_NOTE_DETAIL_VIEW, "style", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "closeOnClickOutside", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "closeOnEscape", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "withOverlay", allow_duplicate=True),
     Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
     Input(ID_NOTE_EDIT_BUTTON, "n_clicks"),
     prevent_initial_call=True
 )
-def update_note_container_content(click):
+def add_note_form_view_to_drawer_container(click):
     if click is None or click == 0:
         raise PreventUpdate
-    return {"display": "block"}, {"display": "none"}, False, dict(state=True)
+    return {"display": "block"}, {"display": "none"}, False, False, False, False, dict(state=True)
 
 
-# switch drawer content to note form
 @app.callback(
     Output(ID_NOTE_FORM_VIEW, "style", allow_duplicate=True),
     Output(ID_NOTE_DETAIL_VIEW, "style", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "closeOnClickOutside", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "closeOnEscape", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "withOverlay", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "overlayOpacity", allow_duplicate=True),
     Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     prevent_initial_call=True
 )
-def update_layout_from_save_button_click(save_click, cancel_click):
+def add_note_detail_view_to_drawer_container(save_click, cancel_click):
     if save_click is None or save_click == 0:
         if cancel_click is None or cancel_click == 0:
             raise PreventUpdate
-    return {"display": "none"}, {"display": "block"}, True, dict(state=False)
+    return {"display": "none"}, {"display": "block"}, True, True, True, True, 0, dict(state=False)
 
 
 
