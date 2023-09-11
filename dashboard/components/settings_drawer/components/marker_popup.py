@@ -57,7 +57,7 @@ def device_popup(deployment, color):
     start = pretty_date(deployment.period_start)
     end = pretty_date(deployment.period_end) if deployment.period_end else "-"
     return dmc.Container([
-        *header(deployment.deployment_id, deployment.node_type, deployment.node_label, color),
+        *header(deployment.id, deployment.node_type, deployment.node_label, color),
         *time_section("Start", start, "End", end),
         dmc.Space(h=10),
         dmc.Group(
@@ -74,7 +74,7 @@ def environment_popup(environment):
     created_at = pretty_date(environment.created_at)
     updated_at = pretty_date(environment.updated_at) if environment.updated_at else "-"
     return dmc.Container([
-        *header(environment.environment_id, "Environment Data Point", "", "#abde00"),
+        *header(environment.id, "Environment Data Point", "", "#abde00"),
         *time_section("Created", created_at, "Updated", updated_at),
     ],
         fluid=True,
@@ -86,7 +86,7 @@ def note_popup(note):
     created_at = pretty_date(note.created_at)
     updated_at = pretty_date(note.updated_at) if note.updated_at else "-"
     return dmc.Container([
-        *header(note.note_id, "Note", note.node_label, "#ffd800"),
+        *header(note.id, "Note", note.node_label, "#ffd800"),
         *time_section("Created", created_at, "Updated", updated_at),
         dmc.Space(h=10),
         dmc.Group(
