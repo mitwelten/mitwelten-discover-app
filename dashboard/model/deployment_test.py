@@ -49,6 +49,8 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(depl.lon, depl_dict["location"]["lon"])
         self.assertEqual(depl.period_end, depl_dict["period"]["end"])
         self.assertEqual(depl.period_start, depl_dict["period"]["start"])
+        self.assertEqual(depl.node_type, depl_dict["node"]["type"])
+        self.assertEqual(depl.node_label, depl_dict["node"]["node_label"])
         for idx, tag in enumerate(depl.tags):
             self.assertEqual(tag, depl_dict["tags"][idx]["name"])
 

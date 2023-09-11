@@ -33,7 +33,7 @@ class Deployment:
         return dict(
             id=self.id,
             description=self.description,
-            node=dict(node_label=self.node_label, node_type=self.node_type),
+            node=dict(node_label=self.node_label, type=self.node_type),
             location=dict(lat=self.lat, lon=self.lon),
             tags=[{"name": t} for t in self.tags] if self.tags is not None else [],
             period=dict(start=self.period_start, end=self.period_end),
