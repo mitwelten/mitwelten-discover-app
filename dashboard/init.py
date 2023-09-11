@@ -1,10 +1,12 @@
 import json
 from datetime import datetime
 from functools import reduce
+from pprint import pprint
 
 from dashboard.config.map import DEFAULT_MARKER_COLORS
 from dashboard.api.api_client import get_environment_data, get_environment_legend, get_deployments, get_all_fake_notes
 from dashboard.model.deployment import Deployment
+from dashboard.model.environment import Environment
 
 
 def init_deployment_data():
@@ -25,8 +27,8 @@ def init_deployment_data():
     deployment_dict = {}
     for node_type in all_types:
         deployment_dict[node_type] = [
-            d for d in all_deployments_json
-            if node_type.lower().strip() in d["node"]["type"].lower()
+            d.to_dict() for d in all_deployments
+            if node_type.lower().strip() in d.node_type.lower()
         ]
 
     idx_list = enumerate(all_types)
@@ -44,11 +46,13 @@ def init_deployment_data():
 
 def init_environment_data():
     all_environments_json = get_environment_data()
+    # standardize dictionary properties
+    all_environments = [Environment(env).to_dict() for env in all_environments_json]
     environment_legend = get_environment_legend()
 
-    return all_environments_json, environment_legend
+    return all_environments, environment_legend
 
 
 def init_notes():
-    all_notes = get_all_fake_notes()
+    all_notes = get_all_fake_notes()  # TODO: change fake data source
     return all_notes
