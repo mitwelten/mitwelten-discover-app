@@ -21,22 +21,14 @@ ID_LOGOUT_BUTTON = "id-logout-btn"
 ID_LOGIN_AVATAR_CONTAINER = "login-avatar-container"
 
 # stores
-ID_DEPLOYMENT_DATA_STORE = "id-deployment-data-store"
 ID_TAG_DATA_STORE = "id-tags-data-store"
-ID_NOTES_STORE = "id-notes-store"
-ID_ENV_DATA_STORE = "id-env-data-store"
-ID_MARKER_CLICK_STORE = "id-marker-clicks-store"
-ID_CURRENT_TAG_DATA_STORE = "id-current-tags-data-store"
+ID_SELECTED_MARKER_STORE = "id-selected-marker-store"
 ID_DATA_SOURCE_STORE = "id-data-source-store"
 ID_BASE_MAP_STORE = {"role": "map_store", "type": "base"}
 ID_OVERLAY_MAP_STORE = {"role": "map_store", "type": "overlay"}
-ID_CURRENT_DRAWER_DATA_STORE = "id-current-drawer-data-store"
 ID_DATE_RANGE_STORE = "id-date-range-store"
-ID_ENVIRONMENT_LEGEND_STORE = "id-environment-legend-store"
-ID_NEW_NOTE_STORE = "id-new-note-store"
 ID_PREVENT_MARKER_EVENT = "id-prevent-marker-event"
-ID_SELECTED_NOTE_STORE = "id-current-note-store"
-ID_EDIT_NOTE_STORE = "id-edit-note-store"
+ID_MODIFIED_NOTE_STORE = "id-modified-note-store"
 ID_SELECTED_NOTE_STORE = "id-selected-note-store"
 
 # node types
