@@ -82,16 +82,13 @@ def open_drawer(data, bounds, viewport):
 )
 def update_drawer_content_from_store(chart_data, legend, notes, light_mode):
     selected_note = None
-    for note in notes:
-        if note["note_id"] == chart_data["id"]:
-            selected_note = note
 
     match chart_data["role"]:
         case "Audio Logger": chart_children = create_audio_chart(chart_data["id"], light_mode)
         case "Env. Sensor": chart_children = create_env_chart(chart_data["id"], light_mode)
         case "Pax Counter": chart_children = create_pax_chart(chart_data["id"], light_mode)
         case "Pollinator Cam": chart_children = create_pollinator_chart(chart_data["id"], light_mode)
-        case "Notes": chart_children = create_note_view(notes, chart_data["id"], light_mode)
+        case "Notes": chart_children, selected_note = create_note_view(notes, chart_data["id"])
         case "Environment Data Points": chart_children = create_environment_point_chart(legend, chart_data["id"])
         case x: return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO), selected_note
     return chart_children, dash.no_update, selected_note
