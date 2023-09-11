@@ -79,15 +79,12 @@ def open_drawer(selected_marker, bounds, viewport):
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
-    State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
     State({"role": "Environment Data Points", "label": "Store", "type": "virtual"}, "data"),
     State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
-def update_drawer_content_from_store(selected_marker, notes, env, light_mode):
-    selected_note = None
+def update_drawer_content_from_store(selected_marker, env, light_mode):
     if selected_marker is None:
         raise PreventUpdate
 
@@ -100,13 +97,23 @@ def update_drawer_content_from_store(selected_marker, notes, env, light_mode):
             chart_children = create_pax_chart(selected_marker["data"]["id"], light_mode)
         case "Pollinator Cam":
             chart_children = create_pollinator_chart(selected_marker["data"]["id"], light_mode)
-        case "Notes":
-            chart_children, selected_note = create_note_view(notes["entries"], selected_marker["data"]["id"])
         case "Environment Data Points":
             chart_children = create_environment_point_chart(env["legend"], selected_marker["data"]["id"])
+        case "Notes": chart_children = create_note_view()
         case x:
-            return (dash.no_update,
-                    create_notification(x, "No further data available!", NotificationType.INFO),
-                    selected_note)
+            return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO)
 
-    return chart_children, dash.no_update, selected_note
+    return chart_children, dash.no_update
+
+
+@app.callback(
+    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Input(ID_SELECTED_MARKER_STORE, "data"),
+    prevent_initial_call=True
+)
+def add_selected_note_into_store(selected_marker):
+    if selected_marker is None:
+        return dash.no_update
+    if selected_marker["type"] == "Notes":
+        return selected_marker["data"]
+    return dash.no_update
