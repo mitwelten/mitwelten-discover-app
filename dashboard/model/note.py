@@ -3,7 +3,7 @@ from dashboard.model.file import File
 
 class Note:
     def __init__(self, json_note):
-        self.note_id = json_note.get("note_id")
+        self.id = json_note.get("note_id", json_note.get("id"))
         self.title = json_note.get("title")
         self.description = json_note.get("description")
         self.node_label = json_note.get("node_label")
@@ -26,7 +26,7 @@ class Note:
 
     def to_dict(self):
         return dict(
-            note_id=self.note_id,
+            id=self.id,
             title=self.title,
             description=self.description,
             note_label=self.node_label,
