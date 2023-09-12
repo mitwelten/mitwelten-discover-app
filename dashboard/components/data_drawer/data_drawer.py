@@ -30,7 +30,7 @@ def chart_drawer():
         className="chart-drawer",
         position="bottom",
         children=[
-            html.Div(id=ID_CHART_CONTAINER, className="measurement-chart", style={"margin": "20px"}),
+            html.Div(id=ID_CHART_CONTAINER, className="chart-container", style={"margin": "20px"}),
         ],
         # children=[
         #     dmc.LoadingOverlay(
@@ -93,20 +93,20 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
 
     match selected_marker["type"]:
         case "Audio Logger":
-            chart_children = create_audio_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_audio_chart(selected_marker["data"]["id"], light_mode)
         case "Env. Sensor":
-            chart_children = create_env_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_env_chart(selected_marker["data"]["id"], light_mode)
         case "Pax Counter":
-            chart_children = create_pax_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_pax_chart(selected_marker["data"]["id"], light_mode)
         case "Pollinator Cam":
-            chart_children = create_pollinator_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_pollinator_chart(selected_marker["data"]["id"], light_mode)
         case "Environment Data Points":
-            chart_children = create_environment_point_chart(environment_data["legend"], selected_marker["data"]["id"])
-        case "Notes": chart_children = create_note_view()
+            drawer_content = create_environment_point_chart(environment_data["legend"], selected_marker["data"]["id"])
+        case "Notes": drawer_content = create_note_view()
         case x:
             return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO)
 
-    return chart_children, dash.no_update
+    return drawer_content, dash.no_update
 
 
 @app.callback(
