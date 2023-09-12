@@ -29,15 +29,20 @@ def chart_drawer():
         withCloseButton=True,
         className="chart-drawer",
         position="bottom",
-        children=[
-            html.Div(id=ID_CHART_CONTAINER, className="chart-container", style={"margin": "20px"}),
-        ],
+        styles={"header": {"margin": 0}},
         # children=[
-        #     dmc.LoadingOverlay(
-        #         html.Div(id=ID_CHART_CONTAINER, className="measurement-chart", style={"margin": "20px"}),
-        #         loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
-        #     )
+        #     html.Div(id=ID_CHART_CONTAINER, className="chart-container", style={"margin": "20px"}),
         # ],
+        children=[
+            html.Div(
+                children=dmc.LoadingOverlay(
+                    html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
+                    loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
+                    style={"height":"100%"},
+                ),
+                className="chart-container"
+            ),
+        ],
     )
 
 
