@@ -1,8 +1,14 @@
-from dash import Output, Input
+from datetime import datetime
+
+import dash
+from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
+from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id import *
 from dashboard.maindash import app
+from dashboard.model.note import Note, default_note
+from dashboard.util.user_validation import get_user_from_cookies
 
 
 @app.callback(
@@ -38,33 +44,37 @@ def add_note_detail_view_to_drawer_container(save_click, cancel_click):
     return True, True, True, True, 0, dict(state=False)
 
 
+@app.callback(
+    Output(ID_NEW_NOTE_STORE, "data"),
+    Output(ID_SELECTED_MARKER_STORE, "data", allow_duplicate=True),
+    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "closeOnClickOutside", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "closeOnEscape", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "withOverlay", allow_duplicate=True),
+    Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
+    Input(ID_MAP, "dbl_click_lat_lng"),
+    prevent_initial_call=True
+)
+def handle_double_click(click):
+    user = get_user_from_cookies()
+    if user is None:
+        notification = create_notification(
+            "Operation not permitted",
+            "Log in to create notes!",
+            NotificationType.WARN
+        )
+        return dash.no_update, dash.no_update, notification, True, True, True, True, dict(state=True)
 
-# @app.callback(
-#     # Output(ID_NOTES_LAYER_GROUP, "children"),
-#     Output(ID_NEW_NOTE_STORE, "data", allow_duplicate=True),
-#     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
-#     Input(ID_MAP, "dbl_click_lat_lng"),
-#     # State(ID_NOTES_LAYER_GROUP, "children"),
-#     prevent_initial_call=True
-# )
-# def handle_double_click(click):
-#     user = get_user_from_cookies()
-#     if user is None:
-#         notification = create_notification(
-#             "Operation not permitted",
-#             "Log in to create notes!",
-#             NotificationType.WARN
-#         )
-#         return dash.no_update, notification
-#
-#     # marker = dl.Marker(
-#     #     position=[click[0], click[1]],
-#     #     icon=dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30),
-#     # )
-#     # if markers is None:
-#     #     markers = []
-#     # return [*markers, marker], dict(lat=click[0], lon=click[1]), dash.no_update,
-#     return dict(lat=click[0], lon=click[1]), dash.no_update
+    new_note = Note(default_note)
+    new_note.lat = click[0]
+    new_note.lon = click[1]
+    new_note.creator = user.full_name
+    new_note.created_at = datetime.now().isoformat()
+    new_note.updated_at = datetime.now().isoformat()
+    new_note = new_note.to_dict()
+    return new_note, dict(data=new_note, type="Notes"), dash.no_update, False, False, False, False, dict(state=False)
+
 
 
 

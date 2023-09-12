@@ -112,12 +112,17 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
+    State(ID_NEW_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def add_selected_note_into_store(selected_marker):
+def add_selected_note_into_store(selected_marker, new_note):
     print("sync marker and note store")
     if selected_marker is None:
         raise PreventUpdate
+
     if selected_marker["type"] == "Notes":
+        if new_note is not None:
+            return dict(data=selected_marker["data"], inEditMode=True, movedTo=[new_note["location"]["lat"], new_note["location"]["lon"]])
+
         return dict(data=selected_marker["data"], inEditMode=False, movedTo=None)
     raise PreventUpdate
