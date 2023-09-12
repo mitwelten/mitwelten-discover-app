@@ -6,8 +6,6 @@ from dashboard.maindash import app
 
 
 @app.callback(
-    Output(ID_NOTE_FORM_VIEW, "style", allow_duplicate=True),
-    Output(ID_NOTE_DETAIL_VIEW, "style", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "closeOnClickOutside", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "closeOnEscape", allow_duplicate=True),
@@ -19,12 +17,10 @@ from dashboard.maindash import app
 def add_note_form_view_to_drawer_container(click):
     if click is None or click == 0:
         raise PreventUpdate
-    return {"display": "block"}, {"display": "none"}, False, False, False, False, dict(state=True)
+    return False, False, False, False, dict(state=True)
 
 
 @app.callback(
-    Output(ID_NOTE_FORM_VIEW, "style", allow_duplicate=True),
-    Output(ID_NOTE_DETAIL_VIEW, "style", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "closeOnClickOutside", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "closeOnEscape", allow_duplicate=True),
@@ -39,7 +35,7 @@ def add_note_detail_view_to_drawer_container(save_click, cancel_click):
     if save_click is None or save_click == 0:
         if cancel_click is None or cancel_click == 0:
             raise PreventUpdate
-    return {"display": "none"}, {"display": "block"}, True, True, True, True, 0, dict(state=False)
+    return True, True, True, True, 0, dict(state=False)
 
 
 

@@ -1,5 +1,6 @@
+import dash
 import dash_mantine_components as dmc
-from dash import Output, Input
+from dash import Output, Input, ALL, State
 from dash.exceptions import PreventUpdate
 
 from configuration import PRIMARY_COLOR
@@ -30,12 +31,35 @@ def note_form(note: Note):
 
 
 @app.callback(
-    Output(ID_NOTE_EDIT_LAT, "value"),
-    Output(ID_NOTE_EDIT_LON, "value"),
-    Input(ID_SELECTED_NOTE_STORE, "data"),
+    Output(ID_SELECTED_NOTE_STORE, "data"),
+    Input(ID_NOTE_EDIT_LAT, "value"),
+    Input(ID_NOTE_EDIT_LON, "value"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
+    prevent_initial_call=True
 )
-def update_content_from_store(selected_note):
-    print("update lat lon text field")
-    if selected_note is None or selected_note["movedTo"] is None:
+def update_content_from_store(lat, lon, selected_note):
+    if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
-    return selected_note["movedTo"][0], selected_note["movedTo"][1]
+
+    is_edited = selected_note.get("inEditMode", False)
+    return dict(data=selected_note["data"], movedTo=[float(lat), float(lon)], inEditMode=is_edited)
+
+
+@app.callback(
+    Output(ID_NOTE_EDIT_LAT, "value", allow_duplicate=True),
+    Output(ID_NOTE_EDIT_LON, "value", allow_duplicate=True),
+    Input({"role": "Notes", "id": ALL, "label": "Node"}, "position"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
+    prevent_initial_call=True
+)
+def update_marker_position(_, selected_note):
+    if selected_note is None or selected_note["data"] is None:
+        raise PreventUpdate
+
+    new_position = None
+    for pos in dash.ctx.inputs_list[0]:
+        if selected_note["data"]["id"] == pos["id"]["id"]:
+            new_position = pos["value"]
+
+    return new_position
+

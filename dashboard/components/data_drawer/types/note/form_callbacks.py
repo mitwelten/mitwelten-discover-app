@@ -70,20 +70,4 @@ def save_note_changes(click, notes, selected_note, title, description):
     return notes, dict(data=note_data.to_dict(), movedTo=None, inEditMode=False)
 
 
-@app.callback(
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    Input({"role": "Notes", "id": ALL, "label": "Node"}, "position"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
-    prevent_initial_call=True
-)
-def update_marker_position(_, selected_note):
-    if selected_note is None or selected_note["data"] is None:
-        raise PreventUpdate
 
-    new_position = None
-    for pos in dash.ctx.inputs_list[0]:
-        if selected_note["data"]["id"] == pos["id"]["id"]:
-            new_position = pos["value"]
-
-    is_edited = selected_note.get("inEditMode", False)
-    return dict(data=selected_note["data"], movedTo=new_position, inEditMode=is_edited)
