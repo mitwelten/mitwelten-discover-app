@@ -45,6 +45,7 @@ app_content = [
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_PREVENT_MARKER_EVENT, data=dict(state=False)),
     dcc.Store(id=ID_SELECTED_NOTE_STORE, data=dict(data=None, inEditMode=False, movedTo=None), storage_type="local"),
+    dcc.Store(id=ID_NEW_NOTE_STORE, data=None, storage_type="local"),
 
     html.Div(
         html.A(
