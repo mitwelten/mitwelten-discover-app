@@ -1,3 +1,4 @@
+import random
 from datetime import datetime
 from pprint import pprint
 
@@ -26,6 +27,7 @@ def store_edited_note_id(edit_click, selected_note):
 
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_NEW_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
@@ -35,12 +37,13 @@ def store_edited_note_id(cancel_click, selected_note):
     if cancel_click is None or cancel_click == 0:
         print("no update")
         raise PreventUpdate
-    return dict(data=selected_note["data"], inEditMode=False, movedTo=None)
+    return dict(data=selected_note["data"], inEditMode=False, movedTo=None), None
 
 
 @app.callback(
-    Output({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
+    Output({"role": "Notes", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_NEW_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
     State(ID_SELECTED_NOTE_STORE, "data"),
@@ -65,9 +68,17 @@ def save_note_changes(click, notes, selected_note, title, description):
     note_data.lon = position[1]
     note_data.updated_at = datetime.now().isoformat()
 
-    notes["entries"] = [note_data.to_dict() if note["id"] == note_data.id else note for note in notes["entries"]]
+    found = False
+    new_entries = []
+    for note in notes["entries"]:
+        if note["id"] == note_data.id:
+            found = True
+            new_entries.append(note_data.to_dict())
+        else:
+            new_entries.append(note)
 
-    return notes, dict(data=note_data.to_dict(), movedTo=None, inEditMode=False)
-
-
-
+    if not found:
+        note_data.id = random.randint(0, 100000)
+        new_entries.append(note_data.to_dict())
+    notes["entries"] = new_entries
+    return notes, dict(data=note_data.to_dict(), movedTo=None, inEditMode=False), None
