@@ -43,14 +43,11 @@ def update_content_from_store(selected_note, view):
     current_view = view["currentView"]
     note = Note(selected_note["data"])
 
-    if current_view is not None:
-        if not is_edit_mode and current_view == "detail":
-            raise PreventUpdate
-        if is_edit_mode and current_view == "edit":
-            raise PreventUpdate
-        if is_edit_mode:
-            return note_form(note), dict(currentView="edit")
-        else:
-            return note_detail_view(note), dict(currentView="detail")
+    if not is_edit_mode and current_view == "detail":
+        raise PreventUpdate
+    if is_edit_mode and current_view == "edit":
+        raise PreventUpdate
+    if is_edit_mode:
+        return note_form(note), dict(currentView="edit")
     else:
         return note_detail_view(note), dict(currentView="detail")
