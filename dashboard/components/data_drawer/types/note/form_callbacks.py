@@ -28,6 +28,7 @@ def store_edited_note_id(edit_click, selected_note):
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_NEW_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
@@ -37,7 +38,7 @@ def store_edited_note_id(cancel_click, selected_note):
     if cancel_click is None or cancel_click == 0:
         print("no update")
         raise PreventUpdate
-    return dict(data=selected_note["data"], inEditMode=False, movedTo=None), None
+    return dict(data=selected_note["data"], inEditMode=False, movedTo=None), None, False
 
 
 @app.callback(

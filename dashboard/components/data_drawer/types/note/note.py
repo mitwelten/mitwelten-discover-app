@@ -21,11 +21,15 @@ from dashboard.model.note import Note
 
 
 def create_note_view():
-    return dmc.Container([
-        dcc.Store(id="id-visible-view", data=dict(currentView=None)),
-        dmc.Title(id=ID_NOTE_DRAWER_TITLE, order=5),
-        html.Div(id="id-test"),
-    ])
+    return dmc.Center(
+        dmc.Container([
+            dcc.Store(id="id-visible-view", data=dict(currentView=None)),
+            dmc.Title(id=ID_NOTE_DRAWER_TITLE, order=5),
+            html.Div(id="id-test"),
+        ],
+            style={"margin": 20, "width": "90%"}
+        )
+    )
 
 
 @app.callback(
