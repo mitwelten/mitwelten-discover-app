@@ -1,6 +1,8 @@
+from datetime import datetime
 from pprint import pprint
 
-from dash import Output, Input, State
+import dash
+from dash import Output, Input, State, ALL
 from dash.exceptions import PreventUpdate
 
 from dashboard.config.id import *
@@ -15,9 +17,11 @@ from dashboard.model.note import Note
     prevent_initial_call=True
 )
 def store_edited_note_id(edit_click, selected_note):
+    print("callback: edit button")
     if edit_click is None or edit_click == 0:
+        print("no update")
         raise PreventUpdate
-    return dict(data=selected_note["data"], inEditMode=True)
+    return dict(data=selected_note["data"], inEditMode=True, movedTo=None)
 
 
 @app.callback(
@@ -27,9 +31,11 @@ def store_edited_note_id(edit_click, selected_note):
     prevent_initial_call=True
 )
 def store_edited_note_id(cancel_click, selected_note):
+    print("callback: cancel button")
     if cancel_click is None or cancel_click == 0:
+        print("no update")
         raise PreventUpdate
-    return dict(data=selected_note["data"], inEditMode=False)
+    return dict(data=selected_note["data"], inEditMode=False, movedTo=None)
 
 
 @app.callback(
@@ -43,16 +49,41 @@ def store_edited_note_id(cancel_click, selected_note):
     prevent_initial_call=True
 )
 def save_note_changes(click, notes, selected_note, title, description):
+    if selected_note is None:
+        raise PreventUpdate
+    print("callback: save button")
     if click is None or click == 0:
+        print("no update")
         raise PreventUpdate
 
     note_data = Note(selected_note["data"])
-
-    for note in notes:
-        if note["id"] == note_data.id:
-            note["title"] = title
-            note["description"] = description
+    position = selected_note.get("movedTo", [note_data.lat, note_data.lon])
 
     note_data.title = title
     note_data.description = description
-    return notes, selected_note
+    note_data.lat = position[0]
+    note_data.lon = position[1]
+    note_data.updated_at = datetime.now().isoformat()
+
+    notes["entries"] = [note_data.to_dict() if note["id"] == note_data.id else note for note in notes["entries"]]
+
+    return notes, dict(data=note_data.to_dict(), movedTo=None, inEditMode=False)
+
+
+@app.callback(
+    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Input({"role": "Notes", "id": ALL, "label": "Node"}, "position"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
+    prevent_initial_call=True
+)
+def update_marker_position(_, selected_note):
+    if selected_note is None or selected_note["data"] is None:
+        raise PreventUpdate
+
+    new_position = None
+    for pos in dash.ctx.inputs_list[0]:
+        if selected_note["data"]["id"] == pos["id"]["id"]:
+            new_position = pos["value"]
+
+    is_edited = selected_note.get("inEditMode", False)
+    return dict(data=selected_note["data"], movedTo=new_position, inEditMode=is_edited)

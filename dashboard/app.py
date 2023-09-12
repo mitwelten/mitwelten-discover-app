@@ -44,7 +44,7 @@ app_content = [
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_PREVENT_MARKER_EVENT, data=dict(state=False)),
-    dcc.Store(id=ID_SELECTED_NOTE_STORE, data=dict(data=None, inEditMode=False)),
+    dcc.Store(id=ID_SELECTED_NOTE_STORE, data=dict(data=None, inEditMode=False, movedTo=None), storage_type="local"),
 
     html.Div(
         html.A(
@@ -101,8 +101,6 @@ def map_click(click_lat_lng, zoom):
 
 
 def handle_marker_click(data_source, marker_click, prevent_event, store):
-    print("handle marker click")
-    print(dash.ctx.triggered_id)
     if prevent_event["state"]:
         raise PreventUpdate
 
@@ -129,20 +127,4 @@ for source in data_sources:
 
 
 
-# @app.callback(
-#     Output(ID_SELECTED_MARKER_STORE, "data", allow_duplicate=True),
-#     Input({"role": "Notes", "id": ALL, "label": "Node"}, "n_clicks"),
-#     State({"role": "Notes", "label": "Store"}, "data"),
-#     prevent_initial_call=True
-# )
-# def test_marker_click(note_click, all_notes):
-#     # ensures a click occurred (callback is fired when a marker is added to the map as well)
-#     click_sum = safe_reduce(lambda x, y: x + y, note_click, 0)
-#     if click_sum == 0:
-#         raise PreventUpdate
-#
-#     for note in all_notes:
-#         if note["note_id"] == dash.ctx.triggered_id["id"]:
-#             return note
-#     raise PreventUpdate
 
