@@ -30,11 +30,14 @@ def chart_drawer():
         className="chart-drawer",
         position="bottom",
         children=[
-            dmc.LoadingOverlay(
-                html.Div(id=ID_CHART_CONTAINER, className="measurement-chart", style={"margin": "20px"}),
-                loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
-            )
+            html.Div(id=ID_CHART_CONTAINER, className="measurement-chart", style={"margin": "20px"}),
         ],
+        # children=[
+        #     dmc.LoadingOverlay(
+        #         html.Div(id=ID_CHART_CONTAINER, className="measurement-chart", style={"margin": "20px"}),
+        #         loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
+        #     )
+        # ],
     )
 
 
@@ -112,8 +115,9 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
     prevent_initial_call=True
 )
 def add_selected_note_into_store(selected_marker):
+    print("sync marker and note store")
     if selected_marker is None:
-        return dash.no_update
+        raise PreventUpdate
     if selected_marker["type"] == "Notes":
-        return dict(data=selected_marker["data"], inEditMode=False)
-    return dash.no_update
+        return dict(data=selected_marker["data"], inEditMode=False, movedTo=None)
+    raise PreventUpdate
