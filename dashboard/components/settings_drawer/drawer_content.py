@@ -4,6 +4,7 @@ import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
 from dash import html, Output, Input, State, ALL
+from dash.exceptions import PreventUpdate
 
 from dashboard.components.settings_drawer.components.date_time_section import date_time_section
 from dashboard.components.settings_drawer.components.general_controls import general_controls
@@ -165,6 +166,7 @@ def add_environment_markers(active_checkboxes, all_environments):
     prevent_initial_call=True
 )
 def add_note_markers(active_checkboxes, selected_note, all_notes):
+    print("callback: marker update")
     if "Notes" not in active_checkboxes:
         return []
 
@@ -174,13 +176,17 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
     markers = []
     for note in all_notes["entries"]:
         note = Note(note)
+        location = [note.lat, note.lon]
+
         is_note_in_edit_mode = False
         if selected_note["data"] is not None:
             is_note_in_edit_mode = note.id == selected_note["data"]["id"] and selected_note["inEditMode"]
+            if is_note_in_edit_mode:
+                location = selected_note.get("movedTo") if selected_note.get("movedTo") is not None else location
 
         markers.append(
             dl.Marker(
-                position=[note.lat, note.lon],
+                position=location,
                 children=[
                     dl.Popup(
                         children=[note_popup(note)],
