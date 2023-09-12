@@ -163,9 +163,10 @@ def add_environment_markers(active_checkboxes, all_environments):
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_SELECTED_NOTE_STORE, "data"),
     State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
+    State(ID_NEW_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def add_note_markers(active_checkboxes, selected_note, all_notes):
+def add_note_markers(active_checkboxes, selected_note, all_notes, new_note):
     print("callback: marker update")
     if "Notes" not in active_checkboxes:
         return []
@@ -173,8 +174,12 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
     marker_icon = dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30)
     marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg", iconAnchor=[61, 50], iconSize=120)
 
+    all_notes = all_notes["entries"]
+    if new_note is not None:
+        all_notes.append(new_note)
+
     markers = []
-    for note in all_notes["entries"]:
+    for note in all_notes:
         note = Note(note)
         location = [note.lat, note.lon]
 
@@ -182,7 +187,7 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
         if selected_note["data"] is not None:
             is_note_in_edit_mode = note.id == selected_note["data"]["id"] and selected_note["inEditMode"]
             if is_note_in_edit_mode:
-                location = selected_note.get("movedTo") if selected_note.get("movedTo") is not None else location
+                location = selected_note.get("movedTo") if selected_note["movedTo"] is not None else location
 
         markers.append(
             dl.Marker(
