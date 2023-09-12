@@ -1,5 +1,21 @@
 from dashboard.model.file import File
 
+default_note = {
+    "note_id": -1,
+    "node_label": "",
+    "title": "",
+    "description": "",
+    "location": {
+        "lat": 0,
+        "lon": 0
+    },
+    "created_at": "",
+    "updated_at": "",
+    "creator": "",
+    "tags": [],
+    "files": []
+}
+
 
 class Note:
     def __init__(self, json_note):
