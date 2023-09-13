@@ -185,7 +185,9 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
                 note["location"]["lon"] = selected_note["data"]["location"]["lon"]
 
         if not found:
-            all_notes.append(selected_note["data"])
+            selected_note = selected_note["data"]
+            selected_note["inEditMode"] = True
+            all_notes.append(selected_note)
 
     markers = []
     for note in all_notes:
