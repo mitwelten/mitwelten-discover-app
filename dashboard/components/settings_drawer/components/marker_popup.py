@@ -83,7 +83,7 @@ def environment_popup(environment):
 
 
 def note_popup(note):
-    created_at = pretty_date(note.created_at)
+    created_at = pretty_date(note.created_at) if note.created_at else "-"
     updated_at = pretty_date(note.updated_at) if note.updated_at else "-"
     return dmc.Container([
         *header(note.id, "Note", note.node_label, "#ffd800"),
