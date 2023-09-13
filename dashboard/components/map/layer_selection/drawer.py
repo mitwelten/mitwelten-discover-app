@@ -64,20 +64,18 @@ def map_menu_drawer(id_prefix):
 
 @app.callback(
     Output(ID_MAP_LAYER_BOTTOM_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_MAP_LAYER_BOTTOM_DRAWER, "position", allow_duplicate=True),
     Input(ID_BOTTOM_DRAWER_BUTTON, "n_clicks"),
     prevent_initial_call=True,
 )
 def open_bottom_drawer(_):
-    return True, "bottom"
+    return True
 
 
 @app.callback(
     Output(ID_MAP_LAYER_BOTTOM_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_MAP_LAYER_BOTTOM_DRAWER, "position", allow_duplicate=True),
     Input(ID_MAP, "click_lat_lng"),
     Input({'role': ALL, 'index': ALL, 'place': "drawer"}, 'n_clicks'),
     prevent_initial_call=True,
 )
 def open_bottom_drawer(_1, _2):
-    return False, "bottom"
+    return False
