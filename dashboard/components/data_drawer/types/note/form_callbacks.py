@@ -1,9 +1,8 @@
 import random
 from datetime import datetime
-from pprint import pprint
 
 import dash
-from dash import Output, Input, State, ALL
+from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
 from dashboard.config.id import *
@@ -17,27 +16,31 @@ from dashboard.model.note import Note
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def store_edited_note_id(edit_click, selected_note):
-    print("callback: edit button")
+def activate_edit_mode(edit_click, selected_note):
     if edit_click is None or edit_click == 0:
-        print("no update")
         raise PreventUpdate
-    return dict(data=selected_note["data"], inEditMode=True)
+    return dict(data=selected_note["data"], inEditMode=True, isDirty=False)
 
 
 @app.callback(
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
+    Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
+    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def store_edited_note_id(cancel_click, selected_note):
-    print("callback: cancel button")
-    if cancel_click is None or cancel_click == 0:
-        print("no update")
+def map_click(click, selected_note):
+    if click is None or click == 0:
         raise PreventUpdate
-    return dict(data=selected_note["data"], inEditMode=False), False
+
+    if selected_note["data"] is None:
+        return False, dash.no_update, dash.no_update
+
+    if selected_note["isDirty"]:
+        return dash.no_update, True, dash.no_update
+
+    return False, dash.no_update, dict(data=None, inEditMode=False, isDirty=False)
 
 
 @app.callback(
@@ -46,29 +49,16 @@ def store_edited_note_id(cancel_click, selected_note):
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
     State(ID_SELECTED_NOTE_STORE, "data"),
-    State(ID_NOTE_EDIT_TITLE, "value"),
-    State(ID_NOTE_EDIT_DESCRIPTION, "value"),
     prevent_initial_call=True
 )
-def save_note_changes(click, notes, selected_note, title, description):
-    if selected_note is None:
-        raise PreventUpdate
-    print("callback: save button")
-    if click is None or click == 0:
-        print("no update")
+def save_note_changes(click, notes, selected_note):
+    if selected_note is None or click is None or click == 0:
         raise PreventUpdate
 
     note_data = Note(selected_note["data"])
-    # position = selected_note.get("movedTo", [note_data.lat, note_data.lon])
-
-    note_data.title = title
-    note_data.description = description
-    # note_data.lat = position[0]
-    # note_data.lon = position[1]
-    note_data.updated_at = datetime.now().isoformat()
-
     found = False
     new_entries = []
+
     for note in notes["entries"]:
         if note["id"] == note_data.id:
             found = True
@@ -77,7 +67,9 @@ def save_note_changes(click, notes, selected_note, title, description):
             new_entries.append(note)
 
     if not found:
-        note_data.id = random.randint(0, 100000)
+        # new created note
+        note_data.id = random.randint(0, 100000)  # TODO: connect to backend
         new_entries.append(note_data.to_dict())
+
     notes["entries"] = new_entries
-    return notes, dict(data=note_data.to_dict(), inEditMode=False)
+    return notes, dict(data=note_data.to_dict(), inEditMode=False, isDirty=False)
