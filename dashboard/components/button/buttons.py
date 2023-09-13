@@ -64,6 +64,9 @@ def control_buttons():
                     id=ID_MAP_LAYER_BOTTOM_DRAWER,
                     size="lg",
                     zIndex=90000,
+                    position="bottom",
+                    withOverlay=True,
+                    closeOnClickOutside=True
                 )
             ],
                 largerThan="sm",
