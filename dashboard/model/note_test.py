@@ -1,6 +1,8 @@
 import unittest
+from datetime import datetime
 
-from dashboard.model.note import Note
+from dashboard.model.file import File
+from dashboard.model.note import Note, empty_note
 
 json_note = {
     "note_id": 0,
@@ -60,6 +62,40 @@ class TestNote(unittest.TestCase):
 
         for idx, file in enumerate(note.files):
             self.assertEqual(file.id, note_dict["files"][idx]["id"])
+
+    def test_eq_with_emtpy_notes(self):
+        note1 = Note(empty_note)
+        note2 = Note(empty_note)
+        self.assertTrue(note1 == note2)
+
+    def test_eq_should_fail(self):
+        note1 = Note(empty_note)
+        note1.id = 123
+        note2 = Note(empty_note)
+        self.assertTrue(note1 != note2)
+
+    def test_eq_with_filled_properties(self):
+        note1 = Note(empty_note)
+        note2 = Note(empty_note)
+        test_file = File(dict(id="1", name="testfile", last_modified=datetime.now().isoformat(), type="pdf"))
+        test_date = datetime.now().isoformat()
+        note1.tags = [dict(name="test"), dict(name="test2")]
+        note2.tags = [dict(name="test"), dict(name="test2")]
+        note1.node_label = "test case"
+        note2.node_label = "test case"
+        note1.creator = "tester"
+        note2.creator = "tester"
+        note1.title = "test case"
+        note2.title = "test case"
+        note1.description = "this is a test case"
+        note2.description = "this is a test case"
+        note1.created_at = test_date
+        note2.created_at = test_date
+        note1.updated_at = test_date
+        note2.updated_at = test_date
+        note1.files = [test_file, test_file]
+        note2.files = [test_file, test_file]
+        self.assertTrue(note1 == note2)
 
 
 if __name__ == '__main__':

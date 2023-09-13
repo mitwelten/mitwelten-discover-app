@@ -1,20 +1,21 @@
+
 from dashboard.model.file import File
 
-default_note = {
-    "note_id": -1,
-    "node_label": "",
-    "title": "",
-    "description": "",
-    "location": {
-        "lat": 0,
-        "lon": 0
-    },
-    "created_at": "",
-    "updated_at": "",
-    "creator": "",
-    "tags": [],
-    "files": []
-}
+empty_note = dict(
+    note_id="",
+    node_label="",
+    title="",
+    description="",
+    location=dict(
+        lat=0,
+        lon=0
+    ),
+    created_at="",
+    updated_at="",
+    creator="",
+    tags=[],
+    files=[]
+    )
 
 
 class Note:
@@ -39,6 +40,21 @@ class Note:
         self.created_at = json_note.get("created_at")
         self.updated_at = json_note.get("updated_at")
         self.creator = json_note.get("creator")
+
+    def __eq__(self, other):
+        return (self.id == other.id and
+                self.title == other.title and
+                self.description == other.description and
+                self.creator == other.creator and
+                self.created_at == other.created_at and
+                self.updated_at == other.updated_at and
+                self.lat == other.lat and
+                self.lon == other.lon and
+                self.node_label == other.node_label and
+                self.files == other.files and
+                self.tags == other.tags
+                )
+
 
     def to_dict(self):
         return dict(
