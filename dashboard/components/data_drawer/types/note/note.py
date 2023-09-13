@@ -24,10 +24,7 @@ def create_note_view():
         dcc.Store(id=ID_VISIBLE_NOTE_VIEW_STORE, data=dict(currentView=None)),
         dmc.Title(id=ID_NOTE_DRAWER_TITLE, order=5),
         html.Div(id=ID_NOTE_VIEW, style={}),
-        dcc.ConfirmDialog(
-            id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG,
-            message="You have unsaved changes. Do you want to discard them?"
-        ),
+
     ],
         size="md"
     )
@@ -41,7 +38,7 @@ def create_note_view():
 )
 def update_content_from_store(selected_note, view):
     print("callback: common html element - edit Mode", selected_note["inEditMode"])
-    if selected_note is None:
+    if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 
     is_edit_mode = selected_note.get("inEditMode", False)
