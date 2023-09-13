@@ -1,8 +1,5 @@
 from functools import partial
-from pprint import pprint
 
-import dash
-from dash import dcc
 from dash.exceptions import PreventUpdate
 
 from dashboard.components.button.buttons import control_buttons
@@ -11,7 +8,6 @@ from dashboard.components.data_drawer.types.pollinator import *
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.settings_drawer import settings_drawer
 from dashboard.config.app import app_theme
-from dashboard.config.map import DEFAULT_LAT, DEFAULT_LON
 from dashboard.init import init_deployment_data, init_environment_data, init_notes
 from util.functions import safe_reduce
 
@@ -44,7 +40,7 @@ app_content = [
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_PREVENT_MARKER_EVENT, data=dict(state=False)),
-    dcc.Store(id=ID_SELECTED_NOTE_STORE, data=dict(data=None, inEditMode=False), storage_type="local"),
+    dcc.Store(id=ID_SELECTED_NOTE_STORE, data=dict(data=None, inEditMode=False, isDirty=False), storage_type="local"),
 
     html.Div(
         html.A(
@@ -55,6 +51,11 @@ app_content = [
             className="mitwelten-logo"
         ),
         id=ID_MAP_CONTAINER,
+    ),
+
+    dcc.ConfirmDialog(
+        id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG,
+        message="You have unsaved changes. Do you want to discard them?"
     ),
 
     map_figure,
@@ -127,13 +128,30 @@ for source in data_sources:
 
 
 @app.callback(
-    Output(ID_CHART_DRAWER, "opened"),
+    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
+    Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
+    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_MAP, "click_lat_lng"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def map_click(click_lat_lng):
-    if click_lat_lng is not None:
-        return False
-    raise PreventUpdate
+def map_click(_, selected_note):
+    if selected_note["data"] is None:
+        return False, dash.no_update, dash.no_update
+
+    if selected_note["isDirty"]:
+        return dash.no_update, True, dash.no_update
+
+    return False, dash.no_update, dict(data=None, inEditMode=False, isDirty=False)
 
 
+@app.callback(
+    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
+    Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
+    prevent_initial_call=True
+)
+def deactivate_edit_mode(cancel_click):
+    if cancel_click is None or cancel_click == 0:
+        raise PreventUpdate
+    return dict(data=None, inEditMode=False), False
