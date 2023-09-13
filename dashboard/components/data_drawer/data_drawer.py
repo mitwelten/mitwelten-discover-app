@@ -24,25 +24,26 @@ def chart_drawer():
         size="50%",
         closeOnClickOutside=True,
         closeOnEscape=True,
-        withOverlay=True,
+        withOverlay=False,
         overlayOpacity=0,
         withCloseButton=True,
+        padding="md",
         className="chart-drawer",
         position="bottom",
         styles={"header": {"margin": 0}},
-        # children=[
-        #     html.Div(id=ID_CHART_CONTAINER, className="chart-container", style={"margin": "20px"}),
-        # ],
         children=[
-            html.Div(
-                children=dmc.LoadingOverlay(
-                    html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
-                    loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
-                    style={"height":"100%"},
-                ),
-                className="chart-container"
-            ),
+            html.Div(id=ID_CHART_CONTAINER, className="chart-container", style={"margin": "20px"}),
         ],
+        # children=[
+        #     html.Div(
+        #         children=dmc.LoadingOverlay(
+        #             html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
+        #             loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
+        #             style={"height":"100%"},
+        #         ),
+        #         className="chart-container"
+        #     ),
+        # ],
     )
 
 
@@ -117,17 +118,19 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
-    State(ID_NEW_NOTE_STORE, "data"),
+    State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )
-def add_selected_note_into_store(selected_marker, new_note):
+def add_selected_note_into_store(selected_marker, all_notes):
     print("sync marker and note store")
     if selected_marker is None:
         raise PreventUpdate
 
     if selected_marker["type"] == "Notes":
-        if new_note is not None:
-            return dict(data=selected_marker["data"], inEditMode=True, movedTo=[new_note["location"]["lat"], new_note["location"]["lon"]])
+        for note in all_notes["entries"]:
+            if note["id"] == selected_marker["data"]["id"]:
+                return dict(data=selected_marker["data"], inEditMode=False, isDirty=False)
 
-        return dict(data=selected_marker["data"], inEditMode=False, movedTo=None)
+        return dict(data=selected_marker["data"], inEditMode=True, isDirty=False)  # new created note
+
     raise PreventUpdate
