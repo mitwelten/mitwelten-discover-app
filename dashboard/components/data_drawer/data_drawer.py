@@ -28,10 +28,9 @@ def chart_drawer():
         overlayOpacity=0,
         className="chart-drawer",
         position="bottom",
-        padding="xl",
-        title=dmc.Title(id="id-data-drawer-title", align="center", order=5, style={"marginTop": "1em", "marginLeft": "1em"}),
+        title=dmc.Text(id="id-data-drawer-title", weight=500, style={"marginTop": "1em", "marginLeft": "1em"}),
         children=[
-            html.Div(id=ID_CHART_CONTAINER, style={"height": "100%", "width": "100%"}),
+            html.Div(id=ID_CHART_CONTAINER, style={"height": "100%", "width": "100%", "paddingBottom": "50px"}),
         ],
         # children=[
         #     html.Div(

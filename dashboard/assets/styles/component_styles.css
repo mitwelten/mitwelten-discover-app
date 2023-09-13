@@ -69,10 +69,10 @@
         width: 100vw;
     }
 
-    /*.chart-graph {*/
-    /*    margin: 0;*/
-    /*    !*height: 300px;*!*/
-    /*}*/
+    .chart-graph {
+        margin: 0;
+        /*height: 300px;*/
+    }
 }
 
 #id-left-drawer-btn {
