@@ -50,18 +50,6 @@
     scroll-behavior: smooth;
 }
 
-@media screen and (max-width: 1000px) {
-    .chart-drawer {
-        left: 0;
-        height: 60%;
-        width: 100vw;
-    }
-
-    .chart-graph {
-        margin: 0;
-    }
-}
-
 @media screen and (max-width: 380px) {
     .chart-drawer {
         left: 0;
@@ -79,14 +67,12 @@
         left: 0;
         height: 100%;
         width: 100vw;
-        margin: 0;
-        padding: 0;
     }
 
-    .chart-graph {
-        margin: 0;
-        /*height: 300px;*/
-    }
+    /*.chart-graph {*/
+    /*    margin: 0;*/
+    /*    !*height: 300px;*!*/
+    /*}*/
 }
 
 #id-left-drawer-btn {
@@ -114,4 +100,8 @@
 
 input:invalid {
     outline: none !important;
+}
+
+.mantine-Drawer-header{
+    margin: 0;
 }

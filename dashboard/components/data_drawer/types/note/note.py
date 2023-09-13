@@ -18,7 +18,6 @@ def create_note_view():
         dcc.Store(id=ID_VISIBLE_NOTE_VIEW_STORE, data=dict(currentView=None)),
         dmc.Title(id=ID_NOTE_DRAWER_TITLE, order=5),
         html.Div(id=ID_NOTE_VIEW, style={}),
-
     ],
         size="md"
     )
@@ -31,7 +30,6 @@ def create_note_view():
     State(ID_VISIBLE_NOTE_VIEW_STORE, "data"),
 )
 def update_content_from_store(selected_note, view):
-    print("callback: common html element - edit Mode", selected_note["inEditMode"])
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 

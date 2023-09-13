@@ -26,13 +26,12 @@ def chart_drawer():
         closeOnEscape=True,
         withOverlay=False,
         overlayOpacity=0,
-        withCloseButton=True,
-        padding="md",
         className="chart-drawer",
         position="bottom",
-        styles={"header": {"margin": 0}},
+        padding="xl",
+        title=dmc.Title(id="id-data-drawer-title", align="center", order=5, style={"marginTop": "1em", "marginLeft": "1em"}),
         children=[
-            html.Div(id=ID_CHART_CONTAINER, className="chart-container", style={"margin": "20px"}),
+            html.Div(id=ID_CHART_CONTAINER, style={"height": "100%", "width": "100%"}),
         ],
         # children=[
         #     html.Div(
@@ -88,6 +87,7 @@ def open_drawer(selected_marker, bounds, viewport):
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
+    Output("id-data-drawer-title", "children"),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     State({"role": "Environment Data Points", "label": "Store", "type": "virtual"}, "data"),
     State(ID_APP_THEME, "theme"),
@@ -97,22 +97,31 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
     if selected_marker is None:
         raise PreventUpdate
 
+    marker_data = selected_marker.get("data")
     match selected_marker["type"]:
         case "Audio Logger":
-            drawer_content = create_audio_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_audio_chart(marker_data["id"], light_mode)
         case "Env. Sensor":
-            drawer_content = create_env_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_env_chart(marker_data["id"], light_mode)
         case "Pax Counter":
-            drawer_content = create_pax_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_pax_chart(marker_data["id"], light_mode)
         case "Pollinator Cam":
-            drawer_content = create_pollinator_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_pollinator_chart(marker_data["id"], light_mode)
         case "Environment Data Points":
-            drawer_content = create_environment_point_chart(environment_data["legend"], selected_marker["data"]["id"])
+            drawer_content = create_environment_point_chart(environment_data["legend"], marker_data["id"])
         case "Notes": drawer_content = create_note_view()
         case x:
-            return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO)
+            return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO), dash.no_update
 
-    return drawer_content, dash.no_update
+    if marker_data.get('node') is not None:
+        if marker_data.get("node").get("node_label") is not None:
+            node_label = marker_data['node']['node_label']
+        else:
+            node_label = marker_data['node']
+    else:
+        node_label = marker_data.get("id")
+
+    return drawer_content, dash.no_update, f"{selected_marker['type']} - {node_label}"
 
 
 @app.callback(
