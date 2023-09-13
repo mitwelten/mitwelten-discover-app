@@ -1,6 +1,6 @@
 import dash
 import dash_mantine_components as dmc
-from dash import Output, Input, ALL, State, dcc
+from dash import Output, Input, ALL, State
 from dash.exceptions import PreventUpdate
 
 from configuration import PRIMARY_COLOR
@@ -10,13 +10,12 @@ from dashboard.model.note import Note
 
 
 def note_form(note: Note):
-    print("render note_form")
     return [
         dmc.Grid([
             dmc.Col(dmc.Title(f"Note - {note.id}", order=5), span="content"),
             dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span=12),
-            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title ,label="Title", variant="filled"), span=12),
-            dmc.Col(dmc.Textarea(id=ID_NOTE_EDIT_DESCRIPTION, value=note.description ,label="Description", variant="filled"), span=12),
+            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", variant="filled"), span=12),
+            dmc.Col(dmc.Textarea(id=ID_NOTE_EDIT_DESCRIPTION, value=note.description, label="Description", variant="filled"), span=12),
             dmc.Divider(size="sm"),
             dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_LAT, label="Latitude", value=note.lat, variant="filled"), span="content"),
             dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_LON, label="Longitude", value=note.lon, variant="filled"), span="content"),
@@ -36,31 +35,38 @@ def note_form(note: Note):
 
 
 @app.callback(
-    Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed"),
-    Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
-    prevent_initial_call=True
-)
-def update_content_from_store(click):
-    if click and click > 0:
-        return True
-    return False
-
-
-@app.callback(
-    Output(ID_SELECTED_NOTE_STORE, "data"),
+    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Input(ID_NOTE_EDIT_TITLE, "value"),
+    Input(ID_NOTE_EDIT_DESCRIPTION, "value"),
     Input(ID_NOTE_EDIT_LAT, "value"),
     Input(ID_NOTE_EDIT_LON, "value"),
     State(ID_SELECTED_NOTE_STORE, "data"),
+    State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )
-def update_content_from_store(lat, lon, selected_note):
+def update_note_store_by_form(title, description, lat, lon, selected_note, all_notes):
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 
-    is_edited = selected_note.get("inEditMode", False)
+    selected_note["data"]["title"] = title
+    selected_note["data"]["description"] = description
     selected_note["data"]["location"]["lat"] = float(lat)
     selected_note["data"]["location"]["lon"] = float(lon)
-    return dict(data=selected_note["data"], inEditMode=is_edited)
+
+    # if selected note is not modified(dirty), check if note is modified after callback has fired
+    is_dirty = True
+    found = False
+    for note in all_notes["entries"]:
+        if note["id"] == selected_note["data"]["id"]:
+            found = True
+            is_dirty = Note(note) != Note(selected_note["data"])
+
+    if not found:  # note is new created - therefore not in collection
+        if title == "" and description == "":
+            is_dirty = False  # callback was fired when mounting to de DOM
+
+    is_edited = selected_note.get("inEditMode", False)
+    return dict(data=selected_note["data"], inEditMode=is_edited, isDirty=is_dirty)
 
 
 @app.callback(
@@ -70,7 +76,7 @@ def update_content_from_store(lat, lon, selected_note):
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def update_marker_position(_, selected_note):
+def change_lat_lon_by_marker_position(_, selected_note):
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 
