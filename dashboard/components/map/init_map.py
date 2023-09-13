@@ -22,13 +22,9 @@ map_figure = dl.Map(
                 zIndex=0
             ),
         ),
-        dl.FeatureGroup(
-            [
-                dl.ScaleControl(position="bottomright"),
-                dl.LocateControl(
-                    options={"locateOptions": {"enableHighAccuracy": True}, "position":"bottomright"},
-                ),
-            ]
+        dl.ScaleControl(position="bottomright"),
+        dl.LocateControl(
+            options={"locateOptions": {"enableHighAccuracy": True}, "position":"bottomright"},
         ),
         dl.LayerGroup(id=ID_MAP_LAYER_GROUP),
         dl.LayerGroup(id=ID_ENV_LAYER_GROUP),
