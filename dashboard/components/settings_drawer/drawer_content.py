@@ -127,10 +127,10 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, sources):
 @app.callback(
     Output(ID_ENV_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-    State({"role": "Environment Data Points", "label": "Store", "type": "virtual"}, "data"),
+    State({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
 )
 def add_environment_markers(active_checkboxes, all_environments):
-    if "Environment Data Points" not in active_checkboxes:
+    if "Environment Data Point" not in active_checkboxes:
         return []
     markers = []
 
@@ -152,7 +152,7 @@ def add_environment_markers(active_checkboxes, all_environments):
                     ),
                 ],
                 icon=dict(iconUrl="assets/markers/environment.svg", iconAnchor=[15, 6], iconSize=30),
-                id={"role": "Environment Data Points", "id": env.id, "label": "Node"},
+                id={"role": "Environment Data Point", "id": env.id, "label": "Node"},
             )
         )
     return markers
@@ -162,12 +162,12 @@ def add_environment_markers(active_checkboxes, all_environments):
     Output(ID_NOTES_LAYER_GROUP, "children", allow_duplicate=True),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_SELECTED_NOTE_STORE, "data"),
-    State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
+    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )
 def add_note_markers(active_checkboxes, selected_note, all_notes):
     print("callback: marker update")
-    if "Notes" not in active_checkboxes:
+    if "Note" not in active_checkboxes:
         return []
 
     marker_icon = dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30)
@@ -210,7 +210,7 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
                 ],
                 icon=marker_icon_draggable if in_edit_mode else marker_icon,
                 draggable=True if in_edit_mode else False,
-                id={"role": "Notes", "id": current_note.id, "label": "Node"},
+                id={"role": "Note", "id": current_note.id, "label": "Node"},
             )
         )
     return markers

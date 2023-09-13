@@ -1,6 +1,3 @@
-import json
-
-
 class Deployment:
 
     def __init__(self, json_deployment: dict):
@@ -38,4 +35,3 @@ class Deployment:
             tags=[{"name": t} for t in self.tags] if self.tags is not None else [],
             period=dict(start=self.period_start, end=self.period_end),
         )
-

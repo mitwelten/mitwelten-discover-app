@@ -38,8 +38,8 @@ def init_deployment_data():
             svgPath=f"assets/markers/location-{idx}.svg"
         )
 
-    data_sources["Notes"] = dict(color="#ffd800", svgPath="assets/markers/note.svg")
-    data_sources["Environment Data Points"] = dict(color="#946000", svgPath="assets/markers/environment.svg")
+    data_sources["Note"] = dict(color="#ffd800", svgPath="assets/markers/note.svg")
+    data_sources["Environment Data Point"] = dict(color="#946000", svgPath="assets/markers/environment.svg")
 
     return deployment_dict, data_sources, tags
 

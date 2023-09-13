@@ -89,7 +89,7 @@ def open_drawer(selected_marker, bounds, viewport):
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
     Output("id-data-drawer-title", "children"),
     Input(ID_SELECTED_MARKER_STORE, "data"),
-    State({"role": "Environment Data Points", "label": "Store", "type": "virtual"}, "data"),
+    State({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
     State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
@@ -107,9 +107,9 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
             drawer_content = create_pax_chart(marker_data["id"], light_mode)
         case "Pollinator Cam":
             drawer_content = create_pollinator_chart(marker_data["id"], light_mode)
-        case "Environment Data Points":
+        case "Environment Data Point":
             drawer_content = create_environment_point_chart(environment_data["legend"], marker_data["id"])
-        case "Notes": drawer_content = create_note_view()
+        case "Note": drawer_content = create_note_view()
         case x:
             return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO), dash.no_update
 
@@ -127,7 +127,7 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
-    State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
+    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )
 def add_selected_note_into_store(selected_marker, all_notes):
@@ -135,7 +135,7 @@ def add_selected_note_into_store(selected_marker, all_notes):
     if selected_marker is None:
         raise PreventUpdate
 
-    if selected_marker["type"] == "Notes":
+    if selected_marker["type"] == "Note":
         for note in all_notes["entries"]:
             if note["id"] == selected_marker["data"]["id"]:
                 return dict(data=selected_marker["data"], inEditMode=False, isDirty=False)

@@ -43,10 +43,10 @@ def map_click(click, selected_note):
 
 
 @app.callback(
-    Output({"role": "Notes", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
+    Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
-    State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
+    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )

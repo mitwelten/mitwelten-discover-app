@@ -36,7 +36,7 @@ def note_form(note: Note):
     Input(ID_NOTE_EDIT_LAT, "value"),
     Input(ID_NOTE_EDIT_LON, "value"),
     State(ID_SELECTED_NOTE_STORE, "data"),
-    State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
+    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )
 def update_note_store_by_form(title, description, lat, lon, selected_note, all_notes):
@@ -67,7 +67,7 @@ def update_note_store_by_form(title, description, lat, lon, selected_note, all_n
 @app.callback(
     Output(ID_NOTE_EDIT_LAT, "value", allow_duplicate=True),
     Output(ID_NOTE_EDIT_LON, "value", allow_duplicate=True),
-    Input({"role": "Notes", "id": ALL, "label": "Node"}, "position"),
+    Input({"role": "Note", "id": ALL, "label": "Node"}, "position"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )

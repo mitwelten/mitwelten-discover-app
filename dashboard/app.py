@@ -19,7 +19,7 @@ app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
 
     dcc.Store(
-        {"role": "Notes", "label": "Store", "type": "virtual"},
+        {"role": "Note", "label": "Store", "type": "virtual"},
         data=dict(entries=notes, type="Note"),
         storage_type="local"
     ),
@@ -30,7 +30,7 @@ app_content = [
         for source_type in deployments
     ],
     dcc.Store(
-        {"role": "Environment Data Points", "label": "Store", "type": "virtual"},
+        {"role": "Environment Data Point", "label": "Store", "type": "virtual"},
         data=dict(entries=environments, type="Environment Data Point", legend=environment_legend),
         storage_type="local"
     ),

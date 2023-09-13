@@ -42,4 +42,4 @@ def handle_double_click(click_location):
     new_note.lat = click_location[0]
     new_note.lon = click_location[1]
     new_note = new_note.to_dict()
-    return dict(data=new_note, type="Notes"), dash.no_update, dict(state=False)
+    return dict(data=new_note, type="Note"), dash.no_update, dict(state=False)
