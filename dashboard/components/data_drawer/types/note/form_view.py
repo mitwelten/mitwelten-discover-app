@@ -58,7 +58,9 @@ def update_content_from_store(lat, lon, selected_note):
         raise PreventUpdate
 
     is_edited = selected_note.get("inEditMode", False)
-    return dict(data=selected_note["data"], movedTo=[float(lat), float(lon)], inEditMode=is_edited)
+    selected_note["data"]["location"]["lat"] = float(lat)
+    selected_note["data"]["location"]["lon"] = float(lon)
+    return dict(data=selected_note["data"], inEditMode=is_edited)
 
 
 @app.callback(

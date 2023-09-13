@@ -44,8 +44,7 @@ app_content = [
     dcc.Store(id=ID_BASE_MAP_STORE, data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_PREVENT_MARKER_EVENT, data=dict(state=False)),
-    dcc.Store(id=ID_SELECTED_NOTE_STORE, data=dict(data=None, inEditMode=False, movedTo=None), storage_type="local"),
-    dcc.Store(id=ID_NEW_NOTE_STORE, data=None, storage_type="local"),
+    dcc.Store(id=ID_SELECTED_NOTE_STORE, data=dict(data=None, inEditMode=False), storage_type="local"),
 
     html.Div(
         html.A(
@@ -127,5 +126,14 @@ for source in data_sources:
     )(partial(handle_marker_click, source))
 
 
+@app.callback(
+    Output(ID_CHART_DRAWER, "opened"),
+    Input(ID_MAP, "click_lat_lng"),
+    prevent_initial_call=True
+)
+def map_click(click_lat_lng):
+    if click_lat_lng is not None:
+        return False
+    raise PreventUpdate
 
 

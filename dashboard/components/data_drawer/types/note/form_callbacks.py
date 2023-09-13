@@ -22,12 +22,11 @@ def store_edited_note_id(edit_click, selected_note):
     if edit_click is None or edit_click == 0:
         print("no update")
         raise PreventUpdate
-    return dict(data=selected_note["data"], inEditMode=True, movedTo=None)
+    return dict(data=selected_note["data"], inEditMode=True)
 
 
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_NEW_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
     State(ID_SELECTED_NOTE_STORE, "data"),
@@ -38,13 +37,12 @@ def store_edited_note_id(cancel_click, selected_note):
     if cancel_click is None or cancel_click == 0:
         print("no update")
         raise PreventUpdate
-    return dict(data=selected_note["data"], inEditMode=False, movedTo=None), None, False
+    return dict(data=selected_note["data"], inEditMode=False), False
 
 
 @app.callback(
     Output({"role": "Notes", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_NEW_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
     State(ID_SELECTED_NOTE_STORE, "data"),
@@ -61,12 +59,12 @@ def save_note_changes(click, notes, selected_note, title, description):
         raise PreventUpdate
 
     note_data = Note(selected_note["data"])
-    position = selected_note.get("movedTo", [note_data.lat, note_data.lon])
+    # position = selected_note.get("movedTo", [note_data.lat, note_data.lon])
 
     note_data.title = title
     note_data.description = description
-    note_data.lat = position[0]
-    note_data.lon = position[1]
+    # note_data.lat = position[0]
+    # note_data.lon = position[1]
     note_data.updated_at = datetime.now().isoformat()
 
     found = False
@@ -82,4 +80,4 @@ def save_note_changes(click, notes, selected_note, title, description):
         note_data.id = random.randint(0, 100000)
         new_entries.append(note_data.to_dict())
     notes["entries"] = new_entries
-    return notes, dict(data=note_data.to_dict(), movedTo=None, inEditMode=False), None
+    return notes, dict(data=note_data.to_dict(), inEditMode=False)

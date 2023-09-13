@@ -29,7 +29,6 @@ ID_OVERLAY_MAP_STORE = {"role": "map_store", "type": "overlay"}
 ID_DATE_RANGE_STORE = "id-date-range-store"
 ID_PREVENT_MARKER_EVENT = "id-prevent-marker-event"
 ID_SELECTED_NOTE_STORE = "id-selected-note-store"
-ID_NEW_NOTE_STORE = "id-new-note-store"
 
 # node types
 ID_ALL_ACTIVE_STORE = "id-active-all-checkbox"

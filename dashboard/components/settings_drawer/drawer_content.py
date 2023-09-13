@@ -163,10 +163,9 @@ def add_environment_markers(active_checkboxes, all_environments):
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_SELECTED_NOTE_STORE, "data"),
     State({"role": "Notes", "label": "Store", "type": "virtual"}, "data"),
-    State(ID_NEW_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def add_note_markers(active_checkboxes, selected_note, all_notes, new_note):
+def add_note_markers(active_checkboxes, selected_note, all_notes):
     print("callback: marker update")
     if "Notes" not in active_checkboxes:
         return []
@@ -175,38 +174,41 @@ def add_note_markers(active_checkboxes, selected_note, all_notes, new_note):
     marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg", iconAnchor=[61, 50], iconSize=120)
 
     all_notes = all_notes["entries"]
-    if new_note is not None:
-        all_notes.append(new_note)
+    if selected_note["data"] is not None:
+        found = False
+        for note in all_notes:
+            if note["id"] == selected_note["data"]["id"]:
+                found = True
+                print(f"print marker: selected note: {selected_note['data']['id']} is in edit mode: {selected_note['inEditMode']}")
+                note["inEditMode"] = selected_note["inEditMode"]
+                note["location"]["lat"] = selected_note["data"]["location"]["lat"]
+                note["location"]["lon"] = selected_note["data"]["location"]["lon"]
+
+        if not found:
+            all_notes.append(selected_note["data"])
 
     markers = []
     for note in all_notes:
-        note = Note(note)
-        location = [note.lat, note.lon]
-
-        is_note_in_edit_mode = False
-        if selected_note["data"] is not None:
-            is_note_in_edit_mode = note.id == selected_note["data"]["id"] and selected_note["inEditMode"]
-            if is_note_in_edit_mode:
-                location = selected_note.get("movedTo") if selected_note["movedTo"] is not None else location
-
+        current_note = Note(note)
+        in_edit_mode = note.get("inEditMode") is not None and note["inEditMode"]
         markers.append(
             dl.Marker(
-                position=location,
+                position=[current_note.lat, current_note.lon],
                 children=[
                     dl.Popup(
-                        children=[note_popup(note)],
+                        children=[note_popup(current_note)],
                         closeButton=False,
                         autoPan=False
                     ),
                     dl.Tooltip(
-                        children=f"Note: {note.id}",
+                        children=f"Note: {current_note.id}",
                         offset={"x": -10, "y": 2},
                         direction="left",
                     ),
                 ],
-                icon=marker_icon if not is_note_in_edit_mode else marker_icon_draggable,
-                draggable=is_note_in_edit_mode,
-                id={"role": "Notes", "id": note.id, "label": "Node"},
+                icon=marker_icon_draggable if in_edit_mode else marker_icon,
+                draggable=True if in_edit_mode else False,
+                id={"role": "Notes", "id": current_note.id, "label": "Node"},
             )
         )
     return markers
