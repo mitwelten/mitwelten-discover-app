@@ -1,15 +1,9 @@
 import dash_mantine_components as dmc
 from dash import html, dcc, State
 
-from dashboard.components.button.components.action_button import action_button
 from dashboard.components.data_drawer.types.note import form_callbacks, attachment_callbacks, callbacks
 from dashboard.components.data_drawer.types.note.detail_view import note_detail_view
 from dashboard.components.data_drawer.types.note.form_view import note_form
-
-
-from dashboard.config.id import *
-from dashboard.model.note import Note
-from dashboard.util.user_validation import get_user_from_cookies
 
 from dash import Output, Input
 from dash.exceptions import PreventUpdate

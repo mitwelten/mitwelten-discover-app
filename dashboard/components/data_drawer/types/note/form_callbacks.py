@@ -1,5 +1,4 @@
 import random
-from datetime import datetime
 
 import dash
 from dash import Output, Input, State
