@@ -7,15 +7,11 @@ from dash.exceptions import PreventUpdate
 from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id import *
 from dashboard.maindash import app
-from dashboard.model.note import Note, default_note
+from dashboard.model.note import Note, empty_note
 from dashboard.util.user_validation import get_user_from_cookies
 
 
 @app.callback(
-    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "closeOnClickOutside", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "closeOnEscape", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "withOverlay", allow_duplicate=True),
     Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
     Input(ID_NOTE_EDIT_BUTTON, "n_clicks"),
     prevent_initial_call=True
@@ -23,35 +19,26 @@ from dashboard.util.user_validation import get_user_from_cookies
 def add_note_form_view_to_drawer_container(click):
     if click is None or click == 0:
         raise PreventUpdate
-    return False, False, False, False, dict(state=True)
+    return dict(state=True)
 
 
 @app.callback(
-    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "closeOnClickOutside", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "closeOnEscape", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "withOverlay", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "overlayOpacity", allow_duplicate=True),
     Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
-    Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
+    Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
     prevent_initial_call=True
 )
 def add_note_detail_view_to_drawer_container(save_click, cancel_click):
     if save_click is None or save_click == 0:
         if cancel_click is None or cancel_click == 0:
             raise PreventUpdate
-    return True, True, True, True, 0, dict(state=False)
+    return dict(state=False)
 
 
 @app.callback(
     Output(ID_NEW_NOTE_STORE, "data"),
     Output(ID_SELECTED_MARKER_STORE, "data", allow_duplicate=True),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "closeOnClickOutside", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "closeOnEscape", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "withOverlay", allow_duplicate=True),
     Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
     Input(ID_MAP, "dbl_click_lat_lng"),
     prevent_initial_call=True
@@ -64,9 +51,9 @@ def handle_double_click(click):
             "Log in to create notes!",
             NotificationType.WARN
         )
-        return dash.no_update, dash.no_update, notification, True, True, True, True, dict(state=True)
+        return dash.no_update, dash.no_update, notification, dict(state=True)
 
-    new_note = Note(default_note)
+    new_note = Note(empty_note)
     new_note.lat = click[0]
     new_note.lon = click[1]
     new_note.creator = user.full_name
