@@ -28,7 +28,7 @@ def chart_drawer():
         overlayOpacity=0,
         className="chart-drawer",
         position="bottom",
-        title=dmc.Text(id="id-data-drawer-title", weight=500, style={"marginTop": "1em", "marginLeft": "1em"}),
+        title=dmc.Text(id=ID_DATA_DRAWER_TITLE, weight=500, style={"marginTop": "1em", "marginLeft": "1em"}),
         children=[
             html.Div(id=ID_CHART_CONTAINER, style={"height": "100%", "width": "100%", "paddingBottom": "50px"}),
         ],
@@ -86,7 +86,7 @@ def open_drawer(selected_marker, bounds, viewport):
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
-    Output("id-data-drawer-title", "children"),
+    Output(ID_DATA_DRAWER_TITLE, "children"),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     State({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
     State(ID_APP_THEME, "theme"),

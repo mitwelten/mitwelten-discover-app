@@ -19,6 +19,8 @@ ID_SEARCH_DEPLOYMENT_BUTTON = "id-search-deployment-button"
 ID_DEPLOYMENT_SELECT = "id-deployment-select"
 ID_LOGOUT_BUTTON = "id-logout-btn"
 ID_LOGIN_AVATAR_CONTAINER = "login-avatar-container"
+ID_ADD_NOTE_BUTTON = "id-add-note-button"
+ID_DATA_DRAWER_TITLE = "id-data-drawer-title"
 
 # stores
 ID_TAG_DATA_STORE = "id-tags-data-store"

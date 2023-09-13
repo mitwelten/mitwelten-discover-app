@@ -1,7 +1,8 @@
 from datetime import datetime
 
 import dash
-from dash import Output, Input
+from dash import Output, Input, State
+from dash.exceptions import PreventUpdate
 
 from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id import *
@@ -24,9 +25,18 @@ def activate_preventing_marker_clicks(selected_note):
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
     Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
     Input(ID_MAP, "dbl_click_lat_lng"),
+    Input(ID_ADD_NOTE_BUTTON, "n_clicks"),
+    State(ID_MAP, "center"),
     prevent_initial_call=True
 )
-def handle_double_click(click_location):
+def handle_double_click(click_location, click, center):
+    if dash.ctx.triggered_id == ID_ADD_NOTE_BUTTON:
+        if click is None or click == 0:
+            raise PreventUpdate
+        else:
+            click_location = [0, 0]
+            click_location[0] = center[0]
+            click_location[1] = center[1]
     user = get_user_from_cookies()
     if user is None:
         notification = create_notification(

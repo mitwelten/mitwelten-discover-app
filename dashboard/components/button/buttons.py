@@ -72,15 +72,15 @@ def control_buttons():
                 largerThan="sm",
                 styles={"display": "none"}
             ),
+            action_button(button_id=ID_ADD_NOTE_BUTTON, icon="material-symbols:add-comment-outline"),
             dmc.MediaQuery(
                 map_menu_popup("menu"),
                 smallerThan="sm",
                 styles={"display": "none"}
             ),
-
         ],
             id=ID_LOGIN_AVATAR_CONTAINER
-        )
+        ),
     ]
 
 
