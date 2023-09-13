@@ -1,6 +1,6 @@
 import dash
 import dash_mantine_components as dmc
-from dash import Output, Input, ALL, State
+from dash import Output, Input, ALL, State, dcc
 from dash.exceptions import PreventUpdate
 
 from configuration import PRIMARY_COLOR
@@ -18,16 +18,32 @@ def note_form(note: Note):
             dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title ,label="Title", variant="filled"), span=12),
             dmc.Col(dmc.Textarea(id=ID_NOTE_EDIT_DESCRIPTION, value=note.description ,label="Description", variant="filled"), span=12),
             dmc.Divider(size="sm"),
-            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_LAT, label="Latitude", value=note.lat, variant="filled"), span=6),
-            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_LON, label="Longitude", value=note.lon, variant="filled"), span=6),
+            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_LAT, label="Latitude", value=note.lat, variant="filled"), span="content"),
+            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_LON, label="Longitude", value=note.lon, variant="filled"), span="content"),
         ]),
         dmc.Grid([
-            dmc.Col(dmc.Button("Cancel", id=ID_NOTE_FORM_CANCEL_BUTTON, type="reset", color="gray"), span="content"),
+            dmc.Col([
+
+                dmc.Button("Cancel", id=ID_NOTE_FORM_CANCEL_BUTTON, type="reset", color="gray"),
+            ],
+                span="content"
+            ),
             dmc.Col(dmc.Button("Save", id=ID_NOTE_FORM_SAVE_BUTTON, type="submit"), span="content"),
         ],
             justify="flex-end"
         )
     ]
+
+
+@app.callback(
+    Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed"),
+    Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
+    prevent_initial_call=True
+)
+def update_content_from_store(click):
+    if click and click > 0:
+        return True
+    return False
 
 
 @app.callback(

@@ -29,7 +29,7 @@ def store_edited_note_id(edit_click, selected_note):
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_NEW_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
+    Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
