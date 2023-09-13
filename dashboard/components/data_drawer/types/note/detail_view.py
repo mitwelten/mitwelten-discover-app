@@ -25,7 +25,6 @@ def list_item(text, icon):
 
 
 def note_detail_view(note: Note):
-    print("render detail view")
     user = get_user_from_cookies()
     return [dmc.Grid([
         dmc.Col(dmc.Title(note.title, order=5), span="content"),
@@ -53,16 +52,3 @@ def note_detail_view(note: Note):
             ),
         ])
     ]
-
-
-# @app.callback(
-#     Output(ID_NOTE_DETAIL_VIEW, "children"),
-#     Input(ID_SELECTED_NOTE_STORE, "data"),
-# )
-# def update_content_from_store(selected_note):
-#     print("callback: detail view", selected_note.get("inEditMode"))
-#     if selected_note.get("inEditMode", True):
-#         print("no update detail view", selected_note.get("inEditMode"))
-#         raise PreventUpdate
-#     note = Note(selected_note["data"])
-#     return note_detail_view(note)
