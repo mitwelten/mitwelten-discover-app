@@ -96,7 +96,6 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, sources):
     for key in depl_to_show.keys():
         depl_to_show[key] = list(filter(lambda x: was_deployed(x, time_range["start"], time_range["end"]), depl_to_show[key]))
 
-
     markers = []
 
     for key in depl_to_show.keys():
