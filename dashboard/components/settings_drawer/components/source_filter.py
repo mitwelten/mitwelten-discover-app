@@ -1,15 +1,18 @@
 from functools import reduce
+from pprint import pprint
 
 import dash
 import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import html, dcc, Output, Input, State
+from dash import html, dcc, Output, Input, State, ALL
+from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
 from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.util.decorators import spaced_section
+from dashboard.util.util import get_identification_label
 
 
 def get_checkbox_by_type(node_type: str, depl_markers: dict):
@@ -120,6 +123,22 @@ def search_deployment(_, value):
         return True, (lat, lon), 20, False, [marker]
     else:
         return dash.no_update
+
+
+@app.callback(
+    Output(ID_DEPLOYMENT_SELECT, "data"),
+    Input(ID_TYPE_CHECKBOX_GROUP, "value"),
+    State({"role": ALL, "label": "Store", "type": ALL}, "data"),
+)
+def update_search_data(active_types, _):
+    pprint(dash.ctx.states_list[0][0])
+    new_data = []
+    for source in dash.ctx.states_list[0]:
+        if source["id"]["role"] in active_types:
+            for entry in source["value"]["entries"]:
+                label = get_identification_label(entry)
+                new_data.append(dict(label=f"{source['id']['role']} - {label}", value=entry))
+    return new_data
 
 
 @app.callback(
