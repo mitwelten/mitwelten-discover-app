@@ -69,12 +69,13 @@ def create_pollinator_chart(_1, _2):
     return dmc.Tabs(
         [
             dmc.TabsList(tab_list, position="center"),
-            html.Div(id="tabs-content")
+            html.Div(id="tabs-content", className="chart-container")
         ],
         id="tabs-example",
         value="0",
         persistence=True,
         variant="outline",
+        style={"height": "100%"}
     )
 
 

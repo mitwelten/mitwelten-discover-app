@@ -30,7 +30,7 @@ def chart_drawer():
         position="bottom",
         title=dmc.Text(id=ID_DATA_DRAWER_TITLE, weight=500, style={"marginTop": "1em", "marginLeft": "1em"}),
         children=[
-            html.Div(id=ID_CHART_CONTAINER, style={"height": "100%", "width": "100%", "paddingBottom": "50px"}),
+            html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
         ],
         # children=[
         #     html.Div(
@@ -96,22 +96,22 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
     if selected_marker is None:
         raise PreventUpdate
 
-    marker_data = selected_marker.get("data")
     match selected_marker["type"]:
         case "Audio Logger":
-            drawer_content = create_audio_chart(marker_data["id"], light_mode)
+            drawer_content = create_audio_chart(selected_marker["data"]["id"], light_mode)
         case "Env. Sensor":
-            drawer_content = create_env_chart(marker_data["id"], light_mode)
+            drawer_content = create_env_chart(selected_marker["data"]["id"], light_mode)
         case "Pax Counter":
-            drawer_content = create_pax_chart(marker_data["id"], light_mode)
+            drawer_content = create_pax_chart(selected_marker["data"]["id"], light_mode)
         case "Pollinator Cam":
-            drawer_content = create_pollinator_chart(marker_data["id"], light_mode)
+            drawer_content = create_pollinator_chart(selected_marker["data"]["id"], light_mode)
         case "Environment Data Point":
-            drawer_content = create_environment_point_chart(environment_data["legend"], marker_data["id"])
+            drawer_content = create_environment_point_chart(environment_data["legend"], selected_marker["data"]["id"])
         case "Note": drawer_content = create_note_view()
         case x:
             return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO), dash.no_update
 
+    marker_data = selected_marker.get("data")
     if marker_data.get('node') is not None:
         if marker_data.get("node").get("node_label") is not None:
             node_label = marker_data['node']['node_label']

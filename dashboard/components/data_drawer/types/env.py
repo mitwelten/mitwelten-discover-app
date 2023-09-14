@@ -1,14 +1,10 @@
-import dash
 import dash_mantine_components as dmc
 import plotly.graph_objects as go
-from dash import Output, Input, ALL, State
-from dash import dcc
+from dash import dcc, html
 
 from dashboard.api.api_client import get_env_timeseries
 from dashboard.components.data_drawer.charts import create_themed_figure
 from dashboard.config.api import *
-from dashboard.config.id import *
-from dashboard.maindash import app
 from util.validations import cleanup_timeseries
 
 
@@ -70,15 +66,19 @@ def create_env_chart(trigger_id, light_mode=True):
             responsive=True,
             className="chart-graph",
         )
-    panel_list = [dmc.TabsPanel(create_graph(tab["fn"]), value=f"{idx}") for (idx, tab) in enumerated_tabs]
+
+    panel_list = [dmc.TabsPanel(
+            create_graph(tab["fn"]),
+            value=f"{idx}",
+            className="chart-container"
+    )
+        for (idx, tab) in enumerated_tabs]
+
     tab_list = [dmc.Tab(f"{tab['title']}", value=f"{idx}") for (idx, tab) in enumerated_tabs]
 
-    return dmc.Tabs(
-        [
-            dmc.TabsList(tab_list, position="center"),
-            *panel_list
-        ],
-        value="0",
-        persistence=True,
-        variant="outline",
-    )
+    return dmc.Tabs([dmc.TabsList(tab_list, position="center"), *panel_list],
+                    value="0",
+                    persistence=True,
+                    variant="outline",
+                    style={"height": "100%"}
+                    )
