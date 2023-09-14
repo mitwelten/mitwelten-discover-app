@@ -13,6 +13,7 @@ from dashboard.components.notifications.notification import NotificationType, cr
 from dashboard.config.app import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from dashboard.config.id import *
 from dashboard.maindash import app
+from dashboard.util.util import get_identification_label
 from util.functions import safe_reduce, ensure_marker_visibility
 
 
@@ -112,13 +113,7 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
             return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO), dash.no_update
 
     marker_data = selected_marker.get("data")
-    if marker_data.get('node') is not None:
-        if marker_data.get("node").get("node_label") is not None:
-            node_label = marker_data['node']['node_label']
-        else:
-            node_label = marker_data['node']
-    else:
-        node_label = marker_data.get("id")
+    node_label = get_identification_label(marker_data)
 
     return drawer_content, dash.no_update, f"{selected_marker['type']} - {node_label}"
 
