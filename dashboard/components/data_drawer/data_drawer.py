@@ -22,7 +22,7 @@ def chart_drawer():
         opened=False,
         id=ID_CHART_DRAWER,
         zIndex=90000,
-        size="50%",
+        size=SETTINGS_DRAWER_WIDTH,
         closeOnClickOutside=True,
         closeOnEscape=True,
         withOverlay=False,
@@ -61,27 +61,16 @@ def settings_drawer_state(state):
 
 @app.callback(
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_MAP, "center", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
-    State(ID_MAP, "bounds"),
-    State(ID_MAP, "viewport"),
     prevent_initial_call=True
 )
-def open_drawer(selected_marker, bounds, viewport):
-
+def open_drawer(selected_marker):
     if selected_marker is None:
         raise PreventUpdate
 
-    location = selected_marker["data"]["location"]
-    map_center = viewport["center"]
-    new_center = ensure_marker_visibility(
-        map_center,
-        bounds,
-        dict(lat=location["lat"], lon=location["lon"])
-    )
     if selected_marker["type"] not in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
-        return True, new_center
-    return dash.no_update, new_center
+        return True
+    return dash.no_update
 
 
 @app.callback(
