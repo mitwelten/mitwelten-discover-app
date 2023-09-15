@@ -1,5 +1,7 @@
 from functools import partial
+from pprint import pprint
 
+from dash import clientside_callback, ClientsideFunction
 from dash.exceptions import PreventUpdate
 
 from dashboard.components.button.buttons import control_buttons
@@ -9,15 +11,14 @@ from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.settings_drawer import settings_drawer
 from dashboard.config.app import app_theme
 from dashboard.init import init_deployment_data, init_environment_data, init_notes
-from util.functions import safe_reduce
+from util.functions import safe_reduce, ensure_marker_visibility
 
-deployments, data_sources, tags = init_deployment_data()
+deployments, data_sources, tags  = init_deployment_data()
 environments, environment_legend = init_environment_data()
 notes = init_notes()
 
 app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
-
     dcc.Store(
         {"role": "Note", "label": "Store", "type": "virtual"},
         data=dict(entries=notes, type="Note"),
@@ -34,13 +35,14 @@ app_content = [
         data=dict(entries=environments, type="Environment Data Point", legend=environment_legend),
         storage_type="local"
     ),
-    dcc.Store(id=ID_TAG_DATA_STORE, data=tags),
-    dcc.Store(id=ID_DATA_SOURCE_STORE, data=data_sources),
-    dcc.Store(id=ID_SELECTED_MARKER_STORE, data=None),
-    dcc.Store(id=ID_BASE_MAP_STORE, data=dict(index=0), storage_type="local"),
-    dcc.Store(id=ID_OVERLAY_MAP_STORE, data=dict(index=0), storage_type="local"),
-    dcc.Store(id=ID_PREVENT_MARKER_EVENT, data=dict(state=False)),
-    dcc.Store(id=ID_SELECTED_NOTE_STORE, data=dict(data=None, inEditMode=False, isDirty=False), storage_type="local"),
+    dcc.Store(id=ID_TAG_DATA_STORE,           data=tags),
+    dcc.Store(id=ID_DATA_SOURCE_STORE,        data=data_sources),
+    dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=None),
+    dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=0), storage_type="local"),
+    dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=0), storage_type="local"),
+    dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),
+    dcc.Store(id=ID_SELECTED_NOTE_STORE,      data=dict(data=None, inEditMode=False, isDirty=False), storage_type="local"),
+    dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
 
     html.Div(
         html.A(
@@ -57,7 +59,6 @@ app_content = [
         id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG,
         message="You have unsaved changes. Do you want to discard them?"
     ),
-
     map_figure,
     chart_drawer(),
     *control_buttons(),
@@ -78,10 +79,10 @@ discover_app = dmc.MantineProvider(
             html.Div(
                 children=app_content,
                 id=ID_APP_CONTAINER,
-            ),
+            )
         ],
             zIndex=9999999
-        ),
+        )
     ]
 )
 
@@ -108,10 +109,9 @@ def handle_marker_click(data_source, marker_click, prevent_event, store):
     click_sum = safe_reduce(lambda x, y: x + y, marker_click, 0)
     if click_sum == 0:
         raise PreventUpdate
-    #
+
     for entry in store[0]["entries"]:
         if entry["id"] == dash.ctx.triggered_id["id"]:
-            print("set selected marker: ", entry["id"])
             return dict(data=entry, type=data_source)
 
     raise PreventUpdate
@@ -155,3 +155,46 @@ def deactivate_edit_mode(cancel_click):
     if cancel_click is None or cancel_click == 0:
         raise PreventUpdate
     return dict(data=None, inEditMode=False), False
+
+
+clientside_callback(
+    ClientsideFunction(
+        namespace="browser", function_name="testFunction"
+    ),
+    Output(ID_BROWSER_PROPERTIES_STORE, "data"),
+    Input(ID_SELECTED_MARKER_STORE, "data"),
+)
+
+@app.callback(
+    Output(ID_MAP, "center"),
+    Input(ID_BROWSER_PROPERTIES_STORE, "data"),
+    State(ID_SETTINGS_DRAWER, "opened"),
+    State(ID_SETTINGS_DRAWER, "size"),
+    State(ID_CHART_DRAWER, "size"),
+    State(ID_SELECTED_MARKER_STORE, "data"),
+    State(ID_MAP, "bounds"),
+    State(ID_MAP, "viewport"),
+)
+def ensure_marker_visibility(
+        browser_props,
+        drawer_state,
+        settings_drawer_size,
+        data_drawer_size,
+        marker,
+        bounds,
+        viewport
+):
+    if marker is None:
+        raise PreventUpdate
+
+    marker_position = marker["data"]["location"]
+    map_center = viewport["center"]
+    new_center = ensure_marker_visibility(
+        map_center,
+        bounds,
+        marker_position,
+        browser_props,
+        settings_drawer_size if drawer_state else 0,  # settings drawer is open or not
+        data_drawer_size
+    )
+    return new_center
