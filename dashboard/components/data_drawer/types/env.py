@@ -5,7 +5,7 @@ from dash import dcc, html
 from dashboard.api.api_client import get_env_timeseries
 from dashboard.components.data_drawer.charts import create_themed_figure
 from dashboard.config.api import *
-from util.validations import cleanup_timeseries
+from dashboard.util.validations import cleanup_timeseries
 
 
 def create_env_temp_chart(trigger_id, bucket_width, light_mode):
