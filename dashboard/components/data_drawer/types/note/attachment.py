@@ -16,7 +16,7 @@ from dashboard.model.file import File
 from dashboard.model.note import Note
 from dashboard.util.user_validation import get_user_from_cookies
 from dashboard.util.util import pretty_date
-from util.functions import safe_reduce
+from util.helper_functions import safe_reduce
 
 
 def attachment_table(note, is_editable=False):

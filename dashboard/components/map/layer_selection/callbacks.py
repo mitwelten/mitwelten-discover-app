@@ -4,7 +4,7 @@ from dash import Output, Input, ALL, State
 from dashboard.config.id import *
 from dashboard.config.map import MAPS, OVERLAYS, MAP_TYPES
 from dashboard.maindash import app
-from util.functions import safe_reduce
+from util.helper_functions import safe_reduce
 
 
 def update_store(store, collection):

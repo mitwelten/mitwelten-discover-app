@@ -16,7 +16,7 @@ from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
 from dashboard.model.environment import Environment
 from dashboard.model.note import Note
-from util.functions import was_deployed
+from util.helper_functions import was_deployed
 
 
 def divider(title: str):

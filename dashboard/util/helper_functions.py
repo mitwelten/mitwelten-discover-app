@@ -86,7 +86,7 @@ def ensure_marker_visibility(
     marker_lat_percent = (100.0 / screen_height_deg) * marker_lat_normalized
     marker_lon_percent = (100.0 / screen_width_deg) * marker_lon_normalized
 
-    margin = 10
+    margin = 15
     borders = dict(
         top=80,
         right=80,

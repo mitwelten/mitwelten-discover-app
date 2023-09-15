@@ -34,10 +34,12 @@ def handle_double_click(click_location, click, center):
         if click is None or click == 0:
             raise PreventUpdate
         else:
-            click_location = [0, 0]
+            click_location    = [0, 0]
             click_location[0] = center[0]
             click_location[1] = center[1]
+
     user = get_user_from_cookies()
+
     if user is None:
         notification = create_notification(
             "Operation not permitted",
@@ -46,10 +48,11 @@ def handle_double_click(click_location, click, center):
         )
         return dash.no_update, notification, dict(state=True)
 
-    new_note = Note(empty_note)
-    new_note.creator = user.full_name
+    new_note            = Note(empty_note)
+    new_note.creator    = user.full_name
     new_note.created_at = datetime.now().isoformat()
-    new_note.lat = click_location[0]
-    new_note.lon = click_location[1]
-    new_note = new_note.to_dict()
+    new_note.lat        = click_location[0]
+    new_note.lon        = click_location[1]
+    new_note            = new_note.to_dict()
+
     return dict(data=new_note, type="Note"), dash.no_update, dict(state=False)

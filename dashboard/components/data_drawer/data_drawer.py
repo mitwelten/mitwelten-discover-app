@@ -14,7 +14,7 @@ from dashboard.config.app import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHA
 from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.util.util import get_identification_label
-from util.functions import safe_reduce, ensure_marker_visibility
+from util.helper_functions import safe_reduce, ensure_marker_visibility
 
 
 def chart_drawer():

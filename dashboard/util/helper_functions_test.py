@@ -3,7 +3,7 @@ import unittest
 from parameterized import parameterized
 
 from dashboard.model.deployment import Deployment
-from util.functions import safe_reduce, was_deployed, ensure_marker_visibility
+from util.helper_functions import safe_reduce, was_deployed, ensure_marker_visibility
 
 deployment_data: dict = {
     'deployment_id': 2099,
