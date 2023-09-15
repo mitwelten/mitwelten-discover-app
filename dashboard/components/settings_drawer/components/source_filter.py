@@ -114,11 +114,11 @@ def activate_all(value, data, all_enabled):
 )
 def search_deployment(_, value):
     if value is not None:
-        lat = value["location"]["lat"]
-        lon = value["location"]["lon"]
+        lat = value["entry"]["location"]["lat"]
+        lon = value["entry"]["location"]["lon"]
         marker = dl.Marker(
             position=[lat, lon],
-            icon=dict(iconUrl=f"assets/markers/highlight-circle.svg", iconAnchor=[40, 30], iconSize=80)
+            icon=dict(iconUrl=f"assets/markers/highlight-circle.svg", iconAnchor=[40, 30], iconSize=80, className="blinking"),
         )
         return True, (lat, lon), 20, False, [marker]
     else:
@@ -136,7 +136,11 @@ def update_search_data(active_types, _):
         if source["id"]["role"] in active_types:
             for entry in source["value"]["entries"]:
                 label = get_identification_label(entry)
-                new_data.append(dict(label=f"{source['id']['role']} - {label}", value=dict(entry=entry, type=source['id']['role'])))
+                new_data.append(
+                    dict(
+                        label=f"{source['id']['role']} - {label}",
+                        value=dict(entry=entry, type=source['id']['role']))
+                )
     return new_data
 
 
