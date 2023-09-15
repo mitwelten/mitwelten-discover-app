@@ -175,7 +175,7 @@ clientside_callback(
     State(ID_MAP, "bounds"),
     State(ID_MAP, "viewport"),
 )
-def ensure_marker_visibility(
+def ensure_marker_visibility_in_viewport(
         browser_props,
         drawer_state,
         settings_drawer_size,
@@ -195,6 +195,6 @@ def ensure_marker_visibility(
         marker_position,
         browser_props,
         settings_drawer_size if drawer_state else 0,  # settings drawer is open or not
-        data_drawer_size
+        data_drawer_size,
     )
     return new_center

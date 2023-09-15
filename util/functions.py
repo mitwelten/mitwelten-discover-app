@@ -68,14 +68,14 @@ def ensure_marker_visibility(
     screen_height_pixel = browser_props["height"]  # number of pixels of the browser window width
     screen_width_pixel  = browser_props["width"]   # number of pixels of the browser window width
 
-    settings_drawer_percent = (100 / screen_width_pixel)  * settings_drawer_size
-    data_drawer_percent     = (100 / screen_height_pixel) * chart_drawer_size
+    settings_drawer_percent = 100 / screen_width_pixel  * settings_drawer_size
+    data_drawer_percent     = 100 / screen_height_pixel * chart_drawer_size
 
     target_lon = settings_drawer_percent + (100 - settings_drawer_percent) / 2
     target_lat = data_drawer_percent     + (100 - data_drawer_percent)     / 2
 
-    center_target_lat = ((screen_height_deg / 100.0) * target_lat) + lower_lat
-    center_target_lon = ((screen_width_deg  / 100.0) * target_lon) + left_lon
+    center_target_lat = (screen_height_deg / 100.0 * target_lat) + lower_lat
+    center_target_lon = (screen_width_deg  / 100.0 * target_lon) + left_lon
 
     delta_lat_move    = center_target_lat - map_lat
     delta_lon_move    = center_target_lon - map_lon
