@@ -86,6 +86,9 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
     if selected_marker is None:
         raise PreventUpdate
 
+    marker_data = selected_marker.get("data")
+    node_label = get_identification_label(marker_data)
+
     match selected_marker["type"]:
         case "Audio Logger":
             drawer_content = create_audio_chart(selected_marker["data"]["id"], light_mode)
@@ -97,12 +100,9 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
             drawer_content = create_pollinator_chart(selected_marker["data"]["id"], light_mode)
         case "Environment Data Point":
             drawer_content = create_environment_point_chart(environment_data["legend"], selected_marker["data"]["id"])
-        case "Note": drawer_content = create_note_view()
+        case "Note": drawer_content = create_note_view(node_label)
         case x:
             return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO), dash.no_update
-
-    marker_data = selected_marker.get("data")
-    node_label = get_identification_label(marker_data)
 
     return drawer_content, dash.no_update, f"{selected_marker['type']} - {node_label}"
 
@@ -114,7 +114,6 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
     prevent_initial_call=True
 )
 def add_selected_note_into_store(selected_marker, all_notes):
-    print("sync marker and note store")
     if selected_marker is None:
         raise PreventUpdate
 
@@ -126,3 +125,14 @@ def add_selected_note_into_store(selected_marker, all_notes):
         return dict(data=selected_marker["data"], inEditMode=True, isDirty=False)  # new created note
 
     raise PreventUpdate
+
+
+@app.callback(
+    Output(ID_DATA_DRAWER_TITLE, "style"),
+    Input(ID_CHART_DRAWER, "opened"),
+    State(ID_SELECTED_MARKER_STORE, "data")
+)
+def hide_drawer_title_for_notes(opened, marker):
+    if opened and marker["type"] == "Note":
+        return {"display": "none"}
+    return {"display": "block", "marginTop": "1em", "marginLeft": "1em"}

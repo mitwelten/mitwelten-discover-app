@@ -12,7 +12,6 @@ from dashboard.model.note import Note
 def note_form(note: Note):
     return [
         dmc.Grid([
-            dmc.Col(dmc.Title(f"Note - {note.id}", order=5), span="content"),
             dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span=12),
             dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", variant="filled"), span=12),
             dmc.Col(dmc.Textarea(id=ID_NOTE_EDIT_DESCRIPTION, value=note.description, label="Description", variant="filled"), span=12),
