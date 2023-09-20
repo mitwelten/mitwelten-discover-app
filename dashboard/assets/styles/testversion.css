@@ -1,0 +1,27 @@
+.banner {
+    display: flex;
+    position: fixed;
+    top: 40px;
+    left: -90px;
+    background-color: #f44336; /* Hintergrundfarbe des Banners */
+    color: #fff; /* Textfarbe */
+    padding: 1px 100px; /* Innenabstand des Banners */
+    transform: rotate(-45deg); /* Rotation des Banners */
+    align-items: center;
+    z-index: 99999999;
+}
+
+.banner-text {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    font-weight: 500;
+    font-family: Tahoma, sans-serif;
+}
+
+.banner-icon {
+    display: inline;
+    font-size: 1.5rem;
+    padding: 0;
+    margin: 0 10px;
+}
