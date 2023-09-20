@@ -43,6 +43,27 @@ def map_click(click, selected_note):
 
 
 @app.callback(
+    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
+    Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
+    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Input(ID_CHART_DRAWER, "opened"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
+    prevent_initial_call=True
+)
+def close_open_note_by_drawer_close_click(drawer_state, selected_note):
+    if drawer_state:
+        raise PreventUpdate #  drawer state is opening - no action required
+
+    if selected_note["data"] is None:
+        raise PreventUpdate #  drawer contains not a note
+
+    if selected_note["isDirty"]:
+        return True, True, dash.no_update
+    else:
+        return dash.no_update, dash.no_update, dict(data=None, inEditMode=False, isDirty=False)
+
+
+@app.callback(
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
@@ -50,7 +71,7 @@ def map_click(click, selected_note):
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def save_note_changes(click, notes, selected_note):
+def add_note_to_store(click, notes, selected_note):
     if selected_note is None or click is None or click == 0:
         raise PreventUpdate
 

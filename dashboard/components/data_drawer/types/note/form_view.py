@@ -1,7 +1,8 @@
 import dash
 import dash_mantine_components as dmc
-from dash import Output, Input, ALL, State
+from dash import Output, Input, ALL, State, html
 from dash.exceptions import PreventUpdate
+from dash_cool_components import TagInput
 
 from configuration import PRIMARY_COLOR
 from dashboard.config.id import *
@@ -13,6 +14,7 @@ def note_form(note: Note):
     return [
         dmc.Grid([
             dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span=12),
+            dmc.Col(html.Div(TagInput(value=[{"index":0, "displayValue":"helo"}])), span=12),
             dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", variant="filled"), span=12),
             dmc.Col(dmc.Textarea(id=ID_NOTE_EDIT_DESCRIPTION, value=note.description, label="Description", variant="filled"), span=12),
             dmc.Divider(size="sm"),
@@ -71,6 +73,7 @@ def update_note_store_by_form(title, description, lat, lon, selected_note, all_n
     prevent_initial_call=True
 )
 def change_lat_lon_by_marker_position(_, selected_note):
+    """Update value of lat & lon text fields when marker is moved and its position change"""
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 
