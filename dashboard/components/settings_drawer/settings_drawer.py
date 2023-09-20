@@ -26,4 +26,8 @@ def settings_drawer(deployments, tags, data_sources):
     prevent_initial_call=True,
 )
 def open_left_drawer(_):
+    """
+    Opens the settings drawer by click on the menu button.
+    :return: The open state of the settings drawer.
+    """
     return True
