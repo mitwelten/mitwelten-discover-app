@@ -16,10 +16,22 @@ from dashboard.util.helper_functions import was_deployed
     Input(ID_TAG_CHIPS_GROUP, "value"),
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
-    State(ID_DATA_SOURCE_STORE, "data"),
+    State(ID_DATA_SOURCE_PROPERTY_STORE, "data"),
     State({"role": ALL, "label": "Store", "type": "physical"}, "data"),
 )
-def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, sources):
+def add_device_markers(checkboxes, tags, fs_tag, time_range, source_props, sources):
+    """
+    Changes the visible markers of the "physical" devices on the map.
+    This callback is mainly triggered by adjusting the filter settings.
+
+    :param checkboxes: The activated checkboxes of the data sources.
+    :param tags: The selected additional tags.
+    :param fs_tag: The selected field study (fs) tag.
+    :param time_range: The selected date range.
+    :param source_props: The store containing source type specific properties.
+    :param sources: The store containing "physical" sources, which are represented by deployments.
+    :return: The map layer containing all current visible markers with the selected settings.
+    """
     deployment_data = {}
     for source in sources:
         deployment_data[source["type"]] = source["entries"]
@@ -37,7 +49,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, sources):
         depl_to_show[active] = deployment_data[active]
 
     depl_fs_filtered = {}
-    # tag filter
+    # field study tag filter
     if fs_tag:
         for key in depl_to_show.keys():
             depl_fs_filtered[key] = list(filter(lambda depl: fs_tag in depl.tags, depl_to_show[key]))
@@ -65,7 +77,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, sources):
                     position=[d.lat, d.lon],
                     children=[
                         dl.Popup(
-                            children=[device_popup(d, colors[d.node_type]['color'])],
+                            children=[device_popup(d, source_props[d.node_type]['color'])],
                             closeButton=False,
                             id=f"{d.id}",
                             autoPan=False
@@ -76,7 +88,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, colors, sources):
                             direction="left",
                         ),
                     ],
-                    icon=dict(iconUrl=colors[d.node_type]['svgPath'], iconAnchor=[15, 6], iconSize=30),
+                    icon=dict(iconUrl=source_props[d.node_type]['svgPath'], iconAnchor=[15, 6], iconSize=30),
                     id={"role": f"{d.node_type}", "id": d.id, "label": "Node"},
                 )
             )

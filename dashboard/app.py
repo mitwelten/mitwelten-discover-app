@@ -18,7 +18,6 @@ environments, environment_legend = init_environment_data()
 notes = init_notes()
 
 app_content = [
-    test_banner,  # TODO: remove for production
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(
         {"role": "Note", "label": "Store", "type": "virtual"},
@@ -37,7 +36,7 @@ app_content = [
         storage_type="local"
     ),
     dcc.Store(id=ID_TAG_DATA_STORE,           data=tags),
-    dcc.Store(id=ID_DATA_SOURCE_STORE,        data=data_sources),
+    dcc.Store(id=ID_DATA_SOURCE_PROPERTY_STORE, data=data_sources),
     dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=None),
     dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=0), storage_type="local"),

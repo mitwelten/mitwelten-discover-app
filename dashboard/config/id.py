@@ -25,7 +25,7 @@ ID_DATA_DRAWER_TITLE = "id-data-drawer-title"
 # stores
 ID_TAG_DATA_STORE = "id-tags-data-store"
 ID_SELECTED_MARKER_STORE = "id-selected-marker-store"
-ID_DATA_SOURCE_STORE = "id-data-source-store"
+ID_DATA_SOURCE_PROPERTY_STORE = "id-data-source-store"
 ID_BASE_MAP_STORE = {"role": "map_store", "type": "base"}
 ID_OVERLAY_MAP_STORE = {"role": "map_store", "type": "overlay"}
 ID_DATE_RANGE_STORE = "id-date-range-store"
