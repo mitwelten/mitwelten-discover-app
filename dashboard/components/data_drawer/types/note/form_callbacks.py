@@ -16,6 +16,12 @@ from dashboard.model.note import Note
     prevent_initial_call=True
 )
 def activate_edit_mode(edit_click, selected_note):
+    """
+    A click on the `Edit` button replaces the detail view by a form to edit note properties.
+    :param edit_click: The edit button click-event of the note detail view.
+    :param selected_note: The store containing the current selected note.
+    :return: The modified selected note store. Property `inEditMode` is set to `True`.
+    """
     if edit_click is None or edit_click == 0:
         raise PreventUpdate
     return dict(data=selected_note["data"], inEditMode=True, isDirty=False)
@@ -29,8 +35,15 @@ def activate_edit_mode(edit_click, selected_note):
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def map_click(click, selected_note):
-    if click is None or click == 0:
+def map_click(cancel_click, selected_note):
+    """
+    Closing the drawer by click on the map.
+    A modified note will not be stored, but a confirm dialog rises up.
+    :param cancel_click: The cancel button click-event of the note form.
+    :param selected_note: The store containing the current selected note.
+    :return: The drawers state (open/closed) and optional a dialog to confirm unsaved changes.
+    """
+    if cancel_click is None or cancel_click == 0:
         raise PreventUpdate
 
     if selected_note["data"] is None:
@@ -51,6 +64,10 @@ def map_click(click, selected_note):
     prevent_initial_call=True
 )
 def close_open_note_by_drawer_close_click(drawer_state, selected_note):
+    """
+    Handle the selected note when the drawer is closed by click on the close button.
+    Click event is not available, therefore the callback listen on a state-change.
+    """
     if drawer_state:
         raise PreventUpdate #  drawer state is opening - no action required
 
@@ -72,6 +89,10 @@ def close_open_note_by_drawer_close_click(drawer_state, selected_note):
     prevent_initial_call=True
 )
 def add_note_to_store(click, notes, selected_note):
+    """
+    Insert an edited note into note store by clicking on the save button.
+    The selected note will be cleared after a successful saving.
+    """
     if selected_note is None or click is None or click == 0:
         raise PreventUpdate
 
