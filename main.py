@@ -1,6 +1,7 @@
 
 import time
 
+import flask
 from fastapi import FastAPI
 from fastapi import Request, HTTPException, status
 from fastapi.middleware.wsgi import WSGIMiddleware

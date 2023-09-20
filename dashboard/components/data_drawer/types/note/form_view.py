@@ -1,4 +1,5 @@
 import dash
+
 import dash_mantine_components as dmc
 from dash import Output, Input, ALL, State, html
 from dash.exceptions import PreventUpdate
@@ -73,7 +74,9 @@ def update_note_store_by_form(title, description, lat, lon, selected_note, all_n
     prevent_initial_call=True
 )
 def change_lat_lon_by_marker_position(_, selected_note):
-    """Update value of lat & lon text fields when marker is moved and its position change"""
+    """
+    Update value of lat & lon text fields when marker is moved and its position changes.
+    """
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 

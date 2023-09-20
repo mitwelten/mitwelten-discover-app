@@ -12,7 +12,8 @@ empty_note = dict(
     ),
     created_at="",
     updated_at="",
-    # creator="",
+    author="",
+    public=False,
     tags=[],
     files=[]
     )
@@ -39,15 +40,18 @@ class Note:
         )
         self.created_at = json_note.get("created_at")
         self.updated_at = json_note.get("updated_at")
-        # self.creator = json_note.get("creator")
+        self.public = (json_note.get("public")),
+        self.author= json_note.get("author")
 
     def __eq__(self, other):
         return (self.id == other.id and
                 self.title == other.title and
                 self.description == other.description and
-                # self.creator == other.creator and
+                self.author== other.author and
                 self.created_at == other.created_at and
                 self.updated_at == other.updated_at and
+                self.author == other.author and
+                self.public == other.public and
                 self.lat == other.lat and
                 self.lon == other.lon and
                 self.node_label == other.node_label and
@@ -66,6 +70,7 @@ class Note:
             tags=[{"name": t} for t in self.tags] if self.tags is not None else [],
             created_at=self.created_at,
             updated_at=self.updated_at,
-            # creator=self.creator,
+            author=self.author,
+            public=self.public,
             files=[f.to_dict() for f in self.files] if self.files is not None else []
         )

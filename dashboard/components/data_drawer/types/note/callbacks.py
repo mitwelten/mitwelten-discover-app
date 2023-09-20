@@ -49,8 +49,6 @@ def handle_double_click(click_location, click, center):
         return dash.no_update, notification, dict(state=True)
 
     new_note            = Note(empty_note)
-    # new_note.creator    = user.full_name
-    new_note.created_at = datetime.now().isoformat()
     new_note.lat        = click_location[0]
     new_note.lon        = click_location[1]
     new_note            = new_note.to_dict()

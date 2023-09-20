@@ -1,9 +1,11 @@
 import random
 
 import dash
+import flask
 from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
+from dashboard.api.api_note import create_note
 from dashboard.config.id import *
 from dashboard.maindash import app
 from dashboard.model.note import Note
@@ -95,7 +97,7 @@ def add_note_to_store(click, notes, selected_note):
     """
     if selected_note is None or click is None or click == 0:
         raise PreventUpdate
-
+    auth_cookie = flask.request.cookies.get("auth")
     note_data = Note(selected_note["data"])
     found = False
     new_entries = []
@@ -109,8 +111,9 @@ def add_note_to_store(click, notes, selected_note):
 
     if not found:
         # new created note
-        note_data.id = random.randint(0, 100000)  # TODO: connect to backend
-        new_entries.append(note_data.to_dict())
+        note_data.public = True
+        create_note(note_data, auth_cookie)
+        # new_entries.append(new_note.to_dict())
 
     notes["entries"] = new_entries
     return notes, dict(data=note_data.to_dict(), inEditMode=False, isDirty=False)
