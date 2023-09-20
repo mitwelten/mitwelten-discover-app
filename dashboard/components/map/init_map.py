@@ -1,6 +1,5 @@
 from urllib.parse import urlparse, parse_qs
 
-import dash
 import dash_leaflet as dl
 from dash import Output, Input, State
 
@@ -9,6 +8,9 @@ from dashboard.config.id import *
 from dashboard.config.map import *
 from dashboard.config.map import DEFAULT_MAX_ZOOM
 from dashboard.maindash import app
+
+# import marker callbacks
+from dashboard.components.map import markers
 
 initial_map = map_config.MAPS[0]
 map_figure = dl.Map(
