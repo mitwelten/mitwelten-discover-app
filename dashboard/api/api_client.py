@@ -3,9 +3,17 @@ from urllib.parse import urlencode
 
 import requests
 
-from dashboard.model.note import Note
+from dashboard.config.api import API_URL
 
-DATA_API_URL = "https://data.mitwelten.org/api/v3/"
+
+def construct_url(path: str, args: dict = None):
+    url = f"{API_URL}{path}"
+    if args:
+        filtered_args = {k: v for k, v in args.items() if v is not None}
+        if bool(filtered_args):
+            encoded_args = urlencode(filtered_args)
+            url += f"?{encoded_args}"
+    return url
 
 
 def get_deployments():
@@ -14,16 +22,6 @@ def get_deployments():
     if response.status_code == 200:
         return response.json()
     return None
-
-
-def construct_url(path: str, args: dict = None):
-    url = f"{DATA_API_URL}{path}"
-    if args:
-        filtered_args = {k: v for k, v in args.items() if v is not None}
-        if bool(filtered_args):
-            encoded_args = urlencode(filtered_args)
-            url += f"?{encoded_args}"
-    return url
 
 
 def get_env_timeseries(deployment_id, measurement_type, aggregation, bucket_width_m, time_from=None, time_to=None):
