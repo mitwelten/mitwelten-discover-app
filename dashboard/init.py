@@ -1,10 +1,13 @@
 import json
 from functools import reduce
 
-from dashboard.api.api_client import get_environment_data, get_environment_legend, get_deployments, get_all_fake_notes
+from dashboard.api.api_deployment import get_deployments
+from dashboard.api.api_environment import get_environment_data, get_environment_legend
+from dashboard.api.api_note import get_all_notes
 from dashboard.config.map import DEFAULT_MARKER_COLORS
 from dashboard.model.deployment import Deployment
 from dashboard.model.environment import Environment
+from dashboard.model.note import Note
 
 
 def init_deployment_data():
@@ -52,5 +55,6 @@ def init_environment_data():
 
 
 def init_notes():
-    all_notes = get_all_fake_notes()  # TODO: change fake data source
+    all_notes = get_all_notes()
+    all_notes = [Note(n).to_dict() for n in all_notes]
     return all_notes

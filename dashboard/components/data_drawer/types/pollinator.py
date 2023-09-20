@@ -1,14 +1,12 @@
 from datetime import datetime, timedelta
 
-import dash
 import dash_mantine_components as dmc
 import plotly.graph_objects as go
-from dash import Output, Input, dcc, State, html, callback, ALL
+from dash import Output, Input, dcc, State, html, callback
 
-from dashboard.api.api_client import get_pollinator_timeseries
+from dashboard.api.api_deployment import get_pollinator_timeseries
 from dashboard.components.data_drawer.charts import create_themed_figure
 from dashboard.config.id import *
-from dashboard.maindash import app
 
 tabs = [
     dict(

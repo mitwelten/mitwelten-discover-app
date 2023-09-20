@@ -1,6 +1,7 @@
 from functools import partial
 
-from dash import clientside_callback, ClientsideFunction
+import dash
+from dash import clientside_callback, ClientsideFunction, ALL
 from dash.exceptions import PreventUpdate
 
 from dashboard.components.button.buttons import control_buttons
@@ -10,6 +11,7 @@ from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.settings_drawer import settings_drawer
 from dashboard.config.app import app_theme
 from dashboard.init import init_deployment_data, init_environment_data, init_notes
+from dashboard.maindash import app
 from dashboard.util.helper_functions import safe_reduce, ensure_marker_visibility
 
 deployments, data_sources, tags  = init_deployment_data()

@@ -35,7 +35,7 @@ def note_detail_view(note: Note):
         justify="space-between"
     ),
         dmc.Grid([
-            dmc.Col(dmc.Text(f"{note.creator} • {pretty_date(note.created_at)}", size="xs", color="dimmed"), span="content"),
+            dmc.Col(dmc.Text(f"Author • {pretty_date(note.created_at) if note.created_at is not None else ''}", size="xs", color="dimmed"), span="content"),
             dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span=12),
             dmc.Col(dmc.Divider(size="xs")),
             dmc.Col(

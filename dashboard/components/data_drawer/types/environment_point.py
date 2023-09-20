@@ -1,12 +1,8 @@
-import dash
 import dash_mantine_components as dmc
-from dash import Output, Input, ALL, State
 from dash import dcc
 
-from dashboard.api.api_client import get_environment_data_by_id
+from dashboard.api.api_environment import get_environment_data_by_id
 from dashboard.components.data_drawer.charts import spider_chart
-from dashboard.config.id import *
-from dashboard.maindash import app
 
 
 def create_environment_point_chart(legend, trigger_id, light_mode=True):

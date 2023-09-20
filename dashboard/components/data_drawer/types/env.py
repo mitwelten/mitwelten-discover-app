@@ -1,8 +1,8 @@
 import dash_mantine_components as dmc
 import plotly.graph_objects as go
-from dash import dcc, html
+from dash import dcc
 
-from dashboard.api.api_client import get_env_timeseries
+from dashboard.api.api_deployment import get_env_timeseries
 from dashboard.components.data_drawer.charts import create_themed_figure
 from dashboard.config.api import *
 from dashboard.util.validations import cleanup_timeseries

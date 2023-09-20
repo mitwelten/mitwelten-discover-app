@@ -6,7 +6,8 @@ def create_themed_figure(light_mode):
     figure.update_layout(
         template="plotly_white" if light_mode else "plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)"
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=0, r=0, t=0, b=0),
     )
     return figure
 
