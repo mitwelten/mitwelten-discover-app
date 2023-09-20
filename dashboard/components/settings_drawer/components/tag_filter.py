@@ -20,6 +20,7 @@ def tag_filter(all_tags):
     return html.Div([
         dmc.Text("Field Study",
                  color="dimmed",
+                 size="sm",
                  ),
         dmc.Center([
             dmc.SegmentedControl(
