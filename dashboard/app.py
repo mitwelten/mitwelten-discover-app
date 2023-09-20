@@ -8,7 +8,6 @@ from dashboard.components.data_drawer.data_drawer import chart_drawer
 from dashboard.components.data_drawer.types.pollinator import *
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.settings_drawer import settings_drawer
-from dashboard.components.testversion.testversion import test_banner
 from dashboard.config.app import app_theme
 from dashboard.init import init_deployment_data, init_environment_data, init_notes
 from dashboard.util.helper_functions import safe_reduce, ensure_marker_visibility
