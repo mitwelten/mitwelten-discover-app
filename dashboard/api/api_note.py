@@ -14,7 +14,6 @@ def get_all_notes(auth_cookie = None):
         headers={"Authorization": f"Bearer {auth_cookie}"} if auth_cookie is not None else {},
     )
     print(f"Get Notes:  status={res.status_code}")
-    pprint(res.json())
     if res.status_code == 200:
         return res.json()
     return None

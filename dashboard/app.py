@@ -1,6 +1,8 @@
 from functools import partial
+from pprint import pprint
 
 import dash
+import flask
 from dash import clientside_callback, ClientsideFunction, ALL
 from dash.exceptions import PreventUpdate
 
@@ -16,13 +18,12 @@ from dashboard.util.helper_functions import safe_reduce, ensure_marker_visibilit
 
 deployments, data_sources, tags  = init_deployment_data()
 environments, environment_legend = init_environment_data()
-notes = init_notes()
 
 app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(
         {"role": "Note", "label": "Store", "type": "virtual"},
-        data=dict(entries=notes, type="Note"),
+        data=dict(entries=None, type="Note"),
         storage_type="local"
     ),
     *[dcc.Store(
@@ -200,6 +201,18 @@ def ensure_marker_visibility_in_viewport(
     )
     return new_center
 
+
+@app.callback(
+    Output({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    Input({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+)
+def init_note_store(data):
+    if data["entries"] is None:
+        cookies = flask.request.cookies
+        data["entries"] = init_notes(cookies["auth"] if cookies else None)
+        return data
+    else:
+        raise PreventUpdate
 
 
 

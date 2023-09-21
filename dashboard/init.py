@@ -54,7 +54,7 @@ def init_environment_data():
     return all_environments, environment_legend
 
 
-def init_notes():
-    all_notes = get_all_notes()
+def init_notes(auth_cookie=None):
+    all_notes = get_all_notes(auth_cookie)
     all_notes = [Note(n).to_dict() for n in all_notes]
     return all_notes
