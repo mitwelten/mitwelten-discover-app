@@ -1,10 +1,6 @@
-import json
-from functools import reduce
-
 from dashboard.api.api_deployment import get_deployments, get_tags
 from dashboard.api.api_environment import get_environment_data, get_environment_legend
 from dashboard.api.api_note import get_all_notes
-from dashboard.config.map_config import DEFAULT_MARKER_COLORS
 from dashboard.model.deployment import Deployment
 from dashboard.model.environment import Environment
 from dashboard.model.note import Note
@@ -17,12 +13,7 @@ def init_deployment_data():
 
     all_types = set(map(lambda d: d.node_type, all_deployments))
 
-    all_tags = map(lambda d: d.tags, all_deployments)
-    all_tags = sorted(set(reduce(list.__add__, all_tags, [])))
-    tags = json.dumps(all_tags)
-
     # {type: color}
-    data_sources = {}
     all_types = sorted(all_types)
 
     # {type: deployment}
@@ -33,17 +24,7 @@ def init_deployment_data():
             if node_type.lower().strip() in d.node_type.lower()
         ]
 
-    idx_list = enumerate(all_types)
-    for (idx, node_type) in idx_list:
-        data_sources[node_type] = dict(
-            color=DEFAULT_MARKER_COLORS[idx],
-            svgPath=f"assets/markers/location-{idx}.svg"
-        )
-
-    data_sources["Note"] = dict(color="#ffd800", svgPath="assets/markers/note.svg")
-    data_sources["Environment Data Point"] = dict(color="#946000", svgPath="assets/markers/environment.svg")
-
-    return deployment_dict, data_sources, tags
+    return deployment_dict
 
 
 def init_environment_data():

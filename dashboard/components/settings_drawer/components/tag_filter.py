@@ -1,9 +1,7 @@
 import json
 import re
-from pprint import pprint
 
 import dash
-from dash import dcc
 import dash_mantine_components as dmc
 from dash import html, Input, Output, State
 from dash.exceptions import PreventUpdate
@@ -12,7 +10,6 @@ from dash_iconify import DashIconify
 from configuration import PRIMARY_COLOR
 from dashboard.config.id_config import *
 from dashboard.maindash import app
-from dashboard.model.tag import Tag
 
 
 def tag_filter():

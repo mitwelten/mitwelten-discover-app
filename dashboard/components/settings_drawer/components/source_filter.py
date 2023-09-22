@@ -10,17 +10,18 @@ from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
 from dashboard.config.id_config import *
+from dashboard.config.map_config import SOURCE_PROPS, get_source_props
 from dashboard.maindash import app
 from dashboard.util.decorators import spaced_section
 from dashboard.util.util import get_identification_label
 
 
-def get_checkbox_by_type(node_type: str, depl_markers: dict):
+def get_checkbox_by_type(node_type: str):
     return dmc.Checkbox(
         label=dmc.Group([
             html.Div(
                 className="color-point",
-                style={"background": f"{depl_markers[node_type]['color']}"}
+                style={"background": get_source_props(node_type)["color"]}
             ),
             node_type,
         ]),
@@ -31,10 +32,10 @@ def get_checkbox_by_type(node_type: str, depl_markers: dict):
 
 
 @spaced_section
-def source_filter(deployments, data_sources):
+def source_filter(deployments):
     source_types = reduce(
         list.__add__,
-        [list(map(lambda x: get_checkbox_by_type(x, data_sources), data_sources.keys()))],
+        [list(map(lambda x: get_checkbox_by_type(x),  SOURCE_PROPS.keys()))],
         [dmc.Checkbox(label="All", value="all", size="xs")]
     )
 

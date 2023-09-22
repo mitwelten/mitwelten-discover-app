@@ -12,7 +12,7 @@ def divider(title: str):
     return dmc.Divider(label=title, labelPosition="center", size="md")
 
 
-def drawer_content(deployments, tags_data, data_sources):
+def drawer_content(deployments):
     return dmc.Container(
         children=[
             dmc.Space(h=30),
@@ -21,7 +21,7 @@ def drawer_content(deployments, tags_data, data_sources):
                     divider("Date Range"),
                     date_time_section(),
                     divider("Data Source"),
-                    source_filter(deployments, data_sources),
+                    source_filter(deployments),
                     divider("Tags"),
                     tag_filter(),
                     divider("Settings"),

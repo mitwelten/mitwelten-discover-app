@@ -16,7 +16,7 @@ from dashboard.init import init_deployment_data, init_environment_data, init_not
 from dashboard.maindash import app
 from dashboard.util.helper_functions import safe_reduce, ensure_marker_visibility
 
-deployments, data_sources, tags  = init_deployment_data()
+deployments, data_sources = init_deployment_data()
 
 app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
@@ -61,7 +61,7 @@ app_content = [
     map_figure,
     chart_drawer(),
     *control_buttons(),
-    settings_drawer(deployments, tags, data_sources),
+    settings_drawer(deployments),
     dmc.Modal(id=ID_NOTE_ATTACHMENT_MODAL, size="lg", opened=False, zIndex=30000),
 ]
 
