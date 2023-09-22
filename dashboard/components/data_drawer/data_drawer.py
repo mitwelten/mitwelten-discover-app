@@ -45,7 +45,7 @@ chart_drawer = dmc.Drawer(
 
 
 @app.callback(
-    Output(ID_MAP_CONTAINER, "style"),
+    Output(ID_LOGO_CONTAINER, "style"),
     Output(ID_CHART_DRAWER, "styles"),
     Input(ID_SETTINGS_DRAWER, "opened")
 )
