@@ -1,5 +1,6 @@
 import dash_leaflet as dl
 from dash import Output, Input, State, ALL
+from dash.exceptions import PreventUpdate
 
 from dashboard.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_popup
 from dashboard.config.id_config import *
@@ -139,10 +140,10 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
     if "Note" not in active_checkboxes:
         return []
 
-    marker_icon = dict(get_source_props(["Note"])["marker"], iconAnchor=[15, 6], iconSize=30)
-    marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg", iconAnchor=[61, 50], iconSize=120)
+    marker_icon           = dict(iconUrl=get_source_props("Note")["marker"], iconAnchor=[15, 6],  iconSize=30)
+    marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg",     iconAnchor=[61, 50], iconSize=120)
 
-    all_notes = all_notes["entries"]
+    all_notes = all_notes.get("entries") if all_notes.get("entries") is not None else []
     if selected_note["data"] is not None:
         found = False
         for note in all_notes:

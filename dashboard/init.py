@@ -8,22 +8,16 @@ from dashboard.model.tag import Tag
 
 
 def init_deployment_data():
-    all_deployments_json = [d for d in get_deployments()]
-    all_deployments = [Deployment(d) for d in all_deployments_json]
-
-    all_types = set(map(lambda d: d.node_type, all_deployments))
-
-    # {type: color}
-    all_types = sorted(all_types)
+    all_deployments = [Deployment(d) for d in get_deployments()]
+    all_types       = sorted(set(map(lambda d: d.node_type, all_deployments)))
 
     # {type: deployment}
     deployment_dict = {}
-    for node_type in all_types:
-        deployment_dict[node_type] = [
+    for source_type in all_types:
+        deployment_dict[source_type] = [
             d.to_dict() for d in all_deployments
-            if node_type.lower().strip() in d.node_type.lower()
+            if source_type.lower().strip() in d.node_type.lower()
         ]
-
     return deployment_dict
 
 

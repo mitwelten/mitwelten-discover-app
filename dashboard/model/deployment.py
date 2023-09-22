@@ -5,7 +5,8 @@ class Deployment:
         description = json_deployment.get("description")
         self.description = description if description else "-"
         self.node_label = json_deployment.get("node").get("node_label")
-        self.node_type = json_deployment.get("node").get("type")
+        self.node_type = json_deployment.get("node").get("type").replace(".","")
+        self.node_type = self.node_type.replace(".","")  # replace the dot (.) in Env. Sensor, based on callback issues
         period = json_deployment.get("period")
         self.period_start = period.get("start")
         self.period_end = period.get("end")
