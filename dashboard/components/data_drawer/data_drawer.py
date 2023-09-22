@@ -10,8 +10,8 @@ from dashboard.components.data_drawer.types.pax import create_pax_chart
 from dashboard.components.data_drawer.types.pollinator import create_pollinator_chart
 from dashboard.components.data_drawer.types.environment_point import create_environment_point_chart
 from dashboard.components.notifications.notification import NotificationType, create_notification
-from dashboard.config.app import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
-from dashboard.config.id import *
+from dashboard.config.app_config import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.util.util import get_identification_label
 

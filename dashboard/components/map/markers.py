@@ -2,7 +2,7 @@ import dash_leaflet as dl
 from dash import Output, Input, State, ALL
 
 from dashboard.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_popup
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
 from dashboard.model.environment import Environment

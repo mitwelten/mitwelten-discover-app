@@ -8,7 +8,7 @@ from dashboard.components.data_drawer.types.note.form_view import note_form
 from dash import Output, Input
 from dash.exceptions import PreventUpdate
 
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.note import Note
 

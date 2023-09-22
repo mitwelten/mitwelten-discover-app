@@ -6,7 +6,7 @@ from dash import Output, Input, dcc, State, html, callback
 
 from dashboard.api.api_deployment import get_pollinator_timeseries
 from dashboard.components.data_drawer.charts import create_themed_figure
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 
 tabs = [
     dict(

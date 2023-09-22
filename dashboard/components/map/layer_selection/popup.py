@@ -2,7 +2,7 @@ import dash_mantine_components as dmc
 from dash import html
 
 from dashboard.components.button.components.action_button import action_button
-from dashboard.config.map import MAPS, OVERLAYS, MAP_TYPES
+from dashboard.config.map_config import MAPS, OVERLAYS, MAP_TYPES
 
 
 def map_menu_popup(id_prefix):

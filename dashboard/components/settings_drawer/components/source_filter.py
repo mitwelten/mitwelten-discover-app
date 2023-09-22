@@ -9,7 +9,7 @@ from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.util.decorators import spaced_section
 from dashboard.util.util import get_identification_label

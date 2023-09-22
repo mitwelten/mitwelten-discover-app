@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 import requests
 
-from dashboard.config.api import API_URL
+from dashboard.config.api_config import API_URL
 
 
 def construct_url(path: str, args: dict = None):

@@ -3,7 +3,7 @@ from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
 from dashboard.components.button.components.action_button import action_button
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 from dashboard.model.note import Note
 from dashboard.util.user_validation import get_user_from_cookies
 from dashboard.util.util import pretty_date

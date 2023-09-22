@@ -2,8 +2,8 @@ import dash_mantine_components as dmc
 from dash import Output, Input
 
 from dashboard.components.settings_drawer.drawer_content import drawer_content
-from dashboard.config.app import SETTINGS_DRAWER_WIDTH
-from dashboard.config.id import *
+from dashboard.config.app_config import SETTINGS_DRAWER_WIDTH
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 
 

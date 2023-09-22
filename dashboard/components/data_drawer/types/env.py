@@ -4,7 +4,7 @@ from dash import dcc
 
 from dashboard.api.api_deployment import get_env_timeseries
 from dashboard.components.data_drawer.charts import create_themed_figure
-from dashboard.config.api import *
+from dashboard.config.api_config import *
 from dashboard.util.validations import cleanup_timeseries
 
 

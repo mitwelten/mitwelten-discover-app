@@ -2,7 +2,7 @@ from collections.abc import Callable
 from datetime import datetime
 from typing import Iterable, TypeVar
 
-from dashboard.config.app import DATE_FORMAT
+from dashboard.config.app_config import DATE_FORMAT
 from dashboard.model.deployment import Deployment
 
 T = TypeVar('T')

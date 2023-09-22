@@ -5,7 +5,7 @@ from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
 from dashboard.components.notifications.notification import create_notification, NotificationType
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.note import Note, empty_note
 from dashboard.util.user_validation import get_user_from_cookies

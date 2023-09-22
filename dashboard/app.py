@@ -11,7 +11,7 @@ from dashboard.components.data_drawer.data_drawer import chart_drawer
 from dashboard.components.data_drawer.types.pollinator import *
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.settings_drawer import settings_drawer
-from dashboard.config.app import app_theme
+from dashboard.config.app_config import app_theme
 from dashboard.init import init_deployment_data, init_environment_data, init_notes
 from dashboard.maindash import app
 from dashboard.util.helper_functions import safe_reduce, ensure_marker_visibility
@@ -24,7 +24,7 @@ app_content = [
     dcc.Store(
         {"role": "Note", "label": "Store", "type": "virtual"},
         data=dict(entries=None, type="Note"),
-        storage_type="local"
+        # storage_type="local"
     ),
     *[dcc.Store(
         {"role": source_type, "label": "Store", "type": "physical"},
@@ -43,7 +43,7 @@ app_content = [
     dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),
-    dcc.Store(id=ID_SELECTED_NOTE_STORE,      data=dict(data=None, inEditMode=False, isDirty=False), storage_type="local"),
+    dcc.Store(id=ID_SELECTED_NOTE_STORE,      data=dict(data=None, inEditMode=False, isDirty=False)),
     dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
 
     html.Div(

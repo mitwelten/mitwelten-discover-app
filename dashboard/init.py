@@ -4,7 +4,7 @@ from functools import reduce
 from dashboard.api.api_deployment import get_deployments
 from dashboard.api.api_environment import get_environment_data, get_environment_legend
 from dashboard.api.api_note import get_all_notes
-from dashboard.config.map import DEFAULT_MARKER_COLORS
+from dashboard.config.map_config import DEFAULT_MARKER_COLORS
 from dashboard.model.deployment import Deployment
 from dashboard.model.environment import Environment
 from dashboard.model.note import Note

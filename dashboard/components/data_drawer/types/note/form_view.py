@@ -6,7 +6,7 @@ from dash.exceptions import PreventUpdate
 from dash_cool_components import TagInput
 
 from configuration import PRIMARY_COLOR
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.note import Note
 

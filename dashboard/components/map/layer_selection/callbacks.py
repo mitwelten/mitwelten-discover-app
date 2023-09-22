@@ -1,8 +1,8 @@
 import dash
 from dash import Output, Input, ALL, State
 
-from dashboard.config.id import *
-from dashboard.config.map import MAPS, OVERLAYS, MAP_TYPES
+from dashboard.config.id_config import *
+from dashboard.config.map_config import MAPS, OVERLAYS, MAP_TYPES
 from dashboard.maindash import app
 from dashboard.util.helper_functions import safe_reduce
 

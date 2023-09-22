@@ -8,7 +8,7 @@ from dash import html, Input, Output, State
 from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 
 

@@ -10,7 +10,7 @@ from configuration import PRIMARY_COLOR
 from dashboard.components.button.components.action_button import action_button
 from dashboard.components.data_drawer.types.note.form_view import note_form
 from dashboard.components.notifications.notification import create_notification, NotificationType
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.file import File
 from dashboard.model.note import Note

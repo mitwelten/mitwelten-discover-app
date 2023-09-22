@@ -3,10 +3,10 @@ from urllib.parse import urlparse, parse_qs
 import dash_leaflet as dl
 from dash import Output, Input, State
 
-from dashboard.config import map as map_config
-from dashboard.config.id import *
-from dashboard.config.map import *
-from dashboard.config.map import DEFAULT_MAX_ZOOM
+from dashboard.config import map_config as map_config
+from dashboard.config.id_config import *
+from dashboard.config.map_config import *
+from dashboard.config.map_config import DEFAULT_MAX_ZOOM
 from dashboard.maindash import app
 
 # import marker callbacks

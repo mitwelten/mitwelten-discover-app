@@ -5,7 +5,7 @@ from dashboard.components.settings_drawer.components.date_time_section import da
 from dashboard.components.settings_drawer.components.general_controls import general_controls
 from dashboard.components.settings_drawer.components.source_filter import source_filter
 from dashboard.components.settings_drawer.components.tag_filter import tag_filter
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 
 
 def divider(title: str):

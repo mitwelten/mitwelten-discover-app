@@ -8,7 +8,7 @@ from configuration import DOMAIN_NAME, PRIMARY_COLOR
 from dashboard.components.button.components.action_button import action_button
 from dashboard.components.map.layer_selection.drawer import map_menu_drawer
 from dashboard.components.map.layer_selection.popup import map_menu_popup
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.user import User
 from dashboard.util.user_validation import get_user_from_cookies

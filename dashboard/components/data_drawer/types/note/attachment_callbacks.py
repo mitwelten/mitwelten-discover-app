@@ -3,7 +3,7 @@ from dash import Output, Input, State, html, ALL, MATCH
 from dash.exceptions import PreventUpdate
 
 from dashboard.components.notifications.notification import create_notification, NotificationType
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 
 

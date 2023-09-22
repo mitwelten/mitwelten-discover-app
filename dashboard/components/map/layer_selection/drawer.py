@@ -2,8 +2,8 @@ import dash_mantine_components as dmc
 from dash import html, Output, Input, ALL
 
 from dashboard.maindash import app
-from dashboard.config.id import *
-from dashboard.config.map import MAPS, OVERLAYS, MAP_TYPES
+from dashboard.config.id_config import *
+from dashboard.config.map_config import MAPS, OVERLAYS, MAP_TYPES
 
 # unused import is used to initialize callbacks !
 import dashboard.components.map.layer_selection.callbacks

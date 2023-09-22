@@ -6,7 +6,7 @@ from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
 from dashboard.api.api_note import create_note
-from dashboard.config.id import *
+from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.note import Note
 
