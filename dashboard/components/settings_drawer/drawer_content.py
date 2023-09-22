@@ -12,28 +12,27 @@ def divider(title: str):
     return dmc.Divider(label=title, labelPosition="center", size="md")
 
 
-def drawer_content(deployments):
-    return dmc.Container(
-        children=[
-            dmc.Space(h=30),
-            dmc.ScrollArea([
-                html.Div([
-                    divider("Date Range"),
-                    date_time_section(),
-                    divider("Data Source"),
-                    source_filter(deployments),
-                    divider("Tags"),
-                    tag_filter(),
-                    divider("Settings"),
-                    general_controls(),
-                ],
-                    id=ID_LEFT_DRAWER_CONTENT_SCROLL_AREA,
-                    style={"height": "100%"}
-                )],
-                offsetScrollbars=True,
-                type="always",
+drawer_content = dmc.Container(
+    children=[
+        dmc.Space(h=30),
+        dmc.ScrollArea([
+            html.Div([
+                divider("Date Range"),
+                date_time_section(),
+                divider("Data Source"),
+                source_filter(),
+                divider("Tags"),
+                tag_filter(),
+                divider("Settings"),
+                general_controls(),
+            ],
+                id=ID_LEFT_DRAWER_CONTENT_SCROLL_AREA,
                 style={"height": "100%"}
             )],
-        fluid=True,
-        style={"height": "calc(100vh - 100px)"}
-    )
+            offsetScrollbars=True,
+            type="always",
+            style={"height": "100%"}
+        )],
+    fluid=True,
+    style={"height": "calc(100vh - 100px)"}
+)

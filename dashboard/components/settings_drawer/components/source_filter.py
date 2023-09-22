@@ -31,17 +31,12 @@ def get_checkbox_by_type(node_type: str):
 
 
 @spaced_section
-def source_filter(deployments):
+def source_filter():
     source_types = reduce(
         list.__add__,
         [list(map(lambda x: get_checkbox_by_type(x),  SOURCE_PROPS.keys()))],
         [dmc.Checkbox(label="All", value="all", size="xs")]
     )
-
-    deployment_ids = []
-    for key in deployments.keys():
-        for entry in deployments[key]:
-            deployment_ids.append(dict(label=f"{key} - {entry['node']['node_label']}", value=entry))
 
     return html.Div([
         dcc.Interval(id="remove-highlight", interval=3000, disabled=True),
@@ -49,7 +44,7 @@ def source_filter(deployments):
         dmc.Group([
             dmc.Select(
                 id=ID_DEPLOYMENT_SELECT,
-                data=deployment_ids,
+                data=[],
                 placeholder="Node Label",
                 searchable=True,
                 nothingFound="ID not found",
@@ -128,11 +123,11 @@ def search_deployment(_, value):
 @app.callback(
     Output(ID_DEPLOYMENT_SELECT, "data"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-    State({"role": ALL, "label": "Store", "type": ALL}, "data"),
+    Input({"role": ALL, "label": "Store", "type": ALL}, "data"),
 )
 def update_search_data(active_types, _):
     new_data = []
-    for source in dash.ctx.states_list[0]:
+    for source in dash.ctx.inputs_list[1]:
         if source["id"]["role"] in active_types:
             for entry in source["value"]["entries"]:
                 label = get_identification_label(entry)

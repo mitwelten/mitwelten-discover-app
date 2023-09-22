@@ -16,33 +16,32 @@ from dashboard.maindash import app
 from dashboard.util.util import get_identification_label
 
 
-def chart_drawer():
-    return dmc.Drawer(
-        opened=False,
-        id=ID_CHART_DRAWER,
-        zIndex=90000,
-        size=SETTINGS_DRAWER_WIDTH,
-        closeOnClickOutside=True,
-        closeOnEscape=True,
-        withOverlay=False,
-        overlayOpacity=0,
-        className="chart-drawer",
-        position="bottom",
-        title=dmc.Text(id=ID_DATA_DRAWER_TITLE, weight=500, style={"marginTop": "1em", "marginLeft": "1em"}),
-        children=[
-            html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
-        ],
-        # children=[
-        #     html.Div(
-        #         children=dmc.LoadingOverlay(
-        #             html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
-        #             loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
-        #             style={"height":"100%"},
-        #         ),
-        #         className="chart-container"
-        #     ),
-        # ],
-    )
+chart_drawer = dmc.Drawer(
+    opened=False,
+    id=ID_CHART_DRAWER,
+    zIndex=90000,
+    size=SETTINGS_DRAWER_WIDTH,
+    closeOnClickOutside=True,
+    closeOnEscape=True,
+    withOverlay=False,
+    overlayOpacity=0,
+    className="chart-drawer",
+    position="bottom",
+    title=dmc.Text(id=ID_DATA_DRAWER_TITLE, weight=500, style={"marginTop": "1em", "marginLeft": "1em"}),
+    children=[
+        html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
+    ],
+    # children=[
+    #     html.Div(
+    #         children=dmc.LoadingOverlay(
+    #             html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
+    #             loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
+    #             style={"height":"100%"},
+    #         ),
+    #         className="chart-container"
+    #     ),
+    # ],
+)
 
 
 @app.callback(

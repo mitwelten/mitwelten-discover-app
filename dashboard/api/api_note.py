@@ -40,8 +40,6 @@ def create_note(note: Note, auth_cookie):
         headers={"Authorization": f"Bearer {auth_cookie}"},
     )
     print(f"Create Note: id={note.id}, status={res.status_code}")
-    pprint(note.to_dict())
-    pprint(res)
     return True
 
 

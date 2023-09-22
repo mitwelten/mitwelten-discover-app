@@ -53,8 +53,7 @@ def create_avatar(user):
     )
 
 
-def control_buttons():
-    return [
+control_buttons = [
         action_button(button_id=ID_OPEN_LEFT_DRAWER_BUTTON, icon="material-symbols:menu"),
         dmc.Group([
             dmc.MediaQuery([
