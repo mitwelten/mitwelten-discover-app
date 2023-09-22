@@ -7,7 +7,7 @@ def create_themed_figure(light_mode):
         template="plotly_white" if light_mode else "plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=0, r=0, t=0, b=0),
+        margin=dict(l=30, r=30, t=5, b=30),
     )
     return figure
 
@@ -47,6 +47,7 @@ def spider_chart(labels, keys, light_mode=True):
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         legend=dict(orientation="h"),
+        margin=dict(l=0, r=0, t=10, b=35),
     )
     return fig
 
