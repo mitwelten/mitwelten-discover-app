@@ -2,6 +2,13 @@ import requests
 
 from dashboard.api.api_client import construct_url
 
+def get_tags():
+    url = construct_url("tags")
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    return None
+
 
 def get_deployments():
     url = construct_url("deployments")
