@@ -1,9 +1,13 @@
+from dashboard.model.map_configuration import MapConfiguration
+
 DEFAULT_LAT = 47.53522891224535
 DEFAULT_LON = 7.606299048260731
 DEFAULT_ZOOM = 11.5
 DEFAULT_MAX_ZOOM = 20.9
 DEFAULT_MAP_INDEX = 1
+
 MAP_TYPES = ["base", "overlay"]
+
 DEFAULT_MARKER_COLORS = [
     "#FF5733",  # (Pastell Orange)
     "#9B59B6",  # (Lavendelviolett)
@@ -11,28 +15,31 @@ DEFAULT_MARKER_COLORS = [
     "#3498DB",  # (Hellblau)
     "#E67E22",  # (Terra Cotta)
     "#2ECC71",  # (Smaragdgrün)
+    "#946000",  # (brown)
+    "#FFd800",  # (Yellow)
     "#E74C3C",  # (Tomatenrot)
     "#1ABC9C",  # (Türkis)
-    "#F39C12",  # (Goldgelb)
-    "#FF00FF",  # (Magenta)
 ]
 
+SOURCE_PROPS = {
+    "Access Point":           dict(color="#FF5733", marker="location-0.svg"),
+    "Audio Logger":           dict(color="#9B59B6", marker="location-1.svg"),
+    "Env. Sensor":            dict(color="#F1C40F", marker="location-2.svg"),
+    "Pax Counter":            dict(color="#3498DB", marker="location-3.svg"),
+    "Pollinator Cam":         dict(color="#E67E22", marker="location-4.svg"),
+    "Wild Cam":               dict(color="#2ECC71", marker="location-5.svg"),
+    "Environment Data Point": dict(color="#946000", marker="location-6.svg"),
+    "Note":                   dict(color="#FFd800", marker="note.svg"),
+}
 
-class MapConfiguration:
-
-    def __init__(
-            self,
-            title,
-            image,
-            index,
-            source,
-            source_attribution,
-    ):
-        self.title = title
-        self.image = image
-        self.index = index
-        self.source = source
-        self.source_attribution = source_attribution
+def get_source_props(source):
+    default_marker = "assets/markers/location-default.svg"
+    default_color  = "#000000"
+    source_marker  = SOURCE_PROPS.get(source).get("marker")
+    source_color   = SOURCE_PROPS.get(source).get("color")
+    marker = source_marker if source_marker is not None else default_marker
+    color  = source_color  if source_color  is not None else default_color
+    return dict(marker=f"assets/markers/{marker}", color=color)
 
 
 MAPS = [

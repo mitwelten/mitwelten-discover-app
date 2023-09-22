@@ -3,6 +3,7 @@ from dash import Output, Input, State, ALL
 
 from dashboard.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_popup
 from dashboard.config.id_config import *
+from dashboard.config.map_config import get_source_props
 from dashboard.maindash import app
 from dashboard.model.deployment import Deployment
 from dashboard.model.environment import Environment
@@ -16,10 +17,9 @@ from dashboard.util.helper_functions import was_deployed
     Input(ID_TAG_CHIPS_GROUP, "value"),
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
-    State(ID_DATA_SOURCE_PROPERTY_STORE, "data"),
     State({"role": ALL, "label": "Store", "type": "physical"}, "data"),
 )
-def add_device_markers(checkboxes, tags, fs_tag, time_range, source_props, sources):
+def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
     """
     Changes the visible markers of the "physical" devices on the map.
     This callback is mainly triggered by adjusting the filter settings.
@@ -28,7 +28,6 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, source_props, sourc
     :param tags: The selected additional tags.
     :param fs_tag: The selected field study (fs) tag.
     :param time_range: The selected date range.
-    :param source_props: The store containing source type specific properties.
     :param sources: The store containing "physical" sources, which are represented by deployments.
     :return: The map layer containing all current visible markers with the selected settings.
     """
@@ -77,7 +76,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, source_props, sourc
                     position=[d.lat, d.lon],
                     children=[
                         dl.Popup(
-                            children=[device_popup(d, source_props[d.node_type]['color'])],
+                            children=[device_popup(d, get_source_props(d.node_type)["color"])],
                             closeButton=False,
                             id=f"{d.id}",
                             autoPan=False
@@ -88,7 +87,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, source_props, sourc
                             direction="left",
                         ),
                     ],
-                    icon=dict(iconUrl=source_props[d.node_type]['svgPath'], iconAnchor=[15, 6], iconSize=30),
+                    icon=dict(iconUrl=get_source_props(d.node_type)["marker"], iconAnchor=[15, 6], iconSize=30),
                     id={"role": f"{d.node_type}", "id": d.id, "label": "Node"},
                 )
             )
@@ -122,7 +121,7 @@ def add_environment_markers(active_checkboxes, all_environments):
                         direction="left",
                     ),
                 ],
-                icon=dict(iconUrl="assets/markers/environment.svg", iconAnchor=[15, 6], iconSize=30),
+                icon=dict(iconUrl=get_source_props("Environment Data Point")["marker"], iconAnchor=[15, 6], iconSize=30),
                 id={"role": "Environment Data Point", "id": env.id, "label": "Node"},
             )
         )
@@ -140,7 +139,7 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
     if "Note" not in active_checkboxes:
         return []
 
-    marker_icon = dict(iconUrl="assets/markers/note.svg", iconAnchor=[15, 6], iconSize=30)
+    marker_icon = dict(get_source_props(["Note"])["marker"], iconAnchor=[15, 6], iconSize=30)
     marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg", iconAnchor=[61, 50], iconSize=120)
 
     all_notes = all_notes["entries"]
