@@ -23,7 +23,7 @@ def drawer_content(deployments, tags_data, data_sources):
                     divider("Data Source"),
                     source_filter(deployments, data_sources),
                     divider("Tags"),
-                    tag_filter(tags_data),
+                    tag_filter(),
                     divider("Settings"),
                     general_controls(),
                 ],

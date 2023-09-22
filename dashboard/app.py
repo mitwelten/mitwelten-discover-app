@@ -12,18 +12,17 @@ from dashboard.components.data_drawer.types.pollinator import *
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.settings_drawer import settings_drawer
 from dashboard.config.app_config import app_theme
-from dashboard.init import init_deployment_data, init_environment_data, init_notes
+from dashboard.init import init_deployment_data, init_environment_data, init_notes, init_tags
 from dashboard.maindash import app
 from dashboard.util.helper_functions import safe_reduce, ensure_marker_visibility
 
 deployments, data_sources, tags  = init_deployment_data()
-environments, environment_legend = init_environment_data()
 
 app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Store(
         {"role": "Note", "label": "Store", "type": "virtual"},
-        data=dict(entries=None, type="Note"),
+        data=dict(entries=[], type="Note"),
         # storage_type="local"
     ),
     *[dcc.Store(
@@ -34,17 +33,15 @@ app_content = [
     ],
     dcc.Store(
         {"role": "Environment Data Point", "label": "Store", "type": "virtual"},
-        data=dict(entries=environments, type="Environment Data Point", legend=environment_legend),
-        storage_type="local"
+        data=dict(entries=[], type="Environment Data Point", legend=None),
     ),
-    dcc.Store(id=ID_TAG_DATA_STORE,           data=tags),
-    dcc.Store(id=ID_DATA_SOURCE_PROPERTY_STORE, data=data_sources),
-    dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=None),
-    dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=0), storage_type="local"),
-    dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=0), storage_type="local"),
-    dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),
-    dcc.Store(id=ID_SELECTED_NOTE_STORE,      data=dict(data=None, inEditMode=False, isDirty=False)),
-    dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
+    dcc.Store(id=ID_TAG_DATA_STORE,             data=None, storage_type="local"),
+    dcc.Store(id=ID_SELECTED_MARKER_STORE,      data=None),
+    dcc.Store(id=ID_BASE_MAP_STORE,             data=dict(index=0), storage_type="local"),
+    dcc.Store(id=ID_OVERLAY_MAP_STORE,          data=dict(index=0), storage_type="local"),
+    dcc.Store(id=ID_PREVENT_MARKER_EVENT,       data=dict(state=False)),
+    dcc.Store(id=ID_SELECTED_NOTE_STORE,        data=dict(data=None, inEditMode=False, isDirty=False)),
+    dcc.Store(id=ID_BROWSER_PROPERTIES_STORE,   data=None, storage_type="local"),
 
     html.Div(
         html.A(
@@ -164,7 +161,7 @@ clientside_callback(
         namespace="browser", function_name="testFunction"
     ),
     Output(ID_BROWSER_PROPERTIES_STORE, "data"),
-    Input(ID_SELECTED_MARKER_STORE, "data"),
+    Input (ID_SELECTED_MARKER_STORE,    "data"),
 )
 
 @app.callback(
@@ -204,10 +201,11 @@ def ensure_marker_visibility_in_viewport(
 
 @app.callback(
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    Input({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    Input ({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
 )
-def init_note_store(data):
-    if data["entries"] is None:
+def load_notes_from_backend(data):
+    outdated = False
+    if data["entries"] == [] or outdated:
         cookies = flask.request.cookies
         data["entries"] = init_notes(cookies["auth"] if cookies else None)
         return data
@@ -215,4 +213,39 @@ def init_note_store(data):
         raise PreventUpdate
 
 
+@app.callback(
+    Output({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
+    Input ({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
+)
+def load_notes_from_backend(data):
+    outdated = False  # TODO: implement data update
+    if data["entries"] == [] or outdated:
+        data["entries"], data["legend"]= init_environment_data()
+        return data
+    else:
+        raise PreventUpdate
 
+
+@app.callback(
+    Output(ID_TAG_DATA_STORE, "data"),
+    Input (ID_TAG_DATA_STORE, "data")
+)
+def load_tags_from_backend(data):
+    outdated = False  # TODO: implement data update
+    if data is None or outdated:
+        all_tags  = init_tags()
+        return all_tags
+    else:
+        raise PreventUpdate
+
+
+
+        # def update_deployment_store():
+        #     return None
+        #
+        # for source in data_sources:
+        #     app.callback(
+        #         Input({"role": source, "id": ALL, "label": "Node"}, "n_clicks"),
+        #         Input({"role": source, "id": ALL, "label": "Node"}, "n_clicks"),
+        #         prevent_initial_call=True
+        #     )(update_deployment_store)

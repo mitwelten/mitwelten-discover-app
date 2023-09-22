@@ -1,22 +1,21 @@
 import json
 import re
+from pprint import pprint
 
 import dash
 from dash import dcc
 import dash_mantine_components as dmc
 from dash import html, Input, Output, State
+from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
 from dashboard.config.id_config import *
 from dashboard.maindash import app
+from dashboard.model.tag import Tag
 
 
-def tag_filter(all_tags):
-    all_tags = json.loads(all_tags)
-    p = re.compile("FS\d")
-    fs_tags = [s for s in all_tags if p.match(s)]
-    tags = [t for t in all_tags if t not in fs_tags]
+def tag_filter():
     return html.Div([
         dmc.Text("Field Study",
                  color="dimmed",
@@ -26,8 +25,7 @@ def tag_filter(all_tags):
             dmc.SegmentedControl(
                 color=PRIMARY_COLOR,
                 id=ID_FS_TAG_CHIPS_GROUP,
-                data=fs_tags,
-                value="FS1",
+                data=[],
                 persistence=True,
             ),
         ]),
@@ -77,7 +75,6 @@ def tag_filter(all_tags):
                     zIndex=10000,
                     children=[
                         dmc.ChipGroup(
-                            [dmc.Chip(x, value=x, size="xs", styles={"iconWrapper": {"className": ""}}) for x in sorted(tags)],
                             id=ID_MODAL_CHIPS_GROUP,
                             value=[],
                             multiple=True
@@ -92,6 +89,27 @@ def tag_filter(all_tags):
 
 
 @app.callback(
+    Output(ID_FS_TAG_CHIPS_GROUP, "data"),
+    Output(ID_FS_TAG_CHIPS_GROUP, "value"),
+    Output(ID_MODAL_CHIPS_GROUP, "children"),
+    Input(ID_TAG_DATA_STORE, "data"),
+    State(ID_FS_TAG_CHIPS_GROUP, "value"),
+    prevent_initial_call=True
+)
+def update_fs_tags_from_store(all_tags, active_tag):
+    if all_tags is None:
+        raise PreventUpdate
+    predicate = re.compile("FS\d")
+
+    fs_tags   = list(sorted(([tag["name"] for tag in all_tags if predicate.match(tag["name"])])))
+    value     = active_tag if active_tag is not None else fs_tags[0]
+
+    tags      = [t["name"] for t in all_tags if t["name"] not in fs_tags]
+    chips     = [dmc.Chip(x, value=x, size="xs", styles={"iconWrapper": {"className": ""}}) for x in sorted(tags)],
+    return fs_tags, value, *chips
+
+
+@app.callback(
     Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),
     Output(ID_TAG_CHIPS_GROUP, "value", allow_duplicate=True),
     Output(ID_MODAL_CHIPS_GROUP, "value"),
@@ -99,9 +117,11 @@ def tag_filter(all_tags):
     prevent_initial_call=True
 )
 def reset_tags(_):
+    # TODO: fix bug marker still be visible after clearing additional tags
     return [], [], []
 
 
+# TODO: refactor
 @app.callback(
     Output(ID_CHIPS_MODAL, "opened"),
     Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),

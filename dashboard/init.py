@@ -1,13 +1,14 @@
 import json
 from functools import reduce
 
-from dashboard.api.api_deployment import get_deployments
+from dashboard.api.api_deployment import get_deployments, get_tags
 from dashboard.api.api_environment import get_environment_data, get_environment_legend
 from dashboard.api.api_note import get_all_notes
 from dashboard.config.map_config import DEFAULT_MARKER_COLORS
 from dashboard.model.deployment import Deployment
 from dashboard.model.environment import Environment
 from dashboard.model.note import Note
+from dashboard.model.tag import Tag
 
 
 def init_deployment_data():
@@ -50,11 +51,18 @@ def init_environment_data():
     # standardize dictionary properties
     all_environments = [Environment(env).to_dict() for env in all_environments_json]
     environment_legend = get_environment_legend()
-
     return all_environments, environment_legend
 
 
 def init_notes(auth_cookie=None):
     all_notes = get_all_notes(auth_cookie)
+    # standardize dictionary properties
     all_notes = [Note(n).to_dict() for n in all_notes]
     return all_notes
+
+
+def init_tags():
+    all_tags = get_tags()
+    # standardize dictionary properties
+    all_tags = [Tag(t).to_dict() for t in all_tags]
+    return all_tags
