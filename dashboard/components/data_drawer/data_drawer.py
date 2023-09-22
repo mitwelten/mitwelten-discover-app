@@ -91,7 +91,7 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
     match selected_marker["type"]:
         case "Audio Logger":
             drawer_content = create_audio_chart(selected_marker["data"]["id"], light_mode)
-        case "Env. Sensor":
+        case "Env Sensor":
             drawer_content = create_env_chart(selected_marker["data"]["id"], light_mode)
         case "Pax Counter":
             drawer_content = create_pax_chart(selected_marker["data"]["id"], light_mode)
