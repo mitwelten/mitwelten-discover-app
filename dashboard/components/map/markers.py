@@ -18,7 +18,7 @@ from dashboard.util.helper_functions import was_deployed
     Input(ID_TAG_CHIPS_GROUP, "value"),
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
-    State({"role": ALL, "label": "Store", "type": "physical"}, "data"),
+    Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
 )
 def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
     """
@@ -98,7 +98,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
 @app.callback(
     Output(ID_ENV_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-    State({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
+    Input({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
 )
 def add_environment_markers(active_checkboxes, all_environments):
     if "Environment Data Point" not in active_checkboxes:
@@ -133,7 +133,7 @@ def add_environment_markers(active_checkboxes, all_environments):
     Output(ID_NOTES_LAYER_GROUP, "children", allow_duplicate=True),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_SELECTED_NOTE_STORE, "data"),
-    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    Input({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )
 def add_note_markers(active_checkboxes, selected_note, all_notes):

@@ -1,5 +1,5 @@
+import logging
 from functools import partial
-from pprint import pprint
 
 import dash
 import flask
@@ -23,7 +23,7 @@ app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     *[dcc.Store(
         {"role": source_type, "label": "Store", "type": get_source_props(source_type)["type"]},
-        data=dict(entries=[], type=source_type), storage_type="local")
+        data=dict(entries=[], type=source_type))
         for source_type in SOURCE_PROPS.keys()
     ],
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE,    data=None),
