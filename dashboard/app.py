@@ -26,9 +26,8 @@ app_content = [
             target="_blank",
             className="mitwelten-logo"
         ),
-        id=ID_MAP_CONTAINER,
+        id=ID_LOGO_CONTAINER,
     ),
-
     dcc.ConfirmDialog(
         id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG,
         message="You have unsaved changes. Do you want to discard them?"

@@ -3,7 +3,7 @@ ID_THEME_SWITCH = "id-theme-switch"
 ID_APP_THEME = "id-app-theme"
 ID_LOADER = "id-loader"
 ID_NOTIFICATION_CONTAINER = "id-notification_container"
-ID_MAP_CONTAINER = "id-map-container"
+ID_LOGO_CONTAINER = "id-logo-container"
 
 # UI elements
 ID_APP_CONTAINER = "id-app-container"

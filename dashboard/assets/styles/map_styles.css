@@ -16,10 +16,20 @@ body {
     padding: 0;
 }
 
-#id-map-container {
+#id-logo-container {
     position: absolute;
     right: 0;
     bottom: 20px;
+    width: 100vw;
+    height: 20px;
+    text-align: center;
+    z-index: 900;
+}
+
+#search {
+    position: absolute;
+    right: 0;
+    top: 20px;
     width: 100vw;
     height: 20px;
     text-align: center;
