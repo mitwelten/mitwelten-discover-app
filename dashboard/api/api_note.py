@@ -13,10 +13,14 @@ def get_all_notes(auth_cookie = None):
         url=url,
         headers={"Authorization": f"Bearer {auth_cookie}"} if auth_cookie is not None else {},
     )
+    if 400 <= res.status_code < 500:
+        # if cookie is too old, initial call will fail
+        print(f"Get Notes:  status={res.status_code}, try again...")
+        res = requests.get(url=url)
     print(f"Get Notes:  status={res.status_code}")
     if res.status_code == 200:
         return res.json()
-    return None
+    return []
 
 
 def update_note(note: Note, auth_cookie):
