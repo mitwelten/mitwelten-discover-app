@@ -88,7 +88,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
                             direction="left",
                         ),
                     ],
-                    icon=dict(iconUrl=get_source_props(d.node_type)["marker"], iconAnchor=[15, 6], iconSize=30),
+                    icon=dict(iconUrl=get_source_props(d.node_type)["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
                     id={"role": f"{d.node_type}", "id": d.id, "label": "Node"},
                 )
             )
@@ -122,7 +122,7 @@ def add_environment_markers(active_checkboxes, all_environments):
                         direction="left",
                     ),
                 ],
-                icon=dict(iconUrl=get_source_props("Environment Data Point")["marker"], iconAnchor=[15, 6], iconSize=30),
+                icon=dict(iconUrl=get_source_props("Environment Data Point")["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
                 id={"role": "Environment Data Point", "id": env.id, "label": "Node"},
             )
         )
@@ -140,8 +140,8 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
     if "Note" not in active_checkboxes:
         return []
 
-    marker_icon           = dict(iconUrl=get_source_props("Note")["marker"], iconAnchor=[15, 6],  iconSize=30)
-    marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg",     iconAnchor=[61, 50], iconSize=120)
+    marker_icon           = dict(iconUrl=get_source_props("Note")["marker"], iconAnchor=[15, 6],  iconSize=[30, 30])
+    marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg",     iconAnchor=[61, 50], iconSize=[120, 120])
 
     all_notes = all_notes.get("entries") if all_notes.get("entries") is not None else []
     if selected_note["data"] is not None:
