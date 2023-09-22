@@ -8,8 +8,6 @@ window.dash_clientside.browser = {
       width: window.innerWidth,
       height: window.innerHeight,
     };
-    console.log(retval);
     return retval
   },
-
 };
