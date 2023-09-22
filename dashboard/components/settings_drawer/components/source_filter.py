@@ -1,5 +1,4 @@
 from functools import reduce
-from pprint import pprint
 
 import dash
 import dash_leaflet as dl
