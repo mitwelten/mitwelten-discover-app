@@ -9,7 +9,6 @@ from dashboard.maindash import app
 
 settings_drawer = dmc.Drawer(
     id=ID_SETTINGS_DRAWER,
-    title=dmc.Title("Mitwelten Discover", align="center", order=1, style={"marginLeft": "20px"}),
     children=drawer_content,
     opened=True,
     size=SETTINGS_DRAWER_WIDTH,

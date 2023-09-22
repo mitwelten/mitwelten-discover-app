@@ -14,6 +14,7 @@ def divider(title: str):
 
 drawer_content = dmc.Container(
     children=[
+        dmc.Title("Mitwelten Discover", align="center", order=1),
         dmc.Space(h=30),
         dmc.ScrollArea([
             html.Div([
@@ -25,6 +26,15 @@ drawer_content = dmc.Container(
                 tag_filter(),
                 divider("Settings"),
                 general_controls(),
+                dmc.Group([
+                    dmc.Text("Found a bug?", size="sm"),
+                    dmc.Anchor(
+                        "Submit an issue",
+                        href="https://github.com/mitwelten/mitwelten-discover-app/issues",
+                        target="_blank",
+                        size="sm"
+                    ),
+                ])
             ],
                 id=ID_LEFT_DRAWER_CONTENT_SCROLL_AREA,
                 style={"height": "100%"}
