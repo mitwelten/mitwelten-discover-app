@@ -14,6 +14,9 @@ stores = [
         data=dict(entries=[], type=source_type))
         for source_type in SOURCE_PROPS.keys()
     ],
+    *[dcc.Store(f"id-{source_type}-refresh-store", data=dict(pending=False))
+        for source_type in SOURCE_PROPS.keys()
+    ],
     dcc.Store(id=ID_DEPLOYMENT_DATA_STORE,    data=None),
     dcc.Store(id=ID_TAG_DATA_STORE,           data=None),
     dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=None),
@@ -27,11 +30,11 @@ stores = [
 @app.callback(
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     Input ({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    Input(ID_CONFIRM_DELETE_DIALOG, "submit_n_clicks"),
+    Input("id-Note-refresh-store", "data")
 )
 def load_notes_from_backend(data, _):
-    outdated = True  # TODO: implement
-    if  outdated:
+    outdated = True # TODO: implement
+    if outdated:
         cookies = flask.request.cookies
         data["entries"] = init_notes(cookies["auth"] if cookies else None)
         return data

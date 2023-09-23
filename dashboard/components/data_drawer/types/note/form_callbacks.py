@@ -1,4 +1,6 @@
 import random
+from datetime import datetime
+from pprint import pprint
 
 import dash
 import flask
@@ -6,6 +8,7 @@ from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
 from dashboard.api.api_note import create_note
+from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.note import Note
@@ -83,8 +86,10 @@ def close_open_note_by_drawer_close_click(drawer_state, selected_note):
 
 
 @app.callback(
+    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_SELECTED_NOTE_STORE, "data"),
@@ -112,8 +117,20 @@ def add_note_to_store(click, notes, selected_note):
     if not found:
         # new created note
         note_data.public = True
-        create_note(note_data, auth_cookie)
-        # new_entries.append(new_note.to_dict())
+        note_data.date = datetime.now().isoformat()
+        pprint(note_data.to_dict())
+        response = create_note(note_data, auth_cookie)
+        if response == 200:
+            notes["entries"] = []
+            return False, notes, dict(data=None, inEditMode=False, isDirty=False), dash.no_update
+        else:
+            notification = create_notification(
+                "Something went wrong!",
+                f"Status Code: {response}",
+                NotificationType.ERROR
+            )
+            return dash.no_update, dash.no_update, dash.no_update, notification
+
 
     notes["entries"] = new_entries
-    return notes, dict(data=note_data.to_dict(), inEditMode=False, isDirty=False)
+    return False, notes, dict(data=note_data.to_dict(), inEditMode=False, isDirty=False), dash.no_update

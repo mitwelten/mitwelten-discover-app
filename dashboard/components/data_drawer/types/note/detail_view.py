@@ -48,7 +48,7 @@ def note_detail_view(note: Note):
             dmc.Col(
                 html.Span([
                     dmc.Text(
-                        f"{note.author} • {pretty_date(note.date)} •",
+                        f"{note.author if note.author is not None else 'unknown'} • {pretty_date(note.date) if note.date is not None else '-'} •",
                         size="xs",
                         color="dimmed",
                         style={"display":"block"},
@@ -86,6 +86,7 @@ def map_click(click):
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
+    Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Input(ID_CONFIRM_DELETE_DIALOG, "submit_n_clicks"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
@@ -95,13 +96,14 @@ def deactivate_edit_mode(delete_click, note):
         raise PreventUpdate
 
     auth_cookie = flask.request.cookies.get("auth")
-    success = delete_note(note["data"]["id"], auth_cookie)
-    if not success:
+    response = delete_note(note["data"]["id"], auth_cookie)
+    if response == 200:
+        return dict(data=None, inEditMode=False), False, dash.no_update, dict(entries=[], type="Note")
+    else:
         notification = create_notification(
-            "Operation not permitted",
-            "Log in to delete notes!",
+            "Something went wrong!",
+            f"Status Code: {response}",
             NotificationType.ERROR
         )
-        return dash.no_update, dash.no_update, notification
+        return dash.no_update, dash.no_update, notification, dash.no_update
 
-    return dict(data=None, inEditMode=False), False, dash.no_update
