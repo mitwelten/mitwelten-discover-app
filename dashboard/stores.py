@@ -73,7 +73,8 @@ def load_tags_from_backend(data):
 
 
 def update_deployment_store(source_type, data):
-    return dict(entries=data[source_type], type=source_type)
+    source_data = data[source_type] if data.get(source_type) is not None else []
+    return dict(entries=source_data, type=source_type)
 
 for source in SOURCE_PROPS.keys():
     if get_source_props(source)["type"] == "physical":
