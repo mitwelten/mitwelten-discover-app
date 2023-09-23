@@ -47,3 +47,6 @@ app_theme = {
         },
     },
 }
+
+CONFIRM_UNSAVED_CHANGES_MESSAGE = "You have unsaved changes. Do you want to discard them?"
+CONFIRM_DELETE_MESSAGE          = "Are you sure you want to permanently remove this item?"

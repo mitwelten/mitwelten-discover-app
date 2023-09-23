@@ -9,7 +9,8 @@ from dashboard.components.data_drawer.data_drawer import chart_drawer
 from dashboard.components.data_drawer.types.pollinator import *
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.settings_drawer import settings_drawer
-from dashboard.config.app_config import app_theme
+from dashboard.config.app_config import app_theme, CONFIRM_UNSAVED_CHANGES_MESSAGE, \
+    CONFIRM_DELETE_MESSAGE
 from dashboard.config.map_config import SOURCE_PROPS
 from dashboard.maindash import app
 from dashboard.stores import stores
@@ -30,7 +31,11 @@ app_content = [
     ),
     dcc.ConfirmDialog(
         id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG,
-        message="You have unsaved changes. Do you want to discard them?"
+        message=CONFIRM_UNSAVED_CHANGES_MESSAGE
+    ),
+    dcc.ConfirmDialog(
+        id=ID_CONFIRM_DELETE_DIALOG,
+        message=CONFIRM_DELETE_MESSAGE
     ),
     map_figure,
     chart_drawer,

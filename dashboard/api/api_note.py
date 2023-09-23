@@ -47,8 +47,8 @@ def create_note(note: Note, auth_cookie):
     return True
 
 
-def delete_annotation(note_id, auth_cookie):
+def delete_note(note_id, auth_cookie):
     url = construct_url(f"note/{note_id}")
     res = requests.delete(url=url, headers={"Authorization": f"Bearer {auth_cookie}"})
     print(f"Delete Note: id={note_id}, status={res.status_code}")
-    return True
+    return res.status_code == 200

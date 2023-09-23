@@ -27,10 +27,11 @@ stores = [
 @app.callback(
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     Input ({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    Input(ID_CONFIRM_DELETE_DIALOG, "submit_n_clicks"),
 )
-def load_notes_from_backend(data):
-    outdated = False
-    if data["entries"] == [] or outdated:
+def load_notes_from_backend(data, _):
+    outdated = True  # TODO: implement
+    if  outdated:
         cookies = flask.request.cookies
         data["entries"] = init_notes(cookies["auth"] if cookies else None)
         return data
