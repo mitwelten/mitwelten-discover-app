@@ -45,7 +45,7 @@ def note_detail_view(note: Note):
                         f"{note.author} • {pretty_date(note.date)} •",
                         size="xs",
                         color="dimmed",
-                        style={"display":"block", "vertical-align":"middle"},
+                        style={"display":"block"},
                     ),
                     dmc.Text(icon_public if note.public else icon_private),
                 ],
