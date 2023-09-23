@@ -13,8 +13,7 @@ json_note = {
         "lat": 47.53514,
         "lon": 7.61467
     },
-    "created_at": "2021-03-15T23:00:00+00:00",
-    "updated_at": "2021-04-20T22:00:00+00:00",
+    "date": "2021-03-15T23:00:00+00:00",
     "creator": "Andri Wild",
     "tags": [{
         "tag_id": 135,
@@ -54,9 +53,8 @@ class TestNote(unittest.TestCase):
         self.assertEqual(note.description, note_dict["description"])
         self.assertEqual(note.lat, note_dict["location"]["lat"])
         self.assertEqual(note.lon, note_dict["location"]["lon"])
-        self.assertEqual(note.creator, note_dict["creator"])
-        self.assertEqual(note.created_at, note_dict["created_at"])
-        self.assertEqual(note.updated_at, note_dict["updated_at"])
+        self.assertEqual(note.author, note_dict["author"])
+        self.assertEqual(note.date, note_dict["date"])
         for idx, tag in enumerate(note.tags):
             self.assertEqual(tag, note_dict["tags"][idx]["name"])
 
@@ -89,10 +87,7 @@ class TestNote(unittest.TestCase):
         note2.title = "test case"
         note1.description = "this is a test case"
         note2.description = "this is a test case"
-        note1.created_at = test_date
-        note2.created_at = test_date
-        note1.updated_at = test_date
-        note2.updated_at = test_date
+        note1.date = test_date
         note1.files = [test_file, test_file]
         note2.files = [test_file, test_file]
         self.assertTrue(note1 == note2)

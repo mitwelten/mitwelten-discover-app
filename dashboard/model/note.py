@@ -10,8 +10,7 @@ empty_note = dict(
         lat=0,
         lon=0
     ),
-    created_at="",
-    updated_at="",
+    date="",
     author="",
     public=False,
     tags=[],
@@ -38,8 +37,7 @@ class Note:
             if json_note.get("files") is not None
             else []
         )
-        self.created_at = json_note.get("created_at")
-        self.updated_at = json_note.get("updated_at")
+        self.date = json_note.get("date")
         self.public = (json_note.get("public")),
         self.author= json_note.get("author")
 
@@ -48,8 +46,7 @@ class Note:
                 self.title == other.title and
                 self.description == other.description and
                 self.author== other.author and
-                self.created_at == other.created_at and
-                self.updated_at == other.updated_at and
+                self.date == other.date and
                 self.author == other.author and
                 self.public == other.public and
                 self.lat == other.lat and
@@ -68,8 +65,7 @@ class Note:
             note_label=self.node_label,
             location=dict(lat=self.lat, lon=self.lon),
             tags=[{"name": t} for t in self.tags] if self.tags is not None else [],
-            created_at=self.created_at,
-            updated_at=self.updated_at,
+            date=self.date,
             author=self.author,
             public=self.public,
             files=[f.to_dict() for f in self.files] if self.files is not None else []

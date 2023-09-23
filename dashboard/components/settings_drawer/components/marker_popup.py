@@ -1,6 +1,7 @@
 import dash_mantine_components as dmc
 from dash import html
 
+from dashboard.model.note import Note
 from dashboard.util.util import pretty_date
 
 
@@ -35,7 +36,15 @@ def header(source_id, source_type, label, color):
         )]
 
 
-def time_section(fst_label, fst_time, snd_label, snd_time):
+def time_section(fst_label, fst_time, snd_label=None, snd_time=None):
+    snd_date_section = None
+    if snd_label is not None:
+        snd_date_section = dmc.Group([
+            dmc.Text(snd_label, size="xs"),
+            dmc.Text(snd_time, size="xs", color="dimmed"),
+        ],
+            position="apart"
+        )
     return [
         dmc.Group([
             dmc.Text(fst_label, size="xs"),
@@ -43,12 +52,7 @@ def time_section(fst_label, fst_time, snd_label, snd_time):
         ],
             position="apart"
         ),
-        dmc.Group([
-            dmc.Text(snd_label, size="xs"),
-            dmc.Text(snd_time, size="xs", color="dimmed"),
-        ],
-            position="apart"
-        ),
+        snd_date_section if snd_date_section is not None else {},
         dmc.Space(h=10)
     ]
 
@@ -82,12 +86,11 @@ def environment_popup(environment):
     )
 
 
-def note_popup(note):
-    created_at = pretty_date(note.created_at) if note.created_at else "-"
-    updated_at = pretty_date(note.updated_at) if note.updated_at else "-"
+def note_popup(note: Note):
+    date = pretty_date(note.date) if note.date else "-"
     return dmc.Container([
         *header(note.id, "Note", note.node_label, "#ffd800"),
-        *time_section("Created", created_at, "Updated", updated_at),
+        *time_section("Date", date),
         dmc.Space(h=10),
         dmc.Group(
             children=[dmc.Badge(t, size="sm", variant="outline") for t in note.tags],

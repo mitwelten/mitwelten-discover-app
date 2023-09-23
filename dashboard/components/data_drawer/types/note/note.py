@@ -16,7 +16,6 @@ from dashboard.model.note import Note
 def create_note_view(note_label):
     return dmc.Container([
         dcc.Store(id=ID_VISIBLE_NOTE_VIEW_STORE, data=dict(currentView=None)),
-        dmc.Text(f"Note - {note_label}", weight=500),
         dmc.Title(id=ID_NOTE_DRAWER_TITLE, order=5),
         html.Div(id=ID_NOTE_VIEW, style={}),
     ],

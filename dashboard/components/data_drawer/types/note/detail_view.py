@@ -1,4 +1,5 @@
 import dash_mantine_components as dmc
+from dash import html
 from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
@@ -23,6 +24,9 @@ def list_item(text, icon):
 
 def note_detail_view(note: Note):
     user = get_user_from_cookies()
+    icon_private = DashIconify(icon="material-symbols:lock",                    width=14, color="#868e96", style={"display":"block", "margin-left":"3px"})
+    icon_public  = DashIconify(icon="material-symbols:lock-open-right-outline", width=14, color="#868e96", style={"display":"block", "margin-left":"3px"})
+
     return [dmc.Grid([
         dmc.Col(dmc.Title(note.title, order=5), span="content"),
         dmc.Col(dmc.Group([
@@ -35,7 +39,19 @@ def note_detail_view(note: Note):
         justify="space-between"
     ),
         dmc.Grid([
-            dmc.Col(dmc.Text(f"Author • {pretty_date(note.created_at) if note.created_at is not None else ''}", size="xs", color="dimmed"), span="content"),
+            dmc.Col(
+                html.Span([
+                    dmc.Text(
+                        f"{note.author} • {pretty_date(note.date)} •",
+                        size="xs",
+                        color="dimmed",
+                        style={"display":"block", "vertical-align":"middle"},
+                    ),
+                    dmc.Text(icon_public if note.public else icon_private),
+                ],
+                    style={"display":"inline-flex"}
+                ),
+                span="content"),
             dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span=12),
             dmc.Col(dmc.Divider(size="xs")),
             dmc.Col(
