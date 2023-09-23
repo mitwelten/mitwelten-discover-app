@@ -24,9 +24,8 @@ def list_item(text, icon):
 
 def note_detail_view(note: Note):
     user = get_user_from_cookies()
-    icon_private = DashIconify(icon="material-symbols:lock",                    width=14, color="#868e96", style={"display":"block", "margin-left":"3px"})
-    icon_public  = DashIconify(icon="material-symbols:lock-open-right-outline", width=14, color="#868e96", style={"display":"block", "margin-left":"3px"})
-
+    icon_private = DashIconify(icon="material-symbols:lock",                    width=14, color="#868e96", style={"display":"block", "marginLeft":"3px"})
+    icon_public  = DashIconify(icon="material-symbols:lock-open-right-outline", width=14, color="#868e96", style={"display":"block", "marginLeft":"3px"})
     return [dmc.Grid([
         dmc.Col(dmc.Title(note.title, order=5), span="content"),
         dmc.Col(dmc.Group([
