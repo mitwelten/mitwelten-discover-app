@@ -21,6 +21,7 @@ def note_form(note: Note):
             dmc.Divider(size="sm"),
             dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_LAT, label="Latitude", value=note.lat, variant="filled"), span="content"),
             dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_LON, label="Longitude", value=note.lon, variant="filled"), span="content"),
+            dmc.Col(dmc.Checkbox(id=ID_NOTE_EDIT_PUBLIC_FLAG, label="Public", checked=True ), span="content"),
         ]),
         dmc.Grid([
             dmc.Col([dmc.Button("Cancel", id=ID_NOTE_FORM_CANCEL_BUTTON, type="reset", color="gray")], span="content"),
@@ -37,11 +38,12 @@ def note_form(note: Note):
     Input(ID_NOTE_EDIT_DESCRIPTION, "value"),
     Input(ID_NOTE_EDIT_LAT, "value"),
     Input(ID_NOTE_EDIT_LON, "value"),
+    Input(ID_NOTE_EDIT_PUBLIC_FLAG, "checked"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )
-def update_note_store_by_form(title, description, lat, lon, selected_note, all_notes):
+def update_note_store_by_form(title, description, lat, lon, is_public, selected_note, all_notes):
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 
@@ -49,6 +51,7 @@ def update_note_store_by_form(title, description, lat, lon, selected_note, all_n
     selected_note["data"]["description"] = description
     selected_note["data"]["location"]["lat"] = float(lat)
     selected_note["data"]["location"]["lon"] = float(lon)
+    selected_note["data"]["public"] = is_public
 
     # if selected note is not modified(dirty), check if note is modified after callback has fired
     is_dirty = True

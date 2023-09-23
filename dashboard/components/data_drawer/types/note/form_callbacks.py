@@ -116,7 +116,6 @@ def add_note_to_store(click, notes, selected_note):
 
     if not found:
         # new created note
-        note_data.public = True
         note_data.date = datetime.now().isoformat()
         pprint(note_data.to_dict())
         response = create_note(note_data, auth_cookie)
