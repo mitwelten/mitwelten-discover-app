@@ -15,13 +15,13 @@ def note_form(note: Note):
     return [
         dmc.Grid([
             dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span=12),
-            dmc.Col(html.Div(TagInput(value=[{"index":0, "displayValue":"helo"}])), span=12),
+            # dmc.Col(html.Div(TagInput(value=[{"index":0, "displayValue":"helo"}])), span=12),
             dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", variant="filled"), span=12),
             dmc.Col(dmc.Textarea(id=ID_NOTE_EDIT_DESCRIPTION, value=note.description, label="Description", variant="filled"), span=12),
             dmc.Divider(size="sm"),
             dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_LAT, label="Latitude", value=note.lat, variant="filled"), span="content"),
             dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_LON, label="Longitude", value=note.lon, variant="filled"), span="content"),
-            dmc.Col(dmc.Checkbox(id=ID_NOTE_EDIT_PUBLIC_FLAG, label="Public", checked=True ), span="content"),
+            dmc.Col(dmc.Checkbox(id=ID_NOTE_EDIT_PUBLIC_FLAG, label="Public", checked=note.public), span="content"),
         ]),
         dmc.Grid([
             dmc.Col([dmc.Button("Cancel", id=ID_NOTE_FORM_CANCEL_BUTTON, type="reset", color="gray")], span="content"),

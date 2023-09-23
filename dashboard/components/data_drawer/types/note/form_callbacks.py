@@ -7,7 +7,7 @@ import flask
 from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
-from dashboard.api.api_note import create_note
+from dashboard.api.api_note import create_note, update_note
 from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id_config import *
 from dashboard.maindash import app
@@ -104,32 +104,27 @@ def add_note_to_store(click, notes, selected_note):
         raise PreventUpdate
     auth_cookie = flask.request.cookies.get("auth")
     note_data = Note(selected_note["data"])
-    found = False
-    new_entries = []
+    note_data.date = datetime.now().isoformat()
 
+    found = False
+    response = 400
     for note in notes["entries"]:
         if note["id"] == note_data.id:
             found = True
-            new_entries.append(note_data.to_dict())
-        else:
-            new_entries.append(note)
+            response = update_note(note_data, auth_cookie)
 
     if not found:
         # new created note
-        note_data.date = datetime.now().isoformat()
-        pprint(note_data.to_dict())
         response = create_note(note_data, auth_cookie)
-        if response == 200:
-            notes["entries"] = []
-            return False, notes, dict(data=None, inEditMode=False, isDirty=False), dash.no_update
-        else:
-            notification = create_notification(
-                "Something went wrong!",
-                f"Status Code: {response}",
-                NotificationType.ERROR
-            )
-            return dash.no_update, dash.no_update, dash.no_update, notification
 
+    if response != 200:
+       notification = create_notification(
+           "Something went wrong!",
+           f"Status Code: {response}",
+           NotificationType.ERROR
+       )
+       return dash.no_update, dash.no_update, dash.no_update, notification
 
-    notes["entries"] = new_entries
-    return False, notes, dict(data=note_data.to_dict(), inEditMode=False, isDirty=False), dash.no_update
+    notes["entries"] = []
+    return False, notes, dict(data=None, inEditMode=False, isDirty=False), dash.no_update
+

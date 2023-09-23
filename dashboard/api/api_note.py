@@ -25,16 +25,16 @@ def get_all_notes(auth_cookie = None):
 
 def update_note(note: Note, auth_cookie):
     url = construct_url(f"note/{note.id}")
+    note = note.to_dict()
+    note["note_id"] = note["id"]
     res = requests.patch(
         url=url,
-        json=dict(content=note.to_dict()),
+        json=note,
         headers={"Authorization": f"Bearer {auth_cookie}"},
     )
-    print(f"Update Note: id={note.id}, status={res.status_code}")
-    if res.status_code == 200:
-        return True
-    else:
-        return False
+    print(f"Update Note: id={note['id']}, status={res.status_code}")
+    return res.status_code
+
 
 def create_note(note: Note, auth_cookie):
     url = construct_url("notes")
