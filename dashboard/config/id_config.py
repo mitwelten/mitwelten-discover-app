@@ -21,6 +21,7 @@ ID_LOGOUT_BUTTON = "id-logout-btn"
 ID_LOGIN_AVATAR_CONTAINER = "login-avatar-container"
 ID_ADD_NOTE_BUTTON = "id-add-note-button"
 ID_DATA_DRAWER_TITLE = "id-data-drawer-title"
+ID_STAY_LOGGED_IN_INTERVAL = "id-stay-logged-in-interval"
 
 # stores
 ID_TAG_DATA_STORE = "id-tags-data-store"
