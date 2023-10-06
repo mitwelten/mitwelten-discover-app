@@ -1,6 +1,3 @@
-# API_URL = "https://data.mitwelten.org/api/v3"
-API_URL = "http://localhost:8080"
-
 
 TEMP_LOWER_BOUNDARY = -30
 TEMP_UPPER_BOUNDARY = 50

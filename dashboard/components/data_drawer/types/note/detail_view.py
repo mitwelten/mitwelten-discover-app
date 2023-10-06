@@ -36,8 +36,8 @@ def note_detail_view(note: Note):
         dmc.Col(dmc.Title(note.title, order=5), span="content"),
         dmc.Col(dmc.Group([
             action_button(ID_NOTE_ATTACHMENT_BUTTON, "material-symbols:attach-file"),
-            action_button(ID_NOTE_DELETE_BUTTON, "material-symbols:delete") if user is not None else {},
-            action_button(ID_NOTE_EDIT_BUTTON, "material-symbols:edit", disabled=True if user is None else False)
+            action_button(ID_NOTE_DELETE_BUTTON,     "material-symbols:delete") if user is not None else {},
+            action_button(ID_NOTE_EDIT_BUTTON,       "material-symbols:edit", disabled=True if user is None else False)
         ]),
             span="content"
         ),
@@ -48,7 +48,7 @@ def note_detail_view(note: Note):
             dmc.Col(
                 html.Span([
                     dmc.Text(
-                        f"{note.author if note.author is not None else 'unknown'} • {pretty_date(note.date) if note.date is not None else '-'} •",
+                        f"{note.author if note.author is not None else 'unknown'} | {pretty_date(note.date) if note.date is not None else '-'} |",
                         size="xs",
                         color="dimmed",
                         style={"display":"block"},

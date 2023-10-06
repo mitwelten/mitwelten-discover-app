@@ -49,7 +49,7 @@ def load_notes_from_backend(data, _):
 def load_notes_from_backend(data):
     outdated = False  # TODO: implement data update
     if data["entries"] == [] or outdated:
-        data["entries"], data["legend"]= init_environment_data()
+        data["entries"], data["legend"] = init_environment_data()
         return data
     raise PreventUpdate
 
@@ -69,7 +69,7 @@ def load_tags_from_backend(data):
     Output(ID_DEPLOYMENT_DATA_STORE, "data"),
     Input (ID_DEPLOYMENT_DATA_STORE, "data")
 )
-def load_tags_from_backend(data):
+def load_deployments_from_backend(data):
     outdated = False  # TODO: implement data update
     if data is None or outdated:
         return init_deployment_data()

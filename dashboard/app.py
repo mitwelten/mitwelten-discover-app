@@ -137,7 +137,7 @@ def deactivate_edit_mode(cancel_click):
 
 clientside_callback(
     ClientsideFunction(
-        namespace="browser", function_name="testFunction"
+        namespace="browser_properties", function_name="fetchWindowProps"
     ),
     Output(ID_BROWSER_PROPERTIES_STORE, "data"),
     Input (ID_SELECTED_MARKER_STORE,    "data"),

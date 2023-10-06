@@ -1,13 +1,13 @@
 if (!window.dash_clientside) {
   window.dash_clientside = {};
 }
-window.dash_clientside.browser = {
-  testFunction: function() {
-    const retval = {
+window.dash_clientside.browser_properties = {
+  fetchWindowProps: function() {
+    const returnObj = {
       pixelRatio:  window.devicePixelRatio,
       width: window.innerWidth,
       height: window.innerHeight,
     };
-    return retval
+    return returnObj
   },
 };

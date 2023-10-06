@@ -80,5 +80,5 @@ def create_env_chart(trigger_id, light_mode=True):
                     value="0",
                     persistence=True,
                     variant="outline",
-                    style={"height": "100%"}
+                    style={"height": "90%"}
                     )

@@ -73,7 +73,7 @@ def create_pollinator_chart(_1, _2):
         value="0",
         persistence=True,
         variant="outline",
-        style={"height": "100%"}
+        style={"height": "90%"}
     )
 
 
