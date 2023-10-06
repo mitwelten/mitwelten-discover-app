@@ -18,6 +18,10 @@ from dashboard.util.helper_functions import safe_reduce, ensure_marker_visibilit
 
 app_content = [
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
+    dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000),
+    dmc.NotificationsProvider(
+        html.Div(id=ID_NOTIFICATION_CONTAINER),
+    ),
     *stores,
     html.Div(
         html.A(
@@ -52,19 +56,22 @@ discover_app = dmc.MantineProvider(
     withGlobalStyles=True,
     withNormalizeCSS=True,
     children=[
-        dmc.NotificationsProvider([
-            html.Div(id=ID_NOTIFICATION_CONTAINER),
-            html.Div(
-                children=app_content,
-                id=ID_APP_CONTAINER,
-            )
-        ],
-            zIndex=9999999
+        html.Div(
+            children=app_content,
+            id=ID_APP_CONTAINER,
         )
     ]
 )
 
 app.layout = discover_app
+
+@app.callback(
+    Output(ID_STAY_LOGGED_IN_INTERVAL, "interval"),
+    Input(ID_STAY_LOGGED_IN_INTERVAL, "n_intervals"),
+    prevent_initial_call=True
+)
+def create_backend_request_to_stay_logged_in(_):
+    return dash.no_update
 
 
 @app.callback(
