@@ -26,10 +26,12 @@ def create_note_view(note_label):
 @app.callback(
     Output(ID_NOTE_VIEW, "children"),
     Output(ID_VISIBLE_NOTE_VIEW_STORE, "data"),
+    Output(ID_CHART_DRAWER, "size"),
     Input(ID_SELECTED_NOTE_STORE, "data"),
     State(ID_VISIBLE_NOTE_VIEW_STORE, "data"),
+    State(ID_TAG_DATA_STORE, "data"),
 )
-def update_content_from_store(selected_note, view):
+def update_content_from_store(selected_note, view, all_tags):
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 
@@ -42,6 +44,6 @@ def update_content_from_store(selected_note, view):
     if is_edit_mode and current_view == "edit":
         raise PreventUpdate
     if is_edit_mode:
-        return note_form(note), dict(currentView="edit")
+        return note_form(note, all_tags), dict(currentView="edit"), 500
     else:
-        return note_detail_view(note), dict(currentView="detail")
+        return note_detail_view(note), dict(currentView="detail"), 400
