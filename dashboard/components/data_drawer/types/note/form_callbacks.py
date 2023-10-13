@@ -1,4 +1,3 @@
-import random
 from datetime import datetime
 from pprint import pprint
 
@@ -7,7 +6,7 @@ import flask
 from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
-from dashboard.api.api_note import create_note, update_note
+from dashboard.api.api_note import create_note, update_note, delete_tag_by_note_id, add_tag_by_note_id
 from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id_config import *
 from dashboard.maindash import app
@@ -85,6 +84,33 @@ def close_open_note_by_drawer_close_click(drawer_state, selected_note):
         return dash.no_update, dash.no_update, dict(data=None, inEditMode=False, isDirty=False)
 
 
+def find_new_tags(note_dict, all_tags):
+    note_tags = note_dict["data"]["tags"]
+    result_list = []
+    for item in note_tags:
+        if item not in all_tags:
+            result_list.append(item["name"])
+
+    return result_list
+
+def find_deleted_tags(modified_note, original_note):
+    result = []
+    for t in original_note.tags:
+        if t not in modified_note.tags:
+            result.append(t)
+    print("find deleted tags", result)
+    return result
+
+
+def find_added_tags(modified_note, original_note):
+    result = []
+    for t in modified_note.tags:
+        if t not in original_note.tags:
+            result.append(t)
+    print("find added tags", result)
+    return result
+
+
 @app.callback(
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
@@ -93,9 +119,10 @@ def close_open_note_by_drawer_close_click(drawer_state, selected_note):
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_TAG_DATA_STORE, "data"),
     prevent_initial_call=True
 )
-def add_note_to_store(click, notes, selected_note):
+def persist_note(click, notes, selected_note, all_tags):
     """
     Insert an edited note into note store by clicking on the save button.
     The selected note will be cleared after a successful saving.
@@ -103,27 +130,53 @@ def add_note_to_store(click, notes, selected_note):
     if selected_note is None or click is None or click == 0:
         raise PreventUpdate
     auth_cookie = flask.request.cookies.get("auth")
-    note_data = Note(selected_note["data"])
-    note_data.date = datetime.now().isoformat()
+    modified_note = Note(selected_note["data"])
+    modified_note.date = datetime.now().isoformat()
+
+    pprint(modified_note.to_dict())
+
+    tags_to_delete = []
+    tags_to_add    = []
 
     found = False
-    response = 400
+    response_code = 400
+    returned_note_id = None
+
     for note in notes["entries"]:
-        if note["id"] == note_data.id:
+        if note["id"] == modified_note.id:
+            #  Note already exists
             found = True
-            response = update_note(note_data, auth_cookie)
+            note = Note(note)
+            tags_to_delete = find_deleted_tags(modified_note, note)
+            tags_to_add = find_added_tags(modified_note, note)
+            res = update_note(modified_note, auth_cookie)
+            response_code = res.status_code
+            returned_note_id = res.json().get("note_id", -1)
 
     if not found:
         # new created note
-        response = create_note(note_data, auth_cookie)
+        res = create_note(modified_note, auth_cookie)
+        response_code = res.status_code
+        returned_note_id = res.json().get("note_id", -1)
+        tags_to_add = modified_note.tags
 
-    if response != 200:
+    if response_code != 200 or returned_note_id == -1:
        notification = create_notification(
            "Something went wrong!",
-           f"Status Code: {response}",
+           f"Status Code: {response_code} - Note ID: {returned_note_id}",
            NotificationType.ERROR
        )
        return dash.no_update, dash.no_update, dash.no_update, notification
+
+    # Persists deleted tag of a note
+    if tags_to_delete:
+        for t in tags_to_delete:
+            delete_tag_by_note_id(returned_note_id, t, auth_cookie)
+    # Persists added tags to a note
+    if tags_to_add:
+        for t in tags_to_add:
+            add_tag_by_note_id(returned_note_id, t, auth_cookie)
+
 
     notes["entries"] = []
     return False, notes, dict(data=None, inEditMode=False, isDirty=False), dash.no_update
