@@ -30,6 +30,7 @@ def create_note_view(note_label):
     Input(ID_SELECTED_NOTE_STORE, "data"),
     State(ID_VISIBLE_NOTE_VIEW_STORE, "data"),
     State(ID_TAG_DATA_STORE, "data"),
+    prevent_initial_call=True
 )
 def update_content_from_store(selected_note, view, all_tags):
     if selected_note is None or selected_note["data"] is None:
