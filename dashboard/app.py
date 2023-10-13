@@ -3,9 +3,12 @@ from functools import partial
 import dash
 from dash import clientside_callback, ClientsideFunction, ALL
 from dash.exceptions import PreventUpdate
+from dash_iconify import DashIconify
 
+from configuration import PRIMARY_COLOR
 from dashboard.components.button.buttons import control_buttons
 from dashboard.components.data_drawer.data_drawer import chart_drawer
+from dashboard.components.data_drawer.types.note.form_view import note_form
 from dashboard.components.data_drawer.types.pollinator import *
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.settings_drawer import settings_drawer
@@ -13,10 +16,32 @@ from dashboard.config.app_config import app_theme, CONFIRM_UNSAVED_CHANGES_MESSA
     CONFIRM_DELETE_MESSAGE
 from dashboard.config.map_config import SOURCE_PROPS
 from dashboard.maindash import app
+from dashboard.model.note import empty_note, Note
+from dashboard.model.note_test import json_note
 from dashboard.stores import stores
 from dashboard.util.helper_functions import safe_reduce, ensure_marker_visibility
 
+
 app_content = [
+    # dmc.Drawer(
+    #     id=ID_CHART_DRAWER,
+    #     opened=True,
+    #     zIndex=90000,
+    #     size=500,
+    #     closeOnClickOutside=True,
+    #     closeOnEscape=True,
+    #     withOverlay=False,
+    #     overlayOpacity=0,
+    #     className="chart-drawer",
+    #     position="bottom",
+    #     title=dmc.Text(id=ID_DATA_DRAWER_TITLE, weight=500, style={"marginTop": "1em", "marginLeft": "1em"}),
+    #     children=html.Div(
+    #         dmc.Container(
+    #             note_form(Note(json_note), [{"name": "FS1"}, {"name":"Am Wasser"}, {"name": "FS2"}]), id=ID_CHART_CONTAINER, className="chart-container"),
+    #         )
+    # ),
+
+
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000),
     dmc.NotificationsProvider(
@@ -33,6 +58,33 @@ app_content = [
             className="mitwelten-logo"
         ),
         id=ID_LOGO_CONTAINER,
+    ),
+    dmc.MediaQuery(
+        html.Div(
+            dmc.Select(
+                id=ID_DEPLOYMENT_SELECT_SEARCH_BAR,
+                allowDeselect=True,
+                data=[],
+                placeholder="Search for Deployments",
+                searchable=True,
+                nothingFound="ID not found",
+                style={"width": "300px"},
+                size="md",
+                radius="xl",
+                icon=DashIconify(icon="material-symbols:search", width=20),
+                rightSection=dmc.ActionIcon(
+                    DashIconify(icon="material-symbols:my-location", width=20),
+                    size="lg",
+                    variant="subtle",
+                    id=ID_SEARCH_DEPLOYMENT_BUTTON,
+                    n_clicks=0,
+                    color=PRIMARY_COLOR,
+                ),
+            ),
+            id="id-search-bar-container"
+        ),
+        smallerThan="md",
+        styles={"display": "none"}
     ),
     dcc.ConfirmDialog(
         id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG,
