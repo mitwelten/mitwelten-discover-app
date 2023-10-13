@@ -26,16 +26,9 @@ json_note = {
     ],
     "files": [
         {
-            "id": 20,
-            "name": "The Book",
-            "type": "pdf",
-            "last_modified": "2021-03-15T23:00:00+00:00"
-        },
-        {
-            "id": 23,
-            "name": "Mitwelten Logo",
-            "type": "png",
-            "last_modified": "2021-03-12T23:00:00+00:00"
+            "type": "image/png",
+            "name": "test_img.png",
+            "object_name": "test_img.png"
         }
     ]
 }
