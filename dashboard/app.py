@@ -21,6 +21,7 @@ app_content = [
     dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000),
     dmc.NotificationsProvider(
         html.Div(id=ID_NOTIFICATION_CONTAINER),
+        zIndex=999999999,
     ),
     *stores,
     html.Div(
