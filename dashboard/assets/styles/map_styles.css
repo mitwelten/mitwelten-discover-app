@@ -24,6 +24,19 @@ body {
     height: 20px;
     text-align: center;
     z-index: 900;
+    transition: width 100ms ease;
+}
+
+#id-search-bar-container {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    right: 0;
+    top: 20px;
+    width: 100vw;
+    height: 20px;
+    z-index: 1;
+    transition: width 100ms ease;
 }
 
 #search {
