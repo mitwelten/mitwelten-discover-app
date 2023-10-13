@@ -20,7 +20,7 @@ settings_drawer = dmc.Drawer(
 
 @app.callback(
     Output(ID_SETTINGS_DRAWER, "opened"),
-    Input(ID_OPEN_LEFT_DRAWER_BUTTON, "n_clicks"),
+    Input(ID_OPEN_SETTINGS_DRAWER_BUTTON, "n_clicks"),
     prevent_initial_call=True,
 )
 def open_left_drawer(_):
