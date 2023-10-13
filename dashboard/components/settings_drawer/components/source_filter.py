@@ -111,8 +111,6 @@ def activate_all(value, data, all_enabled):
     prevent_initial_call=True
 )
 def search_deployment(_, value, value_search_bar):
-    if value is None and value_search_bar is None:
-        raise PreventUpdate
     value = value if value is not None else value_search_bar
 
     if value is not None:
