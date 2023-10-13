@@ -75,13 +75,13 @@
     }
 }
 
-#id-left-drawer-btn {
+#id-settings-drawer-btn {
     position: absolute;
     top: 20px;
     left: 20px;
 }
 
-#login-avatar-container{
+#id-fab-container{
     position: absolute;
     top: 20px;
     right: 40px;

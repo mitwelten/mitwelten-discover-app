@@ -1,7 +1,7 @@
 import dash_mantine_components as dmc
 import flask
 import jwt
-from dash import Output, Input, State
+from dash import Output, Input, State, html
 from dash_iconify import DashIconify
 
 from configuration import DOMAIN_NAME, PRIMARY_COLOR
@@ -55,10 +55,14 @@ def create_avatar(user):
 
 control_buttons = [
         action_button(
-            button_id=ID_OPEN_LEFT_DRAWER_BUTTON,
-            icon="material-symbols:menu",
+            button_id=ID_OPEN_SETTINGS_DRAWER_BUTTON,
+            icon="material-symbols:menu"
         ),
         dmc.Group([
+            html.Div(
+                id=ID_LOGIN_AVATAR_CONTAINER
+            ),
+            action_button(button_id=ID_ADD_NOTE_BUTTON, icon="material-symbols:add-comment-outline"),
             dmc.MediaQuery([
                 action_button(button_id=ID_BOTTOM_DRAWER_BUTTON, icon="material-symbols:layers-outline"),
                 dmc.Drawer(
@@ -74,25 +78,24 @@ control_buttons = [
                 largerThan="sm",
                 styles={"display": "none"}
             ),
-            action_button(button_id=ID_ADD_NOTE_BUTTON, icon="material-symbols:add-comment-outline"),
             dmc.MediaQuery(
                 map_menu_popup("menu"),
                 smallerThan="sm",
                 styles={"display": "none"}
             ),
+
         ],
-            id=ID_LOGIN_AVATAR_CONTAINER
-        ),
+            id=ID_FAB_CONTAINER
+        )
     ]
 
 
 @app.callback(
     Output(ID_LOGIN_AVATAR_CONTAINER, "children"),
     Input(ID_LOGIN_AVATAR_CONTAINER, "n_clicks"),
-    State(ID_LOGIN_AVATAR_CONTAINER, "children")
 )
-def login(_, children):
+def login(_):
     user = get_user_from_cookies()
     if user is None:
-        return [login_button, *children]
-    return [create_avatar(user), *children]
+        return login_button
+    return create_avatar(user)

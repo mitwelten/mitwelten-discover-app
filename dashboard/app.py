@@ -1,12 +1,14 @@
+import time
 from functools import partial
 
 import dash
+import flask
 from dash import clientside_callback, ClientsideFunction, ALL
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
-from dashboard.components.button.buttons import control_buttons
+from dashboard.components.button.buttons import control_buttons, login_button
 from dashboard.components.data_drawer.data_drawer import chart_drawer
 from dashboard.components.data_drawer.types.note.form_view import note_form
 from dashboard.components.data_drawer.types.pollinator import *
@@ -20,7 +22,7 @@ from dashboard.model.note import empty_note, Note
 from dashboard.model.note_test import json_note
 from dashboard.stores import stores
 from dashboard.util.helper_functions import safe_reduce, ensure_marker_visibility
-
+from dashboard.util.user_validation import get_user_from_cookies, get_expiration_date_from_cookies
 
 app_content = [
     # dmc.Drawer(
@@ -43,7 +45,7 @@ app_content = [
 
 
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
-    dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000),
+    dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=10 * 1000),
     dmc.NotificationsProvider(
         html.Div(id=ID_NOTIFICATION_CONTAINER),
         zIndex=999999999,
@@ -118,13 +120,19 @@ discover_app = dmc.MantineProvider(
 
 app.layout = discover_app
 
+
 @app.callback(
     Output(ID_STAY_LOGGED_IN_INTERVAL, "interval"),
+    Output(ID_LOGIN_AVATAR_CONTAINER, "n_clicks"),
     Input(ID_STAY_LOGGED_IN_INTERVAL, "n_intervals"),
+    State(ID_LOGIN_AVATAR_CONTAINER, "n_clicks"),
     prevent_initial_call=True
 )
-def create_backend_request_to_stay_logged_in(_):
-    return dash.no_update
+def create_backend_request_to_stay_logged_in(_, avatar_clicks):
+    exp = get_expiration_date_from_cookies()
+    if exp is None or exp - time.time() < 0:
+        return dash.no_update, avatar_clicks + 1 if avatar_clicks is not None else 0
+    raise PreventUpdate
 
 
 @app.callback(
