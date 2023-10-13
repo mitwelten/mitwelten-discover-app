@@ -1,29 +1,19 @@
 import dash
 
 import dash_mantine_components as dmc
-from dash import Output, Input, ALL, State, html
+from dash import Output, Input, ALL, State
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
 from dashboard.components.button.components.action_button import action_button
+from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.note import Note
 
-wrapper_style = dict(
-    position="relative",
-    transition="None",
-    transform="None",
-    left=0,
-    top=0,
-    width="100%",
-    borderRadius="4px"
-)
-
 
 def note_form(note: Note, all_tags):
-
     return [
         dmc.Grid([
             dmc.Col(dmc.Title("Create a new Note"),span="content"),
@@ -35,8 +25,8 @@ def note_form(note: Note, all_tags):
                     size="sm",
                     checked=note.public
                 ),
-                action_button(button_id="id-location-modal-button", icon="material-symbols:edit-location-alt-outline-sharp"),
-                action_button(button_id="id-attachment-modal-button", icon="material-symbols:attach-file")
+                action_button(button_id=ID_LOCATION_MODAL_BUTTON, icon="material-symbols:edit-location-alt-outline-sharp"),
+                action_button(button_id=ID_ATTACHMENT_MODAL_FORM_BUTTON, icon="material-symbols:attach-file")
             ],
                 spacing="sm"
             ),
@@ -46,11 +36,10 @@ def note_form(note: Note, all_tags):
             justify="space-between"
         ),
 
-
         dmc.Grid([
             # title and description section
             dmc.Col(dmc.MultiSelect(
-                id="id_note_tag_select",
+                id=ID_NOTE_TAG_SELECT,
                 label="Select Tags",
                 data=[t["name"] for t in all_tags],
                 value=note.tags,
@@ -61,14 +50,14 @@ def note_form(note: Note, all_tags):
                 span="auto"
             ),
             dmc.Col(dmc.TextInput(
-                id="id-new-tag-input",
+                id=ID_NEW_TAG_INPUT,
                 label="Create new Tag",
                 size="sm",
                 rightSection=dmc.ActionIcon(
                     DashIconify(icon="material-symbols:add-circle", width=20),
                     size="lg",
                     variant="subtle",
-                    id="id-create-new-tag-button",
+                    id=ID_CREATE_NEW_TAG_BUTTON,
                     n_clicks=0,
                     color=PRIMARY_COLOR
                 )
@@ -79,41 +68,43 @@ def note_form(note: Note, all_tags):
             dmc.Col(dmc.Textarea(id=ID_NOTE_EDIT_DESCRIPTION, value=note.description, label="Description", autosize=True, maxRows=9), span=12),
         ]),
         dmc.Grid([
-            dmc.Col([dmc.Button("Cancel", id=ID_NOTE_FORM_CANCEL_BUTTON, type="reset", color="gray")], span="content"),
-            dmc.Col(dmc.Button("Save", id=ID_NOTE_FORM_SAVE_BUTTON, type="submit"), span="content"),
+            dmc.Col([dmc.Button("Cancel", id=ID_NOTE_FORM_CANCEL_BUTTON, type="reset",   color="gray")], span="content"),
+            dmc.Col(dmc.Button("Save",    id=ID_NOTE_FORM_SAVE_BUTTON,   type="submit"), span="content"),
         ],
             justify="flex-end"
         ),
         dmc.Modal(
-            title="Select Tags",
-            id="ID_NOTE_CHIPS_MODAL",
+            title="Attachments",
+            id=ID_ATTACHMENT_FORM_MODAL,
             zIndex=10000,
             children=[
-                dmc.Space(h=20),
-                dmc.Center(dmc.Button("Ok", id="ID_NOTE_CLOSE_CHIP_MODAL_BUTTON")),
+                # html.Div(id="id-image-container"),
+                # dmc.Image(src=f"{API_URL}/files/discover/test_img.png"),
+                # *[dmc.Text(f"{t.to_dict()}") for t in note.files],
+                dmc.Button("Ok", id=ID_SAVE_ATTACHMENT_BUTTON),
             ],
         ),
         dmc.Modal(
             title="Edit Location",
-            id="id_edit_location_modal",
+            id=ID_EDIT_LOCATION_MODAL,
             zIndex=10000,
             children=[
                 dmc.Grid([
                     dmc.Col(dmc.NumberInput(id=ID_NOTE_EDIT_LAT, label="Latitude",  value=note.lat, size="sm", precision=12), span=6),
                     dmc.Col(dmc.NumberInput(id=ID_NOTE_EDIT_LON, label="Longitude", value=note.lon, size="sm", precision=12), span=6),
-                    dmc.Col(dmc.Button("Save", id="id-save-location-button", type="submit"), span=12)
+                    dmc.Col(dmc.Button("Save", id=ID_SAVE_LOCATION_BUTTON, type="submit"), span=12)
                 ]),
             ],
         ),
     ]
 
 @app.callback(
-    Output("id_note_tag_select", "data"),
-    Output("id_note_tag_select", "value"),
-    Input("id-create-new-tag-button", "n_clicks"),
-    State("id-new-tag-input", "value"),
-    State("id_note_tag_select", "data"),
-    State("id_note_tag_select", "value"),
+    Output(ID_NOTE_TAG_SELECT, "data"),
+    Output(ID_NOTE_TAG_SELECT, "value"),
+    Input(ID_CREATE_NEW_TAG_BUTTON, "n_clicks"),
+    State(ID_NEW_TAG_INPUT, "value"),
+    State(ID_NOTE_TAG_SELECT, "data"),
+    State(ID_NOTE_TAG_SELECT, "value"),
 )
 def update_selected_tags(_, text_input, existing_tags, actual_selected):
     if text_input is None or text_input == "":
@@ -122,12 +113,32 @@ def update_selected_tags(_, text_input, existing_tags, actual_selected):
 
 
 @app.callback(
-    Output("id_edit_location_modal", "opened"),
-    Input("id-location-modal-button", "n_clicks"),
-    State("id_edit_location_modal", "opened"),
+    Output(ID_ATTACHMENT_FORM_MODAL, "opened"),
+    Output(ID_NOTIFICATION_CONTAINER, "children"),
+    #Output("id-image-container", "children"),
+    Input(ID_ATTACHMENT_MODAL_FORM_BUTTON, "n_clicks"),
     prevent_initial_call=True
 )
-def update_location_modal_state(click, state):
+def update_attachment_modal_state(click):
+    if click == 0 or click is None:
+        raise PreventUpdate
+
+    notification = create_notification(
+        "Unsupported Operation: Open Attachments",
+        "Feature coming soon!",
+        NotificationType.INFO
+    )
+    # auth_cookie = flask.request.cookies.get("auth")
+    # file = get_file("test_img.png", auth_cookie)
+    return dash.no_update, notification
+
+
+@app.callback(
+    Output(ID_EDIT_LOCATION_MODAL, "opened"),
+    Input(ID_LOCATION_MODAL_BUTTON, "n_clicks"),
+    prevent_initial_call=True
+)
+def update_location_modal_state(click):
     if click == 0 or click is None:
         raise PreventUpdate
     return True
@@ -135,28 +146,28 @@ def update_location_modal_state(click, state):
 
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    Output("id_edit_location_modal", "opened", allow_duplicate=True),
+    Output(ID_EDIT_LOCATION_MODAL, "opened", allow_duplicate=True),
     Input(ID_NOTE_EDIT_TITLE, "value"),
     Input(ID_NOTE_EDIT_DESCRIPTION, "value"),
     Input(ID_NOTE_EDIT_PUBLIC_FLAG, "checked"),
-    Input("id-save-location-button", "n_clicks"),
-    State(ID_NOTE_EDIT_LAT, "value"),
-    State(ID_NOTE_EDIT_LON, "value"),
+    Input(ID_SAVE_LOCATION_BUTTON, "n_clicks"),
+    Input(ID_NOTE_TAG_SELECT, "value"),
+    Input(ID_NOTE_EDIT_LAT, "value"),
+    Input(ID_NOTE_EDIT_LON, "value"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )
-def update_note_store_by_form(title, description, is_public, location_click, lat, lon, selected_note, all_notes):
-    if location_click == 0 or location_click is None:
-        raise PreventUpdate
+def update_note_store_by_form(title, description, is_public, location_click, tags, lat, lon, selected_note, all_notes):
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 
-    selected_note["data"]["title"] = title
-    selected_note["data"]["description"] = description
+    selected_note["data"]["title"]           = title
+    selected_note["data"]["description"]     = description
     selected_note["data"]["location"]["lat"] = float(lat)
     selected_note["data"]["location"]["lon"] = float(lon)
-    selected_note["data"]["public"] = is_public
+    selected_note["data"]["public"]          = is_public
+    selected_note["data"]["tags"]            = [{"name": t} for t in tags]
 
     # if selected note is not modified(dirty), check if note is modified after callback has fired
     is_dirty = True
