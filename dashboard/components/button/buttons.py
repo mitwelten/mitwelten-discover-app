@@ -54,7 +54,10 @@ def create_avatar(user):
 
 
 control_buttons = [
-        action_button(button_id=ID_OPEN_LEFT_DRAWER_BUTTON, icon="material-symbols:menu"),
+        action_button(
+            button_id=ID_OPEN_LEFT_DRAWER_BUTTON,
+            icon="material-symbols:menu",
+        ),
         dmc.Group([
             dmc.MediaQuery([
                 action_button(button_id=ID_BOTTOM_DRAWER_BUTTON, icon="material-symbols:layers-outline"),
