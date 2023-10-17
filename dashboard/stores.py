@@ -25,6 +25,7 @@ stores = [
     dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),
     dcc.Store(id=ID_SELECTED_NOTE_STORE,      data=dict(data=None, inEditMode=False, isDirty=False)),
     dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
+    dcc.Store(id=ID_VISIBLE_NOTE_VIEW_STORE, data=dict(currentView=None)),
 ]
 
 @app.callback(
