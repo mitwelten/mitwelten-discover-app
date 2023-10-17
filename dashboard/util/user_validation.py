@@ -1,3 +1,4 @@
+import time
 from pprint import pprint
 
 import flask
@@ -20,7 +21,8 @@ def get_user_from_cookies() -> User | None:
     cookies = flask.request.cookies
     try:
         decoded_cookie = jwt.decode(cookies.get("auth"), options={"verify_signature": False})
-        return User(decoded_cookie)
+        exp = decoded_cookie.get("exp")
+        return None if exp - time.time() < 0 else User(decoded_cookie)
     except Exception as e:
         print("Get user from cookie error", e)
         return None
