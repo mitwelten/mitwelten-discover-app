@@ -15,7 +15,6 @@ from dashboard.model.note import Note
 
 def create_note_view(note_label):
     return dmc.Container([
-        dcc.Store(id=ID_VISIBLE_NOTE_VIEW_STORE, data=dict(currentView=None)),
         dmc.Title(id=ID_NOTE_DRAWER_TITLE, order=5),
         html.Div(id=ID_NOTE_VIEW, style={}),
     ],
@@ -24,7 +23,7 @@ def create_note_view(note_label):
 
 
 @app.callback(
-    Output(ID_NOTE_VIEW, "children"),
+    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
     Output(ID_VISIBLE_NOTE_VIEW_STORE, "data"),
     Output(ID_CHART_DRAWER, "size"),
     Input(ID_SELECTED_NOTE_STORE, "data"),
