@@ -7,7 +7,6 @@ from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
 from dashboard.components.button.components.action_button import action_button
-from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.note import Note
@@ -114,6 +113,7 @@ def update_selected_tags(_, text_input, existing_tags, actual_selected):
 
 @app.callback(
     Output(ID_ATTACHMENT_FORM_MODAL, "opened"),
+    Output(ID_NOTIFICATION_CONTAINER, "is_open"),
     Output(ID_NOTIFICATION_CONTAINER, "children"),
     #Output("id-image-container", "children"),
     Input(ID_ATTACHMENT_MODAL_FORM_BUTTON, "n_clicks"),
@@ -123,14 +123,10 @@ def update_attachment_modal_state(click):
     if click == 0 or click is None:
         raise PreventUpdate
 
-    notification = create_notification(
-        "Unsupported Operation: Open Attachments",
-        "Feature coming soon!",
-        NotificationType.INFO
-    )
+    notification = "Unsupported Operation: Open Attachments - Feature coming soon!",
     # auth_cookie = flask.request.cookies.get("auth")
     # file = get_file("test_img.png", auth_cookie)
-    return dash.no_update, notification
+    return dash.no_update, True, notification
 
 
 @app.callback(

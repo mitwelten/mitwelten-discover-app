@@ -7,7 +7,6 @@ from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
 from dashboard.api.api_note import create_note, update_note, delete_tag_by_note_id, add_tag_by_note_id
-from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.note import Note
@@ -116,6 +115,7 @@ def find_added_tags(modified_note, original_note):
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_NOTIFICATION_CONTAINER, "is_open", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_SELECTED_NOTE_STORE, "data"),
@@ -161,12 +161,9 @@ def persist_note(click, notes, selected_note, all_tags):
         tags_to_add = modified_note.tags
 
     if response_code != 200 or returned_note_id == -1:
-       notification = create_notification(
-           "Something went wrong!",
-           f"Status Code: {response_code} - Note ID: {returned_note_id}",
-           NotificationType.ERROR
-       )
-       return dash.no_update, dash.no_update, dash.no_update, notification
+       notification = f"Something went wrong! Status Code: {response_code} - Note ID: {returned_note_id}"
+
+       return dash.no_update, dash.no_update, dash.no_update, True, notification
 
     # Persists deleted tag of a note
     if tags_to_delete:
@@ -179,5 +176,5 @@ def persist_note(click, notes, selected_note, all_tags):
 
 
     notes["entries"] = []
-    return False, notes, dict(data=None, inEditMode=False, isDirty=False), dash.no_update
+    return False, notes, dict(data=None, inEditMode=False, isDirty=False),dash.no_update, dash.no_update
 

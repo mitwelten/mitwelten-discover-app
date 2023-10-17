@@ -8,7 +8,6 @@ from dash_iconify import DashIconify
 from configuration import PRIMARY_COLOR
 from dashboard.api.api_note import delete_note
 from dashboard.components.button.components.action_button import action_button
-from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id_config import *
 from dashboard.model.note import Note
 from dashboard.util.user_validation import get_user_from_cookies
@@ -85,6 +84,7 @@ def map_click(click):
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
+    Output(ID_NOTIFICATION_CONTAINER, "is_open", allow_duplicate=True),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Input(ID_CONFIRM_DELETE_DIALOG, "submit_n_clicks"),
@@ -98,17 +98,14 @@ def deactivate_edit_mode(delete_click, note):
     auth_cookie = flask.request.cookies.get("auth")
     response = delete_note(note["data"]["id"], auth_cookie)
     if response == 200:
-        return dict(data=None, inEditMode=False), False, dash.no_update, dict(entries=[], type="Note")
+        return dict(data=None, inEditMode=False), False, dash.no_update, dash.no_update, dict(entries=[], type="Note")
     else:
-        notification = create_notification(
-            "Something went wrong!",
-            f"Status Code: {response}",
-            NotificationType.ERROR
-        )
-        return dash.no_update, dash.no_update, notification, dash.no_update
+        notification = f"Something went wrong! - Status Code: {response}",
+        return dash.no_update, dash.no_update, True, notification, dash.no_update
 
 
 @app.callback(
+    Output(ID_NOTIFICATION_CONTAINER, "is_open", allow_duplicate=True),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
     Input(ID_NOTE_ATTACHMENT_BUTTON, "n_clicks"),
     prevent_initial_call=True
@@ -117,8 +114,9 @@ def handle_attachment_click(click):
     if click == 0 or click is None:
         raise PreventUpdate
 
-    return create_notification(
-        "Unsupported Operation: Open Attachments",
-        "Feature coming soon!",
-        NotificationType.INFO
-    )
+    return True, "Unsupported Operation: Open Attachments"
+    # return create_notification(
+    #     "Unsupported Operation: Open Attachments",
+    #     "Feature coming soon!",
+    #     NotificationType.INFO
+    # )

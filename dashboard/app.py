@@ -6,6 +6,7 @@ import flask
 from dash import clientside_callback, ClientsideFunction, ALL
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
+import dash_bootstrap_components as dbc
 
 from configuration import PRIMARY_COLOR
 from dashboard.components.button.buttons import control_buttons, login_button
@@ -45,10 +46,18 @@ app_content = [
 
 
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
-    dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=10 * 1000),
-    dmc.NotificationsProvider(
-        html.Div(id=ID_NOTIFICATION_CONTAINER),
-        zIndex=999999999,
+    dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
+    dbc.Toast(
+        "This toast is placed in the top right",
+        id=ID_NOTIFICATION_CONTAINER,
+        header="Positioned toast",
+        is_open=True,
+        dismissable=True,
+        duration=4000,
+        icon="danger",
+
+        # top: 66 positions the toast below the navbar
+        style={"position": "fixed", "top": 66, "right": 10, "width": 350, "zIndex": 999999},
     ),
     *stores,
     html.Div(
@@ -111,10 +120,13 @@ discover_app = dmc.MantineProvider(
     withGlobalStyles=True,
     withNormalizeCSS=True,
     children=[
-        html.Div(
-            children=app_content,
-            id=ID_APP_CONTAINER,
-        )
+        html.Div(children=app_content, id=ID_APP_CONTAINER)
+        # dmc.NotificationsProvider(
+        #     children=[
+        #         html.Div(id=ID_NOTIFICATION_CONTAINER),
+        #     ],
+        #     zIndex=999999999,
+        # )
     ]
 )
 

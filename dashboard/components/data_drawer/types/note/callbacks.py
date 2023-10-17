@@ -4,7 +4,6 @@ import dash
 from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
-from dashboard.components.notifications.notification import create_notification, NotificationType
 from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.note import Note, empty_note
@@ -22,8 +21,8 @@ def activate_preventing_marker_clicks(selected_note):
 
 @app.callback(
     Output(ID_SELECTED_MARKER_STORE, "data", allow_duplicate=True),
+    Output(ID_NOTIFICATION_CONTAINER, "is_open", allow_duplicate=True),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
-    Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
     Input(ID_MAP, "dbl_click_lat_lng"),
     Input(ID_ADD_NOTE_BUTTON, "n_clicks"),
     State(ID_MAP, "center"),
@@ -41,16 +40,12 @@ def handle_double_click(click_location, click, center):
     user = get_user_from_cookies()
 
     if user is None:
-        notification = create_notification(
-            "Operation not permitted",
-            "Log in to create notes!",
-            NotificationType.WARN
-        )
-        return dash.no_update, notification, dict(state=True)
+        notification = "Operation not permitted - Log in to create notes!",
+        return dash.no_update, True, notification
 
     new_note            = Note(empty_note)
     new_note.lat        = click_location[0]
     new_note.lon        = click_location[1]
     new_note            = new_note.to_dict()
 
-    return dict(data=new_note, type="Note"), dash.no_update, dict(state=False)
+    return dict(data=new_note, type="Note"), dash.no_update, dash.no_update

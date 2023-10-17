@@ -9,7 +9,6 @@ from dashboard.components.data_drawer.types.note.note import create_note_view
 from dashboard.components.data_drawer.types.pax import create_pax_chart
 from dashboard.components.data_drawer.types.pollinator import create_pollinator_chart
 from dashboard.components.data_drawer.types.environment_point import create_environment_point_chart
-from dashboard.components.notifications.notification import NotificationType, create_notification
 from dashboard.config.app_config import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from dashboard.config.id_config import *
 from dashboard.maindash import app
@@ -74,6 +73,7 @@ def open_drawer(selected_marker):
 
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
+    Output(ID_NOTIFICATION_CONTAINER, "is_open", allow_duplicate=True),
     Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
     Output(ID_DATA_DRAWER_TITLE, "children"),
     Input(ID_SELECTED_MARKER_STORE, "data"),
@@ -101,9 +101,9 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
             drawer_content = create_environment_point_chart(environment_data["legend"], selected_marker["data"]["id"])
         case "Note": drawer_content = create_note_view(node_label)
         case x:
-            return dash.no_update, create_notification(x, "No further data available!", NotificationType.INFO), dash.no_update
+            return dash.no_update, True, "No further data available!", dash.no_update
 
-    return drawer_content, dash.no_update, f"{selected_marker['type']} - {node_label}"
+    return drawer_content, dash.no_update, dash.no_update, f"{selected_marker['type']} - {node_label}"
 
 
 @app.callback(
