@@ -16,6 +16,7 @@ ID_MAP_SELECTION_POPUP = "id-map-selector-popup"
 ID_MAP = "id-map"
 ID_URL_LOCATION = 'id-url-location'
 ID_SEARCH_DEPLOYMENT_BUTTON = "id-search-deployment-button"
+ID_SEARCHBAR_SEARCH_DEPLOYMENT_BUTTON = "id-searchbar-search-deployment-button"
 ID_DEPLOYMENT_SELECT = "id-deployment-select"
 ID_DEPLOYMENT_SELECT_SEARCH_BAR = "id-deployment-select-search-bar"
 ID_LOGOUT_BUTTON = "id-logout-btn"

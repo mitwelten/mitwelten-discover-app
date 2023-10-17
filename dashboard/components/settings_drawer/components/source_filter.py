@@ -41,31 +41,26 @@ def source_filter():
     return html.Div([
         dcc.Interval(id="remove-highlight", interval=3000, disabled=True),
         dcc.Store(id=ID_ALL_ACTIVE_STORE, data={"active": False}),
-        dmc.MediaQuery([
-            dmc.Select(
-                id=ID_DEPLOYMENT_SELECT,
-                data=[],
-                placeholder="Search for Deployments",
-                searchable=True,
-                nothingFound="ID not found",
-                style={"width": "100%"},
-                size="sm",
-                icon=DashIconify(icon="material-symbols:search", width=20),
-                rightSection=dmc.ActionIcon(
-                    DashIconify(icon="material-symbols:my-location", width=20),
-                    size="lg",
-                    variant="subtle",
-                    id=ID_SEARCH_DEPLOYMENT_BUTTON,
-                    n_clicks=0,
-                    color=PRIMARY_COLOR,
-                ),
+        dmc.Select(
+            id=ID_DEPLOYMENT_SELECT,
+            data=[],
+            placeholder="Search for Deployments",
+            searchable=True,
+            nothingFound="ID not found",
+            style={"width": "100%"},
+            size="sm",
+            icon=DashIconify(icon="material-symbols:search", width=20),
+            rightSection=dmc.ActionIcon(
+                DashIconify(icon="material-symbols:my-location", width=20),
+                size="lg",
+                variant="subtle",
+                id=ID_SEARCH_DEPLOYMENT_BUTTON,
+                n_clicks=0,
+                color=PRIMARY_COLOR,
             ),
-            dmc.Space(h=10),
-        ],
-            largerThan="md",
-            innerBoxStyle={"width":"100%"},
-            styles={"display": "none"}
         ),
+        dmc.Space(h=10),
+
         dmc.CheckboxGroup(
             id=ID_TYPE_CHECKBOX_GROUP,
             orientation="vertical",
@@ -107,12 +102,9 @@ def activate_all(value, data, all_enabled):
     Output(ID_HIGHLIGHT_LAYER_GROUP, "children", allow_duplicate=True),
     Input(ID_SEARCH_DEPLOYMENT_BUTTON, "n_clicks"),
     State(ID_DEPLOYMENT_SELECT, "value"),
-    State(ID_DEPLOYMENT_SELECT_SEARCH_BAR, "value"),
     prevent_initial_call=True
 )
-def search_deployment(_, value, value_search_bar):
-    value = value if value is not None else value_search_bar
-
+def search_deployment(_, value):
     if value is not None:
         lat = value["entry"]["location"]["lat"]
         lon = value["entry"]["location"]["lon"]
@@ -127,7 +119,6 @@ def search_deployment(_, value, value_search_bar):
 
 @app.callback(
     Output(ID_DEPLOYMENT_SELECT, "data"),
-    Output(ID_DEPLOYMENT_SELECT_SEARCH_BAR, "data"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input({"role": ALL, "label": "Store", "type": ALL}, "data"),
 )
@@ -142,7 +133,7 @@ def update_search_data(active_types, _):
                         label=f"{source['id']['role']} - {label}",
                         value=dict(entry=entry, type=source['id']['role']))
                 )
-    return new_data, new_data
+    return new_data
 
 
 @app.callback(

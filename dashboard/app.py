@@ -61,33 +61,33 @@ app_content = [
         ),
         id=ID_LOGO_CONTAINER,
     ),
-    dmc.MediaQuery(
-        html.Div(
-            dmc.Select(
-                id=ID_DEPLOYMENT_SELECT_SEARCH_BAR,
-                allowDeselect=True,
-                data=[],
-                placeholder="Search for Deployments",
-                searchable=True,
-                nothingFound="ID not found",
-                style={"width": "300px"},
-                size="md",
-                radius="xl",
-                icon=DashIconify(icon="material-symbols:search", width=20),
-                rightSection=dmc.ActionIcon(
-                    DashIconify(icon="material-symbols:my-location", width=20),
-                    size="lg",
-                    variant="subtle",
-                    id=ID_SEARCH_DEPLOYMENT_BUTTON,
-                    n_clicks=0,
-                    color=PRIMARY_COLOR,
-                ),
-            ),
-            id="id-search-bar-container"
-        ),
-        smallerThan="md",
-        styles={"display": "none"}
-    ),
+    # dmc.MediaQuery(
+    #     html.Div(
+    #         dmc.Select(
+    #             id=ID_DEPLOYMENT_SELECT_SEARCH_BAR,
+    #             allowDeselect=True,
+    #             data=[],
+    #             placeholder="Search for Deployments",
+    #             searchable=True,
+    #             nothingFound="ID not found",
+    #             style={"width": "300px"},
+    #             size="md",
+    #             radius="xl",
+    #             icon=DashIconify(icon="material-symbols:search", width=20),
+    #             rightSection=dmc.ActionIcon(
+    #                 DashIconify(icon="material-symbols:my-location", width=20),
+    #                 size="lg",
+    #                 variant="subtle",
+    #                 id=ID_SEARCHBAR_SEARCH_DEPLOYMENT_BUTTON,
+    #                 n_clicks=0,
+    #                 color=PRIMARY_COLOR,
+    #             ),
+    #         ),
+    #         id="id-search-bar-container"
+    #     ),
+    #     smallerThan="md",
+    #     styles={"display": "none"}
+    # ),
     dcc.ConfirmDialog(
         id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG,
         message=CONFIRM_UNSAVED_CHANGES_MESSAGE
