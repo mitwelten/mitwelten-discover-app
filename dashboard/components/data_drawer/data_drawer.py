@@ -46,16 +46,16 @@ chart_drawer = dmc.Drawer(
 
 @app.callback(
     Output(ID_LOGO_CONTAINER, "style"),
-    Output("id-search-bar-container", "style"),
     Output(ID_CHART_DRAWER, "styles"),
+    # Output("id-search-bar-container", "style"),
     Input(ID_SETTINGS_DRAWER, "opened")
 )
 def settings_drawer_state(state):
     width_reduced = {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
     full_width = {"width": "100vw"}
     if state:
-        return width_reduced, width_reduced, {"drawer": {"left": "400px", "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}}
-    return full_width, full_width, {"drawer": {"left": "0", "width": "100vw"}}
+        return width_reduced, {"drawer": {"left": "400px", "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}} # width_reduced,
+    return full_width, {"drawer": {"left": "0", "width": "100vw"}}#, full_width,
 
 
 @app.callback(
