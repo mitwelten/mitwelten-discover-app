@@ -2,7 +2,9 @@
 ID_THEME_SWITCH = "id-theme-switch"
 ID_APP_THEME = "id-app-theme"
 ID_LOADER = "id-loader"
-ID_NOTIFICATION_CONTAINER = "id-notification_container"
+ID_ALERT_DANGER = "id-alert_danger"
+ID_ALERT_WARNING= "id-alert_warning"
+ID_ALERT_INFO = "id-alert_info"
 ID_LOGO_CONTAINER = "id-logo-container"
 
 # UI elements
@@ -90,7 +92,6 @@ ID_NOTE_EDIT_LON = "id-note-edit-lon"
 ID_NOTE_EDIT_PUBLIC_FLAG = "id-note-edit-public-flag"
 ID_CONFIRM_UNSAVED_CHANGES_DIALOG = "id-confirm-unsaved-changes-dialog"
 ID_CONFIRM_DELETE_DIALOG = "id-confirm-delete-dialog"
-ID_VISIBLE_NOTE_VIEW_STORE = "id-visible-note-view-store"
 ID_NOTE_TAG_SELECT = "id-note-tag-select"
 ID_CREATE_NEW_TAG_BUTTON = "id-create-new-tag-button"
 ID_NEW_TAG_INPUT = "id-new-tag-input"
