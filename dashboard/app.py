@@ -1,29 +1,21 @@
 import time
 from functools import partial
 
-import dash
-import flask
 from dash import clientside_callback, ClientsideFunction, ALL
-from dash.exceptions import PreventUpdate
-from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 
-from configuration import PRIMARY_COLOR
-from dashboard.components.button.buttons import control_buttons, login_button
+from dashboard.components.alert.alert import alert_danger, alert_warning, alert_info
+from dashboard.components.button.buttons import control_buttons
 from dashboard.components.data_drawer.data_drawer import chart_drawer
-from dashboard.components.data_drawer.types.note.form_view import note_form
 from dashboard.components.data_drawer.types.pollinator import *
 from dashboard.components.map.init_map import map_figure
 from dashboard.components.settings_drawer.settings_drawer import settings_drawer
-from dashboard.config.app_config import app_theme, CONFIRM_UNSAVED_CHANGES_MESSAGE, \
-    CONFIRM_DELETE_MESSAGE
+from dashboard.config.app_config import app_theme, CONFIRM_UNSAVED_CHANGES_MESSAGE, CONFIRM_DELETE_MESSAGE
 from dashboard.config.map_config import SOURCE_PROPS
-from dashboard.maindash import app
-from dashboard.model.note import empty_note, Note
-from dashboard.model.note_test import json_note
 from dashboard.stores import stores
 from dashboard.util.helper_functions import safe_reduce, ensure_marker_visibility
-from dashboard.util.user_validation import get_user_from_cookies, get_expiration_date_from_cookies
+from dashboard.util.user_validation import  get_expiration_date_from_cookies
+from dashboard.components.data_drawer.types.note.callbacks import *
 
 app_content = [
     # dmc.Drawer(
@@ -47,18 +39,9 @@ app_content = [
 
     dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
     dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
-    dbc.Toast(
-        "This toast is placed in the top right",
-        id=ID_NOTIFICATION_CONTAINER,
-        header="Positioned toast",
-        is_open=True,
-        dismissable=True,
-        duration=4000,
-        icon="danger",
-
-        # top: 66 positions the toast below the navbar
-        style={"position": "fixed", "top": 66, "right": 10, "width": 350, "zIndex": 999999},
-    ),
+    alert_danger,
+    alert_warning,
+    alert_info,
     *stores,
     html.Div(
         html.A(
