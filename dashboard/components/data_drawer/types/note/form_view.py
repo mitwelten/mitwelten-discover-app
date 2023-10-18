@@ -65,8 +65,16 @@ def note_form(note: Note, all_tags):
             ),
                 span="auto"
             ),
-            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title"), span=12),
-            dmc.Col(dmc.Textarea(id=ID_NOTE_EDIT_DESCRIPTION, value=note.description, label="Description", autosize=True, maxRows=9), span=12),
+            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", debounce=500), span=12),
+            dmc.Col(dmc.Textarea(
+                id=ID_NOTE_EDIT_DESCRIPTION,
+                value=note.description,
+                label="Description",
+                autosize=True,
+                maxRows=9,
+                debounce=500
+            ),
+                span=12),
         ]),
         dmc.Grid([
             dmc.Col([dmc.Button("Cancel", id=ID_NOTE_FORM_CANCEL_BUTTON, type="reset",   color="gray")], span="content"),
