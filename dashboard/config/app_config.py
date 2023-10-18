@@ -4,6 +4,9 @@ DATA_SOURCES_WITHOUT_CHART_SUPPORT = ["Wild Cam", "Access Point"]
 DATE_FORMAT = "%Y-%m-%d"
 
 SETTINGS_DRAWER_WIDTH = 400
+ALERT_DURATION = 4000
+
+
 app_theme = {
     "colorScheme": "light",
     "colors": {
