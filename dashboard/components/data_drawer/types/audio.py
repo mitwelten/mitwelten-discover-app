@@ -25,6 +25,7 @@ def create_audio_chart(trigger_id, light_mode=True):
         figure=figure,
         responsive=True,
         className="chart-graph",
+
     )
     return graph
 

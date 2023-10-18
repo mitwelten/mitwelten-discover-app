@@ -1,4 +1,3 @@
-import dash_mantine_components as dmc
 from dash import dcc
 
 from dashboard.api.api_environment import get_environment_data_by_id
@@ -11,13 +10,8 @@ def create_environment_point_chart(legend, trigger_id, light_mode=True):
     labels = [legend[key]["label"] for key in legend.keys()]
 
     figure = spider_chart(labels, values, light_mode)
-    graph = dcc.Graph(
-        figure=figure,
-        responsive=True,
-        className="chart-graph",
-    )
-    return graph
-
-
-def create_figure(env_point):
-    return dmc.Text(f"Env Point {env_point}")
+    return dcc.Graph(
+            figure=figure,
+            responsive=True,
+            className="chart-graph",
+        )
