@@ -136,11 +136,20 @@ def add_selected_note_into_store(selected_marker, all_notes):
 
 
 @app.callback(
-    Output(ID_DATA_DRAWER_TITLE, "style"),
-    Input(ID_CHART_DRAWER, "opened"),
-    State(ID_SELECTED_MARKER_STORE, "data")
+    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "size"),
+    Input(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_TAG_DATA_STORE, "data"),
+    prevent_initial_call=True
 )
-def hide_drawer_title_for_notes(opened, marker):
-    if opened and marker["type"] == "Note":
-        return {"display": "none"}
-    return {"display": "block", "marginTop": "1em", "marginLeft": "1em"}
+def update_content_from_store(selected_note, all_tags):
+    if selected_note is None or selected_note["data"] is None:
+        raise PreventUpdate
+
+    is_edit_mode = selected_note.get("inEditMode", False)
+    note = Note(selected_note["data"])
+
+    if is_edit_mode:
+        return note_form(note, all_tags), 500
+    else:
+        return note_detail_view(note), 400
