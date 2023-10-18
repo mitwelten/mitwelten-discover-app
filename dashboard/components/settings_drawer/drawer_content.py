@@ -17,32 +17,28 @@ drawer_content = dmc.Container(
         dmc.Title("Mitwelten Discover", align="center", order=1),
         dmc.Space(h=30),
         dmc.ScrollArea([
-            html.Div([
-                divider("Date Range"),
-                date_time_section(),
-                divider("Data Source"),
-                source_filter(),
-                divider("Tags"),
-                tag_filter(),
-                divider("Settings"),
-                general_controls(),
-                dmc.Group([
-                    dmc.Text("Found a bug?", size="sm"),
-                    dmc.Anchor(
-                        "Submit an issue",
-                        href="https://github.com/mitwelten/mitwelten-discover-app/issues",
-                        target="_blank",
-                        size="sm"
-                    ),
-                ])
-            ],
-                id=ID_LEFT_DRAWER_CONTENT_SCROLL_AREA,
-                style={"height": "100%"}
-            )],
+            divider("Date Range"),
+            date_time_section(),
+            divider("Data Source"),
+            source_filter(),
+            divider("Tags"),
+            tag_filter(),
+            divider("Settings"),
+            general_controls(),
+            dmc.Group([
+                dmc.Text("Found a bug?", size="sm"),
+                dmc.Anchor(
+                    "Submit an issue",
+                    href="https://github.com/mitwelten/mitwelten-discover-app/issues",
+                    target="_blank",
+                    size="sm"
+                ),
+            ])
+        ],
             offsetScrollbars=True,
-            type="always",
-            style={"height": "100%"}
+            type="scroll",
+            style={"height": "100%", "paddingLeft": "5px"}
         )],
     fluid=True,
-    style={"height": "calc(100vh - 100px)"}
+    style={"height": "calc(100vh - 100px)", "paddingRight": "0px"}
 )
