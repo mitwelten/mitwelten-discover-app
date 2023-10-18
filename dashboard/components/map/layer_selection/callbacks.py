@@ -21,7 +21,6 @@ def update_store(store, collection):
     Input(ID_BASE_MAP_STORE, "data"),
 )
 def handle_map_store_update(store):
-    print("update base map: ", store)
     return update_store(store, MAPS)
 
 

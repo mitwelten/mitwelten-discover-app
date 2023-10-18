@@ -73,7 +73,7 @@ def open_bottom_drawer(_):
 
 @app.callback(
     Output(ID_MAP_LAYER_BOTTOM_DRAWER, "opened", allow_duplicate=True),
-    Input(ID_MAP, "click_lat_lng"),
+    Input(ID_MAP, "clickData"),
     Input({'role': ALL, 'index': ALL, 'place': "drawer"}, 'n_clicks'),
     prevent_initial_call=True,
 )

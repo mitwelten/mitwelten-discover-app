@@ -132,14 +132,14 @@ def create_backend_request_to_stay_logged_in(_, avatar_clicks):
 
 @app.callback(
     Output(ID_URL_LOCATION, "search"),
-    Input(ID_MAP, "click_lat_lng"),
+    Input(ID_MAP, "clickData"),
     Input(ID_MAP, "zoom"),
     prevent_initial_call=True
 )
-def map_click(click_lat_lng, zoom):
+def map_click(click_data, zoom):
     loc = ""
-    if click_lat_lng is not None:
-        loc = f"?lat={click_lat_lng[0]}&lon={click_lat_lng[1]}&zoom={zoom}"
+    if click_data is not None:
+        loc = f"?lat={click_data['latlng']['lat']}&lon={click_data['latlng']['lng']}&zoom={zoom}"
     return loc
 
 
@@ -172,7 +172,7 @@ for source in SOURCE_PROPS.keys():
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    Input(ID_MAP, "click_lat_lng"),
+    Input(ID_MAP, "clickData"),
     State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
@@ -207,7 +207,7 @@ clientside_callback(
 )
 
 @app.callback(
-    Output(ID_MAP, "center"),
+    Output(ID_MAP, "viewport", allow_duplicate=True),
     Input(ID_BROWSER_PROPERTIES_STORE, "data"),
     State(ID_SETTINGS_DRAWER, "opened"),
     State(ID_SETTINGS_DRAWER, "size"),
@@ -215,6 +215,8 @@ clientside_callback(
     State(ID_SELECTED_MARKER_STORE, "data"),
     State(ID_MAP, "bounds"),
     State(ID_MAP, "viewport"),
+    State(ID_MAP, "zoom"),
+    prevent_initial_call=True
 )
 def ensure_marker_visibility_in_viewport(
         browser_props,
@@ -223,13 +225,17 @@ def ensure_marker_visibility_in_viewport(
         data_drawer_size,
         marker,
         bounds,
-        viewport
+        viewport,
+        zoom
 ):
     if marker is None:
         raise PreventUpdate
 
     marker_position = marker["data"]["location"]
-    map_center = viewport["center"]
+    map_center = [0, 0]
+    map_center[0] = viewport["center"][0]
+    map_center[1] = viewport["center"][1]
+
     new_center = ensure_marker_visibility(
         map_center,
         bounds,
@@ -238,4 +244,4 @@ def ensure_marker_visibility_in_viewport(
         settings_drawer_size if drawer_state else 0,  # settings drawer is open or not
         data_drawer_size,
     )
-    return new_center
+    return dict(center=new_center, zoom=zoom, transition="flyTo")

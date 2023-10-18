@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import dash
 from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
@@ -24,20 +22,12 @@ def activate_preventing_marker_clicks(selected_note):
     Output(ID_SELECTED_MARKER_STORE, "data", allow_duplicate=True),
     Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
     Output(ID_ALERT_INFO, "children", allow_duplicate=True),
-    Input(ID_MAP, "dbl_click_lat_lng"),
+    Input(ID_MAP, "dblclickData"),
     Input(ID_ADD_NOTE_BUTTON, "n_clicks"),
     State(ID_MAP, "center"),
     prevent_initial_call=True
 )
-def handle_double_click(click_location, click, center):
-    if dash.ctx.triggered_id == ID_ADD_NOTE_BUTTON:
-        if click is None or click == 0:
-            raise PreventUpdate
-        else:
-            click_location    = [0, 0]
-            click_location[0] = center[0]
-            click_location[1] = center[1]
-
+def create_note_on_map(click_location, click, center):
     user = get_user_from_cookies()
 
     if user is None:
@@ -47,9 +37,17 @@ def handle_double_click(click_location, click, center):
         ]
         return dash.no_update, True, notification
 
-    new_note            = Note(empty_note)
-    new_note.lat        = click_location[0]
-    new_note.lon        = click_location[1]
-    new_note            = new_note.to_dict()
+    new_note = Note(empty_note)
+    if dash.ctx.triggered_id == ID_ADD_NOTE_BUTTON:
+        if click is None or click == 0:
+            raise PreventUpdate
+        else:
+            new_note.lat = center.get("lat", 0)
+            new_note.lon = center.get("lng", 0)
+    else:
+        # double-click on map occurred
+        new_note.lat = click_location["latlng"]["lat"]
+        new_note.lon = click_location["latlng"]["lng"]
 
+    new_note = new_note.to_dict()
     return dict(data=new_note, type="Note"), dash.no_update, dash.no_update

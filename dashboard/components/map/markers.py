@@ -1,6 +1,5 @@
 import dash_leaflet as dl
-from dash import Output, Input, State, ALL
-from dash.exceptions import PreventUpdate
+from dash import Output, Input, ALL
 
 from dashboard.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_popup
 from dashboard.config.id_config import *
@@ -19,6 +18,7 @@ from dashboard.util.helper_functions import was_deployed
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
+    prevent_initial_call=True
 )
 def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
     """

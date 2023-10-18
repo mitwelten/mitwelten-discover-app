@@ -95,9 +95,7 @@ def activate_all(value, data, all_enabled):
 
 
 @app.callback(
-    Output(ID_MAP, "useFlyTo", allow_duplicate=True),
-    Output(ID_MAP, "center", allow_duplicate=True),
-    Output(ID_MAP, "zoom", allow_duplicate=True),
+    Output(ID_MAP, "viewport", allow_duplicate=True),
     Output("remove-highlight", "disabled", allow_duplicate=True),
     Output(ID_HIGHLIGHT_LAYER_GROUP, "children", allow_duplicate=True),
     Input(ID_SEARCH_DEPLOYMENT_BUTTON, "n_clicks"),
@@ -112,7 +110,7 @@ def search_deployment(_, value):
             position=[lat, lon],
             icon=dict(iconUrl=f"assets/markers/highlight-circle.svg", iconAnchor=[40, 30], iconSize=80, className="blinking"),
         )
-        return True, (lat, lon), 20, False, [marker]
+        return dict(center=[lat, lon], zoom=20, transition="flyTo"), False, [marker]
     else:
         raise PreventUpdate
 
@@ -138,10 +136,9 @@ def update_search_data(active_types, _):
 
 @app.callback(
     Output(ID_HIGHLIGHT_LAYER_GROUP, "children", allow_duplicate=True),
-    Output(ID_MAP, "useFlyTo", allow_duplicate=True),
     Output("remove-highlight", "disabled", allow_duplicate=True),
     Input("remove-highlight", "n_intervals"),
     prevent_initial_call=True
 )
 def remove_highlight(_):
-    return [], False, True
+    return [], True

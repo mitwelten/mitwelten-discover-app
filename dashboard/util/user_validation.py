@@ -1,5 +1,4 @@
 import time
-from pprint import pprint
 
 import flask
 import jwt
