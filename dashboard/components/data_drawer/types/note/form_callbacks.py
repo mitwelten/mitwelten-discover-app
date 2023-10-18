@@ -1,4 +1,5 @@
 from datetime import datetime
+from http.client import responses
 from pprint import pprint
 
 import dash
@@ -6,6 +7,7 @@ import flask
 from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
+import dash_mantine_components as dmc
 from dashboard.api.api_note import create_note, update_note, delete_tag_by_note_id, add_tag_by_note_id
 from dashboard.config.id_config import *
 from dashboard.maindash import app
@@ -114,8 +116,8 @@ def find_added_tags(modified_note, original_note):
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
-    Output(ID_NOTIFICATION_CONTAINER, "is_open", allow_duplicate=True),
+    Output(ID_ALERT_DANGER, "children", allow_duplicate=True),
+    Output(ID_ALERT_DANGER, "is_open", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_SELECTED_NOTE_STORE, "data"),
@@ -161,9 +163,11 @@ def persist_note(click, notes, selected_note, all_tags):
         tags_to_add = modified_note.tags
 
     if response_code != 200 or returned_note_id == -1:
-       notification = f"Something went wrong! Status Code: {response_code} - Note ID: {returned_note_id}"
-
-       return dash.no_update, dash.no_update, dash.no_update, True, notification
+        notification = [
+            dmc.Title("Something went wrong!", order=6),
+            dmc.Text("Could not save Note."),
+            dmc.Text(f"Exited with Status Code: {response_code} | {responses[response_code]}", color="dimmed")]
+        return dash.no_update, dash.no_update, dash.no_update, True, notification
 
     # Persists deleted tag of a note
     if tags_to_delete:

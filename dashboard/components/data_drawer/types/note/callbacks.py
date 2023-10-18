@@ -4,6 +4,7 @@ import dash
 from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
+import dash_mantine_components as dmc
 from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.note import Note, empty_note
@@ -21,8 +22,8 @@ def activate_preventing_marker_clicks(selected_note):
 
 @app.callback(
     Output(ID_SELECTED_MARKER_STORE, "data", allow_duplicate=True),
-    Output(ID_NOTIFICATION_CONTAINER, "is_open", allow_duplicate=True),
-    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
+    Output(ID_ALERT_INFO, "children", allow_duplicate=True),
     Input(ID_MAP, "dbl_click_lat_lng"),
     Input(ID_ADD_NOTE_BUTTON, "n_clicks"),
     State(ID_MAP, "center"),
@@ -40,7 +41,10 @@ def handle_double_click(click_location, click, center):
     user = get_user_from_cookies()
 
     if user is None:
-        notification = "Operation not permitted - Log in to create notes!",
+        notification = [
+            dmc.Title("Operation not permitted", order=6),
+            dmc.Text("Log in to create notes!")
+        ]
         return dash.no_update, True, notification
 
     new_note            = Note(empty_note)

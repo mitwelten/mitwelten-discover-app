@@ -10,10 +10,12 @@ from dashboard.components.button.components.action_button import action_button
 from dashboard.config.id_config import *
 from dashboard.maindash import app
 from dashboard.model.note import Note
+from dashboard.components.data_drawer.types.note import form_callbacks
 
 
 def note_form(note: Note, all_tags):
-    return [
+    return dmc.Container([
+
         dmc.Grid([
             dmc.Col(dmc.Title("Create a new Note"),span="content"),
             dmc.Col(dmc.Group([
@@ -94,8 +96,9 @@ def note_form(note: Note, all_tags):
                     dmc.Col(dmc.Button("Save", id=ID_SAVE_LOCATION_BUTTON, type="submit"), span=12)
                 ]),
             ],
-        ),
-    ]
+        )
+    ])
+
 
 @app.callback(
     Output(ID_NOTE_TAG_SELECT, "data"),
@@ -113,8 +116,8 @@ def update_selected_tags(_, text_input, existing_tags, actual_selected):
 
 @app.callback(
     Output(ID_ATTACHMENT_FORM_MODAL, "opened"),
-    Output(ID_NOTIFICATION_CONTAINER, "is_open"),
-    Output(ID_NOTIFICATION_CONTAINER, "children"),
+    Output(ID_ALERT_INFO, "is_open"),
+    Output(ID_ALERT_INFO, "children"),
     #Output("id-image-container", "children"),
     Input(ID_ATTACHMENT_MODAL_FORM_BUTTON, "n_clicks"),
     prevent_initial_call=True
@@ -123,7 +126,10 @@ def update_attachment_modal_state(click):
     if click == 0 or click is None:
         raise PreventUpdate
 
-    notification = "Unsupported Operation: Open Attachments - Feature coming soon!",
+    notification = [
+        dmc.Title("Sorry, Feature not implemented yet!", order=6),
+        dmc.Text("Attachments coming soon...")
+    ]
     # auth_cookie = flask.request.cookies.get("auth")
     # file = get_file("test_img.png", auth_cookie)
     return dash.no_update, True, notification

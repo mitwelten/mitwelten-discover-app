@@ -5,13 +5,15 @@ from dash.exceptions import PreventUpdate
 
 from dashboard.components.data_drawer.types.audio import create_audio_chart
 from dashboard.components.data_drawer.types.env import create_env_chart
-from dashboard.components.data_drawer.types.note.note import create_note_view
+from dashboard.components.data_drawer.types.note.detail_view import note_detail_view
+from dashboard.components.data_drawer.types.note.form_view import note_form
 from dashboard.components.data_drawer.types.pax import create_pax_chart
 from dashboard.components.data_drawer.types.pollinator import create_pollinator_chart
 from dashboard.components.data_drawer.types.environment_point import create_environment_point_chart
 from dashboard.config.app_config import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from dashboard.config.id_config import *
 from dashboard.maindash import app
+from dashboard.model.note import Note
 from dashboard.util.util import get_identification_label
 
 
@@ -73,21 +75,21 @@ def open_drawer(selected_marker):
 
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
-    Output(ID_NOTIFICATION_CONTAINER, "is_open", allow_duplicate=True),
-    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
+    Output(ID_ALERT_INFO, "children", allow_duplicate=True),
     Output(ID_DATA_DRAWER_TITLE, "children"),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     State({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
     State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
-def update_drawer_content_from_store(selected_marker, environment_data, light_mode):
+def update_drawer_content_from_marker_store(selected_marker, environment_data, light_mode):
     if selected_marker is None:
         raise PreventUpdate
 
     marker_data = selected_marker.get("data")
     node_label = get_identification_label(marker_data)
-
+    drawer_title = f"{selected_marker['type']} - {node_label}"
     match selected_marker["type"]:
         case "Audio Logger":
             drawer_content = create_audio_chart(selected_marker["data"]["id"], light_mode)
@@ -99,11 +101,17 @@ def update_drawer_content_from_store(selected_marker, environment_data, light_mo
             drawer_content = create_pollinator_chart(selected_marker["data"]["id"], light_mode)
         case "Environment Data Point":
             drawer_content = create_environment_point_chart(environment_data["legend"], selected_marker["data"]["id"])
-        case "Note": drawer_content = create_note_view(node_label)
-        case x:
-            return dash.no_update, True, "No further data available!", dash.no_update
+        case "Note":
+            drawer_title = ""
+            drawer_content = dash.no_update # Nothing to do, content will be updated by the selected note callback
+        case _:
+            notification = [
+                dmc.Title(f"Deployment: {selected_marker['type']}", order=6),
+                dmc.Text("No further data available!"),
+            ]
+            return dash.no_update, True, notification, dash.no_update
 
-    return drawer_content, dash.no_update, dash.no_update, f"{selected_marker['type']} - {node_label}"
+    return drawer_content, dash.no_update, dash.no_update, drawer_title
 
 
 @app.callback(
@@ -119,6 +127,7 @@ def add_selected_note_into_store(selected_marker, all_notes):
     if selected_marker["type"] == "Note":
         for note in all_notes["entries"]:
             if note["id"] == selected_marker["data"]["id"]:
+                print("update selected note store")
                 return dict(data=selected_marker["data"], inEditMode=False, isDirty=False)
 
         return dict(data=selected_marker["data"], inEditMode=True, isDirty=False)  # new created note

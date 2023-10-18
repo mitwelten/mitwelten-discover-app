@@ -5,6 +5,7 @@ from dash import html, Output, Input, State
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
+from http.client import responses
 from configuration import PRIMARY_COLOR
 from dashboard.api.api_note import delete_note
 from dashboard.components.button.components.action_button import action_button
@@ -31,18 +32,19 @@ def note_detail_view(note: Note):
     user = get_user_from_cookies()
     icon_private = DashIconify(icon="material-symbols:lock",                    width=14, color="#868e96", style={"display":"block", "marginLeft":"3px"})
     icon_public  = DashIconify(icon="material-symbols:lock-open-right-outline", width=14, color="#868e96", style={"display":"block", "marginLeft":"3px"})
-    return [dmc.Grid([
-        dmc.Col(dmc.Title(note.title, order=5), span="content"),
-        dmc.Col(dmc.Group([
-            action_button(ID_NOTE_ATTACHMENT_BUTTON, "material-symbols:attach-file"),
-            action_button(ID_NOTE_EDIT_BUTTON,       "material-symbols:edit", disabled=True if user is None else False),
-            action_button(ID_NOTE_DELETE_BUTTON,     "material-symbols:delete") if user is not None else {}
-        ]),
-            span="content"
+    return dmc.Container([
+        dmc.Grid([
+            dmc.Col(dmc.Title(note.title, order=5), span="content"),
+            dmc.Col(dmc.Group([
+                action_button(ID_NOTE_ATTACHMENT_BUTTON, "material-symbols:attach-file"),
+                action_button(ID_NOTE_EDIT_BUTTON,       "material-symbols:edit", disabled=True if user is None else False),
+                action_button(ID_NOTE_DELETE_BUTTON,     "material-symbols:delete") if user is not None else {}
+            ]),
+                span="content"
+            ),
+        ],
+            justify="space-between"
         ),
-    ],
-        justify="space-between"
-    ),
         dmc.Grid([
             dmc.Col(
                 html.Span([
@@ -69,7 +71,9 @@ def note_detail_view(note: Note):
                 span=12
             ),
         ])
-    ]
+    ])
+
+
 @app.callback(
     Output(ID_CONFIRM_DELETE_DIALOG, "displayed", allow_duplicate=True),
     Input(ID_NOTE_DELETE_BUTTON, "n_clicks"),
@@ -84,8 +88,8 @@ def map_click(click):
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_NOTIFICATION_CONTAINER, "is_open", allow_duplicate=True),
-    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_ALERT_DANGER, "is_open", allow_duplicate=True),
+    Output(ID_ALERT_DANGER, "children", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Input(ID_CONFIRM_DELETE_DIALOG, "submit_n_clicks"),
     State(ID_SELECTED_NOTE_STORE, "data"),
@@ -100,23 +104,26 @@ def deactivate_edit_mode(delete_click, note):
     if response == 200:
         return dict(data=None, inEditMode=False), False, dash.no_update, dash.no_update, dict(entries=[], type="Note")
     else:
-        notification = f"Something went wrong! - Status Code: {response}",
+        notification = [
+            dmc.Title("Something went wrong!", order=6),
+            dmc.Text("Could not delete Note."),
+            dmc.Text(f"Exited with Status Code: {response} | {responses[response]}", color="dimmed")
+        ]
         return dash.no_update, dash.no_update, True, notification, dash.no_update
 
 
 @app.callback(
-    Output(ID_NOTIFICATION_CONTAINER, "is_open", allow_duplicate=True),
-    Output(ID_NOTIFICATION_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
+    Output(ID_ALERT_INFO, "children", allow_duplicate=True),
     Input(ID_NOTE_ATTACHMENT_BUTTON, "n_clicks"),
     prevent_initial_call=True
 )
 def handle_attachment_click(click):
     if click == 0 or click is None:
         raise PreventUpdate
+    notification = [
+        dmc.Title("Sorry, Feature not implemented yet!", order=6),
+        dmc.Text("Attachments coming soon...")
+    ]
 
-    return True, "Unsupported Operation: Open Attachments"
-    # return create_notification(
-    #     "Unsupported Operation: Open Attachments",
-    #     "Feature coming soon!",
-    #     NotificationType.INFO
-    # )
+    return True, notification
