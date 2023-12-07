@@ -99,7 +99,6 @@ def find_deleted_tags(modified_note, original_note):
     for t in original_note.tags:
         if t not in modified_note.tags:
             result.append(t)
-    print("find deleted tags", result)
     return result
 
 
@@ -108,7 +107,6 @@ def find_added_tags(modified_note, original_note):
     for t in modified_note.tags:
         if t not in original_note.tags:
             result.append(t)
-    print("find added tags", result)
     return result
 
 
@@ -134,8 +132,6 @@ def persist_note(click, notes, selected_note, all_tags):
     auth_cookie = flask.request.cookies.get("auth")
     modified_note = Note(selected_note["data"])
     modified_note.date = datetime.now().isoformat()
-
-    pprint(modified_note.to_dict())
 
     tags_to_delete = []
     tags_to_add    = []
