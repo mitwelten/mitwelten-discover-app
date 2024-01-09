@@ -38,11 +38,11 @@ class Note:
             else []
         )
         self.date = json_note.get("date")
-        p = json_note.get("public")
+        p = json_note.get("public", False)
         if isinstance(p, bool):
             self.public = p
         else:
-            self.public = True if "true" in json_note.get("public").lower() else False,
+            self.public = True if "true" in str(p).lower() else False,
         self.author= json_note.get("author")
 
     def __eq__(self, other):

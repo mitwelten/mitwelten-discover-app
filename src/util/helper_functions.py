@@ -6,7 +6,7 @@ from src.config.app_config import DATE_FORMAT
 from src.model.deployment import Deployment
 
 T = TypeVar('T')
-def safe_reduce(fn: Callable[[T, T], T], iterable: Iterable[T], start: T = None) -> int:
+def safe_reduce(fn: Callable[[T, T], T], iterable: Iterable[T], start: T|None) -> T|None:
     iterator = iter(iterable)
     accumulator = start
     for current in iterator:
@@ -41,7 +41,21 @@ def was_deployed(deployment: Deployment, start_date: str, end_date: str):
         else:
             return node_start <= selected_end
 
+"""
+INFO:
+Map latitude & longitude:
 
+          N (Latitude)
+          ^
+          |
+ West 0---|---> (Longitude)
+          |
+          |
+          0
+          S
+
+Map bounds format: [ bottom-left: [lat, lon], top-right [lat, lon]]
+"""
 def ensure_marker_visibility(
         map_center,
         map_bounds,

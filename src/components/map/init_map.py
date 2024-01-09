@@ -2,6 +2,7 @@ from urllib.parse import urlparse, parse_qs
 
 import dash_leaflet as dl
 from dash import Output, Input
+from dash_extensions.javascript import assign
 
 from src.main import app
 from src.config import map_config as map_config
@@ -13,6 +14,7 @@ import src.components.map.layer_selection.callbacks
 import src.components.map.markers
 
 initial_map = map_config.MAPS[1]
+
 map_figure = dl.Map([
     dl.TileLayer(
         id=ID_BASE_LAYER_MAP,
@@ -45,11 +47,12 @@ map_figure = dl.Map([
     className="id-map",
     trackResize=True,
     trackViewport=True,
+    easeLinearity=10.5,
     style={
         "width": "100vw",
         "height": "100vh",
         "zIndex": 0,
-    }
+    },
 )
 
 @app.callback(
