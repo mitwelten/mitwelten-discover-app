@@ -1,7 +1,5 @@
-
 import time
 
-import flask
 from fastapi import FastAPI
 from fastapi import Request, HTTPException, status
 from fastapi.middleware.wsgi import WSGIMiddleware
@@ -9,8 +7,14 @@ from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from keycloak import KeycloakOpenID
 
-from configuration import KC_SERVER_URL, KC_CLIENT_ID, KC_REALM_NAME, REFRESH_KEY_TIME_LEFT_S, DOMAIN_NAME
-from dashboard.app import app as dash_app
+from configuration import (
+    KC_SERVER_URL,
+    KC_CLIENT_ID,
+    KC_REALM_NAME,
+    REFRESH_KEY_TIME_LEFT_S,
+    DOMAIN_NAME,
+)
+from src.app import app as dash_app
 
 keycloak_openid = KeycloakOpenID(
     server_url=KC_SERVER_URL,
@@ -26,9 +30,9 @@ oauth2_scheme = OAuth2AuthorizationCodeBearer(
     tokenUrl=f"{KC_SERVER_URL}realms/{KC_REALM_NAME}/protocol/openid-connect/token",
 )
 KEYCLOAK_PUBLIC_KEY = (
-        "-----BEGIN PUBLIC KEY-----\n"
-        + keycloak_openid.public_key()
-        + "\n-----END PUBLIC KEY-----"
+    "-----BEGIN PUBLIC KEY-----\n"
+    + keycloak_openid.public_key()
+    + "\n-----END PUBLIC KEY-----"
 )
 
 
@@ -87,10 +91,10 @@ def get_auth_url(state):
         state=state,
     )
 
+
 @app.get("/login")
 def login_redirect():
     return RedirectResponse(get_auth_url(f"{DOMAIN_NAME}/app"))
-
 
 
 @app.get("/logout")
@@ -123,10 +127,10 @@ def callback(code, state=None):
 async def auth_middleware(request: Request, call_next):
     response = await call_next(request)
     if (
-            not request.url.path.startswith("/login")
-            and not request.url.path.startswith("/callback")
-            and not request.url.path.startswith("/logout")
-            and not request.url.path == "/"
+        not request.url.path.startswith("/login")
+        and not request.url.path.startswith("/callback")
+        and not request.url.path.startswith("/logout")
+        and not request.url.path == "/"
     ):
         try:
             user = await get_current_user(request=request)
@@ -146,12 +150,12 @@ async def auth_middleware(request: Request, call_next):
 
 app.mount("/app", WSGIMiddleware(dash_app.server))
 
+
 @app.get("/")
 def root():
     return RedirectResponse("/app")
 
+
 @app.get("/index")
 def index():
     return "Hello World"
-
-
