@@ -15,6 +15,16 @@ from src.util.user_validation import get_user_from_cookies
 from src.util.util import pretty_date
 from src.main import app
 
+from src.components.data_drawer.types.note import callbacks
+
+
+def text_to_html_list(text: str):
+    text_list = text.split("\n")
+    children = []
+    for para in text_list:
+        children.append(para)
+        children.append(html.Br())
+    return children
 
 def list_item(text, icon):
     return dmc.ListItem(
@@ -63,7 +73,7 @@ def note_detail_view(note: Note):
             dmc.Col(dmc.Divider(size="xs")),
             dmc.Col(
                 dmc.Spoiler(
-                    note.description,
+                    text_to_html_list(note.description),
                     showLabel="Show more",
                     hideLabel="Hide",
                     maxHeight=250,
