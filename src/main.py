@@ -23,5 +23,5 @@ app = Dash(
 app.enable_dev_tools(
     dev_tools_ui=True,
     dev_tools_serve_dev_bundles=True,
-    dev_tools_hot_reload=True
+    # dev_tools_hot_reload=True
 )

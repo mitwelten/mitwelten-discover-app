@@ -10,6 +10,7 @@ from src.components.button.components.action_button import action_button
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
+from src.components.data_drawer.types.note import form_callbacks
 
 
 def note_form(note: Note, all_tags):

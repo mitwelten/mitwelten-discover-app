@@ -1,4 +1,5 @@
 import plotly.graph_objects as go
+from src.components.data_drawer.types.note import callbacks
 
 
 def create_themed_figure(light_mode):
@@ -50,4 +51,5 @@ def spider_chart(labels, keys, light_mode=True):
         margin=dict(l=0, r=0, t=10, b=35),
     )
     return fig
+
 

@@ -2,10 +2,12 @@ import dash_leaflet as dl
 from dash import (
     Output,
     Input,
+    State,
     ALL,
     clientside_callback,
     ClientsideFunction,
 )
+from dash.exceptions import PreventUpdate
 
 from src.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_popup
 from src.config.id_config import *
@@ -254,8 +256,6 @@ def ensure_marker_visibility_in_viewport(
         [top - moving_zone_bounds[1][0] * zone_factor_h, right -  moving_zone_bounds[1][1] * zone_factor_w]
          ]
 
-    pprint.pprint(marker)
-
     marker_loc = marker["data"]["location"]
 
     # returns an array containing the values to be moved: [[bottom/top], [left/right]]
@@ -280,3 +280,7 @@ def ensure_marker_visibility_in_viewport(
     new_center = [center["lat"] + (move_required[0] * -1), center["lng"] + (move_required[1] * -1)]
 
     return dict(center=new_center, zoom=zoom, transition="flyTo")
+
+
+
+
