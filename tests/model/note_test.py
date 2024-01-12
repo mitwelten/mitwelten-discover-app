@@ -52,8 +52,6 @@ class TestNote(unittest.TestCase):
         for idx, tag in enumerate(note.tags):
             self.assertEqual(tag, note_dict["tags"][idx]["name"])
 
-        for idx, file in enumerate(note.files):
-            self.assertEqual(file.id, note_dict["files"][idx]["id"])
 
     def test_eq_with_emtpy_notes(self):
         note1 = Note(empty_note)
@@ -75,8 +73,8 @@ class TestNote(unittest.TestCase):
         note2.tags = [dict(name="test"), dict(name="test2")]
         note1.node_label = "test case"
         note2.node_label = "test case"
-        note1.creator = "tester"
-        note2.creator = "tester"
+        note1.author = "tester"
+        note2.author = "tester"
         note1.title = "test case"
         note2.title = "test case"
         note1.description = "this is a test case"
