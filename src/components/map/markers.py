@@ -8,6 +8,7 @@ from dash import (
     ClientsideFunction,
 )
 from dash.exceptions import PreventUpdate
+import dash_mantine_components as dmc
 
 from src.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_popup
 from src.config.id_config import *
@@ -180,7 +181,7 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
                         autoPan=False
                     ),
                     dl.Tooltip(
-                        children=f"Note: {current_note.id}",
+                        children=dmc.Text(current_note.title[:50]),
                         offset={"x": -10, "y": 2},
                         direction="left",
                     ),
