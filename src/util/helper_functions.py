@@ -41,3 +41,8 @@ def was_deployed(deployment: Deployment, start_date: str, end_date: str):
         else:
             return node_start <= selected_end
 
+# def plot_image(image):
+#     buffered = BytesIO()
+#     image.save(buffered, format="PNG")
+#     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+#     return html.Img(id="my-img", className="image", src="data:image/png;base64, " + img_str)

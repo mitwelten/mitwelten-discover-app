@@ -7,7 +7,8 @@ from dash_iconify import DashIconify
 
 from http.client import responses
 from configuration import PRIMARY_COLOR
-from src.api.api_note import delete_note, get_file
+from src.api.api_note import delete_note
+from src.api.api_files import get_image
 from src.components.button.components.action_button import action_button
 from src.config.id_config import *
 from src.model.note import Note
@@ -134,7 +135,7 @@ def handle_attachment_click(click):
         raise PreventUpdate
 
     auth_cookie = flask.request.cookies.get("auth")
-    img = get_file("test_img.png", auth_cookie)
+    img = get_image( "https://picsum.photos/200", auth_cookie)
     print("img", img)
     notification = [
         dmc.Title("Sorry, Feature not implemented yet!", order=6),
