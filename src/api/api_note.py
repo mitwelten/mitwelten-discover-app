@@ -1,6 +1,3 @@
-from pprint import pprint
-
-import flask
 import requests
 
 from src.api.api_client import construct_url
@@ -36,7 +33,6 @@ def update_note(note: Note, auth_cookie):
     return res
 
 
-
 def create_note(note: Note, auth_cookie):
     url = construct_url("notes")
     res = requests.post(
@@ -53,13 +49,6 @@ def delete_note(note_id, auth_cookie):
     res = requests.delete(url=url, headers={"Authorization": f"Bearer {auth_cookie}"})
     print(f"Delete Note: id={note_id}, status={res.status_code}")
     return res.status_code
-
-
-def get_file(object_name, auth_cookie):
-    url = construct_url(f"files/discover/{object_name}")
-    res = requests.get(url=url, headers={"Authorization": f"Bearer {auth_cookie}"})
-    print(f"Get File from Note: object_name={object_name}, status={res.status_code}")
-    return None
 
 
 def add_tag_by_note_id(note_id, tag:str, auth_cookie):
