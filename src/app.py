@@ -48,8 +48,6 @@ from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_expiration_date_from_cookies
 from src.main import app
 
-from src.components.data_drawer.types.note import callbacks
-
 
 app_content = [
     dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),

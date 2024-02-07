@@ -1,22 +1,17 @@
-import dash
 import dash_mantine_components as dmc
 from dash import Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
 
 from src.components.data_drawer.types.audio import create_audio_chart
 from src.components.data_drawer.types.env import create_env_chart
-from src.components.data_drawer.types.note.detail_view import note_detail_view
-from src.components.data_drawer.types.note.form_view import note_form
+from src.components.data_drawer.types.environment_point import create_environment_point_chart
 from src.components.data_drawer.types.note.note import create_note_content
 from src.components.data_drawer.types.pax import create_pax_chart
 from src.components.data_drawer.types.pollinator import create_pollinator_chart
-from src.components.data_drawer.types.environment_point import create_environment_point_chart
 from src.config.app_config import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from src.config.id_config import *
 from src.main import app
-from src.model.note import Note
 from src.util.util import get_identification_label
-
 
 chart_drawer = dmc.Drawer(
     opened=False,
@@ -159,3 +154,11 @@ def update_content_from_store(selected_note, all_tags):
         raise PreventUpdate
 
     return create_note_content(selected_note, all_tags)
+
+@app.callback(
+    Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
+    Input(ID_SELECTED_NOTE_STORE, "data"),
+    prevent_initial_call=True
+)
+def activate_preventing_marker_clicks(selected_note):
+    return dict(state=selected_note["inEditMode"])

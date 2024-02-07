@@ -13,8 +13,6 @@ from src.model.note import Note
 from src.util.util import pretty_date
 from src.main import app
 
-from src.components.data_drawer.types.note import callbacks
-
 
 def text_to_html_list(text: str):
     text_list = text.split("\n")

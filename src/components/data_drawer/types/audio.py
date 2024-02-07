@@ -28,6 +28,3 @@ def create_audio_chart(trigger_id, light_mode=True):
 
     )
     return graph
-
-
-

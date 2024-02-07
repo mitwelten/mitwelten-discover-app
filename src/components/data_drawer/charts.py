@@ -1,6 +1,4 @@
 import plotly.graph_objects as go
-from src.components.data_drawer.types.note import callbacks
-
 
 def create_themed_figure(light_mode):
     figure = go.Figure()
