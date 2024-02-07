@@ -6,7 +6,6 @@ from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
 from configuration import PRIMARY_COLOR
-from src.components.button.components.action_button import action_button
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
@@ -14,29 +13,7 @@ from src.components.data_drawer.types.note import form_callbacks
 
 
 def note_form(note: Note, all_tags):
-    return dmc.Container([
-
-        dmc.Grid([
-            dmc.Col(dmc.Title("Create a new Note"),span="content"),
-            dmc.Col(dmc.Group([
-                dmc.Switch(
-                    id=ID_NOTE_EDIT_PUBLIC_FLAG,
-                    offLabel=DashIconify(icon="material-symbols:lock", width=15),
-                    onLabel=DashIconify(icon="material-symbols:lock-open-right-outline", width=15),
-                    size="sm",
-                    checked=note.public
-                ),
-                action_button(button_id=ID_LOCATION_MODAL_BUTTON, icon="material-symbols:edit-location-alt-outline-sharp"),
-                action_button(button_id=ID_ATTACHMENT_MODAL_FORM_BUTTON, icon="material-symbols:attach-file")
-            ],
-                spacing="sm"
-            ),
-                span="content"
-            )
-        ],
-            justify="space-between"
-        ),
-
+    return [
         dmc.Grid([
             # title and description section
             dmc.Col(dmc.MultiSelect(
@@ -82,17 +59,7 @@ def note_form(note: Note, all_tags):
         ],
             justify="flex-end"
         ),
-        dmc.Modal(
-            title="Attachments",
-            id=ID_ATTACHMENT_FORM_MODAL,
-            zIndex=10000,
-            children=[
-                # html.Div(id="id-image-container"),
-                # dmc.Image(src=f"{API_URL}/files/discover/test_img.png"),
-                # *[dmc.Text(f"{t.to_dict()}") for t in note.files],
-                dmc.Button("Ok", id=ID_SAVE_ATTACHMENT_BUTTON),
-            ],
-        ),
+
         dmc.Modal(
             title="Edit Location",
             id=ID_EDIT_LOCATION_MODAL,
@@ -105,7 +72,7 @@ def note_form(note: Note, all_tags):
                 ]),
             ],
         )
-    ])
+    ]
 
 
 @app.callback(
@@ -122,25 +89,7 @@ def update_selected_tags(_, text_input, existing_tags, actual_selected):
     return [*existing_tags, text_input], [*actual_selected, text_input]
 
 
-@app.callback(
-    Output(ID_ATTACHMENT_FORM_MODAL, "opened"),
-    Output(ID_ALERT_INFO, "is_open"),
-    Output(ID_ALERT_INFO, "children"),
-    #Output("id-image-container", "children"),
-    Input(ID_ATTACHMENT_MODAL_FORM_BUTTON, "n_clicks"),
-    prevent_initial_call=True
-)
-def update_attachment_modal_state(click):
-    if click == 0 or click is None:
-        raise PreventUpdate
 
-    notification = [
-        dmc.Title("Sorry, Feature not implemented yet!", order=6),
-        dmc.Text("Attachments coming soon...")
-    ]
-    # auth_cookie = flask.request.cookies.get("auth")
-    # file = get_file("test_img.png", auth_cookie)
-    return dash.no_update, True, notification
 
 
 @app.callback(

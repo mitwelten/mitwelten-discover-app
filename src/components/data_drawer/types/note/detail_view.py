@@ -8,11 +8,8 @@ from dash_iconify import DashIconify
 from http.client import responses
 from configuration import PRIMARY_COLOR
 from src.api.api_note import delete_note
-from src.api.api_files import get_image
-from src.components.button.components.action_button import action_button
 from src.config.id_config import *
 from src.model.note import Note
-from src.util.user_validation import get_user_from_cookies
 from src.util.util import pretty_date
 from src.main import app
 
@@ -39,23 +36,11 @@ def list_item(text, icon):
     )
 
 
+icon_private = DashIconify(icon="material-symbols:lock",                    width=14, color="#868e96", style={"display":"block", "marginLeft":"3px"})
+icon_public  = DashIconify(icon="material-symbols:lock-open-right-outline", width=14, color="#868e96", style={"display":"block", "marginLeft":"3px"})
+
 def note_detail_view(note: Note):
-    user = get_user_from_cookies()
-    icon_private = DashIconify(icon="material-symbols:lock",                    width=14, color="#868e96", style={"display":"block", "marginLeft":"3px"})
-    icon_public  = DashIconify(icon="material-symbols:lock-open-right-outline", width=14, color="#868e96", style={"display":"block", "marginLeft":"3px"})
-    return dmc.Container([
-        dmc.Grid([
-            dmc.Col(dmc.Title(note.title, order=5), span="content"),
-            dmc.Col(dmc.Group([
-                action_button(ID_NOTE_ATTACHMENT_BUTTON, "material-symbols:attach-file"),
-                action_button(ID_NOTE_EDIT_BUTTON,       "material-symbols:edit", disabled=True if user is None else False),
-                action_button(ID_NOTE_DELETE_BUTTON,     "material-symbols:delete") if user is not None else {}
-            ]),
-                span="content"
-            ),
-        ],
-            justify="space-between"
-        ),
+    return [
         dmc.Grid([
             dmc.Col(
                 html.Span([
@@ -82,7 +67,7 @@ def note_detail_view(note: Note):
                 span=12
             ),
         ])
-    ])
+    ]
 
 
 @app.callback(
@@ -122,24 +107,3 @@ def deactivate_edit_mode(delete_click, note):
         ]
         return dash.no_update, dash.no_update, True, notification, dash.no_update
 
-
-@app.callback(
-    Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
-    Output(ID_ALERT_INFO, "children", allow_duplicate=True),
-    Input(ID_NOTE_ATTACHMENT_BUTTON, "n_clicks"),
-    prevent_initial_call=True
-)
-def handle_attachment_click(click):
-    print("handle att click")
-    if click == 0 or click is None:
-        raise PreventUpdate
-
-    auth_cookie = flask.request.cookies.get("auth")
-    img = get_image( "https://picsum.photos/200", auth_cookie)
-    print("img", img)
-    notification = [
-        dmc.Title("Sorry, Feature not implemented yet!", order=6),
-        dmc.Text("Attachments coming soon...")
-    ]
-
-    return True, notification
