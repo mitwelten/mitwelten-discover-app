@@ -63,21 +63,6 @@ class FunctionsTestSuite(unittest.TestCase):
         actual = was_deployed(deployment, time_range[0], time_range[1])
         self.assertEqual(actual, expected)
 
-    # def test_typical_case_lat_ensure_marker_visibility(self):
-        # map_center = [50, 50]
-        # map_bounds = [[45, 45], [55, 55]]
-        # marker_position = {"lat": 46, "lon": 50}
-        # expected = (43.5, 50.0)
-        # actual = ensure_marker_visibility(map_center, map_bounds, marker_position)
-        # self.assertEqual(actual, expected)
-    #
-    # def test_typical_case_lon_ensure_marker_visibility(self):
-    #     map_center = [50, 50]
-    #     map_bounds = [[45, 45], [55, 55]]
-    #     marker_position = {"lat": 54, "lon": 46}
-    #     expected = (50.0, 45.0)
-    #     actual = ensure_marker_visibility(map_center, map_bounds, marker_position)
-    #     self.assertEqual(expected, actual)
 
 if __name__ == '__main__':
     unittest.main()
