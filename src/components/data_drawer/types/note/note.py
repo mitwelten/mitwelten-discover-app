@@ -22,7 +22,7 @@ def create_note_content(note, all_tags):
     else:
         children = note_detail_view(note)
 
-    return note_container(note, is_edit_mode, children)
+    return note_container(note, children, is_edit_mode)
 
 
 def get_form_controls(public: bool = False):
@@ -45,7 +45,7 @@ def get_view_controls(user):
     ]
 
 
-def note_container(note: Note, editable: False, children):
+def note_container(note: Note, children, editable = False):
     user = get_user_from_cookies()
     title    = "Create / Edit Note"           if editable else  note.title
     controls = get_form_controls(note.public) if editable else get_view_controls(user)
