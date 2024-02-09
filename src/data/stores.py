@@ -25,14 +25,16 @@ stores = [
     dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),
     dcc.Store(id=ID_SELECTED_NOTE_STORE,      data=dict(data=None, inEditMode=False, isDirty=False)),
     dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
+    dcc.Store(id=ID_NOTE_REFRESH_STORE, data=dict(state=False)),
 ]
 
 @app.callback(
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     Input ({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    Input("id-Note-refresh-store", "data")
+    Input(ID_NOTE_REFRESH_STORE, "data")
 )
 def load_notes_from_backend(data, _):
+    print("update note store")
     outdated = True # TODO: implement
     if outdated:
         cookies = flask.request.cookies
