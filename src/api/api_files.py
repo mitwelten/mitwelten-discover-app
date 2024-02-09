@@ -23,8 +23,17 @@ def get_image(object_name, auth_cookie):
     print(f"Get File from Note: object_name={object_name}, status={res.status_code}")
     return encoded_image
 
-def add_file_to_note(note_id, file, auth_cookie):
+
+def add_file_to_note(note_id, object_name, name, content_type, auth_cookie):
     url = construct_url(f"note/{note_id}/file")
+    payload = dict(type=content_type, name=name, object_name=object_name)
+    res = requests.post(
+        url=url,
+        json=payload,
+        headers={"Authorization": f"Bearer {auth_cookie}"},
+    )
+    return res
+
 
 def add_file(file, name: str, auth_cookie):
     url = construct_url(f"files/discover")
