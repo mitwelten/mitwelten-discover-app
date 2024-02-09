@@ -46,4 +46,11 @@ def add_file(file, name: str, auth_cookie):
     return res
 
 
+def delete_file(file_id, auth_cookie):
+    url = construct_url(f"file/{file_id}")
+    res = requests.delete(
+        url=url,
+        headers={"Authorization": f"Bearer {auth_cookie}"},
+    )
+    return res
 
