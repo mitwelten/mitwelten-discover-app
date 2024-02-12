@@ -1,6 +1,7 @@
 import dash_mantine_components as dmc
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
+from src.components.data_drawer.types.note.form_callbacks import load_callbacks
 
 from src.components.button.components.action_button import action_button
 from src.components.data_drawer.types.note.attachment import attachment_modal
@@ -11,21 +12,23 @@ from src.model.note import Note
 from src.util.user_validation import get_user_from_cookies
 
 
-def create_note_content(note, all_tags):
-    if note is None or note["data"] is None:
+
+def create_note_content(selected_note, all_tags):
+    load_callbacks()
+    if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 
-    is_edit_mode = note.get("inEditMode", False)
-    note = Note(note["data"])
+    is_edit_mode = selected_note.get("inEditMode", False)
+    note = Note(selected_note["data"])
     if is_edit_mode:
         children = note_form(note, all_tags)
     else:
         children = note_detail_view(note)
 
-    return note_container(note, children, is_edit_mode)
+    return note_container(selected_note, children)
 
 
-def get_form_controls(public: bool = False):
+def get_form_controls(public = False):
     return [
         dmc.Switch(
             id=ID_NOTE_EDIT_PUBLIC_FLAG,
@@ -40,14 +43,19 @@ def get_form_controls(public: bool = False):
 
 def get_view_controls(user):
     return [
-        action_button(ID_NOTE_EDIT_BUTTON,       "material-symbols:edit", disabled=True if user is None else False),
-        action_button(ID_NOTE_DELETE_BUTTON,     "material-symbols:delete") if user is not None else {}
+        action_button(
+            button_id=ID_NOTE_EDIT_BUTTON,   
+            icon="material-symbols:edit", 
+            disabled=True if user is None else False),
+        action_button(button_id=ID_NOTE_DELETE_BUTTON, icon="material-symbols:delete") if user is not None else {}
     ]
 
 
-def note_container(note: Note, children, editable = False):
+def note_container(selected_note, children):
+    editable = selected_note.get("inEditMode", False)
+    note = Note(selected_note["data"])
     user = get_user_from_cookies()
-    title    = "Create / Edit Note"           if editable else  note.title
+    title    = "Create / Edit Note"           if editable else note.title
     controls = get_form_controls(note.public) if editable else get_view_controls(user)
     controls.append(action_button(ID_NOTE_ATTACHMENT_BUTTON, "material-symbols:attach-file"))
 
@@ -62,5 +70,5 @@ def note_container(note: Note, children, editable = False):
             justify="space-between"
         ),
         *children,
-        attachment_modal(note, editable)
+        attachment_modal(selected_note)
     ])

@@ -15,11 +15,12 @@ from src.main import app
 
 
 def text_to_html_list(text: str):
-    text_list = text.split("\n")
     children = []
-    for para in text_list:
-        children.append(para)
-        children.append(html.Br())
+    if text is not None:
+        text_list = text.split("\n")
+        for para in text_list:
+            children.append(para)
+            children.append(html.Br())
     return children
 
 def list_item(text, icon):
@@ -57,7 +58,7 @@ def note_detail_view(note: Note):
             dmc.Col(dmc.Divider(size="xs")),
             dmc.Col(
                 dmc.Spoiler(
-                    text_to_html_list(note.description),
+                    children=text_to_html_list(note.description),
                     showLabel="Show more",
                     hideLabel="Hide",
                     maxHeight=250,
