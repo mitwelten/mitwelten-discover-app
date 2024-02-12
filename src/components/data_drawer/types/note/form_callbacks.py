@@ -37,9 +37,10 @@ def activate_edit_mode(edit_click, selected_note):
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_NOTE_ATTACHMENT_STORE, "data"),
     prevent_initial_call=True
 )
-def map_click(cancel_click, selected_note):
+def map_click(cancel_click, selected_note, attachments):
     """
     Closing the drawer by click on the map.
     A modified note will not be stored, but a confirm dialog rises up.
@@ -53,7 +54,8 @@ def map_click(cancel_click, selected_note):
     if selected_note["data"] is None:
         return False, dash.no_update, dash.no_update
 
-    if selected_note["isDirty"]:
+    modified_attachments = len(attachments.get("add", [])) + len(attachments.get("delete", []))
+    if selected_note["isDirty"] or modified_attachments > 0:
         return dash.no_update, True, dash.no_update
 
     return False, dash.no_update, dict(data=None, inEditMode=False, isDirty=False)
@@ -65,9 +67,10 @@ def map_click(cancel_click, selected_note):
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_CHART_DRAWER, "opened"),
     State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_NOTE_ATTACHMENT_STORE, "data"),
     prevent_initial_call=True
 )
-def close_open_note_by_drawer_close_click(drawer_state, selected_note):
+def close_open_note_by_drawer_close_click(drawer_state, selected_note, attachments):
     """
     Handle the selected note when the drawer is closed by click on the close button.
     Click event is not available, therefore the callback listen on a state-change.
@@ -78,7 +81,9 @@ def close_open_note_by_drawer_close_click(drawer_state, selected_note):
     if selected_note["data"] is None:
         raise PreventUpdate #  drawer contains not a note
 
-    if selected_note["isDirty"]:
+
+    modified_attachments = len(attachments.get("add", [])) + len(attachments.get("delete", []))
+    if selected_note["isDirty"] or modified_attachments > 0:
         return True, True, dash.no_update
     else:
         return dash.no_update, dash.no_update, dict(data=None, inEditMode=False, isDirty=False)
@@ -113,12 +118,13 @@ def find_added_tags(modified_note, original_note):
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_NOTE_ATTACHMENT_STORE, "data", allow_duplicate=True),
     Output(ID_ALERT_DANGER, "children", allow_duplicate=True),
     Output(ID_ALERT_DANGER, "is_open", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_SELECTED_NOTE_STORE, "data"),
-    State(ID_TAG_DATA_STORE, "data"),
+    State(ID_NOTE_ATTACHMENT_STORE, "data"),
     prevent_initial_call=True
 )
 def persist_note(click, notes, selected_note, all_tags):
@@ -162,7 +168,7 @@ def persist_note(click, notes, selected_note, all_tags):
             dmc.Title("Something went wrong!", order=6),
             dmc.Text("Could not save Note."),
             dmc.Text(f"Exited with Status Code: {response_code} | {responses[response_code]}", color="dimmed")]
-        return dash.no_update, dash.no_update, dash.no_update, True, notification
+        return dash.no_update, dash.no_update, dash.no_update, dict(add=[], delete=[]), True, notification
 
     # Persists deleted tag of a note
     if tags_to_delete:
@@ -174,6 +180,25 @@ def persist_note(click, notes, selected_note, all_tags):
             add_tag_by_note_id(returned_note_id, t, auth_cookie)
 
 
-    notes["entries"] = []
-    return False, notes, dict(data=None, inEditMode=False, isDirty=False),dash.no_update, dash.no_update
+    files_to_delete = attachments.get("delete", [])
+    files_to_add    = attachments.get("add", [])
+
+
+    for file_id in files_to_delete:
+        res = delete_file(file_id, auth_cookie)
+        print("file deleted from note: ", res.status_code)
+
+    for file in files_to_add:
+        res = add_file_to_note(
+            note_id=returned_note_id if not found else selected_note["data"]["id"], 
+            object_name=file["object_name"], 
+            name=file["name"], 
+            content_type=file["type"],
+            auth_cookie=auth_cookie
+        )
+        print("file added to note: ", res.status_code)
+
+
+    notes["entries"] = [] # refresh note store
+    return False, notes, dict(data=None, inEditMode=False, isDirty=False), dict(add=[], delete=[]), dash.no_update, dash.no_update
 
