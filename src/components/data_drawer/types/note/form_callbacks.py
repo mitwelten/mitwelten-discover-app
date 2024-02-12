@@ -12,6 +12,8 @@ from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
 
+def load_callbacks():
+    return
 
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
