@@ -118,6 +118,7 @@ def find_selected_note(selected_marker, notes):
     if selected_marker["type"] == "Note":
         for note in notes["entries"]:
             if note["id"] == selected_marker["data"]["id"]:
+                print("found note in selected marker store")
                 return dict(data=selected_marker["data"], inEditMode=False, isDirty=False)
 
         return dict(data=selected_marker["data"], inEditMode=True, isDirty=False)  # new created note

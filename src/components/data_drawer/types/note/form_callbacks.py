@@ -1,12 +1,14 @@
 from datetime import datetime
 from http.client import responses
 
+from pprint import pprint
 import dash
 import flask
 from dash import Output, Input, State
 from dash.exceptions import PreventUpdate
 
 import dash_mantine_components as dmc
+from src.api.api_files import add_file_to_note, delete_file
 from src.api.api_note import create_note, update_note, delete_tag_by_note_id, add_tag_by_note_id
 from src.config.id_config import *
 from src.main import app
@@ -22,6 +24,7 @@ def load_callbacks():
     prevent_initial_call=True
 )
 def activate_edit_mode(edit_click, selected_note):
+    print("activate_edit_mode")
     """
     A click on the `Edit` button replaces the detail view by a form to edit note properties.
     :param edit_click: The edit button click-event of the note detail view.
@@ -129,7 +132,7 @@ def find_added_tags(modified_note, original_note):
     State(ID_NOTE_ATTACHMENT_STORE, "data"),
     prevent_initial_call=True
 )
-def persist_note(click, notes, selected_note, all_tags):
+def persist_note(click, notes, selected_note, attachments):
     """
     Insert an edited note into note store by clicking on the save button.
     The selected note will be cleared after a successful saving.
@@ -140,11 +143,11 @@ def persist_note(click, notes, selected_note, all_tags):
     modified_note = Note(selected_note["data"])
     modified_note.date = datetime.now().isoformat()
 
-    tags_to_delete = []
-    tags_to_add    = []
+    tags_to_delete  = []
+    tags_to_add     = []
 
     found = False
-    response_code = 400
+    response_code = 400 # TODO: find another way to handle this
     returned_note_id = None
 
     for note in notes["entries"]:
