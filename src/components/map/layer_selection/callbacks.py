@@ -44,8 +44,8 @@ def handle_map_update(_):
     Input({'role': MAP_TYPES[0], 'index': ALL, 'place': ALL}, 'n_clicks'),
     prevent_initial_call=True
 )
-def handle_map_update(clicks):
-    clicks = safe_reduce(lambda x, y: x + y, clicks)
+def handle_map_update_0(clicks):
+    clicks = safe_reduce(lambda x, y: x + y, clicks, 0)
     if clicks is None or clicks == 0:
         return dash.no_update
 
@@ -57,8 +57,8 @@ def handle_map_update(clicks):
     Input({'role': MAP_TYPES[1], 'index': ALL, 'place': ALL}, 'n_clicks'),
     prevent_initial_call=True
 )
-def handle_map_update(clicks):
-    clicks = safe_reduce(lambda x, y: x + y, clicks)
+def handle_map_update_1(clicks):
+    clicks = safe_reduce(lambda x, y: x + y, clicks, 0)
     if clicks is None or clicks == 0:
         return dash.no_update
 
