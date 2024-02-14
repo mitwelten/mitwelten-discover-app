@@ -28,9 +28,9 @@ def add_file_to_note(note_id, object_name, name, content_type, auth_cookie):
     return res
 
 
-def add_file(file, name: str, auth_cookie):
+def add_file(file, name: str, content_type, auth_cookie):
     url = construct_url(f"files/discover")
-    payload = {"file" : (name, file)}
+    payload = {"file" : (name, file, content_type)}
     res = requests.post(
         url=url,
         files=payload,
