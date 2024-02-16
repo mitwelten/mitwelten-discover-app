@@ -23,10 +23,9 @@ stores = [
     dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),
-    dcc.Store(id=ID_SELECTED_NOTE_STORE,      data=dict(data=None, inEditMode=False, isDirty=False)),
+    dcc.Store(id=ID_SELECTED_NOTE_STORE,      data=dict(data=None)),
     dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
     dcc.Store(id=ID_NOTE_REFRESH_STORE,       data=dict(state=False)),
-    dcc.Store(id=ID_NOTE_ATTACHMENT_STORE,    data=dict(add=[], delete=[]))
 ]
 
 @app.callback(
@@ -37,7 +36,7 @@ stores = [
 def load_notes_from_backend(data, _):
     print("update note store")
     outdated = True # TODO: implement
-    if outdated:
+    if outdated or data is None:
         cookies = flask.request.cookies
         data["entries"] = init_notes(cookies["auth"] if cookies else None)
         return data
@@ -64,6 +63,7 @@ def load_env_from_backend(data):
 def load_tags_from_backend(data):
     outdated = False  # TODO: implement data update
     if data is None or outdated:
+        print("init tags")
         return init_tags()
     raise PreventUpdate
 
