@@ -9,6 +9,7 @@ from dash import (
 )
 from dash.exceptions import PreventUpdate
 import dash_mantine_components as dmc
+from dash_extensions.javascript import assign
 
 from src.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_popup
 from src.config.id_config import *
@@ -149,28 +150,26 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
     if "Note" not in active_checkboxes:
         return []
 
+    print("draw marker")
     marker_icon           = dict(iconUrl=get_source_props("Note")["marker"], iconAnchor=[15, 6],  iconSize=[30, 30])
     marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg",     iconAnchor=[61, 50], iconSize=[120, 120])
 
-    all_notes = all_notes.get("entries") if all_notes.get("entries") is not None else []
+    all_notes = all_notes.get("entries", [])
+    selected_note_id = None
+
     if selected_note["data"] is not None:
-        found = False
         for note in all_notes:
             if note["id"] == selected_note["data"]["id"]:
-                found = True
-                note["inEditMode"] = selected_note["inEditMode"]
+                selected_note_id = note["id"]
                 note["location"]["lat"] = selected_note["data"]["location"]["lat"]
                 note["location"]["lon"] = selected_note["data"]["location"]["lon"]
 
-        if not found:
-            selected_note = selected_note["data"]
-            selected_note["inEditMode"] = True
-            all_notes.append(selected_note)
-
     markers = []
+    dragend_clbk = dict(dragend=assign('function(e, ctx){ctx.setProps({latlng: {lat: `${e.target.getLatLng()["lat"], lng:`${e.target.getLatLng()["lng"]`})}')) 
+
     for note in all_notes:
         current_note = Note(note)
-        in_edit_mode = note.get("inEditMode") is not None and note["inEditMode"]
+        in_edit_mode = current_note.id == selected_note_id
         markers.append(
             dl.Marker(
                 position=[current_note.lat, current_note.lon],
@@ -187,6 +186,7 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
                     ),
                 ],
                 icon=marker_icon_draggable if in_edit_mode else marker_icon,
+                eventHandlers=dragend_clbk if in_edit_mode else {},
                 draggable=True if in_edit_mode else False,
                 id={"role": "Note", "id": current_note.id, "label": "Node"},
             )
@@ -206,6 +206,7 @@ clientside_callback(
 @app.callback(
     Output(ID_MAP, "viewport", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
+    Input(ID_CHART_DRAWER, "size"),
     State(ID_BROWSER_PROPERTIES_STORE, "data"),
     State(ID_SETTINGS_DRAWER, "opened"),
     State(ID_SETTINGS_DRAWER, "size"),
@@ -217,6 +218,7 @@ clientside_callback(
 )
 def ensure_marker_visibility_in_viewport(
     marker,
+    _,
     browser_props,
     drawer_state,
     settings_drawer_size,
