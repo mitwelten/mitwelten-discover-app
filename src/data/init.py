@@ -8,7 +8,11 @@ from src.model.tag import Tag
 
 
 def init_deployment_data():
-    all_deployments = [Deployment(d) for d in get_deployments()]
+    all_deployments_json = get_deployments()
+    if all_deployments_json is None:
+        all_deployments_json = []
+
+    all_deployments = [Deployment(d) for d in all_deployments_json]
     all_types       = sorted(set(map(lambda d: d.node_type, all_deployments)))
 
     # {type: deployment}
@@ -23,6 +27,8 @@ def init_deployment_data():
 
 def init_environment_data():
     all_environments_json = get_environment_data()
+    if all_environments_json is None:
+        return []
     # standardize dictionary properties
     all_environments = [Environment(env).to_dict() for env in all_environments_json]
     environment_legend = get_environment_legend()
@@ -38,6 +44,8 @@ def init_notes(auth_cookie=None):
 
 def init_tags():
     all_tags = get_tags()
+    if all_tags is None:
+        return []
     # standardize dictionary properties
     all_tags = [Tag(t).to_dict() for t in all_tags]
     return all_tags
