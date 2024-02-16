@@ -1,14 +1,15 @@
 import dash_mantine_components as dmc
 from dash import Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
+from src.components.data_drawer.types.note.detail_view import note_detail_view
+from src.model.note import Note
 
 from src.components.data_drawer.types.audio import create_audio_chart
 from src.components.data_drawer.types.env import create_env_chart
 from src.components.data_drawer.types.environment_point import create_environment_point_chart
-from src.components.data_drawer.types.note.note import create_note_content
 from src.components.data_drawer.types.pax import create_pax_chart
 from src.components.data_drawer.types.pollinator import create_pollinator_chart
-from src.config.app_config import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
+from src.config.app_config import CHART_DRAWER_HEIGHT, SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from src.config.id_config import *
 from src.main import app
 from src.util.util import get_identification_label
@@ -17,7 +18,7 @@ chart_drawer = dmc.Drawer(
     opened=False,
     id=ID_CHART_DRAWER,
     zIndex=90000,
-    size=SETTINGS_DRAWER_WIDTH,
+    size=400,
     closeOnClickOutside=True,
     closeOnEscape=True,
     withOverlay=False,
@@ -73,22 +74,24 @@ def open_drawer(selected_marker):
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
     Output(ID_DATA_DRAWER_TITLE, "children"),
+    Output(ID_CHART_DRAWER, "size"),
     Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
     Output(ID_ALERT_INFO, "children", allow_duplicate=True),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
-    Input({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
     State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
-def update_drawer_content_from_marker_store(selected_marker, note_data, environment_data, light_mode):
+def update_drawer_content_from_marker_store(selected_marker, notes, environment_data, light_mode):
     if selected_marker is None:
         raise PreventUpdate
 
     marker_data = selected_marker.get("data")
     node_label = get_identification_label(marker_data)
     drawer_title = f"{selected_marker['type']} - {node_label}"
+    drawer_content = html.Div("Somthing went wrong, not device found!")
     match selected_marker["type"]:
         case "Audio Logger":
             drawer_content = create_audio_chart(selected_marker["data"]["id"], light_mode)
@@ -101,9 +104,10 @@ def update_drawer_content_from_marker_store(selected_marker, note_data, environm
         case "Environment Data Point":
             drawer_content = create_environment_point_chart(environment_data["legend"], selected_marker["data"]["id"])
         case "Note":
-            selected_note = find_selected_note(selected_marker, note_data)
-            # No content is set here, content will be updated by the `update_content_from_store`
-            return no_update, "", no_update, no_update, selected_note
+            for note in notes["entries"]:
+                if note["id"] == selected_marker["data"]["id"]:
+                    drawer_title = ""
+                    drawer_content = note_detail_view(Note(note))
         case _:
             notification = [
                 dmc.Title(f"Deployment: {selected_marker['type']}", order=6),
@@ -111,17 +115,9 @@ def update_drawer_content_from_marker_store(selected_marker, note_data, environm
             ]
             return no_update, no_update, True, notification, no_update
 
-    return drawer_content, drawer_title, no_update, no_update, no_update
+    return drawer_content, drawer_title, CHART_DRAWER_HEIGHT, no_update, no_update, no_update
 
 
-def find_selected_note(selected_marker, notes):
-    if selected_marker["type"] == "Note":
-        for note in notes["entries"]:
-            if note["id"] == selected_marker["data"]["id"]:
-                print("found note in selected marker store")
-                return dict(data=selected_marker["data"], inEditMode=False, isDirty=False)
-
-        return dict(data=selected_marker["data"], inEditMode=True, isDirty=False)  # new created note
 
 # @app.callback(
 #     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
@@ -143,22 +139,28 @@ def find_selected_note(selected_marker, notes):
 #     raise PreventUpdate
 
 
-@app.callback(
-    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
-    Input(ID_SELECTED_NOTE_STORE, "data"),
-    State(ID_TAG_DATA_STORE, "data"),
-    prevent_initial_call=True
-)
-def update_content_from_store(selected_note, all_tags):
-    if selected_note is None or selected_note["data"] is None:
-        raise PreventUpdate
-
-    return create_note_content(selected_note, all_tags)
-
+#@app.callback(
+#    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
+#    Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
+#    Input(ID_SELECTED_NOTE_STORE, "data"),
+#    State(ID_TAG_DATA_STORE, "data"),
+#    prevent_initial_call=True
+#)
+#def update_content_from_store(selected_note, all_tags):
+#    if selected_note is None or selected_note["data"] is None:
+#        raise PreventUpdate
+#
+#    drawer_size = 700 if selected_note["inEditMode"] else 500
+#
+#    return create_note_content(selected_note, all_tags), drawer_size
+#
 @app.callback(
     Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
     Input(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
 def activate_preventing_marker_clicks(selected_note):
-    return dict(state=selected_note["inEditMode"])
+    if selected_note["data"] is None:
+        return dict(state=False)
+    return dict(state=True)
+
