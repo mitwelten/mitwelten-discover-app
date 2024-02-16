@@ -19,7 +19,6 @@ from dash.exceptions import PreventUpdate
 from src.components.alert.alert import alert_danger, alert_warning, alert_info
 from src.components.button.buttons import control_buttons
 from src.config.id_config import (
-    ID_NOTE_ATTACHMENT_STORE,
     ID_STAY_LOGGED_IN_INTERVAL,
     ID_LOGO_CONTAINER,
     ID_CONFIRM_UNSAVED_CHANGES_DIALOG,
@@ -149,6 +148,7 @@ def map_click_handle(click_data, zoom):
 
 def handle_marker_click(data_source, marker_click, prevent_event, store, clickdata):
     if prevent_event["state"]:
+        print("prevent from marker click")
         raise PreventUpdate
 
     click_sum = safe_reduce(lambda x, y: x + y, marker_click, 0)
@@ -185,23 +185,21 @@ def map_click(_, selected_note):
     if selected_note["data"] is None:
         return False, no_update, no_update
 
-    if selected_note["isDirty"]:
-        return no_update, True, no_update
+    #if selected_note["isDirty"]:
+    #    return no_update, True, no_update
 
-    return False, no_update, dict(data=None, inEditMode=False, isDirty=False)
+    return False, no_update, dict(data=None)
 
 
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_NOTE_ATTACHMENT_STORE, "data", allow_duplicate=True),
     Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
     prevent_initial_call=True,
 )
 def deactivate_edit_mode(cancel_click):
     if cancel_click is None or cancel_click == 0:
         raise PreventUpdate
-    return dict(data=None, inEditMode=False), False, dict(add=[], delete=[])
-    # TODO: delete uploaded and unassigned files
+    return dict(data=None), False  # TODO: delete uploaded and unassigned files
 
 
