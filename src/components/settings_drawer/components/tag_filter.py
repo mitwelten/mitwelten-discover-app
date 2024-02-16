@@ -98,7 +98,7 @@ def update_fs_tags_from_store(all_tags, active_tag):
     predicate = re.compile("FS\d")
 
     fs_tags   = list(sorted(([tag["name"] for tag in all_tags if predicate.match(tag["name"])])))
-    value     = active_tag if active_tag is not None else fs_tags[0]
+    value     = active_tag if active_tag is not None else fs_tags[-1]
 
     tags      = [t["name"] for t in all_tags if t["name"] not in fs_tags]
     chips     = [dmc.Chip(x, value=x, size="xs", styles={"iconWrapper": {"className": ""}}) for x in sorted(tags)],
