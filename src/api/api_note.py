@@ -32,6 +32,15 @@ def update_note(note: Note, auth_cookie):
     print(f"Update Note: id={note['id']}, status={res.status_code}")
     return res
 
+def get_note_by_id(id: str, auth_cookie):
+    url = construct_url(f"note/{id}")
+    res = requests.patch(
+        url=url,
+        headers={"Authorization": f"Bearer {auth_cookie}"},
+    )
+    print(f"Get Note by id: id={id}, status={res.status_code}")
+    return res
+
 
 def create_note(note: Note, auth_cookie):
     url = construct_url("notes")
