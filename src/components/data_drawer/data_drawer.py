@@ -113,47 +113,11 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
                 dmc.Title(f"Deployment: {selected_marker['type']}", order=6),
                 dmc.Text("No further data available!"),
             ]
-            return no_update, no_update, True, notification, no_update
+            return no_update, no_update, no_update, True, notification, no_update
 
     return drawer_content, drawer_title, CHART_DRAWER_HEIGHT, no_update, no_update, no_update
 
 
-
-# @app.callback(
-#     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-#     Input(ID_SELECTED_MARKER_STORE, "data"),
-#     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-#     prevent_initial_call=True
-# )
-# def add_selected_note_into_store(selected_marker, all_notes):
-#     if selected_marker is None:
-#         raise PreventUpdate
-#
-#     if selected_marker["type"] == "Note":
-#         for note in all_notes["entries"]:
-#             if note["id"] == selected_marker["data"]["id"]:
-#                 return dict(data=selected_marker["data"], inEditMode=False, isDirty=False)
-#
-#         return dict(data=selected_marker["data"], inEditMode=True, isDirty=False)  # new created note
-#
-#     raise PreventUpdate
-
-
-#@app.callback(
-#    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
-#    Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
-#    Input(ID_SELECTED_NOTE_STORE, "data"),
-#    State(ID_TAG_DATA_STORE, "data"),
-#    prevent_initial_call=True
-#)
-#def update_content_from_store(selected_note, all_tags):
-#    if selected_note is None or selected_note["data"] is None:
-#        raise PreventUpdate
-#
-#    drawer_size = 700 if selected_note["inEditMode"] else 500
-#
-#    return create_note_content(selected_note, all_tags), drawer_size
-#
 @app.callback(
     Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
     Input(ID_SELECTED_NOTE_STORE, "data"),
