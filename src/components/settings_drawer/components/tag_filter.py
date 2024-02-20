@@ -1,5 +1,6 @@
 import re
 
+from pprint import pprint
 import dash
 import dash_mantine_components as dmc
 from dash import html, Input, Output, State
@@ -97,11 +98,12 @@ def update_fs_tags_from_store(all_tags, active_tag):
         raise PreventUpdate
     predicate = re.compile("FS\d")
 
-    fs_tags   = list(sorted(([tag["name"] for tag in all_tags if predicate.match(tag["name"])])))
-    value     = active_tag if active_tag is not None else fs_tags[-1]
+    fs_tags = list(sorted(([tag["name"] for tag in all_tags if predicate.match(tag["name"])])))
+    value   = active_tag if active_tag is not None else fs_tags[-1]
+    fs_tags.append("ANY")
 
-    tags      = [t["name"] for t in all_tags if t["name"] not in fs_tags]
-    chips     = [dmc.Chip(x, value=x, size="xs", styles={"iconWrapper": {"className": ""}}) for x in sorted(tags)],
+    tags    = [t["name"] for t in all_tags if t["name"] not in fs_tags]
+    chips   = [dmc.Chip(tag, value=tag, size="xs", styles={"iconWrapper": {"className": ""}}) for tag in sorted(tags)],
     return fs_tags, value, *chips
 
 

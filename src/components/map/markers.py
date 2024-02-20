@@ -62,7 +62,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
     # field study tag filter
     if fs_tag:
         for key in depl_to_show.keys():
-            depl_fs_filtered[key] = list(filter(lambda depl: fs_tag in depl.tags, depl_to_show[key]))
+            depl_fs_filtered[key] = list(filter(lambda depl: fs_tag in depl.tags or fs_tag == "ANY", depl_to_show[key]))
 
     depl_tags_filtered = {}
     if tags:
