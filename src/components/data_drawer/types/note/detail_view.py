@@ -121,6 +121,7 @@ def note_details(note: Note):
                 ),
                 span=12
             ),
+            dmc.Col(dmc.Divider(size="xs")),
         ])
     ]
 
