@@ -173,6 +173,7 @@ def create_note_on_map(
     res = create_note(new_note, auth_cookie)
     new_note = json.loads(res.content)
     new_note["id"] = new_note["note_id"]
+    new_note["author"] = user.full_name
     notes = dict(entires=[])
 
     return notes, no_update, no_update, dict(data=new_note), note_form_view(Note(new_note), all_tags), 650, True
