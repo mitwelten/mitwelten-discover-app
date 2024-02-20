@@ -79,7 +79,7 @@ def from_content(note: Note, all_tags):
             dmc.Col(dmc.MultiSelect(
                 id=ID_NOTE_TAG_SELECT,
                 label="Select Tags",
-                data=[t["name"] for t in all_tags],
+                data=sorted([t["name"] for t in all_tags]),
                 value=note.tags,
                 searchable=True,
                 nothingFound="No Tags found",
