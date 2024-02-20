@@ -125,7 +125,11 @@ def from_content(note: Note, all_tags):
 
         dcc.Upload(
             id=ID_IMAGE_UPLOAD,
-            children="Click or Drag and Drop",
+            children=[
+                "Drag and Drop or ", 
+                html.A("Select files", style={"fontWeight": "bold"})
+            ] ,
+            accept="image/png, image/jpeg, image/gif, application/pdf, text/plain",
             style={
                 'width': '100%',
                 'height': '60px',
@@ -134,6 +138,7 @@ def from_content(note: Note, all_tags):
                 'borderStyle': 'dashed',
                 'borderRadius': '5px',
                 'textAlign': 'center',
+                'cursor': 'pointer',
             },
             multiple=True
         ),
