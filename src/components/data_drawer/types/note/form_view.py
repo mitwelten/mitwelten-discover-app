@@ -129,7 +129,7 @@ def from_content(note: Note, all_tags):
                 "Drag and Drop or ", 
                 html.A("Select files", style={"fontWeight": "bold"})
             ] ,
-            accept="image/png, image/jpeg, image/gif, application/pdf, text/plain",
+            accept="image/png, image/jpeg, image/gif, application/pdf, text/plain, audio/mpeg",
             style={
                 'width': '100%',
                 'height': '60px',
