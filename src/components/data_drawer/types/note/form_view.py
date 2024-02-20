@@ -23,6 +23,7 @@ from configuration import PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
+from src.util.util import pretty_date
 
 
 
@@ -51,7 +52,10 @@ def note_form_view(note: Note, all_tags):
 
     return dmc.Container([
         dmc.Grid([
-            dmc.Col(dmc.Title("Edit / Create Note"),span="content"),
+            dmc.Col([
+                dmc.Title("Edit / Create Note"),
+                dmc.Text(note.author + " • " + pretty_date(note.date), color="dimmed", size="sm")
+            ],span="content"),
             dmc.Col(dmc.Group(controls, spacing="sm"),
                 span="content"
             ),
