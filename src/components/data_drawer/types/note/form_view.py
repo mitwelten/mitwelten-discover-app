@@ -200,7 +200,6 @@ def update_location_modal_state(click):
 def update_note_store_by_form(title, description, is_public, location_click, tags, lat, lon, selected_note, all_notes):
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
-    print("updaste selected note data")
 
     # TODO: use switch case
     selected_note["data"]["title"]           = title

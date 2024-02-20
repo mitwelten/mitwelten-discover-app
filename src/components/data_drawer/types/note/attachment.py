@@ -79,10 +79,6 @@ def attachment_badge(file: File, auth_cookie, editable = False):
     name, ext = file.object_name.split('.')
     thumbnail = f"{name}_thumbnail.{ext}"
     is_image = file.type in ["image/png", "image/jpg", "image/jpeg",  "image/gif"]
-    print("draw mime type icon")
-    print("file.type", file.type)
-    print(f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg")
-
 
     return html.Div(
         children=[

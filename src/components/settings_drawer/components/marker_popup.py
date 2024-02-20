@@ -5,7 +5,7 @@ from src.model.note import Note
 from src.util.util import pretty_date
 
 
-def header(source_id, source_type, label, color):
+def header(source_type, label, color):
     return [dmc.Group([
         dmc.Group([
             html.Div(
@@ -24,16 +24,7 @@ def header(source_id, source_type, label, color):
         dmc.Space(h=10),
         dmc.Divider(),
         dmc.Space(h=10),
-        dmc.Group([
-            dmc.Text("ID", size="xs"),
-            dmc.Text(
-                source_id,
-                size="xs",
-                color="dimmed",
-            ),
-        ],
-            position="apart"
-        )]
+    ]
 
 
 def time_section(fst_label, fst_time, snd_label=None, snd_time=None):
@@ -61,7 +52,7 @@ def device_popup(deployment, color):
     start = pretty_date(deployment.period_start)
     end = pretty_date(deployment.period_end) if deployment.period_end else "-"
     return dmc.Container([
-        *header(deployment.id, deployment.node_type, deployment.node_label, color),
+        *header(deployment.node_type, deployment.node_label, color),
         *time_section("Start", start, "End", end),
         dmc.Space(h=10),
         dmc.Group(
@@ -78,7 +69,7 @@ def environment_popup(environment):
     created_at = pretty_date(environment.created_at)
     updated_at = pretty_date(environment.updated_at) if environment.updated_at else "-"
     return dmc.Container([
-        *header(environment.id, "Environment Data Point", "", "#abde00"),
+        *header("Environment Data Point", "", "#946000"),
         *time_section("Created", created_at, "Updated", updated_at),
     ],
         fluid=True,
@@ -89,8 +80,8 @@ def environment_popup(environment):
 def note_popup(note: Note):
     date = pretty_date(note.date) if note.date else "-"
     return dmc.Container([
-        *header(note.id, "Note", note.node_label, "#ffd800"),
-        *time_section("Date", date),
+        *header(note.title, "", "#FFd800"),
+        *time_section("Created", date),
         dmc.Space(h=10),
         dmc.Group(
             children=[dmc.Badge(t, size="sm", variant="outline") for t in note.tags],

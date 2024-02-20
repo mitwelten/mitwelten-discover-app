@@ -67,11 +67,11 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
     depl_tags_filtered = {}
     if tags:
         for key in depl_to_show.keys():
-            depl_tags_filtered[key] = list(filter(lambda depl: any(item in depl.tags for item in tags), depl_to_show[key]))
+            depl_tags_filtered[key] = list(filter(lambda depl: any(tag in depl.tags for tag in tags), depl_to_show[key]))
 
     for key in depl_to_show.keys():
-        fs_tags = depl_fs_filtered.get(key) if depl_fs_filtered.get(key) is not None else []
-        tags = depl_tags_filtered.get(key) if depl_tags_filtered.get(key) is not None else []
+        fs_tags = depl_fs_filtered.get(key, [])
+        tags = depl_tags_filtered.get(key, []) 
         depl_to_show[key] = fs_tags + tags
 
     # time filter
@@ -150,7 +150,6 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
     if "Note" not in active_checkboxes:
         return []
 
-    print("draw marker")
     marker_icon           = dict(iconUrl=get_source_props("Note")["marker"], iconAnchor=[15, 6],  iconSize=[30, 30])
     marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg",     iconAnchor=[61, 50], iconSize=[120, 120])
 
