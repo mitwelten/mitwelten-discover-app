@@ -17,6 +17,7 @@ from dash import (
 from dash.exceptions import PreventUpdate
 
 from src.components.alert.alert import alert_danger, alert_warning, alert_info
+from src.model.note import Note
 from src.components.button.buttons import control_buttons
 from src.config.id_config import (
     ID_STAY_LOGGED_IN_INTERVAL,
@@ -148,7 +149,6 @@ def map_click_handle(click_data, zoom):
 
 def handle_marker_click(data_source, marker_click, prevent_event, store, clickdata):
     if prevent_event["state"]:
-        print("prevent from marker click")
         raise PreventUpdate
 
     click_sum = safe_reduce(lambda x, y: x + y, marker_click, 0)
@@ -179,14 +179,15 @@ for source in SOURCE_PROPS.keys():
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_MAP, "clickData"),
     State(ID_SELECTED_NOTE_STORE, "data"),
+    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True,
 )
-def map_click(_, selected_note):
-    if selected_note["data"] is None:
-        return False, no_update, no_update
-
-    #if selected_note["isDirty"]:
-    #    return no_update, True, no_update
+def map_click(_, selected_note, notes):
+    if selected_note["data"] is not None:
+        for note in notes["entries"]:
+            if note["id"] == selected_note["data"]["id"]:
+                if Note(note) != Note(selected_note["data"]):
+                    return no_update, True, no_update
 
     return False, no_update, dict(data=None)
 

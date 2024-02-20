@@ -352,14 +352,14 @@ def persist_note(click, notes, selected_note):
     tags_to_delete  = []
     tags_to_add     = []
 
-    found = False
+    #found = False
     response_code = 400 # TODO: find another way to handle this
     returned_note_id = None
 
     for note in notes["entries"]:
         if note["id"] == modified_note.id:
             #  Note already exists
-            found = True
+            #found = True
             note = Note(note)
             tags_to_delete = find_deleted_tags(modified_note, note)
             tags_to_add = find_added_tags(modified_note, note)
@@ -367,12 +367,12 @@ def persist_note(click, notes, selected_note):
             response_code = res.status_code
             returned_note_id = res.json().get("note_id", -1)
 
-    if not found:
-        # new created note
-        res = create_note(modified_note, auth_cookie)
-        response_code = res.status_code
-        returned_note_id = res.json().get("note_id", -1)
-        tags_to_add = modified_note.tags
+    #if not found:
+    #    # new created note
+    #    res = create_note(modified_note, auth_cookie)
+    #    response_code = res.status_code
+    #    returned_note_id = res.json().get("note_id", -1)
+    #    tags_to_add = modified_note.tags
 
     if response_code != 200 or returned_note_id == -1:
         notification = [
@@ -408,13 +408,10 @@ def persist_note(click, notes, selected_note):
 )
 def cancel_click(cancel_click, notes, selected_note):
 
-    print("map_click callback")
     if ctx.triggered_id == ID_NOTE_FORM_CANCEL_BUTTON:
         if cancel_click is None or cancel_click == 0:
             raise PreventUpdate
 
-    print("map_click")
-
     if selected_note["data"] is None:
         return False, dash.no_update, dash.no_update
 
@@ -425,28 +422,3 @@ def cancel_click(cancel_click, notes, selected_note):
 
     return False, dash.no_update, dict(data=None)
 
-
-@app.callback(
-    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    Input(ID_CHART_DRAWER, "opened"),
-    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
-    prevent_initial_call=True
-)
-def map_click(drawer_state, notes, selected_note):
-
-    if ctx.triggered_id == ID_CHART_DRAWER:
-        if drawer_state:
-            raise PreventUpdate #  drawer state is opening - no action required
-
-    if selected_note["data"] is None:
-        return False, dash.no_update, dash.no_update
-
-    for note in notes["entries"]:
-        if note["id"] == selected_note["data"]["id"]:
-            if Note(note) != Note(selected_note["data"]):
-                return dash.no_update, True, dash.no_update
-
-    return False, dash.no_update, dict(data=None)
