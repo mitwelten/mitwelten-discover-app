@@ -1,5 +1,4 @@
-from hashlib import new
-from types import new_class
+from logging import error
 import dash
 
 import base64
@@ -8,7 +7,7 @@ import flask
 from datetime import datetime
 from pprint import pprint
 import dash_mantine_components as dmc
-from dash import Output, Input, ALL, State, dcc, ctx, html, MATCH, no_update
+from dash import Output, Input, ALL, State, dcc, ctx, html, no_update
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 from src.model.file import File
@@ -18,12 +17,13 @@ from src.components.data_drawer.types.note.attachment import attachment_area
 from src.util.helper_functions import safe_reduce
 from src.api.api_files import add_file, add_file_to_note, delete_file
 from src.api.api_files import add_file_to_note, delete_file
-from src.api.api_note import create_note, update_note, delete_tag_by_note_id, add_tag_by_note_id
+from src.api.api_note import update_note, delete_tag_by_note_id, add_tag_by_note_id
 from configuration import PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
 from src.util.util import pretty_date
+from src.error.notifications import notification, response_notification
 
 
 
@@ -334,8 +334,8 @@ def find_added_tags(modified_note, original_note):
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_ALERT_DANGER, "children", allow_duplicate=True),
     Output(ID_ALERT_DANGER, "is_open", allow_duplicate=True),
+    Output(ID_ALERT_DANGER, "children", allow_duplicate=True),
     Output(ID_TAG_DATA_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
@@ -346,50 +346,48 @@ def persist_note(click, notes, selected_note):
     if selected_note is None or click is None or click == 0:
         raise PreventUpdate
     auth_cookie = flask.request.cookies.get("auth")
-    modified_note = Note(selected_note["data"])
-    modified_note.date = datetime.now().isoformat()
 
-    tags_to_delete  = []
-    tags_to_add     = []
+    note      = Note(selected_note["data"])
+    note.date = datetime.now().isoformat()
 
-    #found = False
-    response_code = 400 # TODO: find another way to handle this
-    returned_note_id = None
+    original_note = None
+    def error_return_values(alert):
+        return [
+            no_update, 
+            no_update, 
+            no_update, 
+            True, 
+            alert,
+            no_update
+        ]
 
-    for note in notes["entries"]:
-        if note["id"] == modified_note.id:
-            #  Note already exists
-            #found = True
-            note = Note(note)
-            tags_to_delete = find_deleted_tags(modified_note, note)
-            tags_to_add = find_added_tags(modified_note, note)
-            res = update_note(modified_note, auth_cookie)
-            response_code = res.status_code
-            returned_note_id = res.json().get("note_id", -1)
+    for n in notes["entries"]:
+        if n["id"] == note.id:
+            original_note = Note(n)
 
-    #if not found:
-    #    # new created note
-    #    res = create_note(modified_note, auth_cookie)
-    #    response_code = res.status_code
-    #    returned_note_id = res.json().get("note_id", -1)
-    #    tags_to_add = modified_note.tags
+    if original_note is None:
+        return error_return_values(notification(f"Note with id {note.id} not found, could not save note!"))
+ 
+    res = update_note(note, auth_cookie)
+    if res.status_code != 200:
+        return error_return_values(response_notification(res.status_code, f"Could not save note with id {note.id}"))
 
-    if response_code != 200 or returned_note_id == -1:
-        notification = [
-            dmc.Title("Something went wrong!", order=6),
-            dmc.Text("Could not save Note."),
-            dmc.Text(f"Exited with Status Code: {response_code} | {responses[response_code]}", color="dimmed")]
-        return no_update, no_update, no_update, dict(add=[], delete=[]), True, notification
+    tags_to_delete = find_deleted_tags(note, original_note)
+    tags_to_add    = find_added_tags(note, original_note)
 
-    # TODO: handle error
     # Persists deleted tag of a note
     if tags_to_delete:
         for t in tags_to_delete:
-            delete_tag_by_note_id(returned_note_id, t, auth_cookie)
+            del_tag_res = delete_tag_by_note_id(note.id, t, auth_cookie)
+            if del_tag_res != 200:
+                return error_return_values(response_notification(del_tag_res, f"Could not delete tag {t} of note with id {note.id}!"))
+
     # Persists added tags to a note
     if tags_to_add:
         for t in tags_to_add:
-            add_tag_by_note_id(returned_note_id, t, auth_cookie)
+            add_tag_res = add_tag_by_note_id(note.id, t, auth_cookie)
+            if add_tag_res != 200:
+                return error_return_values(response_notification(add_tag_res, f"Could not delete tag {t} of note with id {note.id}!"))
 
 
     notes["entries"] = [] # refresh note store
