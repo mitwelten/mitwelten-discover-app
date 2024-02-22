@@ -22,14 +22,14 @@ def get_all_notes(auth_cookie = None):
 
 def update_note(note: Note, auth_cookie):
     url = construct_url(f"note/{note.id}")
-    note = note.to_dict()
-    note["note_id"] = note["id"]
+    note_dict = note.to_dict()
+    note_dict["note_id"] = note_dict["id"]
     res = requests.patch(
         url=url,
-        json=note,
+        json=note_dict,
         headers={"Authorization": f"Bearer {auth_cookie}"},
     )
-    print(f"Update Note: id={note['id']}, status={res.status_code}")
+    print(f"Update Note: id={note_dict['id']}, status={res.status_code}")
     return res
 
 def get_note_by_id(id: str, auth_cookie):
@@ -61,7 +61,6 @@ def delete_note(note_id, auth_cookie):
 
 
 def add_tag_by_note_id(note_id, tag:str, auth_cookie):
-    print(f"add_tag_by_note_id - ID: {note_id} - Tag: {tag}")
     url = construct_url(f"note/{note_id}/tag")
     response = requests.post(
         url=url,
