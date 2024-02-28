@@ -1,7 +1,5 @@
 import time
 from functools import partial
-import pprint
-
 
 import dash_mantine_components as dmc
 import dash_core_components as dcc
@@ -120,6 +118,7 @@ discover_app = dmc.MantineProvider(
 app.layout = discover_app
 
 
+
 @app.callback(
     Output(ID_STAY_LOGGED_IN_INTERVAL, "interval"),
     Output(ID_LOGIN_AVATAR_CONTAINER, "n_clicks"),
@@ -152,7 +151,7 @@ def handle_marker_click(data_source, marker_click, prevent_event, store, clickda
         raise PreventUpdate
 
     click_sum = safe_reduce(lambda x, y: x + y, marker_click, 0)
-    if click_sum == 0:
+    if click_sum == 0 or ctx.triggered_id is None:
         raise PreventUpdate
 
     for entry in store[0]["entries"]:
@@ -201,6 +200,5 @@ def map_click(_, selected_note, notes):
 def deactivate_edit_mode(cancel_click):
     if cancel_click is None or cancel_click == 0:
         raise PreventUpdate
-    return dict(data=None), False  # TODO: delete uploaded and unassigned files
-
+    return dict(data=None), False
 
