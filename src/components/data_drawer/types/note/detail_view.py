@@ -26,7 +26,12 @@ def text_to_html_list(text: str):
         for para in text_list:
             children.append(para)
             children.append(html.Br())
-    return children
+    return dmc.Spoiler(
+        children=children,
+        showLabel="Show more",
+        hideLabel="Hide",
+        maxHeight=100
+    )
 
 
 def list_item(text, icon):
@@ -62,8 +67,6 @@ icon_public= DashIconify(
 )
 
 
-
-
 def note_detail_view(note: Note):
     user = get_user_from_cookies()
     title    = note.title
@@ -78,52 +81,27 @@ def note_detail_view(note: Note):
     return dmc.Container([
         dmc.Grid([
             dmc.Col(dmc.Title(title),span="content"),
-            dmc.Col(dmc.Group(controls, spacing="sm"),
-                span="content"
-            ),
+            dmc.Col(dmc.Group(controls, spacing="sm"), span="content"),
         ],
             justify="space-between"
         ),
-        *note_details(note),
-        dmc.ScrollArea(
-            children=attachment_area(note.files, False),
-            h=150,
-            type="hover",
-            offsetScrollbars=True
-        )
-    ])
-
-
-def note_details(note: Note):
-    return [
         dmc.Grid([
-            dmc.Col(
-                html.Span([
-                    dmc.Text(
-                        f"{note.author if note.author is not None else 'unknown'} | {pretty_date(note.date) if note.date is not None else '-'} |",
-                        size="xs",
-                        color="dimmed",
-                        style={"display":"block"},
-                    ),
-                    dmc.Text(icon_public if note.public else icon_private),
-                ],
-                    style={"display":"inline-flex"}
-                ),
-                span="content"),
             dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span=12),
             dmc.Col(dmc.Divider(size="xs")),
-            dmc.Col(
+            dmc.Col([
                 dmc.ScrollArea(
-                    children=text_to_html_list(note.description),
+                    children=[
+                        text_to_html_list(note.description),
+                        dmc.Divider(size="xs"),
+                        *attachment_area(note.files, False),
+                    ],
                     type="hover",
-                    h=150,
-                    offsetScrollbars=True
+                    h=300,
+                    offsetScrollbars=True,
                 ),
-                span=12
-            ),
-            dmc.Col(dmc.Divider(size="xs")),
-        ])
-    ]
+            ]),
+        ]),
+    ])
 
 
 @app.callback(
