@@ -39,6 +39,7 @@ ID_PREVENT_MARKER_EVENT = "id-prevent-marker-event"
 ID_SELECTED_NOTE_STORE = "id-selected-note-store"
 ID_BROWSER_PROPERTIES_STORE = "id-browser-properties-store"
 ID_NOTE_REFRESH_STORE = "id-note-refresh-store"
+ID_BLOB_URLS_STORE = "id-blob-urls-store"
 
 # node types
 ID_ALL_ACTIVE_STORE = "id-active-all-checkbox"
@@ -104,3 +105,5 @@ ID_EDIT_LOCATION_MODAL = "id-edit-location-modal"
 ID_LOCATION_MODAL_BUTTON = "id-location-modal-button"
 ID_IMAGE_UPLOAD = "id-upload-image"
 ID_IMAGE_VIEW_MODAL = "id-image-view-modal"
+ID_IMAGE_CAROUSEL = "id-image-carousel"
+ID_DOWNLOAD = "id-download"
