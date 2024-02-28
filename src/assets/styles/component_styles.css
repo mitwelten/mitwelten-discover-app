@@ -106,3 +106,28 @@ input:invalid {
 .mantine-Drawer-header{
     margin: 0;
 }
+
+
+.attachment-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+  transition: 0.2s;
+}
+
+.attachment-card:hover {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+
+.image-modal {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Verhindert das Überlaufen des Bildes */
+    position: relative; /* Für die korrekte Positionierung des Bildes */
+}
+
