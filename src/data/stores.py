@@ -2,6 +2,7 @@ from functools import partial
 
 import flask
 from dash.exceptions import PreventUpdate
+from configuration import API_URL
 
 from src.components.data_drawer.types.pollinator import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
@@ -26,6 +27,7 @@ stores = [
     dcc.Store(id=ID_SELECTED_NOTE_STORE,      data=dict(data=None)),
     dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
     dcc.Store(id=ID_NOTE_REFRESH_STORE,       data=dict(state=False)),
+    dcc.Store(id=ID_BLOB_URLS_STORE,          data=dict(url=API_URL)),
 ]
 
 @app.callback(
