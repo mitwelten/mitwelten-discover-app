@@ -1,8 +1,10 @@
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 import flask
+from configuration import API_URL
+from pprint import pprint
 
-from dash import  html, dcc, Output, Input, State, ctx, ALL
+from dash import  html, dcc, Output, Input, State, ctx, ALL, MATCH, clientside_callback, ClientsideFunction
 from dash.exceptions import PreventUpdate
 from src.api.api_files import get_file
 from src.components.button.components.action_button import action_button
@@ -18,7 +20,7 @@ def attachment_area(files: list[File], editable = False):
     if user is None:
         return dmc.Text("Login to see attachments!", color="gray")
     auth_cookie = flask.request.cookies.get("auth")
-    files = list(sorted(files, key=lambda file: file.name))
+    files = list(sorted(files, key=lambda file: file.name.lower()))
 
     badges = [attachment_badge(file, auth_cookie, editable) for file in files]
 
@@ -38,9 +40,9 @@ def attachment_area(files: list[File], editable = False):
         return items 
 
     return [
-        dcc.Download(id="id-download"),
+        dcc.Download(id=ID_DOWNLOAD),
         dmc.Modal(
-            id="id-image-modal",
+            id=ID_IMAGE_VIEW_MODAL,
             size="lg",
             opened=False, 
             centered=True,
@@ -48,10 +50,19 @@ def attachment_area(files: list[File], editable = False):
             children=dmc.LoadingOverlay(
                 id="id-overlay",
                 children=html.Div(
-                    children=dbc.Carousel(id="id-image-carousel", items=get_items(), className="carousel-fade", variant="dark"),
+                    children=dbc.Carousel(
+                        id=ID_IMAGE_CAROUSEL, 
+                        items=get_items(), 
+                        className="carousel-fade", 
+                        variant="dark", 
+                    ),
                     style={"height": "200px", "width": "300px", "display": "flex", "alignItems": "flex-end"},
                 ),
-                loaderProps={"variant": "dots", "color": "orange", "size": "xl"},
+                loaderProps={
+                    "variant": "dots", 
+                    "color": "orange", 
+                    "size": "xl", 
+                },
             ),
         ),
         dmc.Space(h=20),
@@ -72,17 +83,17 @@ def attachment_badge(file: File, auth_cookie, editable = False):
     thumbnail = f"{name}_thumbnail.{ext}"
     is_image = file.type in ["image/png", "image/jpg", "image/jpeg",  "image/gif"]
 
+    path = file.object_name.replace('.', '%') # the dot makes trouble when passing to the clientside callback
+
     return html.Div(
         children=[
-            html.A(
-                href=get_file(file.object_name, file.type, auth_cookie) if not is_image else None,
-                target="_blank",
-                id={"element": "image" if is_image else "text", "file_id": file.id},
+            html.Div(
+                id={"element": "image" if is_image else "text", "file_id": file.id, "object_name": path, "type": file.type},
                 style={"cursor": "pointer",
                        "display": "flex",
                        "overflow": "hidden",
                        "alignItems": "center",
-                       "text-decoration": "none",
+                       "textDecoration": "none",
                        "color": "black",
                        },
                 children=[
@@ -92,25 +103,39 @@ def attachment_badge(file: File, auth_cookie, editable = False):
                         width=48,
                         height=48,
                     ),
-                    dmc.Text(file.name, style={"margin": "0 20px", "min-width": "150px"}), 
+                    dmc.Text(file.name, style={"margin": "0 20px"}), 
                 ]),
-            action_button(
-                button_id={"element": "delete_button", "file_id": file.id},
-                icon="material-symbols:delete",
-            ) if editable else {},
+            html.Div([
+                action_button(
+                    button_id={"element": "delete_button", "file_id": file.id},
+                    icon="material-symbols:delete",
+                ) if editable else {},
+                
+                action_button(
+                    button_id={"element": "download_button", "file_id": file.id, "object_name": file.object_name, "type": file.type}, 
+                    icon="material-symbols:download", 
+                    size="sm"
+                ),
+            ], style={"marginRight": "10px", "display": "flex", "alignItems": "center"}),
+        ],
+        className="attachment-card"
+    )
 
-            action_button(
-                button_id={"element": "download_button", "file_id": file.id, "object_name": file.object_name, "type": file.type}, 
-                icon="material-symbols:download", 
-                size="sm"
-            ),
-        ], style={'display': 'flex', 'alignItems': 'center', "width": "250px"})
+clientside_callback(
+    ClientsideFunction(
+        namespace="test", function_name="create_blob"
+    ),
+    Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
+    Input({"element": "text", "file_id": ALL, "object_name": ALL, "type": ALL}, "n_clicks"),
+    State(ID_BLOB_URLS_STORE, "data"),
+    prevent_initial_call = True
+)
 
 
 
 @app.callback(
-    Output("id-image-modal", "opened"),
-    Input({"element": "image", "file_id": ALL}, "n_clicks"),
+    Output(ID_IMAGE_VIEW_MODAL, "opened"),
+    Input({"element": "image", "file_id": ALL, "object_name": ALL, "type": ALL}, "n_clicks"),
     prevent_initial_call=True
 )
 def open_modal(_):
@@ -118,16 +143,18 @@ def open_modal(_):
 
 
 @app.callback(
-    Output("id-overlay", "children"),
-    Input({"element": "image", "file_id": ALL}, "n_clicks"),
-    State("id-image-carousel", "items"),
-    State("id-image-modal", "opened"),
+    Output(ID_IMAGE_CAROUSEL, "items"),
+    Output(ID_IMAGE_CAROUSEL, "active_index"),
+    Input({"element": "image", "file_id": ALL, "object_name": ALL, "type": ALL}, "n_clicks"),
+    State(ID_IMAGE_CAROUSEL, "items"),
+    State(ID_IMAGE_VIEW_MODAL, "opened"),
     prevent_initial_call=True
 )
-def handle_table_click(click, items, modal_state):
+def handle_table_click(_, items, modal_state):
     if modal_state or ctx.triggered_id is None:
         raise PreventUpdate
 
+    print("carousel callback")
     auth_cookie = flask.request.cookies.get("auth")
 
     index = 0
@@ -140,13 +167,11 @@ def handle_table_click(click, items, modal_state):
         if i["src"] == "":
             i["src"] = get_file(i["key"]["object_name"], i["key"]["type"], auth_cookie)
 
-    carousel = dbc.Carousel(id="id-image-carousel", items=items, className="carousel-fade", variant="dark", active_index=index)
-
-    return carousel
+    return items, index
 
 
 @app.callback(
-    Output("id-download", "data"),
+    Output(ID_DOWNLOAD, "data"),
     Input({"element": "download_button", "file_id": ALL, "object_name": ALL, "type": ALL}, "n_clicks"),
     prevent_initial_call = True
 )
@@ -163,6 +188,5 @@ def download_attachment(click):
 
     _, content_string = file.split(',')
 
-    data = dict(base64=True, type=file_type, filename=object_name.rsplit('/', 1)[1], content=content_string)
-    return data
+    return dict(base64=True, type=file_type, filename=object_name.rsplit('/', 1)[1], content=content_string)
 
