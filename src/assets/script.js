@@ -13,8 +13,8 @@ window.dash_clientside.browser_properties = {
   }
 };
 
-window.dash_clientside.test = {
-  create_blob: async function(_click) {
+window.dash_clientside.attachment = {
+  create_blob: async function(_click, file_store) {
 
     // check if the callback was triggered on initialization
     const arr = dash_clientside.callback_context.triggered;
@@ -25,10 +25,15 @@ window.dash_clientside.test = {
       throw dash_clientside.PreventUpdate;
     }
 
-    const api_url   = dash_clientside.callback_context.states_list[0]["value"]["url"];
-    const data      = dash_clientside.callback_context.triggered_id;
-    const file_name = data["object_name"].replace('%','.');
-    const mime_type = data["type"];
+    const id      = dash_clientside.callback_context.triggered_id["file_id"];
+    const files   = file_store["files"];
+    const api_url = file_store["url"];
+
+    const file    = files.filter((item) => item["id"] == id)[0]
+
+    if (file === undefined) {
+      throw dash_clientside.PreventUpdate;
+    }
 
     const cookie = document.cookie;
 
@@ -53,13 +58,16 @@ window.dash_clientside.test = {
         redirect: 'follow'
       };
 
-      const result  = await fetch(`${api_url}/files/${file_name}`, requestOptions);
+      const result  = await fetch(`${api_url}/files/${file["object_name"]}`, requestOptions);
       const blob    = await result.blob();
-      const blobObj = new Blob([blob], {type: mime_type});
+      const blobObj = new Blob([blob], {type: file["type"]});
       const urlObj  = URL.createObjectURL(blobObj);
-      window.open(urlObj, "_blank");
-      URL.revokeObjectURL(urlObj);
-      throw dash_clientside.PreventUpdate;
+      if (file["type"] == "application/pdf" || file["type"] == "text/plain") {
+        window.open(urlObj, "_blank");
+        URL.revokeObjectURL(urlObj);
+        throw dash_clientside.PreventUpdate;
+      }
+      return urlObj;
     }
   }
 };

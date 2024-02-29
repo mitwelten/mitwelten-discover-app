@@ -24,46 +24,19 @@ def attachment_area(files: list[File], editable = False):
 
     badges = [attachment_badge(file, auth_cookie, editable) for file in files]
 
-    def get_items():
-        idx_counter = 0
-        items = []
-        for f in files:
-            is_image = f.type in ["image/png", "image/jpg", "image/jpeg",  "image/gif"]
-            if is_image:
-                items.append({
-                    "key": {"id": f.id, "object_name": f.object_name, "type": f.type, "index": idx_counter}, 
-                    "src": "",
-                    "caption": f.name
-                })
-                idx_counter += 1
-    
-        return items 
-
     return [
         dcc.Download(id=ID_DOWNLOAD),
+        dcc.Store(id="id-file-store", data=dict(url=API_URL, files=[f.to_dict() for f in files])),
         dmc.Modal(
             id=ID_IMAGE_VIEW_MODAL,
-            size="lg",
+            size="80%",
             opened=False, 
             centered=True,
             zIndex=3000000,
-            children=dmc.LoadingOverlay(
-                id="id-overlay",
-                children=html.Div(
-                    children=dbc.Carousel(
-                        id=ID_IMAGE_CAROUSEL, 
-                        items=get_items(), 
-                        className="carousel-fade", 
-                        variant="dark", 
-                    ),
-                    style={"height": "200px", "width": "300px", "display": "flex", "alignItems": "flex-end"},
-                ),
-                loaderProps={
-                    "variant": "dots", 
-                    "color": "orange", 
-                    "size": "xl", 
-                },
-            ),
+            children=[
+                html.Img(id="id-image")
+            ],
+            style={}
         ),
         dmc.Space(h=20),
         dmc.SimpleGrid(
@@ -83,12 +56,10 @@ def attachment_badge(file: File, auth_cookie, editable = False):
     thumbnail = f"{name}_thumbnail.{ext}"
     is_image = file.type in ["image/png", "image/jpg", "image/jpeg",  "image/gif"]
 
-    path = file.object_name.replace('.', '%') # the dot makes trouble when passing to the clientside callback
-
     return html.Div(
         children=[
             html.Div(
-                id={"element": "image" if is_image else "text", "file_id": file.id, "object_name": path, "type": file.type},
+                id={"element": "image" if is_image else "text", "file_id": file.id},
                 style={"cursor": "pointer",
                        "display": "flex",
                        "overflow": "hidden",
@@ -98,7 +69,10 @@ def attachment_badge(file: File, auth_cookie, editable = False):
                        },
                 children=[
                     dmc.Image(
-                        src=get_file(thumbnail, file.type, auth_cookie) if is_image else f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
+                        src=get_file(
+                            thumbnail, 
+                            file.type, 
+                            auth_cookie) if is_image else f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
                         withPlaceholder=True, 
                         width=48,
                         height=48,
@@ -112,7 +86,7 @@ def attachment_badge(file: File, auth_cookie, editable = False):
                 ) if editable else {},
                 
                 action_button(
-                    button_id={"element": "download_button", "file_id": file.id, "object_name": file.object_name, "type": file.type}, 
+                    button_id={"element": "download_button", "file_id": file.id}, 
                     icon="material-symbols:download", 
                     size="sm"
                 ),
@@ -123,66 +97,54 @@ def attachment_badge(file: File, auth_cookie, editable = False):
 
 clientside_callback(
     ClientsideFunction(
-        namespace="test", function_name="create_blob"
+        namespace="attachment", function_name="create_blob"
     ),
     Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
-    Input({"element": "text", "file_id": ALL, "object_name": ALL, "type": ALL}, "n_clicks"),
-    State(ID_BLOB_URLS_STORE, "data"),
+    Input({"element": "text", "file_id": ALL}, "n_clicks"),
+    State("id-file-store", "data"),
     prevent_initial_call = True
 )
 
 
 
+clientside_callback(
+    ClientsideFunction(
+        namespace="attachment", function_name="create_blob"
+    ),
+    Output("id-image", "src"),
+    Input({"element": "image", "file_id": ALL}, "n_clicks"),
+    State("id-file-store", "data"),
+    prevent_initial_call=True
+)
+
 @app.callback(
     Output(ID_IMAGE_VIEW_MODAL, "opened"),
-    Input({"element": "image", "file_id": ALL, "object_name": ALL, "type": ALL}, "n_clicks"),
-    prevent_initial_call=True
+    Input({"element": "image", "file_id": ALL}, "n_clicks"),
+    prevent_initial_call = True
 )
 def open_modal(_):
     return True
 
 
 @app.callback(
-    Output(ID_IMAGE_CAROUSEL, "items"),
-    Output(ID_IMAGE_CAROUSEL, "active_index"),
-    Input({"element": "image", "file_id": ALL, "object_name": ALL, "type": ALL}, "n_clicks"),
-    State(ID_IMAGE_CAROUSEL, "items"),
-    State(ID_IMAGE_VIEW_MODAL, "opened"),
-    prevent_initial_call=True
-)
-def handle_table_click(_, items, modal_state):
-    if modal_state or ctx.triggered_id is None:
-        raise PreventUpdate
-
-    print("carousel callback")
-    auth_cookie = flask.request.cookies.get("auth")
-
-    index = 0
-    for i in items:
-        # find selected image
-        if i["key"]["id"] == ctx.triggered_id["file_id"]:
-            index = i["key"]["index"]
-
-        # load image, if it is not already loaded
-        if i["src"] == "":
-            i["src"] = get_file(i["key"]["object_name"], i["key"]["type"], auth_cookie)
-
-    return items, index
-
-
-@app.callback(
     Output(ID_DOWNLOAD, "data"),
-    Input({"element": "download_button", "file_id": ALL, "object_name": ALL, "type": ALL}, "n_clicks"),
+    Input({"element": "download_button", "file_id": ALL}, "n_clicks"),
+    State("id-file-store", "data"),
     prevent_initial_call = True
 )
-def download_attachment(click):
+def download_attachment(click, files):
     click_sum = safe_reduce(lambda x, y: x + y, click, 0)
     if ctx.triggered_id is None or click_sum == 0:
         raise PreventUpdate
 
+    file_id = ctx.triggered_id["file_id"]
+    file = list(filter(lambda f: f["id"] == file_id, files["files"]))[0]
+    if file is None:
+        raise PreventUpdate
     auth_cookie = flask.request.cookies.get("auth")
-    object_name = ctx.triggered_id["object_name"]
-    file_type   = ctx.triggered_id["type"]
+
+    object_name = file["object_name"]
+    file_type   = file["type"]
 
     file = get_file(object_name, file_type, auth_cookie)
 
