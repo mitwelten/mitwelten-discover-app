@@ -14,7 +14,6 @@ from src.util.helper_functions import safe_reduce
 from src.api.api_note import delete_note
 from src.config.id_config import *
 from src.model.note import Note
-from src.util.util import pretty_date
 from src.main import app
 from src.util.user_validation import get_user_from_cookies
 

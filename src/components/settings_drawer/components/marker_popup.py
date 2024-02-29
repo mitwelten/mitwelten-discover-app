@@ -1,8 +1,12 @@
 import dash_mantine_components as dmc
 from dash import html
+import time
+import pytz
+from datetime import datetime, timezone
+
 
 from src.model.note import Note
-from src.util.util import pretty_date
+from src.util.util import local_formatted_date
 
 
 def header(source_type, label, color):
@@ -49,8 +53,8 @@ def time_section(fst_label, fst_time, snd_label=None, snd_time=None):
 
 
 def device_popup(deployment, color):
-    start = pretty_date(deployment.period_start)
-    end = pretty_date(deployment.period_end) if deployment.period_end else "-"
+    start = local_formatted_date(deployment.period_start)
+    end   = local_formatted_date(deployment.period_end) if deployment.period_end else "-"
     return dmc.Container([
         *header(deployment.node_type, deployment.node_label, color),
         *time_section("Start", start, "End", end),
@@ -66,8 +70,8 @@ def device_popup(deployment, color):
 
 
 def environment_popup(environment):
-    created_at = pretty_date(environment.created_at)
-    updated_at = pretty_date(environment.updated_at) if environment.updated_at else "-"
+    created_at = local_formatted_date(environment.created_at)
+    updated_at = local_formatted_date(environment.updated_at) if environment.updated_at else "-"
     return dmc.Container([
         *header("Environment Data Point", "", "#946000"),
         *time_section("Created", created_at, "Updated", updated_at),
@@ -78,7 +82,9 @@ def environment_popup(environment):
 
 
 def note_popup(note: Note):
-    date = pretty_date(note.date) if note.date else "-"
+
+    date = local_formatted_date(note.date) if note.date else "-"
+
     return dmc.Container([
         *header(note.title, "", "#FFd800"),
         *time_section("Created", date),

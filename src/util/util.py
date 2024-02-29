@@ -1,8 +1,13 @@
+import time
+import pytz
 from datetime import datetime
 
 
-def pretty_date(date, date_format="%d %b %Y • %H:%M"):
-    return datetime.strftime(datetime.fromisoformat(date), date_format)
+def local_formatted_date(date: str, date_format="%d %b %Y • %H:%M"):
+    tz = pytz.timezone(time.tzname[0])
+    dt = datetime.fromisoformat(date)
+    local_dt = dt.astimezone(tz)
+    return datetime.strftime(local_dt, date_format)
 
 
 def get_identification_label(source) -> str:

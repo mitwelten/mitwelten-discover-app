@@ -1,14 +1,12 @@
 from dash.dash import flask
 import dash_mantine_components as dmc
-from dash import Output, Input, html, State, no_update, dcc
+from dash import Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
-from werkzeug.datastructures import auth
 from src.api.api_note import create_note
 
 import json
-from datetime import datetime
-from pprint import pprint
+from datetime import datetime, timezone
 from configuration import DOMAIN_NAME, PRIMARY_COLOR
 from src.components.button.components.action_button import action_button
 from src.components.map.layer_selection.drawer import map_menu_drawer
@@ -167,7 +165,7 @@ def create_note_on_map(
 
     new_note.lon = left + settings_drawer_width + ((map_delta_lon - settings_drawer_width) / 2)
     new_note.lat = bottom + data_drawer_height + ((map_delta_lat - data_drawer_height) / 2)
-    new_note.date = datetime.now().isoformat()
+    new_note.date = datetime.now(timezone.utc).isoformat()
 
     auth_cookie = flask.request.cookies.get("auth")
     res = create_note(new_note, auth_cookie)

@@ -11,7 +11,7 @@ from src.config.settings_config import DEFAULT_DATE_RANGES
 from src.config.settings_config import FIRST_DEPLOYMENT_WEEKS_AGO
 from src.main import app
 from src.util.decorators import spaced_section
-from src.util.util import pretty_date
+from src.util.util import local_formatted_date
 
 
 @spaced_section
@@ -85,7 +85,7 @@ def update_picker_from_segment(segment_data, picker_value):
         seg_time_range = int(segment_data)
 
     store_data = dict(start=datetime.now().date() - timedelta(weeks=seg_time_range), end=datetime.now().date())
-    label_data_start = pretty_date(datetime.isoformat(datetime.now() - timedelta(weeks=seg_time_range)), "%d %b %Y")
-    label_data_end = pretty_date(datetime.isoformat(datetime.now()),"%d %b %Y")
+    label_data_start = local_formatted_date(datetime.isoformat(datetime.now() - timedelta(weeks=seg_time_range)), "%d %b %Y")
+    label_data_end   = local_formatted_date(datetime.isoformat(datetime.now()), "%d %b %Y")
     return store_data, {"display": "none"}, {"display": "block"}, f"{label_data_start} - {label_data_end}"
 
