@@ -85,7 +85,7 @@ def from_content(note: Note, all_tags):
                 nothingFound="No Tags found",
                 size="sm",
             ),
-                span="auto"
+                span=6
             ),
             dmc.Col(dmc.TextInput(
                 id=ID_NEW_TAG_INPUT,
@@ -100,9 +100,11 @@ def from_content(note: Note, all_tags):
                     color=PRIMARY_COLOR
                 )
             ),
-                span="auto"
+                span=6
             ),
-            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", debounce=500), span=12),
+            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", debounce=500), span=6),
+            dmc.Col(dmc.DatePicker(id=ID_NOTE_DATE_INPUT, value=note.date, label="Date"), span=4),
+            dmc.Col(dmc.TimeInput(id=ID_NOTE_TIME_INPUT, value=note.date, label="Time"), span=2),
             dmc.Col(dmc.Textarea(
                 id=ID_NOTE_EDIT_DESCRIPTION,
                 value=note.description,
@@ -183,6 +185,23 @@ def update_location_modal_state(click):
     return True
 
 
+
+@app.callback(
+    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Input(ID_NOTE_DATE_INPUT, "value"),
+    Input(ID_NOTE_TIME_INPUT, "value"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
+    prevent_initial_call = True
+)
+def update_date_time(input_date, input_time, selected_note):
+    time = datetime.fromisoformat(input_time)
+    date = datetime.fromisoformat(input_date)
+    date = date.replace(hour=time.hour, minute=time.minute, second=time.second, tzinfo=time.tzinfo)
+
+    selected_note["data"]["date"] = date.isoformat()
+    return selected_note
+
+
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_EDIT_LOCATION_MODAL, "opened", allow_duplicate=True),
@@ -194,10 +213,9 @@ def update_location_modal_state(click):
     Input(ID_NOTE_EDIT_LAT, "value"),
     Input(ID_NOTE_EDIT_LON, "value"),
     State(ID_SELECTED_NOTE_STORE, "data"),
-    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )
-def update_note_store_by_form(title, description, is_public, location_click, tags, lat, lon, selected_note, all_notes):
+def update_note_store_by_form(title, description, is_public, location_click, tags, lat, lon, selected_note):
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 
@@ -347,8 +365,7 @@ def persist_note(click, notes, selected_note):
         raise PreventUpdate
     auth_cookie = flask.request.cookies.get("auth")
 
-    note      = Note(selected_note["data"])
-    note.date = datetime.now().isoformat()
+    note = Note(selected_note["data"])
 
     original_note = None
     def error_return_values(alert):

@@ -72,7 +72,7 @@ def attachment_area(files: list[File], editable = False):
             breakpoints=[
                 {"maxWidth": 980 + 400, "cols": 3, "spacing": "lg"},
                 {"maxWidth": 800 + 400, "cols": 2, "spacing": "md"},
-                {"maxWidth": 700 + 400, "cols": 1, "spacing": "md"},
+                {"maxWidth": 500 + 400, "cols": 1, "spacing": "md"},
             ],
             children = badges,
         )

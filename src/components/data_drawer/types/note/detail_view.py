@@ -95,7 +95,7 @@ def note_detail_view(note: Note):
                         *attachment_area(note.files, False),
                     ],
                     type="hover",
-                    h=300,
+                    h=350,
                     offsetScrollbars=True,
                 ),
             ]),
