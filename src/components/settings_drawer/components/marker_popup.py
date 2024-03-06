@@ -87,7 +87,7 @@ def note_popup(note: Note):
 
     return dmc.Container([
         *header(note.title, "", "#FFd800"),
-        *time_section("Created", local_formatted_date(note.date)),
+        *time_section("Created", date),
         dmc.Space(h=10),
         dmc.Group(
             children=[dmc.Badge(t, size="sm", variant="outline") for t in note.tags],
