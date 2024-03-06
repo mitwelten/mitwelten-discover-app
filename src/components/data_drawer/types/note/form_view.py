@@ -11,14 +11,13 @@ from dash import Output, Input, ALL, State, dcc, ctx, html, no_update
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 from src.model.file import File
-from http.client import responses
 from src.components.button.components.action_button import action_button
 from src.components.data_drawer.types.note.attachment import attachment_area
 from src.util.helper_functions import safe_reduce
-from src.api.api_files import add_file, add_file_to_note, delete_file
-from src.api.api_files import add_file_to_note, delete_file
-from src.api.api_note import update_note, delete_tag_by_note_id, add_tag_by_note_id
+from src.api.api_files import add_file,  delete_file
+from src.api.api_note import update_note, delete_tag_by_note_id, add_tag_by_note_id, add_file_to_note
 from configuration import PRIMARY_COLOR
+from src.config.app_config import supported_mime_types
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
@@ -131,7 +130,7 @@ def from_content(note: Note, all_tags):
                 "Drag and Drop or ", 
                 html.A("Select files", style={"fontWeight": "bold"})
             ] ,
-            accept="image/png, image/jpeg, image/gif, application/pdf, text/plain, audio/mpeg",
+            accept=",".join(supported_mime_types),
             style={
                 'width': '100%',
                 'height': '60px',
