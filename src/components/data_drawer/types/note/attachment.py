@@ -9,6 +9,7 @@ from dash.exceptions import PreventUpdate
 from src.api.api_files import get_file
 from src.components.button.components.action_button import action_button
 from src.config.id_config import *
+from src.config.app_config import thumbnail_size
 from src.main import app
 from src.model.file import File
 from src.util.helper_functions import safe_reduce
@@ -53,7 +54,7 @@ def attachment_area(files: list[File], editable = False):
 
 def attachment_badge(file: File, auth_cookie, editable = False): 
     name, ext = file.object_name.split('.')
-    thumbnail = f"{name}_thumbnail.{ext}"
+    thumbnail = f"{name}_{thumbnail_size[0]}x{thumbnail_size[1]}.{ext}"
     is_image = file.type in ["image/png", "image/jpg", "image/jpeg",  "image/gif"]
 
     return html.Div(
