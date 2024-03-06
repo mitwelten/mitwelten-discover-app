@@ -34,7 +34,7 @@ def update_note(note: Note, auth_cookie):
 
 def get_note_by_id(id: str, auth_cookie):
     url = construct_url(f"note/{id}")
-    res = requests.patch(
+    res = requests.get(
         url=url,
         headers={"Authorization": f"Bearer {auth_cookie}"},
     )
@@ -69,6 +69,17 @@ def add_tag_by_note_id(note_id, tag:str, auth_cookie):
     )
     print("added tag with: ", response.status_code)
     return response.status_code
+
+
+def add_file_to_note(note_id, object_name, name, content_type, auth_cookie):
+    url = construct_url(f"note/{note_id}/file")
+    payload = dict(type=content_type, name=name, object_name=object_name)
+    res = requests.post(
+        url=url,
+        json=payload,
+        headers={"Authorization": f"Bearer {auth_cookie}"},
+    )
+    return res
 
 
 def delete_tag_by_note_id(note_id, tag:str, auth_cookie):
