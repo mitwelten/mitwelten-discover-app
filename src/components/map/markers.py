@@ -4,6 +4,7 @@ from dash import (
     Input,
     State,
     ALL,
+    html,
     clientside_callback,
     ClientsideFunction,
 )
@@ -11,7 +12,7 @@ from dash.exceptions import PreventUpdate
 import dash_mantine_components as dmc
 from dash_extensions.javascript import assign
 
-from src.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_popup
+from src.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_tooltip
 from src.config.id_config import *
 from src.config.map_config import get_source_props
 from src.main import app
@@ -174,14 +175,15 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
                 position=[current_note.lat, current_note.lon],
                 children=[
                     dl.Popup(
-                        children=[note_popup(current_note)],
+                        children=current_note.title,
                         closeButton=False,
-                        autoPan=False
+                        autoPan=False,
                     ),
                     dl.Tooltip(
-                        children=dmc.Text(current_note.title[:50]),
+                        children=note_tooltip(current_note),
                         offset={"x": -10, "y": 2},
                         direction="left",
+                        className="marker-tooltip",
                     ),
                 ],
                 icon=marker_icon_draggable if in_edit_mode else marker_icon,

@@ -1,6 +1,7 @@
 import time
 import pytz
 from datetime import datetime
+from dash import html
 
 
 def local_formatted_date(date: str, date_format="%d %b %Y • %H:%M"):
@@ -23,3 +24,13 @@ def get_identification_label(source) -> str:
         node_label = source.get("id")
 
     return node_label
+
+
+def apply_newlines(text: str):
+    children = []
+    if text is not None:
+        text_list = text.split("\n")
+        for para in text_list:
+            children.append(para)
+            children.append(html.Br())
+    return children

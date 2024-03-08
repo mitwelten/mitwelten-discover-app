@@ -15,9 +15,21 @@
 }
 
 .color-point {
-    width: 7px;
-    height: 7px;
+    width: 10px;
+    height: 10px;
+    background-color: rgb(255, 216, 0);
     border-radius: 50%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.note-marker-title {
+    white-space: normal;
+    overflow-wrap: break-word;
+    display: inline-block;
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .loader-icon {
@@ -129,5 +141,14 @@ input:invalid {
     align-items: center;
     overflow: hidden; /* Verhindert das Überlaufen des Bildes */
     position: relative; /* Für die korrekte Positionierung des Bildes */
+}
+
+.marker-tooltip {
+  width: 220px;
+  max-height: 144px;
+  text-wrap: wrap;
+  overflow: hidden;
+  border-radius: 10px;
+  padding: 16px;
 }
 

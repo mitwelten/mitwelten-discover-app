@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 
 from src.model.note import Note
-from src.util.util import local_formatted_date
+from src.util.util import apply_newlines, local_formatted_date
 
 
 def header(source_type, label, color):
@@ -80,20 +80,41 @@ def environment_popup(environment):
         style={"width": "240px"}
     )
 
+def note_tooltip(note: Note):
 
-def note_popup(note: Note):
-
-    date = local_formatted_date(note.date) if note.date else "-"
+    #date = local_formatted_date(note.date) if note.date else "-"
+    if note.description is not None:
+        description = (note.description[:75] + '..') if len(note.description) > 75 else note.description
+    else:
+        description = "-"
 
     return dmc.Container([
-        *header(note.title, "", "#FFd800"),
-        *time_section("Created", date),
-        dmc.Space(h=10),
-        dmc.Group(
-            children=[dmc.Badge(t, size="sm", variant="outline") for t in note.tags],
-            spacing="xs"
-        ),
+
+    html.Div([
+        html.Div([
+            dmc.Text(note.title, weight=700, size="sm", className="note-marker-title"),
+            html.Div(className="color-point"),
+        ], style={'display': 'flex', 'justify-content': 'space-between', 'align-items': 'start'})
+    ]),
+        dmc.Space(h=5),
+        dmc.Divider(),
+        dmc.Space(h=5),
+        html.Div(
+            dmc.Text(apply_newlines(description), lineClamp=3),
+            style={"maxHeight":"70px", "overflow": "hidden"}
+        )
     ],
         fluid=True,
-        style={"width": "220px"}
+        style={"width": "220px", "max-height": "144px", "overflow": "hidden"},
     )
+
+#def note_popup(note: Note):
+#    return html.Div([
+#        html.Div([
+#            dmc.Text(note.title, weight=700, size="sm", className="note-marker-title"),
+#            html.Div(className="color-point"),
+#        ], style={'display': 'flex', 'justify-content': 'space-between', 'align-items': 'start'})
+#    ],
+#        #fluid=True,
+#        style={"width": "150px","overflow": "hidden"},
+#    )

@@ -1,7 +1,7 @@
 import dash
 import dash_mantine_components as dmc
 import flask
-from dash import html, Output, Input, State, ALL, ctx
+from dash import Output, Input, State, ALL, ctx
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
@@ -16,17 +16,13 @@ from src.config.id_config import *
 from src.model.note import Note
 from src.main import app
 from src.util.user_validation import get_user_from_cookies
+from src.util.util import apply_newlines
 
 
 def text_to_html_list(text: str):
-    children = []
-    if text is not None:
-        text_list = text.split("\n")
-        for para in text_list:
-            children.append(para)
-            children.append(html.Br())
+    lines = apply_newlines(text)
     return dmc.Spoiler(
-        children=children,
+        children=lines,
         showLabel="Show more",
         hideLabel="Hide",
         maxHeight=100
