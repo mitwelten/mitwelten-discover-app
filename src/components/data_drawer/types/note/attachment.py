@@ -23,22 +23,10 @@ def attachment_area(files: list[File], editable = False):
     auth_cookie = flask.request.cookies.get("auth")
     files = list(sorted(files, key=lambda file: file.name.lower()))
 
-    badges = [attachment_badge(file, auth_cookie, editable) for file in files]
+    image_cards = [attachment_card(file, auth_cookie, editable) for file in files]
 
     return [
         dcc.Download(id=ID_DOWNLOAD),
-        dcc.Store(id="id-file-store", data=dict(url=API_URL, files=[f.to_dict() for f in files])),
-        dmc.Modal(
-            id=ID_IMAGE_VIEW_MODAL,
-            size="80%",
-            opened=False, 
-            centered=True,
-            zIndex=3000000,
-            children=[
-                html.Img(id="id-image")
-            ],
-            style={}
-        ),
         dmc.Space(h=20),
         dmc.SimpleGrid(
             cols=3,
@@ -48,11 +36,11 @@ def attachment_area(files: list[File], editable = False):
                 {"maxWidth": 800 + 400, "cols": 2, "spacing": "md"},
                 {"maxWidth": 500 + 400, "cols": 1, "spacing": "md"},
             ],
-            children = badges,
+            children = image_cards,
         )
     ]
 
-def attachment_badge(file: File, auth_cookie, editable = False): 
+def attachment_card(file: File, auth_cookie, editable = False): 
     name, ext = file.object_name.split('.')
     thumbnail = f"{name}_{thumbnail_size[0]}x{thumbnail_size[1]}.{ext}"
     is_image = file.type in ["image/png", "image/jpg", "image/jpeg",  "image/gif"]
@@ -96,41 +84,44 @@ def attachment_badge(file: File, auth_cookie, editable = False):
         className="attachment-card"
     )
 
+    #clientside_callback(
+    #    ClientsideFunction(
+    #        namespace="attachment", function_name="create_blob"
+    #    ),
+    #    Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
+    #    Input({"element": "text", "file_id": ALL}, "n_clicks"),
+    #    State(ID_NOTE_FILE_STORE, "data"),
+    #    prevent_initial_call = True
+    #)
+
 clientside_callback(
     ClientsideFunction(
-        namespace="attachment", function_name="create_blob"
+        namespace="attachment", function_name="clear_blob"
     ),
     Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
-    Input({"element": "text", "file_id": ALL}, "n_clicks"),
-    State("id-file-store", "data"),
+    Input(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_BLOB_URLS_STORE, "data"),
     prevent_initial_call = True
 )
-
-
 
 clientside_callback(
     ClientsideFunction(
         namespace="attachment", function_name="create_blob"
     ),
     Output("id-image", "src"),
+    Output(ID_BLOB_URLS_STORE, "data"),
     Input({"element": "image", "file_id": ALL}, "n_clicks"),
-    State("id-file-store", "data"),
+    Input("img-btn-left", "n_clicks"),
+    Input("img-btn-right", "n_clicks"),
+    State(ID_NOTE_FILE_STORE, "data"),
+    State(ID_BLOB_URLS_STORE, "data"),
     prevent_initial_call=True
 )
 
 @app.callback(
-    Output(ID_IMAGE_VIEW_MODAL, "opened"),
-    Input({"element": "image", "file_id": ALL}, "n_clicks"),
-    prevent_initial_call = True
-)
-def open_modal(_):
-    return True
-
-
-@app.callback(
     Output(ID_DOWNLOAD, "data"),
     Input({"element": "download_button", "file_id": ALL}, "n_clicks"),
-    State("id-file-store", "data"),
+    State(ID_NOTE_FILE_STORE, "data"),
     prevent_initial_call = True
 )
 def download_attachment(click, files):

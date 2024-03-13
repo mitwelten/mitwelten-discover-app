@@ -1,10 +1,11 @@
 import dash
 import dash_mantine_components as dmc
 import flask
-from dash import Output, Input, State, ALL, ctx
+from dash import Output, Input, State, ALL, ctx, html, dcc
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
+from configuration import API_URL
 from http.client import responses
 from src.components.data_drawer.types.note.form_view import note_form_view
 from src.components.data_drawer.types.note.attachment import attachment_area
@@ -25,7 +26,7 @@ def text_to_html_list(text: str):
         children=lines,
         showLabel="Show more",
         hideLabel="Hide",
-        maxHeight=100
+        maxHeight=150
     )
 
 
@@ -61,42 +62,83 @@ icon_public= DashIconify(
     style={"display":"block", "marginLeft":"3px", "color": "#868e96"}
 )
 
+slideshow = html.Div([
+        html.Button( "❮", id="img-btn-left", className="slide-btn slide-btn-left"), 
+        html.Div([ html.Img( id="id-image", className="cropped-ofp")], className="image-box"),
+        html.Button( "❯", id="img-btn-right", className="slide-btn slide-btn-right"), 
+    ], 
+        className="image-container"
+    )
+
 
 def note_detail_view(note: Note):
     user = get_user_from_cookies()
     title    = note.title
-    controls = [
-        action_button(
-            button_id={"button":"edit_note", "note_id": note.id},   
-            icon="material-symbols:edit", 
-            disabled=True if user is None else False
-        ),
-    ]
+    files = list(sorted(note.files, key=lambda file: file.name.lower()))
+    has_files = len(files) != 0;
+
+
 
     return dmc.Container([
-        dmc.Grid([
-            dmc.Col(dmc.Title(title),span="content"),
-            dmc.Col(dmc.Group(controls, spacing="sm"), span="content"),
-        ],
-            justify="space-between"
+        dcc.Store(
+            id=ID_NOTE_FILE_STORE, 
+            data=dict(url=API_URL, files=[f.to_dict() for f in files])
         ),
         dmc.Grid([
-            dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span=12),
-            dmc.Col(dmc.Divider(size="xs")),
-            dmc.Col([
-                dmc.ScrollArea(
-                    children=[
-                        text_to_html_list(note.description),
-                        dmc.Divider(size="xs"),
-                        *attachment_area(note.files, False),
+            dmc.Col(
+                dmc.Stack([
+                    dmc.Group([
+                        dmc.Title(title), 
+                        action_button(
+                            button_id={"button":"edit_note", "note_id": note.id},   
+                            icon="material-symbols:edit", 
+                            disabled=True if user is None else False
+                        ),
+                    ]),
+                    dmc.Grid(
+                        children=[
+                        dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span="content"),
+                        dmc.Col(dmc.Text("Author andri wild - Datum 20.234.234.", align="end", color="dimmed", size="sm"), span="content"),
                     ],
-                    type="hover",
-                    h=350,
-                    offsetScrollbars=True,
-                ),
-            ]),
-        ]),
-    ])
+                        justify="space-between",
+                        grow=True
+                    ),
+                ]),
+                span=11,
+            ),
+            dmc.Col(
+                dmc.Image(
+                    src="assets/markers/note.svg", 
+                    alt="note icon", 
+                    width="70px", 
+                    style={"justifyContent": "flex-end"}), 
+                span=1),
+        ],
+            justify="space-between",
+        ),
+        dmc.Space(h=10),
+        dmc.Divider(size="xs"),
+        dmc.Space(h=10),
+        dmc.ScrollArea(
+            children=[
+                dmc.Grid([
+                    dmc.Col(text_to_html_list(note.description), span=8),
+                    dmc.Col(slideshow if has_files else {}, className="image-col", span=4),
+                ],
+                         justify="space-between",
+                         ),
+
+                dmc.Space(h=10),
+                *attachment_area(note.files, False),
+            ],
+            type="hover",
+            h=350,
+            offsetScrollbars=True,
+        ),
+    ],
+                         fluid=True,
+                         style={"margin":"24px"}
+    )
 
 
 @app.callback(

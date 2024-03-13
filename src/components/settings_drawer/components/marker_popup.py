@@ -94,7 +94,7 @@ def note_tooltip(note: Note):
         html.Div([
             dmc.Text(note.title, weight=700, size="sm", className="note-marker-title"),
             html.Div(className="color-point"),
-        ], style={'display': 'flex', 'justify-content': 'space-between', 'align-items': 'start'})
+        ], style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'start'})
     ]),
         dmc.Space(h=5),
         dmc.Divider(),
@@ -105,7 +105,7 @@ def note_tooltip(note: Note):
         )
     ],
         fluid=True,
-        style={"width": "220px", "max-height": "144px", "overflow": "hidden"},
+        style={"width": "220px", "maxHeight": "144px", "overflow": "hidden"},
     )
 
 #def note_popup(note: Note):

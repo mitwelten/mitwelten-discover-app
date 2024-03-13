@@ -27,7 +27,7 @@ stores = [
     dcc.Store(id=ID_SELECTED_NOTE_STORE,      data=dict(data=None)),
     dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
     dcc.Store(id=ID_NOTE_REFRESH_STORE,       data=dict(state=False)),
-    dcc.Store(id=ID_BLOB_URLS_STORE,          data=dict(url=API_URL)),
+    dcc.Store(id=ID_BLOB_URLS_STORE,          data=dict(api_url=API_URL, files=[], active_id=None)),
 ]
 
 @app.callback(

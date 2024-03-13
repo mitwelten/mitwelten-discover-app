@@ -14,26 +14,52 @@ window.dash_clientside.browser_properties = {
 };
 
 window.dash_clientside.attachment = {
-  create_blob: async function(_click, file_store) {
 
-    // check if the callback was triggered on initialization
-    const arr = dash_clientside.callback_context.triggered;
-    const init_call = arr.reduce((previous, current) => {
-      return previous && current["value"] == null;
-    }, true);
-    if (init_call) {
-      throw dash_clientside.PreventUpdate;
+  create_blob: async function(_click, _prev, _next, file_store, blob_store) {
+
+    // no files to load
+    if (file_store.files.length === 0) {
+      return ["", blob_store]
     }
 
-    const id      = dash_clientside.callback_context.triggered_id["file_id"];
-    const files   = file_store["files"];
-    const api_url = file_store["url"];
+    // check if the callback was triggered on initialization
+    const { triggered_id } = dash_clientside.callback_context;
 
-    const file    = files.filter((item) => item["id"] == id)[0]
+    const isInitCall = dash_clientside.callback_context.triggered.every(({ value })=> value === null)
+
+    let file = file_store.files[0];
+
+    const getIndex = (id) => file_store.files.findIndex(it => it.id === id);
+
+    const offset = triggered_id === "img-btn-left" ? -1 : 1;
+
+    const index = getIndex(blob_store.active_id);
+    const l = file_store.files.length
+    const getFileByIndexOffset = (offset) => file_store.files[(index + offset + l) % l]
+
+    if(!isInitCall && triggered_id === "img-btn-left") {
+      file = getFileByIndexOffset(offset);
+    } else if (!isInitCall && triggered_id === "img-btn-right") {
+      const index = getIndex(blob_store.active_id);
+      const l = file_store.files.length
+      const nextIndex = (index + 1) % l;
+      file = file_store.files[nextIndex];
+    } else if  (!isInitCall) {
+      const id = dash_clientside.callback_context.triggered_id["file_id"];
+      file = file_store.files.filter((item) => item["id"] == id)[0];
+    }
+
+    // if file is already in blob store, return its url
+    isFileLoaded = blob_store.files.find(it => it && it["id"] == file.id);
+    if (isFileLoaded !== undefined) {
+      blob_store.active_id = file.id;
+      return [isFileLoaded.url, blob_store];
+    }
 
     if (file === undefined) {
       throw dash_clientside.PreventUpdate;
     }
+
 
     const cookie = document.cookie;
 
@@ -50,26 +76,46 @@ window.dash_clientside.attachment = {
       if (c.indexOf(cname) == 0) {
         auth_token = c.substring(cname.length, c.length);
       }
-
-      const requestOptions = {
-        method: 'GET',
-        mode: "cors",
-        headers: {Authorization: `Bearer ${auth_token}`},
-        redirect: 'follow'
-      };
-
-      const result  = await fetch(`${api_url}/files/${file["object_name"]}`, requestOptions);
-      const blob    = await result.blob();
-      const blobObj = new Blob([blob], {type: file["type"]});
-      const urlObj  = URL.createObjectURL(blobObj);
-      if (file["type"] == "application/pdf" || file["type"] == "text/plain") {
-        window.open(urlObj, "_blank");
-        URL.revokeObjectURL(urlObj);
-        throw dash_clientside.PreventUpdate;
-      }
-      return urlObj;
     }
-  }
+
+    const requestOptions = {
+      method: 'GET',
+      mode: "cors",
+      headers: {Authorization: `Bearer ${auth_token}`},
+      redirect: 'follow'
+    };
+
+    const api_url = blob_store.api_url;
+    const result  = await fetch(`${api_url}/files/${file["object_name"]}`, requestOptions);
+    const blob    = await result.blob();
+    const blobObj = new Blob([blob], {type: file["type"]});
+    const urlObj  = URL.createObjectURL(blobObj);
+    if (file["type"] == "application/pdf" || file["type"] == "text/plain") {
+      window.open(urlObj, "_blank");
+      URL.revokeObjectURL(urlObj);
+      throw dash_clientside.PreventUpdate;
+    }
+    blob_store.files.push({id: file.id, url: urlObj});
+    blob_store.active_id = file.id;
+    return [urlObj, blob_store];
+  },
+
+
+  clear_blob: async function(note_store, blob_store) {
+    console.log("fn: clear blob store");
+
+    if (note_store["data"] === null) {
+      blob_store.files.forEach(it => {
+        URL.revokeObjectURL(it.url);
+        console.log("cleared blob with url: ", it.url);
+      });
+
+    }
+    blob_store.files = [];
+    blob_store.active_id = undefined; 
+    return blob_store;
+  },
+
 };
 
 window.dashExtensions = Object.assign({}, window.dashExtensions, {

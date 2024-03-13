@@ -152,3 +152,66 @@ input:invalid {
   padding: 16px;
 }
 
+.cropped-ofp {
+  width: inherit; 
+  height: 200px; 
+  object-fit: contain;
+  object-position: 50% 50%; 
+}
+.image-box {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+.image-col {
+  display: flex;
+  justify-content: center;
+  width: 250px;
+  min-width: 160px;
+}
+
+.image-container {
+  max-height: 250px;
+  width: 100%;
+  position: relative;
+}
+
+.slide-btn {
+    border: none;
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    text-align: center;
+    cursor: pointer;
+    white-space: nowrap;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    opacity: 0.5;
+    transition: 0.3s;
+
+}
+
+.slide-btn:hover {
+  opacity: 1;
+}
+
+
+.slide-btn-right {
+    position: absolute;
+    top: 50%;
+    right: 0%;
+    transform: translate(0%,-50%);
+    -ms-transform: translate(0%,-50%);
+}
+
+.slide-btn-left {
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    transform: translate(0%,-50%);
+    -ms-transform: translate(-0%,-50%);
+}
