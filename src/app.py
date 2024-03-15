@@ -13,7 +13,7 @@ from dash import (
     no_update,
 )
 from dash.exceptions import PreventUpdate
-from src.components.data_drawer.types.note.detail_view import note_detail_view
+from src.components.data_drawer.types.note.note_view import note_detail_view
 
 from src.components.alert.alert import alert_danger, alert_warning, alert_info
 from src.model.note import Note
@@ -103,7 +103,6 @@ discover_app = dmc.MantineProvider(
 )
 
 app.layout = discover_app
-
 
 
 @app.callback(

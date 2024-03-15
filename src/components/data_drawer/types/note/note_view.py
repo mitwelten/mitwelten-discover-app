@@ -74,7 +74,7 @@ icon_public= DashIconify(
 
 slideshow = html.Div([
         dmc.LoadingOverlay(
-            children=html.Img( id=ID_SLIDESHOW_IMAGE, className="cropped-ofp"), 
+            children=html.Img(id=ID_SLIDESHOW_IMAGE, className="cropped-ofp"),
             className="image-box", 
             loaderProps={"variant": "dots"}
         ),
@@ -109,10 +109,18 @@ def note_form_view(note: Note, all_tags):
 
 
 def note_detail_view(note: Note):
-    user      = get_user_from_cookies()
-    title     = note.title
-    files     = list(sorted(note.files, key=lambda file: file.name.lower()))
-    has_files = len(files) != 0
+    user       = get_user_from_cookies()
+    title      = note.title
+    files      = list(sorted(note.files, key=lambda file: file.name.lower()))
+    images     = list(filter(lambda f: f.type.startswith("image/") , files))
+    has_images = len(images) != 0
+
+    media_section = slideshow
+    # only_audio_file = list(filter(lambda f: f.type == "audio/mpeg", files))
+    # print(only_audio_file)
+    # if len(only_audio_file) == len(files):
+    #     print("note has only audio files => audio note")
+    #     media_section = html.Audio(src="", controls="controls")
 
     return [dmc.Grid([
             dmc.Col(
@@ -151,7 +159,7 @@ def note_detail_view(note: Note):
             children=[
                 dmc.Grid([
                     dmc.Col(text_to_html_list(note.description), span=8),
-                    dmc.Col(slideshow if user and has_files else {}, className="image-col", span=4),
+                    dmc.Col(media_section if user and has_images else {}, className="image-col", span=4),
                 ], justify="space-between"),
                 dmc.Space(h=10),
                 *attachment_area(note.files, False),
@@ -278,8 +286,6 @@ def cancel_click(cancel_click, notes, selected_note):
     for note in notes["entries"]:
         if note["id"] == selected_note["data"]["id"]:
             if Note(note) != Note(selected_note["data"]):
-                pprint(note)
-                pprint(selected_note["data"])
                 return True, no_update, no_update, no_update
 
     return no_update, dict(data=None), note_detail_view(Note(selected_note["data"])), CHART_DRAWER_HEIGHT

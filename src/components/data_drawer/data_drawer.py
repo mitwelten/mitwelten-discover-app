@@ -1,7 +1,7 @@
 import dash_mantine_components as dmc
 from dash import ctx, Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
-from src.components.data_drawer.types.note.detail_view import note_view
+from src.components.data_drawer.types.note.note_view import note_view
 from src.model.note import Note
 
 from src.components.data_drawer.types.audio import create_audio_chart
@@ -27,18 +27,15 @@ chart_drawer = dmc.Drawer(
     position="bottom",
     title=dmc.Text(id=ID_DATA_DRAWER_TITLE, weight=500, style={"marginTop": "1em", "marginLeft": "1em"}),
     children=[
-        html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
+        html.Div(
+            children=dmc.LoadingOverlay(
+                html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
+                overlayBlur="0px",
+                overlayColor=None,
+                overlayOpacity=0
+            ),
+        ),
     ],
-    # children=[
-    #     html.Div(
-    #         children=dmc.LoadingOverlay(
-    #             html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
-    #             loaderProps={"variant": "dots", "color": "mitwelten_pink", "size": "xl"},
-    #             style={"height":"100%"},
-    #         ),
-    #         className="chart-container"
-    #     ),
-    # ],
 )
 
 
@@ -125,7 +122,6 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
     prevent_initial_call=True
 )
 def activate_preventing_marker_clicks(selected_note):
-    print("def activate_preventing_marker_clicks(selected_note): ")
     if selected_note["data"] is None:
         return dict(state=False)
     return dict(state=True)

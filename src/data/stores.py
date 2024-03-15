@@ -26,7 +26,7 @@ stores = [
     dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=0), storage_type="local"),
     dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),
-    dcc.Store(id=ID_EDIT_NOTE_STORE, data=dict(data=None)),
+    dcc.Store(id=ID_EDIT_NOTE_STORE,          data=dict(data=None)),
     dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
     dcc.Store(id=ID_NOTE_REFRESH_STORE,       data=dict(state=False)),
     dcc.Store(id=ID_BLOB_URLS_STORE,          data=dict(api_url=API_URL, files=[], active_id=None)),

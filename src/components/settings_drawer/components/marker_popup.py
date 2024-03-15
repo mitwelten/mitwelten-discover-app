@@ -81,8 +81,6 @@ def environment_popup(environment):
     )
 
 def note_tooltip(note: Note):
-
-    #date = local_formatted_date(note.date) if note.date else "-"
     if note.description is not None:
         description = (note.description[:75] + '..') if len(note.description) > 75 else note.description
     else:
@@ -107,14 +105,3 @@ def note_tooltip(note: Note):
         fluid=True,
         style={"width": "220px", "maxHeight": "144px", "overflow": "hidden"},
     )
-
-#def note_popup(note: Note):
-#    return html.Div([
-#        html.Div([
-#            dmc.Text(note.title, weight=700, size="sm", className="note-marker-title"),
-#            html.Div(className="color-point"),
-#        ], style={'display': 'flex', 'justify-content': 'space-between', 'align-items': 'start'})
-#    ],
-#        #fluid=True,
-#        style={"width": "150px","overflow": "hidden"},
-#    )

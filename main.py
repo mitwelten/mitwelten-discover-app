@@ -42,7 +42,6 @@ async def get_current_user(request: Request):
     auth_header = request.headers.get("Authorization")
     if auth_header:
         auth_header = auth_header.split(" ")[1]
-        print(auth_header)
         try:
             return keycloak_openid.decode_token(
                 auth_header,

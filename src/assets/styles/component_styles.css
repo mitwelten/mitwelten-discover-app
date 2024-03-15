@@ -161,6 +161,7 @@ input:invalid {
 .image-box {
     display: flex;
     width: 100%;
+    background: #F2F2F2;
     justify-content: center;
 }
 
@@ -199,7 +200,6 @@ input:invalid {
 .slide-btn:hover {
   opacity: 1;
 }
-
 
 .slide-btn-right {
     position: absolute;
