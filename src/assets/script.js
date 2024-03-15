@@ -26,29 +26,7 @@ window.dash_clientside.attachment = {
     const { triggered_id } = dash_clientside.callback_context;
     const isInitCall       = dash_clientside.callback_context.triggered.every(({ value }) => value === null);
 
-
-    function getFileBasedOnTrigger(isInitCall, triggered_id, file_store, blob_store) {
-      if (isInitCall) return file_store.files[0];
-
-      const getIndex             = (id)     => file_store.files.findIndex(it => it.id === id);
-      const getFileByIndexOffset = (offset) => file_store.files[(index + offset + len) % len];
-
-      const offset = triggered_id === "img-btn-left" ? -1 : 1;
-      const index  = getIndex(blob_store.active_id);
-      const len    = file_store.files.length;
-
-      // left or right button of slideshow clicked
-      if(triggered_id === "id-slideshow-btn-left" || triggered_id === "id-slideshow-btn-right") {
-        return getFileByIndexOffset(offset);
-      }
-
-      // click on image preview
-      const id = dash_clientside.callback_context.triggered_id["file_id"];
-      return file_store.files.filter((item) => item["id"] == id)[0];
-    }
-
     const file = getFileBasedOnTrigger(isInitCall, triggered_id, file_store, blob_store);
-
 
     // if file is already in blob store, return its url
     isFileLoaded = blob_store.files.find(it => it && it["id"] == file.id);
@@ -61,43 +39,17 @@ window.dash_clientside.attachment = {
       throw dash_clientside.PreventUpdate;
     }
 
-    const cookie = document.cookie;
+    const auth_token = extractFromCookie("auth", document.cookie);
+    const blob_url   = await getBlobUrl(blob_store.api_url, auth_token, file);
 
-     // extract auth cookie
-     let auth_token = "";
-     const cname    = "auth=";
-     const ca       = cookie.split(';');
-
-     for(let i = 0; i <ca.length; i++) {
-       let c = ca[i];
-       while (c.charAt(0) == ' ') {
-         c = c.substring(1);
-       }
-       if (c.indexOf(cname) == 0) {
-         auth_token = c.substring(cname.length, c.length);
-       }
-     }
-
-    const requestOptions = {
-      method: 'GET',
-      mode: "cors",
-      headers: {Authorization: `Bearer ${auth_token}`},
-      redirect: 'follow'
-    };
-
-    const api_url = blob_store.api_url;
-    const result  = await fetch(`${api_url}/files/${file["object_name"]}`, requestOptions);
-    const blob    = await result.blob();
-    const blobObj = new Blob([blob], {type: file["type"]});
-    const urlObj  = URL.createObjectURL(blobObj);
     if (file["type"] == "application/pdf" || file["type"] == "text/plain") {
-      window.open(urlObj, "_blank");
-      URL.revokeObjectURL(urlObj);
+      window.open(blob_url, "_blank");
+      URL.revokeObjectURL(blob_url);
       throw dash_clientside.PreventUpdate;
     }
-    blob_store.files.push({id: file.id, url: urlObj});
+    blob_store.files.push({id: file.id, url: blob_url});
     blob_store.active_id = file.id;
-    return [urlObj, blob_store];
+    return [blob_url, blob_store];
   },
 
 
