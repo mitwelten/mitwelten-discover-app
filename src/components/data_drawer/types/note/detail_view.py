@@ -1,11 +1,13 @@
 import dash
 import dash_mantine_components as dmc
 import flask
-from dash import  html, dcc, Output, Input, State, ctx, ALL, ClientsideFunction
+from pprint import pprint
+from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_update
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
+from src.config.app_config import CHART_DRAWER_HEIGHT
+from src.components.data_drawer.types.note.form_view import form_content, get_form_controls
 
-from configuration import API_URL
 from http.client import responses
 from src.components.data_drawer.types.note.attachment import attachment_area
 from src.components.button.components.action_button import action_button
@@ -18,6 +20,29 @@ from src.main import app
 from src.util.user_validation import get_user_from_cookies
 from src.util.util import apply_newlines, local_formatted_date
 
+def note_form_view(note: Note, all_tags):
+
+    return dmc.Container([
+         dmc.Grid([
+             dmc.Col([
+                 dmc.Title("Edit / Create Note"),
+                 dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm")
+             ],span="content"),
+             dmc.Col(dmc.Group(get_form_controls(note.public),spacing="sm"),
+                span="content"
+             )
+         ],
+             justify="space-between"
+         ),
+        *form_content(note, all_tags),
+        dmc.ScrollArea(
+            id=ID_ATTACHMENTS,
+            children=attachment_area(note.files, True),
+            h=150,
+            type="hover",
+            offsetScrollbars=True
+        )
+    ])
 
 def text_to_html_list(text: str):
     lines = apply_newlines(text)
@@ -71,6 +96,14 @@ slideshow = html.Div([
         html.Button( "❯", id=ID_SLIDESHOW_BTN_RIGHT, className="slide-btn slide-btn-right"), 
     ], className="image-container")
 
+def note_view(note: Note):
+    return dmc.Container(
+        id=ID_NOTE_CONTAINER,
+        children=note_detail_view(note),
+        #fluid=True, 
+        #style={"margin":"0 24px 24px 24px"}
+    )
+        
 
 def note_detail_view(note: Note):
     user = get_user_from_cookies()
@@ -78,14 +111,7 @@ def note_detail_view(note: Note):
     files = list(sorted(note.files, key=lambda file: file.name.lower()))
     has_files = len(files) != 0;
 
-    return dmc.Container(
-        id="id-note-container",
-        children=[
-        dcc.Store(
-            id=ID_NOTE_FILE_STORE, 
-            data=dict(url=API_URL, files=[f.to_dict() for f in files])
-        ),
-        dmc.Grid([
+    return [dmc.Grid([
             dmc.Col(
                 dmc.Stack([
                     dmc.Group([
@@ -129,9 +155,8 @@ def note_detail_view(note: Note):
             ],
             type="hover",
             h=350,
-            offsetScrollbars=True,
-        ),
-    ], fluid=True, style={"margin":"0 24px 24px 24px"})
+            offsetScrollbars=True)
+    ]
 
 
 @app.callback(
@@ -174,18 +199,21 @@ def deactivate_edit_mode(delete_click, note):
 
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    State(ID_TAG_DATA_STORE, "data"),
     prevent_initial_call=True
 )
-def activate_edit_mode(click, notes):
+def activate_edit_mode(click, notes, all_tags):
     click_sum = safe_reduce(lambda x, y: x + y, click, 0)
     if ctx.triggered_id is None or click_sum == 0:
         raise PreventUpdate
 
     for note in notes["entries"]:
        if note["id"] == ctx.triggered_id["note_id"]:
-            return dict(data=note)
+            return dict(data=note), note_form_view(Note(note), all_tags), 650
 
 app.clientside_callback(
     ClientsideFunction(
@@ -224,3 +252,31 @@ app.clientside_callback(
     State(ID_BLOB_URLS_STORE, "data"),
     prevent_initial_call=True
 )
+
+@app.callback(
+    Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
+    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
+    Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
+    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
+    prevent_initial_call=True
+)
+def cancel_click(cancel_click, notes, selected_note):
+
+    if ctx.triggered_id == ID_NOTE_FORM_CANCEL_BUTTON:
+        if cancel_click is None or cancel_click == 0:
+            raise PreventUpdate
+
+    if selected_note["data"] is None:
+        raise PreventUpdate
+
+    for note in notes["entries"]:
+        if note["id"] == selected_note["data"]["id"]:
+            if Note(note) != Note(selected_note["data"]):
+                pprint(note)
+                pprint(selected_note["data"])
+                return True, no_update, no_update, no_update
+
+    return no_update, dict(data=None), note_detail_view(Note(selected_note["data"])), CHART_DRAWER_HEIGHT

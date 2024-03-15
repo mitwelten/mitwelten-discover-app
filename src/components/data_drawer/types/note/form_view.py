@@ -1,11 +1,7 @@
-from logging import error
-import dash
-
 import base64
 import json
 import flask
 from datetime import datetime
-from pprint import pprint
 import dash_mantine_components as dmc
 from dash import Output, Input, ALL, State, dcc, ctx, html, no_update
 from dash.exceptions import PreventUpdate
@@ -23,7 +19,6 @@ from src.main import app
 from src.model.note import Note
 from src.util.util import local_formatted_date
 from src.error.notifications import notification, response_notification
-
 
 
 def get_form_controls(public:bool = False):
@@ -46,31 +41,7 @@ def get_form_controls(public:bool = False):
     ]
 
 
-def note_form_view(note: Note, all_tags):
-
-    return dmc.Container([
-         dmc.Grid([
-             dmc.Col([
-                 dmc.Title("Edit / Create Note"),
-                 dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm")
-             ],span="content"),
-             dmc.Col(dmc.Group(get_form_controls(note.public),spacing="sm"),
-                span="content"
-             )
-         ],
-             justify="space-between"
-         ),
-        *from_content(note, all_tags),
-        dmc.ScrollArea(
-            id=ID_ATTACHMENTS,
-            children=attachment_area(note.files, True),
-            h=150,
-            type="hover",
-            offsetScrollbars=True
-        )
-    ])
-
-def from_content(note: Note, all_tags):
+def form_content(note: Note, all_tags):
     return [
         dmc.Grid([
             # title and description section
@@ -192,6 +163,8 @@ def update_location_modal_state(click):
     prevent_initial_call = True
 )
 def update_date_time(input_date, input_time, selected_note):
+    if selected_note["data"] is None:
+        raise PreventUpdate
     time = datetime.fromisoformat(input_time)
     date = datetime.fromisoformat(input_date)
     date = date.replace(hour=time.hour, minute=time.minute, second=time.second, tzinfo=time.tzinfo)
@@ -217,7 +190,6 @@ def update_note_store_by_form(title, description, is_public, location_click, tag
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 
-    # TODO: use switch case
     selected_note["data"]["title"]           = title
     selected_note["data"]["description"]     = description
     selected_note["data"]["location"]["lat"] = float(lat)
@@ -255,7 +227,6 @@ def marker_click(coordinates):
     prevent_initial_call = True
 )
 def add_attachment(list_of_contents, list_of_names, note):
-    print("add_attachment")
     if list_of_contents is None:
         raise PreventUpdate
 
@@ -408,30 +379,4 @@ def persist_note(click, notes, selected_note):
     notes["entries"] = [] # refresh note store
     update_tag_store = None if tags_to_add else no_update
     return False, notes, dict(data=None), no_update, no_update, update_tag_store 
-
-
-@app.callback(
-    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
-    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
-    prevent_initial_call=True
-)
-def cancel_click(cancel_click, notes, selected_note):
-
-    if ctx.triggered_id == ID_NOTE_FORM_CANCEL_BUTTON:
-        if cancel_click is None or cancel_click == 0:
-            raise PreventUpdate
-
-    if selected_note["data"] is None:
-        return False, dash.no_update, dash.no_update
-
-    for note in notes["entries"]:
-        if note["id"] == selected_note["data"]["id"]:
-            if Note(note) != Note(selected_note["data"]):
-                return dash.no_update, True, dash.no_update
-
-    return False, dash.no_update, dict(data=None)
 

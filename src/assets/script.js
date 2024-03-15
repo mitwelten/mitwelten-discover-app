@@ -15,7 +15,6 @@ window.dash_clientside.browser_properties = {
 window.dash_clientside.attachment = {
 
   create_blob: async function(_click, _prev, _next, file_store, blob_store) {
-    console.log("create_blob")
 
     // no files to load
     if (file_store.files && file_store.files.length === 0) {
@@ -49,7 +48,6 @@ window.dash_clientside.attachment = {
 
 
   load_text_blob: async function(_click, file_store, blob_store) {
-    console.log("create_txt_blob")
 
     // no files to load
     if (file_store.files && file_store.files.length === 0) {

@@ -15,7 +15,7 @@ from src.config.id_config import *
 from src.main import app
 from src.model.note import Note, empty_note
 from src.util.user_validation import get_user_from_cookies
-from src.components.data_drawer.types.note.form_view import note_form_view
+from src.components.data_drawer.types.note.detail_view import note_form_view
 
 login_button = dmc.Anchor(
     action_button(button_id="id-login-btn", icon="material-symbols:login"),

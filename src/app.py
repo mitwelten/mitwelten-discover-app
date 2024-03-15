@@ -13,30 +13,17 @@ from dash import (
     no_update,
 )
 from dash.exceptions import PreventUpdate
+from src.components.data_drawer.types.note.detail_view import note_detail_view
 
 from src.components.alert.alert import alert_danger, alert_warning, alert_info
 from src.model.note import Note
 from src.components.button.buttons import control_buttons
-from src.config.id_config import (
-    ID_STAY_LOGGED_IN_INTERVAL,
-    ID_LOGO_CONTAINER,
-    ID_CONFIRM_UNSAVED_CHANGES_DIALOG,
-    ID_CONFIRM_DELETE_DIALOG,
-    ID_NOTE_ATTACHMENT_MODAL,
-    ID_URL_LOCATION,
-    ID_APP_CONTAINER,
-    ID_APP_THEME,
-    ID_LOGIN_AVATAR_CONTAINER,
-    ID_MAP,
-    ID_SELECTED_MARKER_STORE,
-    ID_PREVENT_MARKER_EVENT,
-    ID_CHART_DRAWER,
-    ID_SELECTED_NOTE_STORE,
-)
+from src.config.id_config import *
 from src.components.map.init_map import map_figure
 from src.components.settings_drawer.settings_drawer import settings_drawer
 from src.components.data_drawer.data_drawer import chart_drawer
 from src.config.app_config import (
+    CHART_DRAWER_HEIGHT,
     app_theme,
     CONFIRM_UNSAVED_CHANGES_MESSAGE,
     CONFIRM_DELETE_MESSAGE,
@@ -182,6 +169,7 @@ for source in SOURCE_PROPS.keys():
     prevent_initial_call=True,
 )
 def map_click(_, selected_note, notes):
+    print("app:map_click")
     if selected_note["data"] is not None:
         for note in notes["entries"]:
             if note["id"] == selected_note["data"]["id"]:
@@ -193,12 +181,14 @@ def map_click(_, selected_note, notes):
 
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
+    Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
     Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
+    State(ID_SELECTED_NOTE_STORE, "data"),
     prevent_initial_call=True,
 )
-def deactivate_edit_mode(cancel_click):
+def deactivate_edit_mode(cancel_click, selected_note):
     if cancel_click is None or cancel_click == 0:
         raise PreventUpdate
-    return dict(data=None), False
+    return dict(data=None), CHART_DRAWER_HEIGHT, note_detail_view(Note(selected_note["data"]))
 

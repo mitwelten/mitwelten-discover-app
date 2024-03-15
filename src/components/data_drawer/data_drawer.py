@@ -1,8 +1,7 @@
 import dash_mantine_components as dmc
 from dash import ctx, Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
-from src.components.data_drawer.types.note.detail_view import note_detail_view
-from src.components.data_drawer.types.note.form_view import note_form_view
+from src.components.data_drawer.types.note.detail_view import note_view
 from src.model.note import Note
 
 from src.components.data_drawer.types.audio import create_audio_chart
@@ -79,14 +78,12 @@ def open_drawer(selected_marker):
     Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
     Output(ID_ALERT_INFO, "children", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
-    Input(ID_SELECTED_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
-    State(ID_TAG_DATA_STORE, "data"),
     State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
-def update_drawer_content_from_marker_store(selected_marker, _selected_note, notes, environment_data, all_tags, light_mode):
+def update_drawer_content_from_marker_store(selected_marker, notes, environment_data, light_mode):
     if selected_marker is None:
         raise PreventUpdate
 
@@ -111,12 +108,7 @@ def update_drawer_content_from_marker_store(selected_marker, _selected_note, not
             for note in notes["entries"]:
                 if note["id"] == selected_marker["data"]["id"]:
                     drawer_title = ""
-                    if ctx.triggered_id == ID_SELECTED_NOTE_STORE:
-                        drawer_content = note_form_view(Note(note), all_tags)
-                        drawer_size = 650
-                    else:
-                        drawer_content = note_detail_view(Note(note))
-
+                    drawer_content = note_view(Note(note))
         case _:
             notification = [
                 dmc.Title(f"Deployment: {selected_marker['type']}", order=6),
@@ -133,6 +125,7 @@ def update_drawer_content_from_marker_store(selected_marker, _selected_note, not
     prevent_initial_call=True
 )
 def activate_preventing_marker_clicks(selected_note):
+    print("def activate_preventing_marker_clicks(selected_note): ")
     if selected_note["data"] is None:
         return dict(state=False)
     return dict(state=True)

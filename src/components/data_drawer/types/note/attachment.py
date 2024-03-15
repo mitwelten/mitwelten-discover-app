@@ -12,6 +12,7 @@ from src.model.file import File
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
 
+from configuration import API_URL
 
 def attachment_area(files: list[File], editable = False):
     user = get_user_from_cookies()
@@ -23,6 +24,10 @@ def attachment_area(files: list[File], editable = False):
     image_cards = [_attachment_card(file, auth_cookie, editable) for file in files]
 
     return [
+        dcc.Store(
+            id=ID_NOTE_FILE_STORE, 
+            data=dict(url=API_URL, files=[f.to_dict() for f in files])
+        ),
         dcc.Download(id=ID_DOWNLOAD),
         dmc.Space(h=20),
         dmc.SimpleGrid(
