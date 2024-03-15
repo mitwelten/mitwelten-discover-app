@@ -216,3 +216,8 @@ input:invalid {
     transform: translate(0%,-50%);
     -ms-transform: translate(-0%,-50%);
 }
+audio::-webkit-media-controls-play-button,
+     audio::-webkit-media-controls-panel {
+     background-color: white; 
+     width: 100%;
+     }
