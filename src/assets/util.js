@@ -1,32 +1,38 @@
-function getFileBasedOnTrigger(isInitCall, triggered_id, file_store, blob_store) {
-  if (isInitCall) return file_store.files[0];
+function getFileBasedOnTrigger(isInitCall, triggered_id, file_store, active_id) {
+  if (isInitCall) {
+    return getNextImage(0, 0, false, file_store.files);
+  }
 
-  const getIndex             = (id)     => file_store.files.findIndex(it => it.id === id);
-  const getFileByIndexOffset = (offset) => file_store.files[(index + offset + len) % len];
-
-  const offset = triggered_id === "img-btn-left" ? -1 : 1;
-  const index  = getIndex(blob_store.active_id);
-  const len    = file_store.files.length;
+  const getIndex = id => file_store.files.findIndex(it => it.id === id);
 
   // left or right button of slideshow clicked
   if(triggered_id === "id-slideshow-btn-left" || triggered_id === "id-slideshow-btn-right") {
-    let isImage = false;
-    let index   = 0;
-    while(!isImage) {
-      file    = getFileByIndexOffset(offset + index);
-      isImage = file.type.startsWith("image/");
-      index ++;
-      if (index > file_store.files.length) {
-        // no image found
-        return null;
-      }
-    }
-    return file;
+    const reversed = triggered_id === "img-btn-left";
+    const index    = getIndex(active_id);
+    return getNextImage(index, 1, reversed, file_store.files)
   }
 
   // click on image preview
   const id = dash_clientside.callback_context.triggered_id["file_id"];
-  return file_store.files.filter((item) => item["id"] == id)[0];
+  return file_store.files.filter(item => item["id"] === id)[0];
+}
+
+
+function getNextImage(index, offset, reversed, files){
+  const len       = files.length;
+  const progress  = reversed ? -1 : 1;
+  let file        = null;
+  let isImage     = false;
+  let loopCounter = 0;
+
+  while(!isImage && loopCounter <= len) {
+    let idx = (index + offset + len) % len;
+    file = files[idx];
+    isImage = file.type.startsWith("image/");
+    index = index + progress;
+    loopCounter++;
+  }
+  return file;
 }
 
 
@@ -37,10 +43,10 @@ function extractFromCookie(name, cookie) {
 
      for(let i = 0; i <ca.length; i++) {
        let c = ca[i];
-       while (c.charAt(0) == ' ') {
+       while (c.charAt(0) === ' ') {
          c = c.substring(1);
        }
-       if (c.indexOf(cname) == 0) {
+       if (c.indexOf(cname) === 0) {
          cookieValue = c.substring(cname.length, c.length);
        }
      }

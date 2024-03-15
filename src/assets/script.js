@@ -4,12 +4,11 @@ if (!window.dash_clientside) {
 
 window.dash_clientside.browser_properties = {
   fetchWindowProps: function() {
-    const returnObj = {
-      pixelRatio:  window.devicePixelRatio,
+    return {
+      pixelRatio: window.devicePixelRatio,
       width: window.innerWidth,
       height: window.innerHeight,
-    };
-    return returnObj
+    }
   }
 };
 
@@ -27,10 +26,10 @@ window.dash_clientside.attachment = {
     const { triggered_id } = dash_clientside.callback_context;
     const isInitCall       = dash_clientside.callback_context.triggered.every(({ value }) => value === null);
 
-    const file = getFileBasedOnTrigger(isInitCall, triggered_id, file_store, blob_store);
+    const file = getFileBasedOnTrigger(isInitCall, triggered_id, file_store, blob_store.active_id);
 
     // if file is already in blob store, return its url
-    isFileLoaded = blob_store.files.find(it => it && it["id"] == file.id);
+    const isFileLoaded = blob_store.files.find(it => it && it["id"] === file.id);
     if (isFileLoaded !== undefined) {
       blob_store.active_id = file.id;
       return [isFileLoaded.url, blob_store];
@@ -65,10 +64,10 @@ window.dash_clientside.attachment = {
       throw dash_clientside.PreventUpdate;
     }
 
-    const file = getFileBasedOnTrigger(isInitCall, triggered_id, file_store, blob_store);
+    const file = getFileBasedOnTrigger(isInitCall, triggered_id, file_store, blob_store.active_id);
 
     // if file is already in blob store, return its url
-    isFileLoaded = blob_store.files.find(it => it && it["id"] == file.id);
+    const isFileLoaded = blob_store.files.find(it => it && it["id"] === file.id);
     if (isFileLoaded !== undefined) {
       window.open(isFileLoaded.url, "_blank");
       return blob_store;
@@ -108,13 +107,13 @@ window.dash_clientside.attachment = {
       throw dash_clientside.PreventUpdate;
     }
 
-    audio_files = file_store.files.filter(file => file.type === "audio/mpeg");
+    const audio_files = file_store.files.filter(file => file.type === "audio/mpeg");
 
     const auth_token = extractFromCookie("auth", document.cookie);
     const audio_urls = [];
 
     for(let i = 0; i < audio_files.length; i ++) {
-      file = audio_files[i];
+      const file = audio_files[i];
       const blob_url = await getBlobUrl(blob_store.api_url, auth_token, file);
       blob_store.files.push({id: file.id, url: blob_url});
       audio_urls.push(blob_url);
