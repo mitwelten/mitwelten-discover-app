@@ -20,7 +20,6 @@ from src.model.note import Note
 from src.util.util import local_formatted_date
 from src.error.notifications import notification, response_notification
 
-
 def get_form_controls(public:bool = False):
     return [
         dmc.Switch(
@@ -39,7 +38,6 @@ def get_form_controls(public:bool = False):
             icon="material-symbols:edit-location-alt-outline-sharp"
         ),
     ]
-
 
 def form_content(note: Note, all_tags):
     return [
@@ -154,12 +152,11 @@ def update_location_modal_state(click):
     return True
 
 
-
 @app.callback(
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_DATE_INPUT, "value"),
     Input(ID_NOTE_TIME_INPUT, "value"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_EDIT_NOTE_STORE, "data"),
     prevent_initial_call = True
 )
 def update_date_time(input_date, input_time, selected_note):
@@ -174,7 +171,7 @@ def update_date_time(input_date, input_time, selected_note):
 
 
 @app.callback(
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_EDIT_LOCATION_MODAL, "opened", allow_duplicate=True),
     Input(ID_NOTE_EDIT_TITLE, "value"),
     Input(ID_NOTE_EDIT_DESCRIPTION, "value"),
@@ -183,7 +180,7 @@ def update_date_time(input_date, input_time, selected_note):
     Input(ID_NOTE_TAG_SELECT, "value"),
     Input(ID_NOTE_EDIT_LAT, "value"),
     Input(ID_NOTE_EDIT_LON, "value"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_EDIT_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
 def update_note_store_by_form(title, description, is_public, location_click, tags, lat, lon, selected_note):
@@ -219,11 +216,11 @@ def marker_click(coordinates):
 
 
 @app.callback(
-    Output(ID_SELECTED_NOTE_STORE, "data",  allow_duplicate=True),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_ATTACHMENTS, "children", allow_duplicate=True),
     Input(ID_IMAGE_UPLOAD, "contents"),
     State(ID_IMAGE_UPLOAD, "filename"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_EDIT_NOTE_STORE, "data"),
     prevent_initial_call = True
 )
 def add_attachment(list_of_contents, list_of_names, note):
@@ -262,10 +259,10 @@ def add_attachment(list_of_contents, list_of_names, note):
 
 
 @app.callback(
-    Output(ID_SELECTED_NOTE_STORE, "data",  allow_duplicate=True),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_ATTACHMENTS, "children", allow_duplicate=True),
     Input({"element": "delete_button", "file_id": ALL}, "n_clicks"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_EDIT_NOTE_STORE, "data"),
     prevent_initial_call = True
 )
 def delete_attachment(click, note):
@@ -320,13 +317,13 @@ def find_added_tags(modified_note, original_note):
 @app.callback(
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_ALERT_DANGER, "is_open", allow_duplicate=True),
     Output(ID_ALERT_DANGER, "children", allow_duplicate=True),
     Output(ID_TAG_DATA_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_EDIT_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
 def persist_note(click, notes, selected_note):

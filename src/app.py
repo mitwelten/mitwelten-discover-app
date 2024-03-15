@@ -162,9 +162,9 @@ for source in SOURCE_PROPS.keys():
 @app.callback(
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_MAP, "clickData"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_EDIT_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True,
 )
@@ -180,11 +180,11 @@ def map_click(_, selected_note, notes):
 
 
 @app.callback(
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
     Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_EDIT_NOTE_STORE, "data"),
     prevent_initial_call=True,
 )
 def deactivate_edit_mode(cancel_click, selected_note):

@@ -4,12 +4,10 @@ from dash import (
     Input,
     State,
     ALL,
-    html,
     clientside_callback,
     ClientsideFunction,
 )
 from dash.exceptions import PreventUpdate
-import dash_mantine_components as dmc
 from dash_extensions.javascript import assign
 
 from src.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_tooltip
@@ -143,7 +141,7 @@ def add_environment_markers(active_checkboxes, all_environments):
 @app.callback(
     Output(ID_NOTES_LAYER_GROUP, "children", allow_duplicate=True),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-    Input(ID_SELECTED_NOTE_STORE, "data"),
+    Input(ID_EDIT_NOTE_STORE, "data"),
     Input({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True
 )

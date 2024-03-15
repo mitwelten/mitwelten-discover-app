@@ -121,7 +121,7 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
 
 @app.callback(
     Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
-    Input(ID_SELECTED_NOTE_STORE, "data"),
+    Input(ID_EDIT_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
 def activate_preventing_marker_clicks(selected_note):

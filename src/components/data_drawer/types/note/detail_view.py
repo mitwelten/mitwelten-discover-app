@@ -20,29 +20,15 @@ from src.main import app
 from src.util.user_validation import get_user_from_cookies
 from src.util.util import apply_newlines, local_formatted_date
 
-def note_form_view(note: Note, all_tags):
 
-    return dmc.Container([
-         dmc.Grid([
-             dmc.Col([
-                 dmc.Title("Edit / Create Note"),
-                 dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm")
-             ],span="content"),
-             dmc.Col(dmc.Group(get_form_controls(note.public),spacing="sm"),
-                span="content"
-             )
-         ],
-             justify="space-between"
-         ),
-        *form_content(note, all_tags),
-        dmc.ScrollArea(
-            id=ID_ATTACHMENTS,
-            children=attachment_area(note.files, True),
-            h=150,
-            type="hover",
-            offsetScrollbars=True
-        )
-    ])
+def note_view(note: Note):
+    return dmc.Container(
+        id=ID_NOTE_CONTAINER,
+        children=note_detail_view(note),
+        #fluid=True,
+        #style={"margin":"0 24px 24px 24px"}
+    )
+
 
 def text_to_html_list(text: str):
     lines = apply_newlines(text)
@@ -96,26 +82,43 @@ slideshow = html.Div([
         html.Button( "❯", id=ID_SLIDESHOW_BTN_RIGHT, className="slide-btn slide-btn-right"), 
     ], className="image-container")
 
-def note_view(note: Note):
-    return dmc.Container(
-        id=ID_NOTE_CONTAINER,
-        children=note_detail_view(note),
-        #fluid=True, 
-        #style={"margin":"0 24px 24px 24px"}
-    )
-        
+
+def note_form_view(note: Note, all_tags):
+
+    return dmc.Container([
+        dmc.Grid([
+            dmc.Col([
+                dmc.Title("Edit / Create Note"),
+                dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm")
+            ],span="content"),
+            dmc.Col(dmc.Group(get_form_controls(note.public),spacing="sm"),
+                    span="content"
+                    )
+        ],
+            justify="space-between"
+        ),
+        *form_content(note, all_tags),
+        dmc.ScrollArea(
+            id=ID_ATTACHMENTS,
+            children=attachment_area(note.files, True),
+            h=150,
+            type="hover",
+            offsetScrollbars=True
+        )
+    ])
+
 
 def note_detail_view(note: Note):
-    user = get_user_from_cookies()
-    title    = note.title
-    files = list(sorted(note.files, key=lambda file: file.name.lower()))
-    has_files = len(files) != 0;
+    user      = get_user_from_cookies()
+    title     = note.title
+    files     = list(sorted(note.files, key=lambda file: file.name.lower()))
+    has_files = len(files) != 0
 
     return [dmc.Grid([
             dmc.Col(
                 dmc.Stack([
                     dmc.Group([
-                        dmc.Title(title), 
+                        dmc.Title(title),
                         action_button(
                             button_id={"button":"edit_note", "note_id": note.id},   
                             icon="material-symbols:edit", 
@@ -171,13 +174,13 @@ def map_click(click):
 
 
 @app.callback(
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_ALERT_DANGER, "is_open", allow_duplicate=True),
     Output(ID_ALERT_DANGER, "children", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Input(ID_CONFIRM_DELETE_DIALOG, "submit_n_clicks"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_EDIT_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
 def deactivate_edit_mode(delete_click, note):
@@ -198,7 +201,7 @@ def deactivate_edit_mode(delete_click, note):
 
 
 @app.callback(
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
@@ -255,12 +258,12 @@ app.clientside_callback(
 
 @app.callback(
     Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    State(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_EDIT_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
 def cancel_click(cancel_click, notes, selected_note):
