@@ -3,18 +3,16 @@ if (!window.dash_clientside) {
 }
 
 window.dash_clientside.browser_properties = {
-  fetchWindowProps: function() {
-    return {
-      pixelRatio: window.devicePixelRatio,
-      width: window.innerWidth,
-      height: window.innerHeight,
-    }
-  }
+  fetchWindowProps: () => ({
+    pixelRatio: window.devicePixelRatio,
+    width: window.innerWidth,
+    height: window.innerHeight,
+  })
 };
 
 window.dash_clientside.attachment = {
 
-  create_blob: async function(_click, _prev, _next, file_store, blob_store) {
+  create_blob: async (_click, _prev, _next, file_store, blob_store) => {
 
     // no files to load
     if (file_store.files && file_store.files.length === 0) {
@@ -47,7 +45,7 @@ window.dash_clientside.attachment = {
   },
 
 
-  load_text_blob: async function(_click, file_store, blob_store) {
+  load_text_blob: async (_click, file_store, blob_store) => {
 
     // no files to load
     if (file_store.files && file_store.files.length === 0) {
@@ -85,7 +83,7 @@ window.dash_clientside.attachment = {
   },
 
 
-  clear_blob: async function(note_store, blob_store) {
+  clear_blob: async (note_store, blob_store) => {
 
     if (note_store["data"] === null) {
       blob_store.files.forEach(it => {
@@ -97,7 +95,7 @@ window.dash_clientside.attachment = {
     return blob_store;
   },
 
-  load_audio_files: async function(_clicks, file_store, blob_store) {
+  load_audio_files: async (_clicks, file_store, blob_store) => {
 
     const isInitCall = dash_clientside.callback_context.triggered.every(({ value }) => value === null);
     // load audio files eagerly on initialization 
@@ -122,7 +120,7 @@ window.dash_clientside.attachment = {
 
 window.dashExtensions = Object.assign({}, window.dashExtensions, {
   default: {
-      function0: function(e, ctx) {
+      function0: (e, ctx) => {
           ctx.setProps({
             latlng: { lat: `${e.target.getLatLng()['lat']}`,
                       lng: `${e.target.getLatLng()['lng']}` 

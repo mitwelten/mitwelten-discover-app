@@ -1,4 +1,4 @@
-function getFileBasedOnTrigger(isInitCall, triggered_id, file_store, active_id) {
+const getFileBasedOnTrigger = (isInitCall, triggered_id, file_store, active_id) => {
   if (isInitCall) {
     return getNextImage(0, 0, false, file_store.files);
   }
@@ -15,10 +15,10 @@ function getFileBasedOnTrigger(isInitCall, triggered_id, file_store, active_id) 
   // click on image preview
   const id = dash_clientside.callback_context.triggered_id["file_id"];
   return file_store.files.filter(item => item["id"] === id)[0];
-}
+};
 
 
-function getNextImage(index, offset, reversed, files){
+const getNextImage = (index, offset, reversed, files) => {
   const len       = files.length;
   const progress  = reversed ? -1 : 1;
   let file        = null;
@@ -26,20 +26,20 @@ function getNextImage(index, offset, reversed, files){
   let loopCounter = 0;
 
   while(!isImage && loopCounter <= len) {
-    let idx = (index + offset + len) % len;
+    const idx = (index + offset + len) % len;
     file = files[idx];
     isImage = file.type.startsWith("image/");
     index = index + progress;
     loopCounter++;
   }
   return file;
-}
+};
 
 
-function extractFromCookie(name, cookie) {
+const extractFromCookie = (name, cookie) => {
      let cookieValue = "";
-     const cname    = `${name}=`;
-     const ca       = cookie.split(';');
+     const cname     = `${name}=`;
+     const ca        = cookie.split(';');
 
      for(let i = 0; i <ca.length; i++) {
        let c = ca[i];
@@ -51,10 +51,10 @@ function extractFromCookie(name, cookie) {
        }
      }
   return cookieValue;
-}
+};
 
 
-async function getBlobUrl(api_url, auth_token, file) {
+const getBlobUrl = async (api_url, auth_token, file) => {
     const requestOptions = {
       method: 'GET',
       mode: "cors",
@@ -66,4 +66,4 @@ async function getBlobUrl(api_url, auth_token, file) {
     const blob    = await result.blob();
     const blobObj = new Blob([blob], {type: file["type"]});
     return URL.createObjectURL(blobObj);
-}
+};
