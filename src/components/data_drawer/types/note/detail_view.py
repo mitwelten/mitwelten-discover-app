@@ -1,13 +1,12 @@
 import dash
 import dash_mantine_components as dmc
 import flask
-from dash import  html, dcc, Output, Input, State, ctx, ALL, clientside_callback, ClientsideFunction
+from dash import  html, dcc, Output, Input, State, ctx, ALL, ClientsideFunction
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
 from configuration import API_URL
 from http.client import responses
-from src.components.data_drawer.types.note.form_view import note_form_view
 from src.components.data_drawer.types.note.attachment import attachment_area
 from src.components.button.components.action_button import action_button
 from configuration import PRIMARY_COLOR
@@ -132,7 +131,7 @@ def note_detail_view(note: Note):
             h=350,
             offsetScrollbars=True,
         ),
-    ], fluid=True, style={"margin":"24px"})
+    ], fluid=True, style={"margin":"0 24px 24px 24px"})
 
 
 @app.callback(
@@ -175,11 +174,8 @@ def deactivate_edit_mode(delete_click, note):
 
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    #Output("id-note-container", "children", allow_duplicate=True),
-    #Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    #State(ID_TAG_DATA_STORE, "data"),
     prevent_initial_call=True
 )
 def activate_edit_mode(click, notes):
@@ -200,6 +196,30 @@ app.clientside_callback(
     Input({"element": "image", "file_id": ALL}, "n_clicks"),
     Input(ID_SLIDESHOW_BTN_LEFT, "n_clicks"),
     Input(ID_SLIDESHOW_BTN_RIGHT, "n_clicks"),
+    State(ID_NOTE_FILE_STORE, "data"),
+    State(ID_BLOB_URLS_STORE, "data"),
+    prevent_initial_call=True
+)
+
+
+app.clientside_callback(
+    ClientsideFunction(
+        namespace="attachment", function_name="load_text_blob"
+    ),
+    Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
+    Input({"element": "text", "file_id": ALL}, "n_clicks"),
+    State(ID_NOTE_FILE_STORE, "data"),
+    State(ID_BLOB_URLS_STORE, "data"),
+    prevent_initial_call=True
+)
+
+app.clientside_callback(
+    ClientsideFunction(
+        namespace="attachment", function_name="load_audio_files"
+    ),
+    Output({"element": "audio", "file_id": ALL}, "src"),
+    Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
+    Input({"element": "image", "file_id": ALL}, "n_clicks"),
     State(ID_NOTE_FILE_STORE, "data"),
     State(ID_BLOB_URLS_STORE, "data"),
     prevent_initial_call=True

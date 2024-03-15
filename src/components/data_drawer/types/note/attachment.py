@@ -6,7 +6,7 @@ from dash.exceptions import PreventUpdate
 from src.api.api_files import get_file
 from src.components.button.components.action_button import action_button
 from src.config.id_config import *
-from src.config.app_config import thumbnail_size, image_types
+from src.config.app_config import thumbnail_size, image_types, audio_types
 from src.main import app
 from src.model.file import File
 from src.util.helper_functions import safe_reduce
@@ -37,11 +37,24 @@ def attachment_area(files: list[File], editable = False):
         )
     ]
 
+def audio_card(file: File):
+    return html.Div(
+        children=html.Audio(
+            id={"element": "audio", "file_id": file.id},
+            controls="controls",
+            style={"width":"100%"}
+        ),
+        className="attachment-card"
+    )
+
+
 def _attachment_card(file: File, auth_cookie, editable = False): 
     name, ext = file.object_name.split('.')
     thumbnail = f"{name}_{thumbnail_size[0]}x{thumbnail_size[1]}.{ext}"
     is_image = file.type in image_types
-
+    is_audio = file.type in audio_types
+    if is_audio:
+        return audio_card(file)
 
     return html.Div(
         id={"element": "image" if is_image else "text", "file_id": file.id} if not editable else "",

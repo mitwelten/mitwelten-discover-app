@@ -10,7 +10,18 @@ function getFileBasedOnTrigger(isInitCall, triggered_id, file_store, blob_store)
 
   // left or right button of slideshow clicked
   if(triggered_id === "id-slideshow-btn-left" || triggered_id === "id-slideshow-btn-right") {
-    return getFileByIndexOffset(offset);
+    let isImage = false;
+    let index   = 0;
+    while(!isImage) {
+      file    = getFileByIndexOffset(offset + index);
+      isImage = file.type.startsWith("image/");
+      index ++;
+      if (index > file_store.files.length) {
+        // no image found
+        return null;
+      }
+    }
+    return file;
   }
 
   // click on image preview
@@ -49,5 +60,4 @@ async function getBlobUrl(api_url, auth_token, file) {
     const blob    = await result.blob();
     const blobObj = new Blob([blob], {type: file["type"]});
     return URL.createObjectURL(blobObj);
-
 }
