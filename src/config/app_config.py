@@ -1,5 +1,3 @@
-from configuration import PRIMARY_COLOR, SECONDARY_COLOR
-
 DATA_SOURCES_WITHOUT_CHART_SUPPORT = ["Wild Cam", "Access Point"]
 DATE_FORMAT = "%Y-%m-%d"
 TIMEZONE = "Europe/Zurich"
@@ -8,6 +6,10 @@ SETTINGS_DRAWER_WIDTH = 400
 CHART_DRAWER_HEIGHT = 500
 ALERT_DURATION = 4000
 
+REFRESH_KEY_TIME_LEFT_S = 10 * 60
+
+PRIMARY_COLOR = "mitwelten_green"
+SECONDARY_COLOR = "mitwelten_pink"
 
 app_theme = {
     "colorScheme": "light",

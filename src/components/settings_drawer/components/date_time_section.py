@@ -5,7 +5,7 @@ import dash
 import dash_mantine_components as dmc
 from dash import html, Output, Input, dcc, State
 
-from configuration import PRIMARY_COLOR
+from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 from src.config.settings_config import DEFAULT_DATE_RANGES
 from src.config.settings_config import FIRST_DEPLOYMENT_WEEKS_AGO

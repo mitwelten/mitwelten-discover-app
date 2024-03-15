@@ -12,8 +12,7 @@ from src.components.data_drawer.types.note.attachment import attachment_area
 from src.util.helper_functions import safe_reduce
 from src.api.api_files import add_file,  delete_file
 from src.api.api_note import update_note, delete_tag_by_note_id, add_tag_by_note_id, add_file_to_note
-from configuration import PRIMARY_COLOR
-from src.config.app_config import supported_mime_types
+from src.config.app_config import supported_mime_types, PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note

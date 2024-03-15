@@ -7,10 +7,11 @@ from src.api.api_note import create_note
 
 import json
 from datetime import datetime, timezone
-from configuration import DOMAIN_NAME, PRIMARY_COLOR
+from configuration import DOMAIN_NAME
 from src.components.button.components.action_button import action_button
 from src.components.map.layer_selection.drawer import map_menu_drawer
 from src.components.map.layer_selection.popup import map_menu_popup
+from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note, empty_note

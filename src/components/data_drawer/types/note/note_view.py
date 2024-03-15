@@ -1,22 +1,21 @@
+from http.client import responses
+
 import dash
 import dash_mantine_components as dmc
 import flask
-from pprint import pprint
 from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_update
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
-from src.config.app_config import CHART_DRAWER_HEIGHT
-from src.components.data_drawer.types.note.form_view import form_content, get_form_controls
 
-from http.client import responses
-from src.components.data_drawer.types.note.attachment import attachment_area
-from src.components.button.components.action_button import action_button
-from configuration import PRIMARY_COLOR
-from src.util.helper_functions import safe_reduce
 from src.api.api_note import delete_note
+from src.components.button.components.action_button import action_button
+from src.components.data_drawer.types.note.attachment import attachment_area
+from src.components.data_drawer.types.note.form_view import form_content, get_form_controls
+from src.config.app_config import CHART_DRAWER_HEIGHT, PRIMARY_COLOR
 from src.config.id_config import *
-from src.model.note import Note
 from src.main import app
+from src.model.note import Note
+from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
 from src.util.util import apply_newlines, local_formatted_date
 

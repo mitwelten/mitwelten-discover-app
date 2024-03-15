@@ -1,13 +1,12 @@
 import re
 
-from pprint import pprint
 import dash
 import dash_mantine_components as dmc
 from dash import html, Input, Output, State
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
-from configuration import PRIMARY_COLOR
+from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
 

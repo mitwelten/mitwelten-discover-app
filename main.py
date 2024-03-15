@@ -11,10 +11,10 @@ from configuration import (
     KC_SERVER_URL,
     KC_CLIENT_ID,
     KC_REALM_NAME,
-    REFRESH_KEY_TIME_LEFT_S,
     DOMAIN_NAME,
 )
 from src.app import app as dash_app
+from src.config.app_config import REFRESH_KEY_TIME_LEFT_S
 
 keycloak_openid = KeycloakOpenID(
     server_url=KC_SERVER_URL,

@@ -1,7 +1,7 @@
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
-from configuration import PRIMARY_COLOR
+from src.config.app_config import PRIMARY_COLOR
 
 
 def action_button(button_id = None, icon: str = None, size="lg", disabled=False):
