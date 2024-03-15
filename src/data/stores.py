@@ -3,6 +3,8 @@ from functools import partial
 import flask
 from dash.exceptions import PreventUpdate
 from configuration import API_URL
+from dash import clientside_callback, ClientsideFunction
+
 
 from src.components.data_drawer.types.pollinator import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
@@ -92,3 +94,14 @@ for source in SOURCE_PROPS.keys():
             Input(ID_DEPLOYMENT_DATA_STORE, "data"),
             prevent_initial_call=True
         )(partial(update_deployment_store, source))
+
+
+clientside_callback(
+    ClientsideFunction(
+        namespace="attachment", function_name="clear_blob"
+    ),
+    Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
+    Input(ID_SELECTED_NOTE_STORE, "data"),
+    State(ID_BLOB_URLS_STORE, "data"),
+    prevent_initial_call = True
+)

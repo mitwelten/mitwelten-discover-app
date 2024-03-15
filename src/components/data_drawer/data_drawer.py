@@ -1,7 +1,8 @@
 import dash_mantine_components as dmc
-from dash import Output, Input, html, State, no_update
+from dash import ctx, Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
 from src.components.data_drawer.types.note.detail_view import note_detail_view
+from src.components.data_drawer.types.note.form_view import note_form_view
 from src.model.note import Note
 
 from src.components.data_drawer.types.audio import create_audio_chart
@@ -77,14 +78,15 @@ def open_drawer(selected_marker):
     Output(ID_CHART_DRAWER, "size"),
     Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
     Output(ID_ALERT_INFO, "children", allow_duplicate=True),
-    Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
+    Input(ID_SELECTED_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
+    State(ID_TAG_DATA_STORE, "data"),
     State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
-def update_drawer_content_from_marker_store(selected_marker, notes, environment_data, light_mode):
+def update_drawer_content_from_marker_store(selected_marker, _selected_note, notes, environment_data, all_tags, light_mode):
     if selected_marker is None:
         raise PreventUpdate
 
@@ -92,6 +94,7 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
     node_label = get_identification_label(marker_data)
     drawer_title = f"{selected_marker['type']} - {node_label}"
     drawer_content = html.Div("Somthing went wrong, not device found!")
+
     match selected_marker["type"]:
         case "Audio Logger":
             drawer_content = create_audio_chart(selected_marker["data"]["id"], light_mode)
@@ -107,15 +110,19 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
             for note in notes["entries"]:
                 if note["id"] == selected_marker["data"]["id"]:
                     drawer_title = ""
-                    drawer_content = note_detail_view(Note(note))
+                    if ctx.triggered_id == ID_SELECTED_NOTE_STORE:
+                        drawer_content = note_form_view(Note(note), all_tags)
+                    else:
+                        drawer_content = note_detail_view(Note(note))
+
         case _:
             notification = [
                 dmc.Title(f"Deployment: {selected_marker['type']}", order=6),
                 dmc.Text("No further data available!"),
             ]
-            return no_update, no_update, no_update, True, notification, no_update
+            return no_update, no_update, no_update, True, notification
 
-    return drawer_content, drawer_title, CHART_DRAWER_HEIGHT, no_update, no_update, no_update
+    return drawer_content, drawer_title, CHART_DRAWER_HEIGHT, no_update, no_update
 
 
 @app.callback(

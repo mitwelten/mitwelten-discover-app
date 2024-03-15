@@ -47,20 +47,19 @@ def get_form_controls(public:bool = False):
 
 
 def note_form_view(note: Note, all_tags):
-    controls = get_form_controls(note.public)
 
     return dmc.Container([
-        dmc.Grid([
-            dmc.Col([
-                dmc.Title("Edit / Create Note"),
-                dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm")
-            ],span="content"),
-            dmc.Col(dmc.Group(controls, spacing="sm"),
+         dmc.Grid([
+             dmc.Col([
+                 dmc.Title("Edit / Create Note"),
+                 dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm")
+             ],span="content"),
+             dmc.Col(dmc.Group(get_form_controls(note.public),spacing="sm"),
                 span="content"
-            ),
-        ],
-            justify="space-between"
-        ),
+             )
+         ],
+             justify="space-between"
+         ),
         *from_content(note, all_tags),
         dmc.ScrollArea(
             id=ID_ATTACHMENTS,

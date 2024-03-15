@@ -66,4 +66,6 @@ supported_mime_types = [
     "audio/mpeg"
 ]
 
+image_types = ["image/png", "image/jpg", "image/jpeg", "image/gif", "image/webp"]
+
 thumbnail_size = (64, 64)

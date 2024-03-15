@@ -1,15 +1,12 @@
-import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 import flask
-from configuration import API_URL
-from pprint import pprint
 
-from dash import  html, dcc, Output, Input, State, ctx, ALL, MATCH, clientside_callback, ClientsideFunction
+from dash import  html, dcc, Output, Input, State, ctx, ALL
 from dash.exceptions import PreventUpdate
 from src.api.api_files import get_file
 from src.components.button.components.action_button import action_button
 from src.config.id_config import *
-from src.config.app_config import thumbnail_size
+from src.config.app_config import thumbnail_size, image_types
 from src.main import app
 from src.model.file import File
 from src.util.helper_functions import safe_reduce
@@ -23,7 +20,7 @@ def attachment_area(files: list[File], editable = False):
     auth_cookie = flask.request.cookies.get("auth")
     files = list(sorted(files, key=lambda file: file.name.lower()))
 
-    image_cards = [attachment_card(file, auth_cookie, editable) for file in files]
+    image_cards = [_attachment_card(file, auth_cookie, editable) for file in files]
 
     return [
         dcc.Download(id=ID_DOWNLOAD),
@@ -40,15 +37,16 @@ def attachment_area(files: list[File], editable = False):
         )
     ]
 
-def attachment_card(file: File, auth_cookie, editable = False): 
+def _attachment_card(file: File, auth_cookie, editable = False): 
     name, ext = file.object_name.split('.')
     thumbnail = f"{name}_{thumbnail_size[0]}x{thumbnail_size[1]}.{ext}"
-    is_image = file.type in ["image/png", "image/jpg", "image/jpeg",  "image/gif"]
+    is_image = file.type in image_types
+
 
     return html.Div(
+        id={"element": "image" if is_image else "text", "file_id": file.id} if not editable else "",
         children=[
             html.Div(
-                id={"element": "image" if is_image else "text", "file_id": file.id},
                 style={"cursor": "pointer",
                        "display": "flex",
                        "overflow": "hidden",
@@ -84,39 +82,6 @@ def attachment_card(file: File, auth_cookie, editable = False):
         className="attachment-card"
     )
 
-    #clientside_callback(
-    #    ClientsideFunction(
-    #        namespace="attachment", function_name="create_blob"
-    #    ),
-    #    Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
-    #    Input({"element": "text", "file_id": ALL}, "n_clicks"),
-    #    State(ID_NOTE_FILE_STORE, "data"),
-    #    prevent_initial_call = True
-    #)
-
-clientside_callback(
-    ClientsideFunction(
-        namespace="attachment", function_name="clear_blob"
-    ),
-    Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
-    Input(ID_SELECTED_NOTE_STORE, "data"),
-    State(ID_BLOB_URLS_STORE, "data"),
-    prevent_initial_call = True
-)
-
-clientside_callback(
-    ClientsideFunction(
-        namespace="attachment", function_name="create_blob"
-    ),
-    Output("id-image", "src"),
-    Output(ID_BLOB_URLS_STORE, "data"),
-    Input({"element": "image", "file_id": ALL}, "n_clicks"),
-    Input("img-btn-left", "n_clicks"),
-    Input("img-btn-right", "n_clicks"),
-    State(ID_NOTE_FILE_STORE, "data"),
-    State(ID_BLOB_URLS_STORE, "data"),
-    prevent_initial_call=True
-)
 
 @app.callback(
     Output(ID_DOWNLOAD, "data"),

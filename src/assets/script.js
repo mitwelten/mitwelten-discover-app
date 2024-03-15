@@ -19,35 +19,36 @@ window.dash_clientside.attachment = {
 
     // no files to load
     if (file_store.files.length === 0) {
-      return ["", blob_store]
+      return ["", blob_store];
     }
 
     // check if the callback was triggered on initialization
     const { triggered_id } = dash_clientside.callback_context;
+    const isInitCall       = dash_clientside.callback_context.triggered.every(({ value }) => value === null);
 
-    const isInitCall = dash_clientside.callback_context.triggered.every(({ value })=> value === null)
 
-    let file = file_store.files[0];
+    function getFileBasedOnTrigger(isInitCall, triggered_id, file_store, blob_store) {
+      if (isInitCall) return file_store.files[0];
 
-    const getIndex = (id) => file_store.files.findIndex(it => it.id === id);
+      const getIndex             = (id)     => file_store.files.findIndex(it => it.id === id);
+      const getFileByIndexOffset = (offset) => file_store.files[(index + offset + len) % len];
 
-    const offset = triggered_id === "img-btn-left" ? -1 : 1;
+      const offset = triggered_id === "img-btn-left" ? -1 : 1;
+      const index  = getIndex(blob_store.active_id);
+      const len    = file_store.files.length;
 
-    const index = getIndex(blob_store.active_id);
-    const l = file_store.files.length
-    const getFileByIndexOffset = (offset) => file_store.files[(index + offset + l) % l]
+      // left or right button of slideshow clicked
+      if(triggered_id === "id-slideshow-btn-left" || triggered_id === "id-slideshow-btn-right") {
+        return getFileByIndexOffset(offset);
+      }
 
-    if(!isInitCall && triggered_id === "img-btn-left") {
-      file = getFileByIndexOffset(offset);
-    } else if (!isInitCall && triggered_id === "img-btn-right") {
-      const index = getIndex(blob_store.active_id);
-      const l = file_store.files.length
-      const nextIndex = (index + 1) % l;
-      file = file_store.files[nextIndex];
-    } else if  (!isInitCall) {
+      // click on image preview
       const id = dash_clientside.callback_context.triggered_id["file_id"];
-      file = file_store.files.filter((item) => item["id"] == id)[0];
+      return file_store.files.filter((item) => item["id"] == id)[0];
     }
+
+    const file = getFileBasedOnTrigger(isInitCall, triggered_id, file_store, blob_store);
+
 
     // if file is already in blob store, return its url
     isFileLoaded = blob_store.files.find(it => it && it["id"] == file.id);
@@ -60,23 +61,22 @@ window.dash_clientside.attachment = {
       throw dash_clientside.PreventUpdate;
     }
 
-
     const cookie = document.cookie;
 
-    // extract auth cookie
-    let auth_token = "";
-    const cname    = "auth=";
-    const ca       = cookie.split(';');
+     // extract auth cookie
+     let auth_token = "";
+     const cname    = "auth=";
+     const ca       = cookie.split(';');
 
-    for(let i = 0; i <ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(cname) == 0) {
-        auth_token = c.substring(cname.length, c.length);
-      }
-    }
+     for(let i = 0; i <ca.length; i++) {
+       let c = ca[i];
+       while (c.charAt(0) == ' ') {
+         c = c.substring(1);
+       }
+       if (c.indexOf(cname) == 0) {
+         auth_token = c.substring(cname.length, c.length);
+       }
+     }
 
     const requestOptions = {
       method: 'GET',
@@ -102,14 +102,11 @@ window.dash_clientside.attachment = {
 
 
   clear_blob: async function(note_store, blob_store) {
-    console.log("fn: clear blob store");
 
     if (note_store["data"] === null) {
       blob_store.files.forEach(it => {
         URL.revokeObjectURL(it.url);
-        console.log("cleared blob with url: ", it.url);
       });
-
     }
     blob_store.files = [];
     blob_store.active_id = undefined; 

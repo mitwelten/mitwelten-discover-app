@@ -1,7 +1,7 @@
 import dash
 import dash_mantine_components as dmc
 import flask
-from dash import Output, Input, State, ALL, ctx, html, dcc
+from dash import  html, dcc, Output, Input, State, ctx, ALL, clientside_callback, ClientsideFunction
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
@@ -17,7 +17,7 @@ from src.config.id_config import *
 from src.model.note import Note
 from src.main import app
 from src.util.user_validation import get_user_from_cookies
-from src.util.util import apply_newlines
+from src.util.util import apply_newlines, local_formatted_date
 
 
 def text_to_html_list(text: str):
@@ -63,12 +63,14 @@ icon_public= DashIconify(
 )
 
 slideshow = html.Div([
-        html.Button( "❮", id="img-btn-left", className="slide-btn slide-btn-left"), 
-        html.Div([ html.Img( id="id-image", className="cropped-ofp")], className="image-box"),
-        html.Button( "❯", id="img-btn-right", className="slide-btn slide-btn-right"), 
-    ], 
-        className="image-container"
-    )
+        dmc.LoadingOverlay(
+            children=html.Img( id=ID_SLIDESHOW_IMAGE, className="cropped-ofp"), 
+            className="image-box", 
+            loaderProps={"variant": "dots"}
+        ),
+        html.Button( "❮", id=ID_SLIDESHOW_BTN_LEFT, className="slide-btn slide-btn-left"), 
+        html.Button( "❯", id=ID_SLIDESHOW_BTN_RIGHT, className="slide-btn slide-btn-right"), 
+    ], className="image-container")
 
 
 def note_detail_view(note: Note):
@@ -77,9 +79,9 @@ def note_detail_view(note: Note):
     files = list(sorted(note.files, key=lambda file: file.name.lower()))
     has_files = len(files) != 0;
 
-
-
-    return dmc.Container([
+    return dmc.Container(
+        id="id-note-container",
+        children=[
         dcc.Store(
             id=ID_NOTE_FILE_STORE, 
             data=dict(url=API_URL, files=[f.to_dict() for f in files])
@@ -98,14 +100,12 @@ def note_detail_view(note: Note):
                     dmc.Grid(
                         children=[
                         dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span="content"),
-                        dmc.Col(dmc.Text("Author andri wild - Datum 20.234.234.", align="end", color="dimmed", size="sm"), span="content"),
+                        dmc.Col(dmc.Text(f"{note.author} | {local_formatted_date(note.date)}", align="end", color="dimmed", size="sm"), span="content"),
                     ],
                         justify="space-between",
                         grow=True
                     ),
-                ]),
-                span=11,
-            ),
+                ]), span=11),
             dmc.Col(
                 dmc.Image(
                     src="assets/markers/note.svg", 
@@ -123,11 +123,8 @@ def note_detail_view(note: Note):
             children=[
                 dmc.Grid([
                     dmc.Col(text_to_html_list(note.description), span=8),
-                    dmc.Col(slideshow if has_files else {}, className="image-col", span=4),
-                ],
-                         justify="space-between",
-                         ),
-
+                    dmc.Col(slideshow if user and has_files else {}, className="image-col", span=4),
+                ], justify="space-between"),
                 dmc.Space(h=10),
                 *attachment_area(note.files, False),
             ],
@@ -135,10 +132,7 @@ def note_detail_view(note: Note):
             h=350,
             offsetScrollbars=True,
         ),
-    ],
-                         fluid=True,
-                         style={"margin":"24px"}
-    )
+    ], fluid=True, style={"margin":"24px"})
 
 
 @app.callback(
@@ -181,21 +175,32 @@ def deactivate_edit_mode(delete_click, note):
 
 @app.callback(
     Output(ID_SELECTED_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
+    #Output("id-note-container", "children", allow_duplicate=True),
+    #Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    State(ID_TAG_DATA_STORE, "data"),
+    #State(ID_TAG_DATA_STORE, "data"),
     prevent_initial_call=True
 )
-def activate_edit_mode(click, notes, all_tags):
+def activate_edit_mode(click, notes):
     click_sum = safe_reduce(lambda x, y: x + y, click, 0)
     if ctx.triggered_id is None or click_sum == 0:
         raise PreventUpdate
 
     for note in notes["entries"]:
        if note["id"] == ctx.triggered_id["note_id"]:
-            return dict(data=note), note_form_view(Note(note), all_tags), 650
+            return dict(data=note)
 
-
-
+app.clientside_callback(
+    ClientsideFunction(
+        namespace="attachment", function_name="create_blob"
+    ),
+    Output(ID_SLIDESHOW_IMAGE, "src"),
+    Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
+    Input({"element": "image", "file_id": ALL}, "n_clicks"),
+    Input(ID_SLIDESHOW_BTN_LEFT, "n_clicks"),
+    Input(ID_SLIDESHOW_BTN_RIGHT, "n_clicks"),
+    State(ID_NOTE_FILE_STORE, "data"),
+    State(ID_BLOB_URLS_STORE, "data"),
+    prevent_initial_call=True
+)
