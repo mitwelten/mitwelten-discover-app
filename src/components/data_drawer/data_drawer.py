@@ -94,6 +94,7 @@ def update_drawer_content_from_marker_store(selected_marker, _selected_note, not
     node_label = get_identification_label(marker_data)
     drawer_title = f"{selected_marker['type']} - {node_label}"
     drawer_content = html.Div("Somthing went wrong, not device found!")
+    drawer_size = CHART_DRAWER_HEIGHT
 
     match selected_marker["type"]:
         case "Audio Logger":
@@ -112,6 +113,7 @@ def update_drawer_content_from_marker_store(selected_marker, _selected_note, not
                     drawer_title = ""
                     if ctx.triggered_id == ID_SELECTED_NOTE_STORE:
                         drawer_content = note_form_view(Note(note), all_tags)
+                        drawer_size = 650
                     else:
                         drawer_content = note_detail_view(Note(note))
 
@@ -122,7 +124,7 @@ def update_drawer_content_from_marker_store(selected_marker, _selected_note, not
             ]
             return no_update, no_update, no_update, True, notification
 
-    return drawer_content, drawer_title, CHART_DRAWER_HEIGHT, no_update, no_update
+    return drawer_content, drawer_title, drawer_size, no_update, no_update
 
 
 @app.callback(
