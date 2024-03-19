@@ -43,13 +43,14 @@ chart_drawer = dmc.Drawer(
     Output(ID_LOGO_CONTAINER, "style"),
     Output(ID_CHART_DRAWER, "styles"),
     # Output("id-search-bar-container", "style"),
-    Input(ID_SETTINGS_DRAWER, "opened")
+    Input(ID_SETTINGS_DRAWER, "opened"),
+    State(ID_SETTINGS_DRAWER, "size")
 )
-def settings_drawer_state(state):
+def settings_drawer_state(state, size):
     width_reduced = {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
     full_width = {"width": "100vw"}
     if state:
-        return width_reduced, {"drawer": {"left": "400px", "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}} # width_reduced,
+        return width_reduced, {"drawer": {"left": size, "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}} # width_reduced,
     return full_width, {"drawer": {"left": "0", "width": "100vw"}}#, full_width,
 
 

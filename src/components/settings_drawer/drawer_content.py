@@ -37,8 +37,8 @@ drawer_content = dmc.Container(
         ],
             offsetScrollbars=True,
             type="scroll",
-            style={"height": "100%", "paddingLeft": "5px"}
+            style={"height": "100%"}
         )],
-    fluid=True,
-    style={"height": "calc(100vh - 100px)", "paddingRight": "0px"}
+    #fluid=True,
+    style={"height": "calc(100vh - 100px)", "paddingRight": "0px", "paddingLeft": "0px"}
 )

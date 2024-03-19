@@ -90,17 +90,18 @@ def note_form_view(note: Note, all_tags):
                 dmc.Title("Edit / Create Note"),
                 dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm")
             ],span="content"),
-            dmc.Col(dmc.Group(get_form_controls(note.public),spacing="sm"),
-                    span="content"
-                    )
+            dmc.Col(dmc.Group(get_form_controls(note.public),spacing="sm"), span="content")
         ],
-            justify="space-between"
+            justify="space-between",
+            grow=True
         ),
-        *form_content(note, all_tags),
         dmc.ScrollArea(
             id=ID_ATTACHMENTS,
-            children=attachment_area(note.files, True),
-            h=150,
+            children=[
+                *form_content(note, all_tags),
+                *attachment_area(note.files, True),
+            ],
+            h=500,
             type="hover",
             offsetScrollbars=True
         )
@@ -142,15 +143,19 @@ def note_detail_view(note: Note):
                     ),
                 ]), span=11),
             dmc.Col(
+
+            dmc.MediaQuery(
                 dmc.Image(
                     src="assets/markers/note.svg", 
                     alt="note icon", 
-                    width="70px", 
-                    style={"justifyContent": "flex-end"}), 
-                span=1),
-        ],
-            justify="space-between",
-        ),
+                    style={"justifyContent": "flex-end", "width": "50px"}), 
+                smallerThan=1015,
+                styles={"display":"none"}
+            ),
+            style={"min-width":"50px"},
+                span="content"),
+        ], justify="space-between", grow=True),
+    
         dmc.Space(h=10),
         dmc.Divider(size="xs"),
         dmc.Space(h=10),
@@ -159,7 +164,7 @@ def note_detail_view(note: Note):
                 dmc.Grid([
                     dmc.Col(text_to_html_list(note.description), span=8),
                     dmc.Col(media_section if user and has_images else {}, className="image-col", span=4),
-                ], justify="space-between"),
+                ], justify="space-between", grow=True),
                 dmc.Space(h=10),
                 *attachment_area(note.files, False),
             ],

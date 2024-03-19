@@ -44,12 +44,15 @@ def attachment_area(files: list[File], editable = False):
 
 def audio_card(file: File):
     return html.Div(
-        children=html.Audio(
-            id={"element": "audio", "file_id": file.id},
-            controls="controls",
-            style={"width":"100%"}
-        ),
-        className="attachment-card"
+        children=[
+            html.Audio(
+                id={"element": "audio", "file_id": file.id},
+                controls="controls",
+                style={"width":"100%", "height": "20px", "display": "block"}
+            ),
+            dmc.Text(file.name)
+        ],
+        className="attachment-card",
     )
 
 

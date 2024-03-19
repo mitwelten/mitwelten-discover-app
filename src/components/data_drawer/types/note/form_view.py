@@ -38,6 +38,8 @@ def get_form_controls(public:bool = False):
         ),
     ]
 
+min_width_style = {"minWidth": "200px"}
+
 def form_content(note: Note, all_tags):
     return [
         dmc.Grid([
@@ -51,7 +53,8 @@ def form_content(note: Note, all_tags):
                 nothingFound="No Tags found",
                 size="sm",
             ),
-                span=6
+                span=6,
+                style=min_width_style
             ),
             dmc.Col(dmc.TextInput(
                 id=ID_NEW_TAG_INPUT,
@@ -63,14 +66,15 @@ def form_content(note: Note, all_tags):
                     variant="subtle",
                     id=ID_CREATE_NEW_TAG_BUTTON,
                     n_clicks=0,
-                    color=PRIMARY_COLOR
+                    color=PRIMARY_COLOR,
                 )
             ),
-                span=6
+                span=6,
+                style=min_width_style,
             ),
-            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", debounce=500), span=6),
-            dmc.Col(dmc.DatePicker(id=ID_NOTE_DATE_INPUT, value=local_formatted_date(note.date, "%Y-%m-%dT%H:%M:%S"), label="Date"), span=4),
-            dmc.Col(dmc.TimeInput(id=ID_NOTE_TIME_INPUT, value=local_formatted_date(note.date, "%Y-%m-%dT%H:%M:%S"), label="Time"), span=2),
+            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", debounce=500, style=min_width_style), span=6),
+            dmc.Col(dmc.DatePicker(id=ID_NOTE_DATE_INPUT, value=local_formatted_date(note.date, "%Y-%m-%dT%H:%M:%S"), label="Date", style={"minWidth": "200px"}), span=4),
+            dmc.Col(dmc.TimeInput(id=ID_NOTE_TIME_INPUT, value=local_formatted_date(note.date, "%Y-%m-%dT%H:%M:%S"), label="Time", style={"minWidth": "50"}), span=2),
             dmc.Col(dmc.Textarea(
                 id=ID_NOTE_EDIT_DESCRIPTION,
                 value=note.description,
@@ -78,10 +82,11 @@ def form_content(note: Note, all_tags):
                 autosize=True,
                 minRows=4,
                 maxRows=4,
-                debounce=500
+                debounce=500,
+                style=min_width_style
             ),
                     span=12),
-        ]),
+        ],grow=True),
         dmc.Grid([
             dmc.Col([dmc.Button("Cancel", id=ID_NOTE_FORM_CANCEL_BUTTON, type="reset",   color="gray")], span="content"),
             dmc.Col(dmc.Button("Save",    id=ID_NOTE_FORM_SAVE_BUTTON,   type="submit"), span="content"),
