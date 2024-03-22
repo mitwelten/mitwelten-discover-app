@@ -27,9 +27,10 @@ from src.util.helper_functions import was_deployed
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
+    Input("id-test-icon-store", "data"),
     prevent_initial_call=True
 )
-def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
+def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons):
     """
     Changes the visible markers of the "physical" devices on the map.
     This callback is mainly triggered by adjusting the filter settings.
@@ -97,7 +98,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
                             direction="left",
                         ),
                     ],
-                    icon=dict(iconUrl=get_source_props(d.node_type)["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
+                    icon=dict(iconUrl=get_source_props(d.node_type, test_icons)["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
                     id={"role": f"{d.node_type}", "id": d.id, "label": "Node"},
                 )
             )
@@ -108,8 +109,9 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
     Output(ID_ENV_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
+    Input("id-test-icon-store", "data"),
 )
-def add_environment_markers(active_checkboxes, all_environments):
+def add_environment_markers(active_checkboxes, all_environments, test_icons):
     if "Environment Data Point" not in active_checkboxes:
         return []
     markers = []
@@ -131,7 +133,7 @@ def add_environment_markers(active_checkboxes, all_environments):
                         direction="left",
                     ),
                 ],
-                icon=dict(iconUrl=get_source_props("Environment Data Point")["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
+                icon=dict(iconUrl=get_source_props("Environment Data Point", test_icons)["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
                 id={"role": "Environment Data Point", "id": env.id, "label": "Node"},
             )
         )
@@ -143,13 +145,14 @@ def add_environment_markers(active_checkboxes, all_environments):
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_EDIT_NOTE_STORE, "data"),
     Input({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    Input("id-test-icon-store", "data"),
     prevent_initial_call=True
 )
-def add_note_markers(active_checkboxes, selected_note, all_notes):
+def add_note_markers(active_checkboxes, selected_note, all_notes, test_icons):
     if "Note" not in active_checkboxes:
         return []
 
-    marker_icon           = dict(iconUrl=get_source_props("Note")["marker"], iconAnchor=[15, 6],  iconSize=[30, 30])
+    marker_icon           = dict(iconUrl=get_source_props("Note", test_icons)["marker"], iconAnchor=[15, 6],  iconSize=[30, 30])
     marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg",     iconAnchor=[61, 50], iconSize=[120, 120])
 
     all_notes = all_notes.get("entries", [])

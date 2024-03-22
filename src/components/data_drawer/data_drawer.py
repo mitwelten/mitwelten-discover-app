@@ -32,7 +32,8 @@ chart_drawer = dmc.Drawer(
                 html.Div(id=ID_CHART_CONTAINER, className="chart-container"),
                 overlayBlur="0px",
                 overlayColor=None,
-                overlayOpacity=0
+                overlayOpacity=0,
+                zIndex=99999999
             ),
         ),
     ],
@@ -79,9 +80,10 @@ def open_drawer(selected_marker):
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
     State(ID_APP_THEME, "theme"),
+    State("id-test-icon-store", "data"),
     prevent_initial_call=True
 )
-def update_drawer_content_from_marker_store(selected_marker, notes, environment_data, light_mode):
+def update_drawer_content_from_marker_store(selected_marker, notes, environment_data, light_mode, test_icons):
     if selected_marker is None:
         raise PreventUpdate
 
@@ -106,7 +108,7 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
             for note in notes["entries"]:
                 if note["id"] == selected_marker["data"]["id"]:
                     drawer_title = ""
-                    drawer_content = note_view(Note(note))
+                    drawer_content = note_view(Note(note), test_icons)
         case _:
             notification = [
                 dmc.Title(f"Deployment: {selected_marker['type']}", order=6),

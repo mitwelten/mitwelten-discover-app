@@ -32,11 +32,23 @@ SOURCE_PROPS = {
     "Note":                   dict(color="#FFd800", marker="note.svg"      , type="virtual"),
 }
 
-def get_source_props(source):
+
+TEST_SOURCE_PROPS = {
+    "Access Point":           dict(color="#FF5733", marker="test/internet", type="physical"),
+    "Audio Logger":           dict(color="#9B59B6", marker="test/audio.svg", type="physical"),
+    "Env Sensor":             dict(color="#F1C40F", marker="test/habitat2.svg", type="physical"),
+    "Pax Counter":            dict(color="#3498DB", marker="test/PAX.svg", type="physical"),
+    "Pollinator Cam":         dict(color="#E67E22", marker="test/pollinator2.svg", type="physical"),
+    "Wild Cam":               dict(color="#2ECC71", marker="test/image-cam.svg", type="physical"),
+    "Environment Data Point": dict(color="#946000", marker="test/habitat1.svg", type="virtual"),
+    "Note":                   dict(color="#FFd800", marker="test/info_comment.svg"      , type="virtual"),
+}
+
+def get_source_props(source, test=False):
     default_marker = "assets/markers/location-default.svg"
     default_color  = "#000000"
     default_type   = "physical"
-    source_marker  = SOURCE_PROPS.get(source).get("marker")
+    source_marker  = TEST_SOURCE_PROPS.get(source).get("marker") if test else SOURCE_PROPS.get(source).get("marker")
     source_color   = SOURCE_PROPS.get(source).get("color")
     source_type    = SOURCE_PROPS.get(source).get("type")
 

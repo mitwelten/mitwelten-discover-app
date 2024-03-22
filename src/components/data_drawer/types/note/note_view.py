@@ -21,12 +21,12 @@ from src.util.user_validation import get_user_from_cookies
 from src.util.util import apply_newlines, local_formatted_date
 
 
-def note_view(note: Note):
+def note_view(note: Note, test_icons = False):
     return dmc.Container(
         id=ID_NOTE_CONTAINER,
         children=[
             dcc.Store("id-focused-media-store", data=None),
-            *note_detail_view(note)
+            *note_detail_view(note, test_icons)
         ]
     )
 
@@ -114,7 +114,7 @@ def note_form_view(note: Note, all_tags):
     ])
 
 
-def note_detail_view(note: Note):
+def note_detail_view(note: Note, test_icons):
     user       = get_user_from_cookies()
     title      = note.title
     files      = list(sorted(note.files, key=lambda file: file.name.lower()))
@@ -145,7 +145,7 @@ def note_detail_view(note: Note):
 
             dmc.MediaQuery(
                 dmc.Image(
-                    src="assets/markers/note.svg", 
+                    src="assets/markers/test/info_comment.svg" if test_icons else "assets/markers/note.svg",
                     alt="note icon", 
                     style={"justifyContent": "flex-end", "width": "50px"}), 
                 smallerThan=1015,

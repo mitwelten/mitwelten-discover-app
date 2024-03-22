@@ -1,6 +1,24 @@
 if (!window.dash_clientside) {
   window.dash_clientside = {};
+
 }
+
+
+window.addEventListener("keydown",
+  (event) => {
+    const keyName = event.key;
+
+    if (keyName === " ") { // space
+
+      const store = localStorage.getItem("id-test-icon-store");
+      if (store === "false" || store === false) {
+        localStorage.setItem("id-test-icon-store", true);
+      } else {
+        localStorage.setItem("id-test-icon-store", false);
+      }
+      return;
+    }
+  });
 
 window.dash_clientside.browser_properties = {
   fetchWindowProps: () => ({

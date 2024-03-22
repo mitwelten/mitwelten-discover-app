@@ -76,5 +76,5 @@ def open_bottom_drawer(_):
     Input({'role': ALL, 'index': ALL, 'place': "drawer"}, 'n_clicks'),
     prevent_initial_call=True,
 )
-def open_bottom_drawer(_1, _2):
+def close_bottom_drawer(_1, _2):
     return False
