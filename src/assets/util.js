@@ -1,15 +1,17 @@
 const getFileBasedOnTrigger = (isInitCall, triggered_id, file_store, active_id) => {
   if (isInitCall) {
-    return getNextImage(0, 0, false, file_store.files);
+    return getNextImage(0, 0, file_store.files);
   }
 
   const getIndex = id => file_store.files.findIndex(it => it.id === id);
 
   // left or right button of slideshow clicked
+  // TODO: replace hard coded strings
   if(triggered_id === "id-slideshow-btn-left" || triggered_id === "id-slideshow-btn-right") {
-    const reversed = triggered_id === "img-btn-left";
+    const reversed = triggered_id === "id-slideshow-btn-left" ;
+    const step     = reversed ? -1 : 1;
     const index    = getIndex(active_id);
-    return getNextImage(index, 1, reversed, file_store.files)
+    return getNextImage(index, step, file_store.files)
   }
 
   // click on image preview
@@ -18,18 +20,19 @@ const getFileBasedOnTrigger = (isInitCall, triggered_id, file_store, active_id) 
 };
 
 
-const getNextImage = (index, offset, reversed, files) => {
+const getNextImage = (index, step, files) => {
   const len       = files.length;
-  const progress  = reversed ? -1 : 1;
   let file        = null;
-  let isImage     = false;
+  let valid       = false;
   let loopCounter = 0;
 
-  while(!isImage && loopCounter <= len) {
-    const idx = (index + offset + len) % len;
+  // filter documents
+  while(!valid && loopCounter <= len) {
+    index = index + step;
+    const idx = (index + len) % len;
     file = files[idx];
-    isImage = file.type.startsWith("image/");
-    index = index + progress;
+    console.log("index: ", idx);
+    valid = file.type.startsWith("image/") || file.type.startsWith("audio/");
     loopCounter++;
   }
   return file;
@@ -66,4 +69,14 @@ const getBlobUrl = async (api_url, auth_token, file) => {
     const blob    = await result.blob();
     const blobObj = new Blob([blob], {type: file["type"]});
     return URL.createObjectURL(blobObj);
+};
+
+
+const formatTime = seconds => {
+  const min = Math.floor(seconds / 60);
+  let sec = Math.floor(seconds - min * 60);
+  if (sec < 10){ 
+    sec = `0${sec}`;
+  }
+  return `${min}:${sec}`;
 };
