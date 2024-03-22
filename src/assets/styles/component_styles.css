@@ -165,11 +165,19 @@ input:invalid {
     justify-content: center;
 }
 
+.audio-player{
+    display: flex;
+    width: inherit; 
+    height: 200px; 
+    justify-content: center;
+    align-items: center;
+}
+
 .image-col {
   display: flex;
   justify-content: center;
   width: 250px;
-  min-width: 160px;
+  min-width: 200px;
 }
 
 .image-container {
@@ -216,8 +224,3 @@ input:invalid {
     transform: translate(0%,-50%);
     -ms-transform: translate(-0%,-50%);
 }
-audio::-webkit-media-controls-play-button,
-     audio::-webkit-media-controls-panel {
-     background-color: white; 
-     width: 100%;
-     }

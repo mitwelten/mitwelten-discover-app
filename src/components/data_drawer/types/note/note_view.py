@@ -3,11 +3,12 @@ from http.client import responses
 import dash
 import dash_mantine_components as dmc
 import flask
-from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_update
+from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_update, dcc
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
 from src.api.api_note import delete_note
+from src.components.media.player import audio_player
 from src.components.button.components.action_button import action_button
 from src.components.data_drawer.types.note.attachment import attachment_area
 from src.components.data_drawer.types.note.form_view import form_content, get_form_controls
@@ -23,9 +24,10 @@ from src.util.util import apply_newlines, local_formatted_date
 def note_view(note: Note):
     return dmc.Container(
         id=ID_NOTE_CONTAINER,
-        children=note_detail_view(note),
-        #fluid=True,
-        #style={"margin":"0 24px 24px 24px"}
+        children=[
+            dcc.Store("id-focused-media-store", data=None),
+            *note_detail_view(note)
+        ]
     )
 
 
@@ -71,14 +73,18 @@ icon_public= DashIconify(
     style={"display":"block", "marginLeft":"3px", "color": "#868e96"}
 )
 
+
 slideshow = html.Div([
         dmc.LoadingOverlay(
-            children=html.Img(id=ID_SLIDESHOW_IMAGE, className="cropped-ofp"),
+            children=[
+                html.Img(id=ID_SLIDESHOW_IMAGE, className="cropped-ofp"),
+                audio_player(id=ID_AUDIO_PLAYER),
+        ],
             className="image-box", 
             loaderProps={"variant": "dots"}
         ),
-        html.Button( "❮", id=ID_SLIDESHOW_BTN_LEFT, className="slide-btn slide-btn-left"), 
-        html.Button( "❯", id=ID_SLIDESHOW_BTN_RIGHT, className="slide-btn slide-btn-right"), 
+        html.Button("❮", id=ID_SLIDESHOW_BTN_LEFT, className="slide-btn slide-btn-left"), 
+        html.Button("❯", id=ID_SLIDESHOW_BTN_RIGHT, className="slide-btn slide-btn-right"), 
     ], className="image-container")
 
 
@@ -112,15 +118,8 @@ def note_detail_view(note: Note):
     user       = get_user_from_cookies()
     title      = note.title
     files      = list(sorted(note.files, key=lambda file: file.name.lower()))
-    images     = list(filter(lambda f: f.type.startswith("image/") , files))
+    images     = list(filter(lambda f: f.type.startswith("image/") or f.type.startswith("audio/"), files))
     has_images = len(images) != 0
-
-    media_section = slideshow
-    # only_audio_file = list(filter(lambda f: f.type == "audio/mpeg", files))
-    # print(only_audio_file)
-    # if len(only_audio_file) == len(files):
-    #     print("note has only audio files => audio note")
-    #     media_section = html.Audio(src="", controls="controls")
 
     return [dmc.Grid([
             dmc.Col(
@@ -128,7 +127,7 @@ def note_detail_view(note: Note):
                     dmc.Group([
                         dmc.Title(title),
                         action_button(
-                            button_id={"button":"edit_note", "note_id": note.id},   
+                            button_id={"button":"edit_note", "note_id": note.id},
                             icon="material-symbols:edit", 
                             disabled=True if user is None else False
                         ),
@@ -163,15 +162,16 @@ def note_detail_view(note: Note):
             children=[
                 dmc.Grid([
                     dmc.Col(text_to_html_list(note.description), span=8),
-                    dmc.Col(media_section if user and has_images else {}, className="image-col", span=4),
+                    dmc.Col(slideshow if user and has_images else {}, className="image-col", span=4),
                 ], justify="space-between", grow=True),
                 dmc.Space(h=10),
                 *attachment_area(note.files, False),
             ],
             type="hover",
-            h=350,
+            h=360,
             offsetScrollbars=True)
     ]
+
 
 
 @app.callback(
@@ -230,13 +230,14 @@ def activate_edit_mode(click, notes, all_tags):
        if note["id"] == ctx.triggered_id["note_id"]:
             return dict(data=note), note_form_view(Note(note), all_tags), 650
 
+
 app.clientside_callback(
     ClientsideFunction(
         namespace="attachment", function_name="create_blob"
     ),
-    Output(ID_SLIDESHOW_IMAGE, "src"),
+    Output("id-focused-media-store", "data"),
     Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
-    Input({"element": "image", "file_id": ALL}, "n_clicks"),
+    Input({"element": "media", "file_id": ALL}, "n_clicks"),
     Input(ID_SLIDESHOW_BTN_LEFT, "n_clicks"),
     Input(ID_SLIDESHOW_BTN_RIGHT, "n_clicks"),
     State(ID_NOTE_FILE_STORE, "data"),
@@ -256,17 +257,25 @@ app.clientside_callback(
     prevent_initial_call=True
 )
 
-app.clientside_callback(
-    ClientsideFunction(
-        namespace="attachment", function_name="load_audio_files"
-    ),
-    Output({"element": "audio", "file_id": ALL}, "src"),
-    Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
-    Input({"element": "image", "file_id": ALL}, "n_clicks"),
-    State(ID_NOTE_FILE_STORE, "data"),
-    State(ID_BLOB_URLS_STORE, "data"),
-    prevent_initial_call=True
+
+@app.callback(
+    Output(ID_SLIDESHOW_IMAGE, "src"),
+    Output(ID_SLIDESHOW_IMAGE, "style"),
+    Output(ID_AUDIO, "src"),
+    Output(ID_AUDIO_PLAYER, "style"),
+    Input(ID_FOCUSED_MEDIA_STORE, "data"),
 )
+def update_focused_image(data):
+    visible   = {"display": "flex"}
+    invisible = {"display": "none"}
+
+    if data["type"].startswith("image"):
+        return data["url"], visible, no_update, invisible
+    elif data["type"].startswith("audio"):
+        return no_update, invisible, data["url"], visible
+
+    raise PreventUpdate
+
 
 @app.callback(
     Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
