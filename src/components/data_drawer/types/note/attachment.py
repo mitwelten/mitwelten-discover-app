@@ -60,12 +60,13 @@ def _attachment_card(file: File, auth_cookie, editable = False):
     name, ext = file.object_name.split('.')
     thumbnail = f"{name}_{thumbnail_size[0]}x{thumbnail_size[1]}.{ext}"
     is_image = file.type in image_types
-    is_audio = file.type in audio_types
-    if is_audio:
-        return audio_card(file)
+
+    element = "text"
+    if is_image or file.type in audio_types:
+        element = "media"
 
     return html.Div(
-        id={"element": "image" if is_image else "text", "file_id": file.id} if not editable else "",
+        id={"element": element, "file_id": file.id} if not editable else "",
         children=[
             html.Div(
                 style={"cursor": "pointer",
