@@ -34,7 +34,7 @@ SOURCE_PROPS = {
 
 
 TEST_SOURCE_PROPS = {
-    "Access Point":           dict(color="#FF5733", marker="test/internet", type="physical"),
+    "Access Point":           dict(color="#FF5733", marker="test/internet.svg", type="physical"),
     "Audio Logger":           dict(color="#9B59B6", marker="test/audio.svg", type="physical"),
     "Env Sensor":             dict(color="#F1C40F", marker="test/habitat2.svg", type="physical"),
     "Pax Counter":            dict(color="#3498DB", marker="test/PAX.svg", type="physical"),

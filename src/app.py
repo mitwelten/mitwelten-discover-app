@@ -168,7 +168,6 @@ for source in SOURCE_PROPS.keys():
     prevent_initial_call=True,
 )
 def map_click(_, selected_note, notes):
-    print("app:map_click")
     if selected_note["data"] is not None:
         for note in notes["entries"]:
             if note["id"] == selected_note["data"]["id"]:
@@ -184,10 +183,11 @@ def map_click(_, selected_note, notes):
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
     Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
     State(ID_EDIT_NOTE_STORE, "data"),
+    State("id-test-icon-store", "data"),
     prevent_initial_call=True,
 )
-def deactivate_edit_mode(cancel_click, selected_note):
+def deactivate_edit_mode(cancel_click, selected_note, test_icons):
     if cancel_click is None or cancel_click == 0:
         raise PreventUpdate
-    return dict(data=None), CHART_DRAWER_HEIGHT, note_detail_view(Note(selected_note["data"]))
+    return dict(data=None), CHART_DRAWER_HEIGHT, note_detail_view(Note(selected_note["data"]), test_icons)
 

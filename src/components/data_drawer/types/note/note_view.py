@@ -25,7 +25,6 @@ def note_view(note: Note, test_icons = False):
     return dmc.Container(
         id=ID_NOTE_CONTAINER,
         children=[
-            dcc.Store("id-focused-media-store", data=None),
             *note_detail_view(note, test_icons)
         ]
     )
@@ -75,13 +74,12 @@ icon_public= DashIconify(
 
 
 slideshow = html.Div([
-        dmc.LoadingOverlay(
+        html.Div(
             children=[
                 html.Img(id=ID_SLIDESHOW_IMAGE, className="cropped-ofp"),
                 audio_player(id=ID_AUDIO_PLAYER),
         ],
             className="image-box", 
-            loaderProps={"variant": "dots"}
         ),
         html.Button("❮", id=ID_SLIDESHOW_BTN_LEFT, className="slide-btn slide-btn-left"), 
         html.Button("❯", id=ID_SLIDESHOW_BTN_RIGHT, className="slide-btn slide-btn-right"), 
@@ -96,18 +94,20 @@ def note_form_view(note: Note, all_tags):
                 dmc.Title("Edit / Create Note"),
                 dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm")
             ],span="content"),
-            dmc.Col(dmc.Group(get_form_controls(note.public),spacing="sm"), span="content")
+            dmc.Col(dmc.Group(get_form_controls(note.public),spacing="sm", style={"justify-content":"flex-end"}), span="content")
         ],
             justify="space-between",
             grow=True
         ),
         dmc.ScrollArea(
-            id=ID_ATTACHMENTS,
             children=[
                 *form_content(note, all_tags),
-                *attachment_area(note.files, True),
+                html.Div(
+                    id=ID_ATTACHMENTS,
+                    children=attachment_area(note.files, True),
+                )
             ],
-            h=500,
+            h=550,
             type="hover",
             offsetScrollbars=True
         )
@@ -120,7 +120,6 @@ def note_detail_view(note: Note, test_icons):
     files      = list(sorted(note.files, key=lambda file: file.name.lower()))
     images     = list(filter(lambda f: f.type.startswith("image/") or f.type.startswith("audio/"), files))
     has_images = len(images) != 0
-
     return [dmc.Grid([
             dmc.Col(
                 dmc.Stack([
@@ -216,6 +215,7 @@ def deactivate_edit_mode(delete_click, note):
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_TAG_DATA_STORE, "data"),
@@ -228,14 +228,14 @@ def activate_edit_mode(click, notes, all_tags):
 
     for note in notes["entries"]:
        if note["id"] == ctx.triggered_id["note_id"]:
-            return dict(data=note), note_form_view(Note(note), all_tags), 650
+            return dict(data=note), note_form_view(Note(note), all_tags), 650, False
 
 
 app.clientside_callback(
     ClientsideFunction(
         namespace="attachment", function_name="create_blob"
     ),
-    Output("id-focused-media-store", "data"),
+    Output(ID_FOCUSED_MEDIA_STORE, "data"),
     Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
     Input({"element": "media", "file_id": ALL}, "n_clicks"),
     Input(ID_SLIDESHOW_BTN_LEFT, "n_clicks"),
@@ -285,9 +285,10 @@ def update_focused_image(data):
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_EDIT_NOTE_STORE, "data"),
+    State("id-test-icon-store", "data"),
     prevent_initial_call=True
 )
-def cancel_click(cancel_click, notes, selected_note):
+def cancel_click(cancel_click, notes, selected_note, test_icons):
 
     if ctx.triggered_id == ID_NOTE_FORM_CANCEL_BUTTON:
         if cancel_click is None or cancel_click == 0:
@@ -301,4 +302,4 @@ def cancel_click(cancel_click, notes, selected_note):
             if Note(note) != Note(selected_note["data"]):
                 return True, no_update, no_update, no_update
 
-    return no_update, dict(data=None), note_detail_view(Note(selected_note["data"])), CHART_DRAWER_HEIGHT
+    return no_update, dict(data=None), note_detail_view(Note(selected_note["data"]), test_icons), CHART_DRAWER_HEIGHT

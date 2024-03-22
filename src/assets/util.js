@@ -31,7 +31,6 @@ const getNextImage = (index, step, files) => {
     index = index + step;
     const idx = (index + len) % len;
     file = files[idx];
-    console.log("index: ", idx);
     valid = file.type.startsWith("image/") || file.type.startsWith("audio/");
     loopCounter++;
   }

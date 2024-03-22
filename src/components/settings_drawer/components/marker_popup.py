@@ -82,7 +82,7 @@ def environment_popup(environment):
 
 def note_tooltip(note: Note):
     if note.description is not None:
-        description = (note.description[:75] + '..') if len(note.description) > 75 else note.description
+        description = (note.description[:75] + '...') if len(note.description) > 75 else note.description
     else:
         description = "-"
 

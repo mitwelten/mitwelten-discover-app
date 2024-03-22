@@ -74,6 +74,7 @@ def open_drawer(selected_marker):
     Output(ID_CHART_CONTAINER, "children"),
     Output(ID_DATA_DRAWER_TITLE, "children"),
     Output(ID_CHART_DRAWER, "size"),
+    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
     Output(ID_ALERT_INFO, "children", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
@@ -87,26 +88,26 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
     if selected_marker is None:
         raise PreventUpdate
 
-    marker_data = selected_marker.get("data")
-    node_label = get_identification_label(marker_data)
-    drawer_title = f"{selected_marker['type']} - {node_label}"
+    marker_data    = selected_marker.get("data")
+    marker_id      = marker_data.get("id")
+    node_label     = get_identification_label(marker_data)
+    drawer_title   = f"{selected_marker['type']} - {node_label}"
     drawer_content = html.Div("Somthing went wrong, not device found!")
-    drawer_size = CHART_DRAWER_HEIGHT
 
     match selected_marker["type"]:
         case "Audio Logger":
-            drawer_content = create_audio_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_audio_chart(marker_id, light_mode)
         case "Env Sensor":
-            drawer_content = create_env_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_env_chart(marker_id, light_mode)
         case "Pax Counter":
-            drawer_content = create_pax_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_pax_chart(marker_id, light_mode)
         case "Pollinator Cam":
-            drawer_content = create_pollinator_chart(selected_marker["data"]["id"], light_mode)
+            drawer_content = create_pollinator_chart(marker_id, light_mode)
         case "Environment Data Point":
-            drawer_content = create_environment_point_chart(environment_data["legend"], selected_marker["data"]["id"])
+            drawer_content = create_environment_point_chart(environment_data["legend"], marker_id)
         case "Note":
             for note in notes["entries"]:
-                if note["id"] == selected_marker["data"]["id"]:
+                if note["id"] == marker_id:
                     drawer_title = ""
                     drawer_content = note_view(Note(note), test_icons)
         case _:
@@ -114,9 +115,9 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
                 dmc.Title(f"Deployment: {selected_marker['type']}", order=6),
                 dmc.Text("No further data available!"),
             ]
-            return no_update, no_update, no_update, True, notification
+            return no_update, no_update, no_update, True, True, notification
 
-    return drawer_content, drawer_title, drawer_size, no_update, no_update
+    return drawer_content, drawer_title, CHART_DRAWER_HEIGHT, True, no_update, no_update
 
 
 @app.callback(

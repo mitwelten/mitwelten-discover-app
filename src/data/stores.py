@@ -30,6 +30,7 @@ stores = [
     dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
     dcc.Store(id=ID_NOTE_REFRESH_STORE,       data=dict(state=False)),
     dcc.Store(id=ID_BLOB_URLS_STORE,          data=dict(api_url=API_URL, files=[], active_id=None)),
+    dcc.Store(ID_FOCUSED_MEDIA_STORE,         data=None),
     dcc.Store(id="id-test-icon-store",        data=False, storage_type="local"),
 ]
 
@@ -39,7 +40,6 @@ stores = [
     Input(ID_NOTE_REFRESH_STORE, "data")
 )
 def load_notes_from_backend(data, _):
-    print("update note store")
     outdated = True # TODO: implement
     if outdated or data is None:
         cookies = flask.request.cookies
@@ -68,7 +68,6 @@ def load_env_from_backend(data):
 def load_tags_from_backend(data):
     outdated = False  # TODO: implement data update
     if data is None or outdated:
-        print("init tags")
         return init_tags()
     raise PreventUpdate
 
