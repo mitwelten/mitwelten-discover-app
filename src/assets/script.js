@@ -28,8 +28,12 @@ window.dash_clientside.attachment = {
     // if file is already in blob store, return its url
     const isFileLoaded = blob_store.files.find(it => it && it["id"] === file.id);
     if (isFileLoaded !== undefined) {
+      if (blob_store.active_id === file.id) {
+        throw dash_clientside.PreventUpdate;
+      }
       blob_store.active_id = file.id;
-      return [isFileLoaded.url, blob_store];
+      const currentFile = {url: isFileLoaded.url, name: file.name, type: file.type};
+      return [currentFile, blob_store];
     }
 
     if (file === undefined) {
@@ -41,7 +45,9 @@ window.dash_clientside.attachment = {
 
     blob_store.files.push({id: file.id, url: blob_url});
     blob_store.active_id = file.id;
-    return [blob_url, blob_store];
+
+    const currentFile = {url: blob_url, name: file.name, type: file.type};
+    return [currentFile, blob_store];
   },
 
 
@@ -95,38 +101,74 @@ window.dash_clientside.attachment = {
     return blob_store;
   },
 
-  load_audio_files: async (_clicks, file_store, blob_store) => {
+  //load_audio_files: async (_clicks, file_store, blob_store) => {
 
-    const isInitCall = dash_clientside.callback_context.triggered.every(({ value }) => value === null);
-    // load audio files eagerly on initialization 
-    if (!isInitCall) {
+  //  const isInitCall = dash_clientside.callback_context.triggered.every(({ value }) => value === null);
+  //  // load audio files eagerly on initialization 
+  //  if (!isInitCall) {
+  //    throw dash_clientside.PreventUpdate;
+  //  }
+
+  //  const audio_files = file_store.files.filter(file => file.type === "audio/mpeg");
+
+  //  const auth_token = extractFromCookie("auth", document.cookie);
+  //  const audio_urls = [];
+
+  //  for(let i = 0; i < audio_files.length; i ++) {
+  //    const file = audio_files[i];
+  //    const blob_url = await getBlobUrl(blob_store.api_url, auth_token, file);
+  //    blob_store.files.push({id: file.id, url: blob_url});
+  //    audio_urls.push(blob_url);
+  //  }
+  //  return [audio_urls, blob_store];
+  //}
+};
+
+
+window.dash_clientside.audio= {
+
+  playOrPause: (_, id) => {
+    const player = document.getElementById(id);
+    if(player.paused || player.currentTime === 0) {
+      player.play();
+    } else {
+      player.pause();
+    }
+  },
+
+  pause: (_1, _2, id) => {
+    document.getElementById(id).pause();
+    throw dash_clientside.PreventUpdate;
+  },
+
+  stop : (_, id) => {
+    const player = document.getElementById(id);
+    player.pause();
+    player.currentTime = 0;
+
+    return `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
+  },
+
+  noSound: (_, id) => document.getElementById(id).muted = !document.getElementById(id).muted,
+
+  progress: (_, id) => {
+    const player = document.getElementById(id);
+    if (player.seeking) {
       throw dash_clientside.PreventUpdate;
     }
-
-    const audio_files = file_store.files.filter(file => file.type === "audio/mpeg");
-
-    const auth_token = extractFromCookie("auth", document.cookie);
-    const audio_urls = [];
-
-    for(let i = 0; i < audio_files.length; i ++) {
-      const file = audio_files[i];
-      const blob_url = await getBlobUrl(blob_store.api_url, auth_token, file);
-      blob_store.files.push({id: file.id, url: blob_url});
-      audio_urls.push(blob_url);
-    }
-    return [audio_urls, blob_store];
-  }
+    return `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
+  },
 };
 
 window.dashExtensions = Object.assign({}, window.dashExtensions, {
   default: {
-      function0: (e, ctx) => {
-          ctx.setProps({
-            latlng: { lat: `${e.target.getLatLng()['lat']}`,
-                      lng: `${e.target.getLatLng()['lng']}` 
-            },
-          })
-      }
+    function0: (e, ctx) => {
+      ctx.setProps({
+        latlng: { lat: `${e.target.getLatLng()['lat']}`,
+          lng: `${e.target.getLatLng()['lng']}`
+        },
+      })
+    }
   }
 });
 
