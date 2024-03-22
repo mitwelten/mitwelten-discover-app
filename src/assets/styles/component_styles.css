@@ -119,13 +119,17 @@ input:invalid {
     margin: 0;
 }
 
-
 .attachment-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
   transition: 0.2s;
+  margin-right: 8px;
+}
+
+.attachment-card-active {
+  background: #F2F2F2;
 }
 
 .attachment-card:hover {
@@ -224,3 +228,5 @@ input:invalid {
     transform: translate(0%,-50%);
     -ms-transform: translate(-0%,-50%);
 }
+
+.attachment-card

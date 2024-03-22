@@ -1,7 +1,8 @@
 import dash_mantine_components as dmc
 import flask
+from pprint import pprint
 
-from dash import  html, dcc, Output, Input, State, ctx, ALL
+from dash import  html, dcc, Output, Input, State, ctx, ALL, MATCH
 from dash.exceptions import PreventUpdate
 from src.api.api_files import get_file
 from src.components.button.components.action_button import action_button
@@ -42,19 +43,6 @@ def attachment_area(files: list[File], editable = False):
         )
     ]
 
-def audio_card(file: File):
-    return html.Div(
-        children=[
-            html.Audio(
-                id={"element": "audio", "file_id": file.id},
-                controls="controls",
-                style={"width":"100%", "height": "20px", "display": "block"}
-            ),
-            dmc.Text(file.name)
-        ],
-        className="attachment-card",
-    )
-
 
 def _attachment_card(file: File, auth_cookie, editable = False): 
     name, ext = file.object_name.split('.')
@@ -65,17 +53,34 @@ def _attachment_card(file: File, auth_cookie, editable = False):
     if is_image or file.type in audio_types:
         element = "media"
 
+    name_length   = 15 if editable else 25
+    long_filename = len(file.name) > name_length
+    file_name     = (file.name[:name_length] + '...') if long_filename else file.name
+
+    file_name_component = dmc.Text(file_name, style={"margin": "0 10px"})
+    card_title = file_name_component 
+
+    if long_filename:
+        card_title = dmc.HoverCard(
+            withArrow=True,
+            shadow="md",
+            children=[
+                dmc.HoverCardTarget(file_name_component),
+                dmc.HoverCardDropdown(dmc.Text(file.name))
+            ]
+        )
+
     return html.Div(
         id={"element": element, "file_id": file.id} if not editable else "",
         children=[
             html.Div(
-                style={"cursor": "pointer",
-                       "display": "flex",
-                       "overflow": "hidden",
-                       "alignItems": "center",
-                       "textDecoration": "none",
-                       "color": "black",
-                       },
+                style={
+                    "display": "flex",
+                    "overflow": "hidden",
+                    "alignItems": "center",
+                    "textDecoration": "none",
+                    "color": "black",
+                },
                 children=[
                     dmc.Image(
                         src=get_file(
@@ -86,9 +91,9 @@ def _attachment_card(file: File, auth_cookie, editable = False):
                         width=48,
                         height=48,
                     ),
-                    dmc.Text(file.name, style={"margin": "0 20px"}), 
+                    card_title
                 ]),
-            html.Div([
+            dmc.Group([
                 action_button(
                     button_id={"element": "delete_button", "file_id": file.id},
                     icon="material-symbols:delete",
@@ -100,11 +105,27 @@ def _attachment_card(file: File, auth_cookie, editable = False):
                     icon="material-symbols:download", 
                     size="sm"
                 ),
-            ], style={"marginRight": "10px", "display": "flex", "alignItems": "center"}),
+            ], ),
         ],
-        className="attachment-card"
+        className="attachment-card",
+        style={"cursor":"pointer"} if not editable else {}
     )
 
+@app.callback(
+    Output({"element": "media", "file_id": ALL}, "className"),
+    Input({"element": "media", "file_id": ALL}, "n_clicks"),
+)
+def mark_active_card(_click):
+    classes = ["attachment-card"] * len(ctx.inputs_list[0])
+
+    if ctx.triggered_id == None:
+        classes[0] = f"{classes[0]} attachment-card-active"
+
+    for idx, i in enumerate(ctx.inputs_list[0]):
+        if i["id"] == ctx.triggered_id:
+            classes[idx] = f"{classes[idx]} attachment-card-active"
+
+    return classes
 
 @app.callback(
     Output(ID_DOWNLOAD, "data"),
