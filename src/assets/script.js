@@ -3,22 +3,22 @@ if (!window.dash_clientside) {
 
 }
 
+window.addEventListener("keydown", (e) => {
+  const evtobj = window.event? event : e;
 
-window.addEventListener("keydown",
-  (event) => {
-    const keyName = event.key;
-
-    if (keyName === " ") { // space
-
-      const store = localStorage.getItem("id-test-icon-store");
-      if (store === "false" || store === false) {
-        localStorage.setItem("id-test-icon-store", true);
-      } else {
-        localStorage.setItem("id-test-icon-store", false);
-      }
-      return;
+  if (evtobj.keyCode == 32 && evtobj.ctrlKey) {
+    const store = localStorage.getItem("id-test-icon-store");
+    let alertText = "Switched to colored icons.";
+    if (store === "false" || store === false) {
+      localStorage.setItem("id-test-icon-store", true);
+      alertText = "Switched to graphical icons.";
+    } else {
+      localStorage.setItem("id-test-icon-store", false);
     }
-  });
+    alert(`${alertText}\nReload the page to make changes visible!`);
+  }
+}),
+
 
 window.dash_clientside.browser_properties = {
   fetchWindowProps: () => ({
