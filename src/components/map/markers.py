@@ -4,8 +4,10 @@ from dash import (
     Input,
     State,
     ALL,
+    ctx,
     clientside_callback,
     ClientsideFunction,
+    no_update,
 )
 from pprint import pprint
 from dash.exceptions import PreventUpdate
@@ -81,26 +83,29 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons
     for key in depl_to_show.keys():
         depl_to_show[key] = list(filter(lambda x: was_deployed(x, time_range["start"], time_range["end"]), depl_to_show[key]))
 
-    markers = []
-    new_bounds = bounds 
-    top     = None
-    bottom  = None
-    left    = None
-    right   = None
+    move_map = ctx.triggered_id == ID_FS_TAG_CHIPS_GROUP
+    if move_map:
+        new_bounds = bounds 
+        top     = None
+        bottom  = None
+        left    = None
+        right   = None
 
+    markers = []
     for key in depl_to_show.keys():
         for d in depl_to_show[key]:
-            if left is None or left > d.lon: 
-                left = d.lon
+            if move_map:
+                if left is None or left > d.lon: 
+                    left = d.lon
 
-            if right is None or right < d.lon :
-                right = d.lon
+                if right is None or right < d.lon :
+                    right = d.lon
 
-            if bottom is None or bottom > d.lat: 
-                bottom = d.lat
+                if bottom is None or bottom > d.lat: 
+                    bottom = d.lat
 
-            if top is None or top < d.lat: 
-                top = d.lat
+                if top is None or top < d.lat: 
+                    top = d.lat
 
             markers.append(
                 dl.Marker(
@@ -123,11 +128,13 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons
                 )
             )
 
-    new_bounds[1][0] = top
-    new_bounds[0][0] = bottom 
-    new_bounds[0][1] = left   
-    new_bounds[1][1] = right  
-    return markers, dict(bounds=bounds, transition="flyTo")
+    if move_map:
+        new_bounds[1][0] = top
+        new_bounds[0][0] = bottom 
+        new_bounds[0][1] = left   
+        new_bounds[1][1] = right 
+
+    return markers, dict(bounds=bounds, transition="flyTo") if move_map else no_update
 
 
 @app.callback(
