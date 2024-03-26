@@ -7,6 +7,7 @@ from dash import (
     clientside_callback,
     ClientsideFunction,
 )
+from pprint import pprint
 from dash.exceptions import PreventUpdate
 from dash_extensions.javascript import assign
 
@@ -22,15 +23,17 @@ from src.util.helper_functions import was_deployed
 
 @app.callback(
     Output(ID_MAP_LAYER_GROUP, "children"),
+    Output(ID_MAP, "viewport"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_TAG_CHIPS_GROUP, "value"),
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
     Input("id-test-icon-store", "data"),
+    State(ID_MAP, "bounds"),
     prevent_initial_call=True
 )
-def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons):
+def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons, bounds):
     """
     Changes the visible markers of the "physical" devices on the map.
     This callback is mainly triggered by adjusting the filter settings.
@@ -79,9 +82,26 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons
         depl_to_show[key] = list(filter(lambda x: was_deployed(x, time_range["start"], time_range["end"]), depl_to_show[key]))
 
     markers = []
+    new_bounds = bounds 
+    top     = None
+    bottom  = None
+    left    = None
+    right   = None
 
     for key in depl_to_show.keys():
         for d in depl_to_show[key]:
+            if left is None or left > d.lon: 
+                left = d.lon
+
+            if right is None or right < d.lon :
+                right = d.lon
+
+            if bottom is None or bottom > d.lat: 
+                bottom = d.lat
+
+            if top is None or top < d.lat: 
+                top = d.lat
+
             markers.append(
                 dl.Marker(
                     position=[d.lat, d.lon],
@@ -102,7 +122,12 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons
                     id={"role": f"{d.node_type}", "id": d.id, "label": "Node"},
                 )
             )
-    return markers
+
+    new_bounds[1][0] = top
+    new_bounds[0][0] = bottom 
+    new_bounds[0][1] = left   
+    new_bounds[1][1] = right  
+    return markers, dict(bounds=bounds, transition="flyTo")
 
 
 @app.callback(
