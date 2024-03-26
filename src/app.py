@@ -180,14 +180,18 @@ def map_click(_, selected_note, notes):
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
     Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
     State(ID_EDIT_NOTE_STORE, "data"),
+    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State("id-test-icon-store", "data"),
     prevent_initial_call=True,
 )
-def deactivate_edit_mode(cancel_click, selected_note, test_icons):
+def deactivate_edit_mode(cancel_click, selected_note, notes, test_icons):
     if cancel_click is None or cancel_click == 0:
-        raise PreventUpdate
-    return dict(data=None), CHART_DRAWER_HEIGHT, note_detail_view(Note(selected_note["data"]), test_icons)
+        return no_update, no_update, True, no_update
+    for note in notes["entries"]:
+        if note["id"] == selected_note["data"]["id"]:
+            return dict(data=None), CHART_DRAWER_HEIGHT, True, note_detail_view(Note(note), test_icons)
 
