@@ -30,7 +30,7 @@ stores = [
     dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
     dcc.Store(id=ID_NOTE_REFRESH_STORE,       data=dict(state=False)),
     dcc.Store(id=ID_BLOB_URLS_STORE,          data=dict(api_url=API_URL, files=[], active_id=None)),
-    dcc.Store(ID_FOCUSED_MEDIA_STORE,         data=None),
+    dcc.Store(id=ID_FOCUSED_MEDIA_STORE,      data=None),
     dcc.Store(id="id-test-icon-store",        data=False, storage_type="local"),
 ]
 

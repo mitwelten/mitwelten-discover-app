@@ -278,6 +278,22 @@ def update_focused_image(data):
 
 
 @app.callback(
+    Output({"element": "media", "file_id": ALL}, "className"),
+    Input(ID_FOCUSED_MEDIA_STORE, "data"),
+)
+def mark_active_card(data):
+    classes = ["attachment-card"] * len(ctx.outputs_list)
+
+    if ctx.triggered_id == None:
+        classes[0] = f"{classes[0]} attachment-card-active"
+
+    for idx, i in enumerate(ctx.outputs_list):
+        if i["id"]["file_id"] == data["id"]:
+            classes[idx] = f"{classes[idx]} attachment-card-active"
+
+    return classes
+
+@app.callback(
     Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),

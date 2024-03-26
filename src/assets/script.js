@@ -50,7 +50,7 @@ window.dash_clientside.attachment = {
         throw dash_clientside.PreventUpdate;
       }
       blob_store.active_id = file.id;
-      const currentFile = {url: isFileLoaded.url, name: file.name, type: file.type};
+      const currentFile = {url: isFileLoaded.url, name: file.name, type: file.type, id: file.id};
       return [currentFile, blob_store];
     }
 
@@ -64,7 +64,7 @@ window.dash_clientside.attachment = {
     blob_store.files.push({id: file.id, url: blob_url});
     blob_store.active_id = file.id;
 
-    const currentFile = {url: blob_url, name: file.name, type: file.type};
+    const currentFile = {url: blob_url, name: file.name, type: file.type, id: file.id};
     return [currentFile, blob_store];
   },
 

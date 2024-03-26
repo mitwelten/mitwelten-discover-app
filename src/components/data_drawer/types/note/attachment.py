@@ -111,21 +111,6 @@ def _attachment_card(file: File, auth_cookie, editable = False):
         style={"cursor":"pointer"} if not editable else {}
     )
 
-@app.callback(
-    Output({"element": "media", "file_id": ALL}, "className"),
-    Input({"element": "media", "file_id": ALL}, "n_clicks"),
-)
-def mark_active_card(_click):
-    classes = ["attachment-card"] * len(ctx.inputs_list[0])
-
-    if ctx.triggered_id == None:
-        classes[0] = f"{classes[0]} attachment-card-active"
-
-    for idx, i in enumerate(ctx.inputs_list[0]):
-        if i["id"] == ctx.triggered_id:
-            classes[idx] = f"{classes[idx]} attachment-card-active"
-
-    return classes
 
 @app.callback(
     Output(ID_DOWNLOAD, "data"),
