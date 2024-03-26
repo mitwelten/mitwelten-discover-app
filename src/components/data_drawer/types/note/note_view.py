@@ -1,4 +1,5 @@
 from http.client import responses
+import re
 
 import dash
 import dash_mantine_components as dmc
@@ -6,6 +7,7 @@ import flask
 from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_update, dcc
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
+from urllib.parse import urlparse
 
 from src.api.api_note import delete_note
 from src.components.media.player import audio_player
@@ -18,7 +20,7 @@ from src.main import app
 from src.model.note import Note
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
-from src.util.util import apply_newlines, local_formatted_date
+from src.util.util import local_formatted_date, text_to_dash_elements
 
 
 def note_view(note: Note, test_icons = False):
@@ -31,9 +33,9 @@ def note_view(note: Note, test_icons = False):
 
 
 def text_to_html_list(text: str):
-    lines = apply_newlines(text)
+    elems = text_to_dash_elements(text)
     return dmc.Spoiler(
-        children=lines,
+        children=elems,
         showLabel="Show more",
         hideLabel="Hide",
         maxHeight=150
@@ -55,8 +57,8 @@ def list_item(text, icon):
 def get_view_controls(user):
     return [
         action_button(
-            button_id=ID_NOTE_EDIT_BUTTON,   
-            icon="material-symbols:edit", 
+            button_id=ID_NOTE_EDIT_BUTTON,
+            icon="material-symbols:edit",
             disabled=True if user is None else False),
     ]
 

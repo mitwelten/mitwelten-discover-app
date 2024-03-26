@@ -1,4 +1,5 @@
 import time
+import re
 import pytz
 from datetime import datetime
 from dash import html
@@ -34,3 +35,35 @@ def apply_newlines(text: str):
             children.append(para)
             children.append(html.Br())
     return children
+
+
+def text_to_dash_elements(text):
+    elements = []
+    lines = text.split('\n')
+
+    url_pattern = re.compile(
+        r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))" 
+    )
+
+    for line in lines:
+        parts = []
+        start = 0
+
+        for match in url_pattern.finditer(line):
+            url = match.group(1)
+            parts.append(line[start:match.start()])
+            href = url if url.startswith('http') else 'http://' + url
+            parts.append(html.A(href=href, children=[url], target="_blank"))
+            start = match.end()
+
+        parts.append(line[start:])
+
+        for part in parts:
+            if isinstance(part, str) and part:
+                elements.append(part)
+            elif part:
+                elements.append(part)
+        if line != lines[-1]:
+            elements.append(html.Br())
+
+    return elements
