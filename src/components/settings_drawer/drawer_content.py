@@ -17,9 +17,25 @@ drawer_content = dmc.Container(
         dmc.Title("Mitwelten Discover", align="center", order=1),
         dmc.Space(h=30),
         dmc.ScrollArea([
-            divider("Date Range"),
+            dmc.HoverCard(
+                withArrow=True,
+                shadow="md",
+                style={"witdh": "100%"},
+                children=[
+                    dmc.HoverCardTarget(divider("Time Frame")),
+                    dmc.HoverCardDropdown(dmc.Text("Some explanation to this section..."))
+                ]
+            ),
             date_time_section(),
-            divider("Data Source"),
+            dmc.HoverCard(
+                withArrow=True,
+                shadow="md",
+                style={"witdh": "100%"},
+                children=[
+                    dmc.HoverCardTarget(divider("Data Sets")),
+                    dmc.HoverCardDropdown(dmc.Text("Some explanation to this section..."))
+                ]
+            ),
             source_filter(),
             divider("Tags"),
             tag_filter(),

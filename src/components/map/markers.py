@@ -84,12 +84,11 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons
         depl_to_show[key] = list(filter(lambda x: was_deployed(x, time_range["start"], time_range["end"]), depl_to_show[key]))
 
     move_map = ctx.triggered_id == ID_FS_TAG_CHIPS_GROUP
-    if move_map:
-        new_bounds = bounds 
-        top     = None
-        bottom  = None
-        left    = None
-        right   = None
+    new_bounds = bounds 
+    top     = None
+    bottom  = None
+    left    = None
+    right   = None
 
     markers = []
     for key in depl_to_show.keys():
