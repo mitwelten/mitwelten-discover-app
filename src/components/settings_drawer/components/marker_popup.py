@@ -90,7 +90,7 @@ def note_tooltip(note: Note):
 
     html.Div([
         html.Div([
-            dmc.Text(note.title, weight=700, size="sm", className="note-marker-title"),
+            dmc.Text(note.title, weight=700, size="xs", className="note-marker-title"),
             html.Div(className="color-point"),
         ], style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'start'})
     ]),
@@ -98,7 +98,7 @@ def note_tooltip(note: Note):
         dmc.Divider(),
         dmc.Space(h=5),
         html.Div(
-            dmc.Text(apply_newlines(description), lineClamp=3),
+            dmc.Text(apply_newlines(description), lineClamp=3, size="xs"),
             style={"maxHeight":"70px", "overflow": "hidden"}
         )
     ],

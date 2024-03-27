@@ -168,6 +168,7 @@ def add_environment_markers(active_checkboxes, all_environments, test_icons):
                 eventHandlers=popup_events,
                 icon=dict(iconUrl=get_source_props("Environment Data Point", test_icons)["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
                 id={"role": "Environment Data Point", "id": env.id, "label": "Node"},
+            
             )
         )
     return markers
