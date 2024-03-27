@@ -178,15 +178,32 @@ window.dash_clientside.audio= {
   },
 };
 
+
 window.dashExtensions = Object.assign({}, window.dashExtensions, {
   default: {
-    function0: (e, ctx) => {
+    setLatLng: (e, ctx) => {
       ctx.setProps({
         latlng: { lat: `${e.target.getLatLng()['lat']}`,
           lng: `${e.target.getLatLng()['lng']}`
         },
       })
-    }
+    },
+
+    mouseover: function(e, _ctx) {  
+      e.target.openPopup();
+    },
+
+    mouseout: function(e, ctx) {  
+      if (ctx.id == ctx.state) {
+        return;
+      }
+      e.target.closePopup();
+    },  
+
+    click: function(e, ctx) {  
+      ctx.setProps({state: ctx.id});
+      e.target.openPopup();
+    },  
   }
 });
 

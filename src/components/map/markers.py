@@ -11,7 +11,7 @@ from dash import (
 )
 from pprint import pprint
 from dash.exceptions import PreventUpdate
-from dash_extensions.javascript import assign
+from dash_extensions.javascript import assign, Namespace
 
 from src.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_tooltip
 from src.config.id_config import *
@@ -21,6 +21,12 @@ from src.model.deployment import Deployment
 from src.model.environment import Environment
 from src.model.note import Note
 from src.util.helper_functions import was_deployed
+
+popup_events=dict(
+    mouseover = assign("", "mouseover"), 
+    mouseout  = assign("", "mouseout"),
+    click     = assign("", "click"),
+) 
 
 
 @app.callback(
@@ -91,6 +97,8 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons
     right   = None
 
     markers = []
+
+
     for key in depl_to_show.keys():
         for d in depl_to_show[key]:
             if move_map:
@@ -116,12 +124,8 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons
                             id=f"{d.id}",
                             autoPan=False
                         ),
-                        dl.Tooltip(
-                            children=f"{d.node_type}\n{d.node_label}",
-                            offset={"x": -10, "y": 2},
-                            direction="left",
-                        ),
                     ],
+                    eventHandlers=popup_events,
                     icon=dict(iconUrl=get_source_props(d.node_type, test_icons)["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
                     id={"role": f"{d.node_type}", "id": d.id, "label": "Node"},
                 )
@@ -145,7 +149,9 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons
 def add_environment_markers(active_checkboxes, all_environments, test_icons):
     if "Environment Data Point" not in active_checkboxes:
         return []
+
     markers = []
+
 
     for env in all_environments["entries"]:
         env = Environment(env)
@@ -158,12 +164,8 @@ def add_environment_markers(active_checkboxes, all_environments, test_icons):
                         closeButton=False,
                         autoPan=False
                     ),
-                    dl.Tooltip(
-                        children=f"Environment Data: {env.id}",
-                        offset={"x": -10, "y": 2},
-                        direction="left",
-                    ),
                 ],
+                eventHandlers=popup_events,
                 icon=dict(iconUrl=get_source_props("Environment Data Point", test_icons)["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
                 id={"role": "Environment Data Point", "id": env.id, "label": "Node"},
             )
@@ -197,29 +199,26 @@ def add_note_markers(active_checkboxes, selected_note, all_notes, test_icons):
                 note["location"]["lon"] = selected_note["data"]["location"]["lon"]
 
     markers = []
-    dragend_clbk = dict(dragend=assign('function(e, ctx){ctx.setProps({latlng: {lat: `${e.target.getLatLng()["lat"], lng:`${e.target.getLatLng()["lng"]`})}')) 
 
     for note in all_notes:
         current_note = Note(note)
         in_edit_mode = current_note.id == selected_note_id
+        if in_edit_mode:
+            popup_events["dragend"] = assign("", "setLatLng")
         markers.append(
             dl.Marker(
                 position=[current_note.lat, current_note.lon],
                 children=[
                     dl.Popup(
-                        children=current_note.title,
+                        children=note_tooltip(current_note),
                         closeButton=False,
                         autoPan=False,
-                    ),
-                    dl.Tooltip(
-                        children=note_tooltip(current_note),
-                        offset={"x": -10, "y": 2},
-                        direction="left",
-                        className="marker-tooltip",
-                    ),
+                        autoClose=False,
+                        bubblingMouseEvents=True
+                        ),
                 ],
                 icon=marker_icon_draggable if in_edit_mode else marker_icon,
-                eventHandlers=dragend_clbk if in_edit_mode else {},
+                eventHandlers=popup_events,
                 draggable=True if in_edit_mode else False,
                 id={"role": "Note", "id": current_note.id, "label": "Node"},
             )

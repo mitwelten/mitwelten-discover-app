@@ -39,6 +39,8 @@ def apply_newlines(text: str):
 
 def text_to_dash_elements(text):
     elements = []
+    if text is None or text is "":
+        return []
     lines = text.split('\n')
 
     url_pattern = re.compile(

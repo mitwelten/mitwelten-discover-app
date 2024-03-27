@@ -109,7 +109,7 @@ def note_form_view(note: Note, all_tags):
                     children=attachment_area(note.files, True),
                 )
             ],
-            h=550,
+            h=415,
             type="hover",
             offsetScrollbars=True
         )
@@ -216,7 +216,6 @@ def deactivate_edit_mode(delete_click, note):
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
@@ -230,7 +229,7 @@ def activate_edit_mode(click, notes, all_tags):
 
     for note in notes["entries"]:
        if note["id"] == ctx.triggered_id["note_id"]:
-            return dict(data=note), note_form_view(Note(note), all_tags), 650, False
+            return dict(data=note), note_form_view(Note(note), all_tags), False
 
 
 app.clientside_callback(
