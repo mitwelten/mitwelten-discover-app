@@ -110,9 +110,12 @@ window.dash_clientside.attachment = {
   clear_blob: async (note_store, blob_store) => {
 
     if (note_store["data"] === null) {
-      blob_store.files.forEach(it => {
-        URL.revokeObjectURL(it.url);
-      });
+
+      if (blob_store.files.length > 0){
+        blob_store.files.forEach(it => {
+          URL.revokeObjectURL(it.url);
+        });
+      }
     }
     blob_store.files = [];
     blob_store.active_id = undefined; 

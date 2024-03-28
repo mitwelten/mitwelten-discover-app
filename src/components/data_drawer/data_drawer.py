@@ -93,6 +93,7 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
     node_label     = get_identification_label(marker_data)
     drawer_title   = f"{selected_marker['type']} - {node_label}"
     drawer_content = html.Div("Somthing went wrong, not device found!")
+    drawer_size = CHART_DRAWER_HEIGHT
 
     match selected_marker["type"]:
         case "Audio Logger":
@@ -108,8 +109,11 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
         case "Note":
             for note in notes["entries"]:
                 if note["id"] == marker_id:
+                    n = Note(note)
+                    file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
+                    drawer_size -= 116 - file_height                    
                     drawer_title = ""
-                    drawer_content = note_view(Note(note), test_icons)
+                    drawer_content = note_view(n, file_height, test_icons)
         case _:
             notification = [
                 dmc.Title(f"Deployment: {selected_marker['type']}", order=6),
@@ -117,7 +121,8 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
             ]
             return no_update, no_update, no_update, True, True, notification
 
-    return drawer_content, drawer_title, CHART_DRAWER_HEIGHT, True, no_update, no_update
+    return drawer_content, drawer_title, drawer_size, True, no_update, no_update
+
 
 
 @app.callback(

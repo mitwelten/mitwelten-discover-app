@@ -6,6 +6,7 @@ from src.api.api_client import construct_url
 
 
 def get_file(object_name, media_type, auth_cookie):
+    print("get_file")
     url = construct_url(f"files/{object_name}")
     headers={"Authorization": f"Bearer {auth_cookie}"} if auth_cookie is not None else {}
 

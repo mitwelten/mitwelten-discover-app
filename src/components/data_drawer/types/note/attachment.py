@@ -27,7 +27,7 @@ def attachment_area(files: list[File], editable = False):
     return [
         dcc.Store(
             id=ID_NOTE_FILE_STORE, 
-            data=dict(url=API_URL, files=[f.to_dict() for f in files])
+            data=dict(url=API_URL, files=[f.to_dict() for f in files]),
         ),
         dcc.Download(id=ID_DOWNLOAD),
         dmc.Space(h=20),

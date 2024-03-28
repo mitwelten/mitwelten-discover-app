@@ -22,11 +22,11 @@ from src.util.util import local_formatted_date, text_to_dash_elements
 
 SCROLL_AREA_HEIGHT = 350
 
-def note_view(note: Note, test_icons = False):
+def note_view(note: Note, file_height, test_icons = False):
     return dmc.Container(
         id=ID_NOTE_CONTAINER,
         children=[
-            *note_detail_view(note, test_icons)
+            *note_detail_view(note, file_height, test_icons)
         ]
     )
 
@@ -74,10 +74,11 @@ icon_public= DashIconify(
 )
 
 
-slideshow = html.Div([
+def slideshow(): 
+    return html.Div([
         html.Div(
             children=[
-                html.Img(id=ID_SLIDESHOW_IMAGE, className="cropped-ofp"),
+                html.Img(id=ID_SLIDESHOW_IMAGE, className="cropped-ofp", src=""),
                 audio_player(id=ID_AUDIO_PLAYER),
         ],
             className="image-box", 
@@ -108,14 +109,14 @@ def note_form_view(note: Note, all_tags):
                     children=attachment_area(note.files, True),
                 )
             ],
-            h=420,
+            h=410,
             type="hover",
             offsetScrollbars=True
         )
     ])
 
 
-def note_detail_view(note: Note, test_icons):
+def note_detail_view(note: Note, file_height, test_icons):
     user       = get_user_from_cookies()
     title      = note.title
     files      = list(sorted(note.files, key=lambda file: file.name.lower()))
@@ -162,7 +163,7 @@ def note_detail_view(note: Note, test_icons):
             children=[
                 dmc.Grid([
                     dmc.Col(text_to_html_list(note.description), span=8),
-                    dmc.Col(slideshow if user and has_images else {}, className="image-col", span=4),
+                    dmc.Col(slideshow() if user and has_images else {}, className="image-col", span=4),
                 ], justify="space-between", grow=True),
                 dmc.Space(h=10),
                 *attachment_area(note.files, False),
@@ -179,7 +180,7 @@ def note_detail_view(note: Note, test_icons):
     Input(ID_NOTE_DELETE_BUTTON, "n_clicks"),
     prevent_initial_call=True
 )
-def map_click(click):
+def delete_click(click):
     if click == 0 or click is None:
         raise PreventUpdate
     return True
@@ -216,6 +217,7 @@ def deactivate_edit_mode(delete_click, note):
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_TAG_DATA_STORE, "data"),
@@ -228,7 +230,7 @@ def activate_edit_mode(click, notes, all_tags):
 
     for note in notes["entries"]:
        if note["id"] == ctx.triggered_id["note_id"]:
-            return dict(data=note), note_form_view(Note(note), all_tags), False
+            return dict(data=note), note_form_view(Note(note), all_tags), False, CHART_DRAWER_HEIGHT
 
 
 app.clientside_callback(
@@ -265,7 +267,11 @@ app.clientside_callback(
     Output(ID_AUDIO_PLAYER, "style"),
     Input(ID_FOCUSED_MEDIA_STORE, "data"),
 )
+
 def update_focused_image(data):
+    if data == None or data == "":
+        raise PreventUpdate
+
     visible   = {"display": "flex"}
     invisible = {"display": "none"}
 
@@ -301,10 +307,11 @@ def mark_active_card(data):
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_EDIT_NOTE_STORE, "data"),
+    State(ID_CHART_DRAWER, "size"),
     State("id-test-icon-store", "data"),
     prevent_initial_call=True
 )
-def cancel_click(cancel_click, notes, selected_note, test_icons):
+def cancel_click(cancel_click, notes, selected_note, drawer_size, test_icons):
 
     if ctx.triggered_id == ID_NOTE_FORM_CANCEL_BUTTON:
         if cancel_click is None or cancel_click == 0:
@@ -315,7 +322,10 @@ def cancel_click(cancel_click, notes, selected_note, test_icons):
 
     for note in notes["entries"]:
         if note["id"] == selected_note["data"]["id"]:
-            if Note(note) != Note(selected_note["data"]):
-                return True, no_update, no_update, no_update
+            n = Note(note)
+            file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
+            drawer_size -= 116 - file_height                    
+            if n != Note(selected_note["data"]):
+                return True, no_update, no_update, no_update, drawer_size
 
-    return no_update, dict(data=None), note_detail_view(Note(selected_note["data"]), test_icons), CHART_DRAWER_HEIGHT
+        return no_update, dict(data=None), note_detail_view(Note(selected_note["data"]), drawer_size, test_icons), drawer_size 

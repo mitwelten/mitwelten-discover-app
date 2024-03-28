@@ -187,6 +187,11 @@ input:invalid {
   z-index: 1;
 }
 
+.audio-player-circle:hover {
+   background-color: lightgray;
+   transition: 0.4s;
+}
+
 .player-background {
   background: white;
   height: 40px;
@@ -199,7 +204,7 @@ input:invalid {
   display: flex;
   justify-content: center;
   width: 250px;
-  min-width: 200px;
+  min-width: 220px;
 }
 
 .image-container {

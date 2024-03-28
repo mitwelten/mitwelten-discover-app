@@ -162,6 +162,7 @@ for source in SOURCE_PROPS.keys():
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_SLIDESHOW_IMAGE, "src", allow_duplicate=True),
     Input(ID_MAP, "clickData"),
     State(ID_EDIT_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
@@ -172,9 +173,9 @@ def map_click(_, selected_note, notes):
         for note in notes["entries"]:
             if note["id"] == selected_note["data"]["id"]:
                 if Note(note) != Note(selected_note["data"]):
-                    return no_update, True, no_update
+                    return no_update, True, no_update, ""
 
-    return False, no_update, dict(data=None)
+    return False, no_update, dict(data=None), ""
 
 
 @app.callback(
@@ -185,13 +186,18 @@ def map_click(_, selected_note, notes):
     Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
     State(ID_EDIT_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    State(ID_CHART_DRAWER, "size"),
     State("id-test-icon-store", "data"),
     prevent_initial_call=True,
 )
-def deactivate_edit_mode(cancel_click, selected_note, notes, test_icons):
+def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, test_icons):
     if cancel_click is None or cancel_click == 0:
         return no_update, no_update, True, no_update
     for note in notes["entries"]:
+
         if note["id"] == selected_note["data"]["id"]:
-            return dict(data=None), CHART_DRAWER_HEIGHT, True, note_detail_view(Note(note), test_icons)
+            n = Note(note)
+            file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
+            drawer_size -= 116 - file_height                    
+            return dict(data=None), drawer_size, True, note_detail_view(Note(note), drawer_size, test_icons)
 
