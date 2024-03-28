@@ -28,7 +28,7 @@ SOURCE_PROPS = {
     "Pax Counter":            dict(color="#3498DB", marker="location-3.svg", type="physical"),
     "Pollinator Cam":         dict(color="#E67E22", marker="location-4.svg", type="physical"),
     "Wild Cam":               dict(color="#2ECC71", marker="location-5.svg", type="physical"),
-    "Environment Data Point": dict(color="#946000", marker="location-6.svg", type="virtual"),
+    "Environment":            dict(color="#946000", marker="location-6.svg", type="virtual"),
     "Note":                   dict(color="#FFd800", marker="note.svg"      , type="virtual"),
 }
 
@@ -40,7 +40,7 @@ TEST_SOURCE_PROPS = {
     "Pax Counter":            dict(color="#3498DB", marker="test/PAX.svg", type="physical"),
     "Pollinator Cam":         dict(color="#E67E22", marker="test/pollinator2.svg", type="physical"),
     "Wild Cam":               dict(color="#2ECC71", marker="test/image-cam.svg", type="physical"),
-    "Environment Data Point": dict(color="#946000", marker="test/habitat1.svg", type="virtual"),
+    "Environment":            dict(color="#946000", marker="test/habitat1.svg", type="virtual"),
     "Note":                   dict(color="#FFd800", marker="test/info_comment.svg"      , type="virtual"),
 }
 

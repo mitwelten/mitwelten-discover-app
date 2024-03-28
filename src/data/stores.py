@@ -50,8 +50,8 @@ def load_notes_from_backend(data, _):
 
 
 @app.callback(
-    Output({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
-    Input ({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
+    Output({"role": "Environment", "label": "Store", "type": "virtual"}, "data"),
+    Input ({"role": "Environment", "label": "Store", "type": "virtual"}, "data"),
 )
 def load_env_from_backend(data):
     outdated = False  # TODO: implement data update

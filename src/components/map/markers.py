@@ -144,11 +144,11 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons
 @app.callback(
     Output(ID_ENV_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-    Input({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
+    Input({"role": "Environment", "label": "Store", "type": "virtual"}, "data"),
     Input("id-test-icon-store", "data"),
 )
 def add_environment_markers(active_checkboxes, all_environments, test_icons):
-    if "Environment Data Point" not in active_checkboxes:
+    if "Environment" not in active_checkboxes:
         return []
 
     markers = []
@@ -168,8 +168,8 @@ def add_environment_markers(active_checkboxes, all_environments, test_icons):
                     ),
                 ],
                 eventHandlers=popup_events,
-                icon=dict(iconUrl=get_source_props("Environment Data Point", test_icons)["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
-                id={"role": "Environment Data Point", "id": env.id, "label": "Node"},
+                icon=dict(iconUrl=get_source_props("Environment", test_icons)["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
+                id={"role": "Environment", "id": env.id, "label": "Node"},
             
             )
         )

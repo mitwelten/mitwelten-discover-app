@@ -79,7 +79,7 @@ def open_drawer(selected_marker):
     Output(ID_ALERT_INFO, "children", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    State({"role": "Environment Data Point", "label": "Store", "type": "virtual"}, "data"),
+    State({"role": "Environment", "label": "Store", "type": "virtual"}, "data"),
     State(ID_APP_THEME, "theme"),
     State("id-test-icon-store", "data"),
     prevent_initial_call=True
@@ -103,7 +103,7 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
             drawer_content = create_pax_chart(marker_id, light_mode)
         case "Pollinator Cam":
             drawer_content = create_pollinator_chart(marker_id, light_mode)
-        case "Environment Data Point":
+        case "Environment":
             drawer_content = create_environment_point_chart(environment_data["legend"], marker_id)
         case "Note":
             for note in notes["entries"]:

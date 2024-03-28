@@ -73,7 +73,7 @@ def environment_popup(environment):
     created_at = local_formatted_date(environment.created_at)
     updated_at = local_formatted_date(environment.updated_at) if environment.updated_at else "-"
     return dmc.Container([
-        *header("Environment Data Point", "", "#946000"),
+        *header("Environment", "", "#946000"),
         *time_section("Created", created_at, "Updated", updated_at),
     ],
         fluid=True,
