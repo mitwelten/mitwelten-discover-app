@@ -1,6 +1,6 @@
 if (!window.dash_clientside) {
   window.dash_clientside = {};
-
+  window.activePopup = "";
 }
 
 window.addEventListener("keydown", (e) => {
@@ -179,6 +179,7 @@ window.dash_clientside.audio= {
 };
 
 
+// handling leaflet marker popup states
 window.dashExtensions = Object.assign({}, window.dashExtensions, {
   default: {
     setLatLng: (e, ctx) => {
@@ -189,20 +190,24 @@ window.dashExtensions = Object.assign({}, window.dashExtensions, {
       })
     },
 
-    mouseover: function(e, _ctx) {  
+    mouseover: function(e, _ctx) {
       e.target.openPopup();
     },
 
     mouseout: function(e, ctx) {  
-      if (ctx.id == ctx.state) {
-        return;
+      if (window.activePopup != ctx.id) {
+        e.target.closePopup();
       }
-      e.target.closePopup();
     },  
 
     click: function(e, ctx) {  
-      ctx.setProps({state: ctx.id});
+      for (const [_, value] of Object.entries(ctx.map._targets)) {
+        if (value.options.id != ctx.id) {
+          value.closePopup();
+        }
+      }
       e.target.openPopup();
+      window.activePopup = ctx.id;
     },  
   }
 });

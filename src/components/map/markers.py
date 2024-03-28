@@ -122,7 +122,8 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, test_icons
                             children=[device_popup(d, get_source_props(d.node_type)["color"])],
                             closeButton=False,
                             id=f"{d.id}",
-                            autoPan=False
+                            autoPan=False,
+                            autoClose=False,
                         ),
                     ],
                     eventHandlers=popup_events,
@@ -162,7 +163,8 @@ def add_environment_markers(active_checkboxes, all_environments, test_icons):
                     dl.Popup(
                         children=[environment_popup(env)],
                         closeButton=False,
-                        autoPan=False
+                        autoPan=False,
+                        autoClose=False,
                     ),
                 ],
                 eventHandlers=popup_events,
@@ -215,7 +217,7 @@ def add_note_markers(active_checkboxes, selected_note, all_notes, test_icons):
                         closeButton=False,
                         autoPan=False,
                         autoClose=False,
-                        bubblingMouseEvents=True
+                        className="colored-popup"
                         ),
                 ],
                 icon=marker_icon_draggable if in_edit_mode else marker_icon,
