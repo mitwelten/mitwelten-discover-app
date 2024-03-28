@@ -1,13 +1,11 @@
 from http.client import responses
-import re
 
 import dash
 import dash_mantine_components as dmc
 import flask
-from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_update, dcc
+from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_update
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
-from urllib.parse import urlparse
 
 from src.api.api_note import delete_note
 from src.components.media.player import audio_player

@@ -1,18 +1,12 @@
 from functools import reduce
 
-import dash
-import dash_leaflet as dl
 import dash_mantine_components as dmc
-from dash import html, dcc, Output, Input, State, ALL
-from dash.exceptions import PreventUpdate
-from dash_iconify import DashIconify
+from dash import dash, html, dcc, Output, Input
 
-from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
 from src.main import app
 from src.util.decorators import spaced_section
-from src.util.util import get_identification_label
 
 
 def get_checkbox_by_type(node_type: str):

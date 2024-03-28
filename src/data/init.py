@@ -1,3 +1,4 @@
+from src.config.app_config import EXCLUDED_DEPLOYMENTS
 from src.api.api_deployment import get_deployments, get_tags
 from src.api.api_environment import get_environment_data, get_environment_legend
 from src.api.api_note import get_all_notes
@@ -14,14 +15,22 @@ def init_deployment_data():
 
     all_deployments = [Deployment(d) for d in all_deployments_json]
     all_types       = sorted(set(map(lambda d: d.node_type, all_deployments)))
+    all_types_filtered = []
+
+    for depl_type in all_types.copy():
+        for excl in EXCLUDED_DEPLOYMENTS:
+            if depl_type.lower().strip() != excl.lower().strip():
+                all_types_filtered.append(depl_type)
+
 
     # {type: deployment}
     deployment_dict = {}
-    for source_type in all_types:
+    for source_type in all_types_filtered:
         deployment_dict[source_type] = [
             d.to_dict() for d in all_deployments
             if source_type.lower().strip() in d.node_type.lower()
         ]
+
     return deployment_dict
 
 
