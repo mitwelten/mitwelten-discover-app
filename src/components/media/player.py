@@ -31,38 +31,40 @@ def audio_player(id: str):
                  events = [{"event": "timeupdate"}, {"event": "loadeddata"}],
                  id=ID_EVENT_LISTENER
             ),
-            dmc.Group([
-                    dmc.ActionIcon(
-                        DashIconify(icon="material-symbols:stop-rounded", width=50),
-                        id=ID_AUDIO_STOP_BTN,
-                        variant="transparent",
-                        style={"width": "35px", "height": "35px"}
+            html.Div([
+                html.Div(className="player-background"),
+                dmc.Group([
+                    html.Div(
+                        dmc.ActionIcon(
+                            DashIconify(icon="material-symbols:stop-rounded", width=35),
+                            id=ID_AUDIO_STOP_BTN,
+                            variant="transparent",
+                        ),
+                        className="audio-player-circle",
+                        style={"width": "40px", "height": "40px"}
                     ),
-                html.Div(
-                    dmc.ActionIcon(
-                        DashIconify(icon=play_icon, width=100, id=ID_AUDIO_PLAY_PAUSE_ICON),
-                        id=ID_AUDIO_PLAY_PAUSE_BTN,
-                        variant="transparent",
-                        style={"width": "75px", "height": "75px"}
+                    html.Div(
+                        dmc.ActionIcon(
+                            DashIconify(icon=play_icon, width=100, id=ID_AUDIO_PLAY_PAUSE_ICON),
+                            id=ID_AUDIO_PLAY_PAUSE_BTN,
+                            variant="transparent",
+                            style={"width": "60px", "height": "60px"}
+                        ),
+                        className="audio-player-circle",
+                        style={ "width": "80px", "height": "80px", "box-shadow": "0 2px 4px rgba(0,0,0,0.2)"} 
                     ),
-                    style={
-                        "display": "flex",
-                        "background": "white",
-                        "width": "80px",
-                        "height": "80px",
-                        "border-radius": "50%",
-                        "justify-content": "center",
-                        "align-items": "center"
-                    }
-                ),
-                    dmc.ActionIcon(
-                        DashIconify(id=ID_AUDIO_MUTE_ICON, icon="material-symbols:no-sound-rounded", width=50),
-                        id=ID_AUDIO_MUTE_BTN,
-                        variant="transparent",
-                        style={"width": "35px", "height": "35px"}
+                    html.Div(
+                        dmc.ActionIcon(
+                            DashIconify(id=ID_AUDIO_MUTE_ICON, icon="material-symbols:no-sound-rounded", width=35),
+                            id=ID_AUDIO_MUTE_BTN,
+                            variant="transparent",
+                        ),
+                        className="audio-player-circle",
+                        style={"width": "40px", "height": "40px"}
                     ),
-            ]
-            ),
+                ]),
+
+            ], style={"display":"flex", "align-items": "center", "justify-content": "center"}),
             dmc.Text("-:- / -:-", id=ID_AUDIO_TIME_PROGRESS)
         ])
 

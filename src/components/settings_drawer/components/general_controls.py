@@ -35,10 +35,11 @@ def general_controls():
     prevent_intial_call=True
 )
 def switch_theme(checked, theme):
+    print(theme)
     if checked is None:
         return dash.no_update
     if not checked:
-        theme.update({'colorScheme': 'light'})
+        theme.update({'colorScheme': 'test'})
     else:
         theme.update({'colorScheme': 'dark'})
     return theme

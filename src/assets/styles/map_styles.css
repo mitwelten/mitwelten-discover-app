@@ -1,6 +1,10 @@
+:root{
+    --background: #E8F7FC;
+}
+
 body {
     font-family: Verdana, sans-serif;
-    margin: 0
+    margin: 0;
 }
 
 .leaflet-control-zoom {
@@ -119,4 +123,12 @@ body {
     height: 50px;
     text-align: center;
     word-wrap: break-word;
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--background);
+}
+
+.leaflet-popup-tip {
+  background: var(--background);
 }

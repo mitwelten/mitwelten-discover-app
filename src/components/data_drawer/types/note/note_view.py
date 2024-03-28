@@ -22,6 +22,7 @@ from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
 from src.util.util import local_formatted_date, text_to_dash_elements
 
+SCROLL_AREA_HEIGHT = 350
 
 def note_view(note: Note, test_icons = False):
     return dmc.Container(
@@ -109,7 +110,7 @@ def note_form_view(note: Note, all_tags):
                     children=attachment_area(note.files, True),
                 )
             ],
-            h=415,
+            h=420,
             type="hover",
             offsetScrollbars=True
         )

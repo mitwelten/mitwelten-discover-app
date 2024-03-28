@@ -10,9 +10,11 @@ REFRESH_KEY_TIME_LEFT_S = 10 * 60
 
 PRIMARY_COLOR = "mitwelten_green"
 SECONDARY_COLOR = "mitwelten_pink"
+BACKGROUND_COLOR = "#E8F7FC"
 
 app_theme = {
     "colorScheme": "light",
+
     "colors": {
         PRIMARY_COLOR:
             [
@@ -41,6 +43,7 @@ app_theme = {
                 "#880E4F",
             ],
     },
+    "white": BACKGROUND_COLOR, # background color of light theme
     "primaryColor": PRIMARY_COLOR,
     "shadows": {
         # other shadows (xs, sm, lg) will be merged from default theme
@@ -61,6 +64,7 @@ CONFIRM_DELETE_MESSAGE          = "Are you sure you want to permanently remove t
 supported_mime_types = [
     "image/png", 
     "image/jpeg",
+    "image/jpg",
     "image/gif",
     "image/webp",
     "application/pdf",

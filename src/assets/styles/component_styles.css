@@ -162,6 +162,7 @@ input:invalid {
   object-fit: contain;
   object-position: 50% 50%; 
 }
+
 .image-box {
     display: flex;
     width: 100%;
@@ -176,6 +177,23 @@ input:invalid {
     justify-content: center;
     align-items: center;
 }
+
+.audio-player-circle {
+  display: flex;
+  background: white;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.player-background {
+  background: white;
+  height: 40px;
+  width: 150px;
+  position: absolute;
+}
+
 
 .image-col {
   display: flex;
@@ -229,4 +247,4 @@ input:invalid {
     -ms-transform: translate(-0%,-50%);
 }
 
-.attachment-card
+
