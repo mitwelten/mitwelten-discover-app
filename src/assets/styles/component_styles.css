@@ -188,7 +188,7 @@ input:invalid {
 }
 
 .audio-player-circle:hover {
-   background-color: lightgray;
+   background-color: #F2F2F2;
    transition: 0.4s;
 }
 

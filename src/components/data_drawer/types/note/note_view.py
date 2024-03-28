@@ -109,7 +109,7 @@ def note_form_view(note: Note, all_tags):
                     children=attachment_area(note.files, True),
                 )
             ],
-            h=410,
+            h=435,
             type="hover",
             offsetScrollbars=True
         )
@@ -174,6 +174,13 @@ def note_detail_view(note: Note, file_height, test_icons):
     ]
 
 
+@app.callback(
+    Output(ID_SLIDESHOW_IMAGE, "src", allow_duplicate=True),
+    Input(ID_MAP, "clickData"),
+    prevent_initial_call=True
+)
+def map_click(_):
+    return ""
 
 @app.callback(
     Output(ID_CONFIRM_DELETE_DIALOG, "displayed", allow_duplicate=True),

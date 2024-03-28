@@ -162,7 +162,6 @@ for source in SOURCE_PROPS.keys():
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_SLIDESHOW_IMAGE, "src", allow_duplicate=True),
     Input(ID_MAP, "clickData"),
     State(ID_EDIT_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
@@ -173,9 +172,9 @@ def map_click(_, selected_note, notes):
         for note in notes["entries"]:
             if note["id"] == selected_note["data"]["id"]:
                 if Note(note) != Note(selected_note["data"]):
-                    return no_update, True, no_update, ""
+                    return no_update, True, no_update
 
-    return False, no_update, dict(data=None), ""
+    return False, no_update, dict(data=None)
 
 
 @app.callback(
