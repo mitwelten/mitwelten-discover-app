@@ -21,8 +21,8 @@ def safe_reduce(fn: Callable[[T, T], T], iterable: Iterable[T], start: T|None) -
 
 
 def was_deployed(deployment: Deployment, start_date: str, end_date: str):
-    selected_start = datetime.strptime(start_date, DATE_FORMAT).date()
-    selected_end   = datetime.strptime(end_date,   DATE_FORMAT).date()
+    selected_start = datetime.fromisoformat(start_date).date()
+    selected_end   = datetime.fromisoformat(end_date).date()
 
     node_start = deployment.period_start
     node_end   = deployment.period_end
@@ -41,8 +41,3 @@ def was_deployed(deployment: Deployment, start_date: str, end_date: str):
         else:
             return node_start <= selected_end
 
-# def plot_image(image):
-#     buffered = BytesIO()
-#     image.save(buffered, format="PNG")
-#     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
-#     return html.Img(id="my-img", className="image", src="data:image/png;base64, " + img_str)

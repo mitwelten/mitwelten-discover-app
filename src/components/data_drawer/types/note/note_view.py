@@ -74,14 +74,13 @@ icon_public= DashIconify(
 )
 
 
-def slideshow(theme): 
+def slideshow(theme, src=None): 
     light_mode = theme["colorScheme"] == "light"
     background = "#F2F2F2" if light_mode else "#373A40"
 
-    return html.Div([
-        html.Div(
+    return [html.Div(
             children=[
-                html.Img(id=ID_SLIDESHOW_IMAGE, className="cropped-ofp", src=""),
+                html.Img(id=ID_SLIDESHOW_IMAGE, className="cropped-ofp", src=src),
                 audio_player(id=ID_AUDIO_PLAYER, light_mode=light_mode),
         ],
             className="image-box", 
@@ -89,7 +88,7 @@ def slideshow(theme):
         ),
         html.Button("❮", id=ID_SLIDESHOW_BTN_LEFT, className="slide-btn slide-btn-left"), 
         html.Button("❯", id=ID_SLIDESHOW_BTN_RIGHT, className="slide-btn slide-btn-right"), 
-    ], className="image-container")
+    ]
 
 
 def note_form_view(note: Note, all_tags):
@@ -163,11 +162,12 @@ def note_detail_view(note: Note, file_height, theme, test_icons):
         dmc.Space(h=10),
         dmc.Divider(size="xs"),
         dmc.Space(h=10),
-        dmc.ScrollArea(
+            dmc.ScrollArea(
             children=[
                 dmc.Grid([
-                    dmc.Col(text_to_html_list(note.description), span=8),
-                    dmc.Col(slideshow(theme) if user and has_images else {}, className="image-col", span=4),
+                dmc.Col(text_to_html_list(note.description), span=8),
+                dmc.Col( html.Div(id="id-slideshow-container", className="image-container", children=slideshow(theme) if user and has_images else {}), 
+                className="image-col", span=4),
                 ], justify="space-between", grow=True),
                 dmc.Space(h=10),
                 *attachment_area(note.files, False),
@@ -344,3 +344,14 @@ def cancel_click(cancel_click, notes, selected_note, drawer_size, test_icons):
                 return True, no_update, no_update, no_update, drawer_size
 
         return no_update, dict(data=None), note_detail_view(Note(selected_note["data"]), drawer_size, test_icons), drawer_size 
+
+
+@app.callback(
+    Output("id-slideshow-container", "children"),
+    Input(ID_APP_THEME, "theme"),
+    State(ID_SLIDESHOW_IMAGE, "src"),
+    prevent_initial_call=True
+)
+def update_player_colors(theme, src):
+    return slideshow(theme, src)
+

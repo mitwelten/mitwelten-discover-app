@@ -79,3 +79,6 @@ image_types = ["image/png", "image/jpg", "image/jpeg", "image/gif", "image/webp"
 audio_types = ["audio/mpeg"]
 
 thumbnail_size = (64, 64)
+
+
+PAX_DESCRIPTION = "The PAX sensor counts people by detecting nearby smartphones' signals. It's used to measure crowds or occupancy without invading privacy. The chart shows the number of detections, indicating how many people were nearby based on their phone signals."
