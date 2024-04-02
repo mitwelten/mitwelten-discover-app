@@ -20,8 +20,8 @@ def date_time_section():
         dcc.Store(
             id=ID_DATE_RANGE_STORE,
             data=dict(
-                start=datetime.now().date() - timedelta(weeks=FIRST_DEPLOYMENT_WEEKS_AGO),
-                end=datetime.now().date()
+                start=datetime.now() - timedelta(weeks=FIRST_DEPLOYMENT_WEEKS_AGO),
+                end=datetime.now()
             )
         ),
         dmc.SegmentedControl(
@@ -38,7 +38,7 @@ def date_time_section():
                 id=ID_DATE_RANGE_PICKER,
                 inputFormat="DD MMM, YY",
                 description="",
-                minDate=date(2020, 8, 5),
+                minDate=date(2020, 1, 1),
                 value=[datetime.now().date() - timedelta(weeks=FIRST_DEPLOYMENT_WEEKS_AGO), datetime.now().date()],
                 styles={"root": {"width": 220}},
             ),
@@ -84,7 +84,7 @@ def update_picker_from_segment(segment_data, picker_value):
     else:
         seg_time_range = int(segment_data)
 
-    store_data = dict(start=datetime.now().date() - timedelta(weeks=seg_time_range), end=datetime.now().date())
+    store_data = dict(start=datetime.now() - timedelta(weeks=seg_time_range), end=datetime.now())
     label_data_start = local_formatted_date(datetime.isoformat(datetime.now() - timedelta(weeks=seg_time_range)), "%d %b %Y")
     label_data_end   = local_formatted_date(datetime.isoformat(datetime.now()), "%d %b %Y")
     return store_data, {"display": "none"}, {"display": "block"}, f"{label_data_start} - {label_data_end}"

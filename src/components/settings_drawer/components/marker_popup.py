@@ -59,10 +59,10 @@ def device_popup(deployment, color):
         *header(deployment.node_type, deployment.node_label, color),
         *time_section("Start", start, "End", end),
         dmc.Space(h=10),
-        dmc.Group(
-            children=[dmc.Badge(t, size="sm", variant="outline") for t in deployment.tags],
-            spacing="xs"
-        ),
+        #dmc.Group(
+        #    children=[dmc.Badge(t, size="sm", variant="outline") for t in deployment.tags],
+        #    spacing="xs"
+        #),
     ],
         fluid=True,
         style={"width": "240px"}
