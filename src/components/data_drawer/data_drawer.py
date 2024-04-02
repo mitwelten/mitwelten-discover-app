@@ -84,7 +84,7 @@ def open_drawer(selected_marker):
     State("id-test-icon-store", "data"),
     prevent_initial_call=True
 )
-def update_drawer_content_from_marker_store(selected_marker, notes, environment_data, light_mode, test_icons):
+def update_drawer_content_from_marker_store(selected_marker, notes, environment_data, theme, test_icons):
     if selected_marker is None:
         raise PreventUpdate
 
@@ -97,13 +97,13 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
 
     match selected_marker["type"]:
         case "Audio Logger":
-            drawer_content = create_audio_chart(marker_id, light_mode)
+            drawer_content = create_audio_chart(marker_id, theme)
         case "Env Sensor":
-            drawer_content = create_env_chart(marker_id, light_mode)
+            drawer_content = create_env_chart(marker_id, theme)
         case "Pax Counter":
-            drawer_content = create_pax_chart(marker_id, light_mode)
+            drawer_content = create_pax_chart(marker_id, theme)
         case "Pollinator Cam":
-            drawer_content = create_pollinator_chart(marker_id, light_mode)
+            drawer_content = create_pollinator_chart(marker_id, theme)
         case "Environment":
             drawer_content = create_environment_point_chart(environment_data["legend"], marker_id)
         case "Note":
@@ -113,7 +113,7 @@ def update_drawer_content_from_marker_store(selected_marker, notes, environment_
                     file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
                     drawer_size -= 116 - file_height                    
                     drawer_title = ""
-                    drawer_content = note_view(n, file_height, test_icons)
+                    drawer_content = note_view(n, file_height, theme, test_icons)
         case _:
             notification = [
                 dmc.Title(f"Deployment: {selected_marker['type']}", order=6),

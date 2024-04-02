@@ -20,7 +20,9 @@ ID_AUDIO_STOP_ICON = "id-audio-stop-icon"
 ID_AUDIO_MUTE_ICON = "id-audio-mute-icon"
 ID_EVENT_LISTENER = "id-event-listener"
 
-def audio_player(id: str):
+def audio_player(id: str, light_mode):
+    player_background = "#F8F9FA" if light_mode else "#25262B"
+
     return dmc.Stack(
         id=id,
         className="audio-player",
@@ -32,7 +34,7 @@ def audio_player(id: str):
                  id=ID_EVENT_LISTENER
             ),
             html.Div([
-                html.Div(className="player-background"),
+                html.Div(className="player-background", style={"background": player_background}),
                 dmc.Group([
                     html.Div(
                         dmc.ActionIcon(
@@ -41,7 +43,7 @@ def audio_player(id: str):
                             variant="transparent",
                         ),
                         className="audio-player-circle",
-                        style={"width": "40px", "height": "40px"}
+                        style={"width": "40px", "height": "40px", "background": player_background}
                     ),
                     html.Div(
                         dmc.ActionIcon(
@@ -51,7 +53,7 @@ def audio_player(id: str):
                             style={"width": "60px", "height": "60px"}
                         ),
                         className="audio-player-circle",
-                        style={ "width": "80px", "height": "80px", "box-shadow": "0 2px 4px rgba(0,0,0,0.2)"} 
+                        style={ "width": "80px", "height": "80px", "box-shadow": "0 2px 4px rgba(0,0,0,0.2)", "background": player_background} 
                     ),
                     html.Div(
                         dmc.ActionIcon(
@@ -60,7 +62,7 @@ def audio_player(id: str):
                             variant="transparent",
                         ),
                         className="audio-player-circle",
-                        style={"width": "40px", "height": "40px"}
+                        style={"width": "40px", "height": "40px", "background": player_background}
                     ),
                 ]),
 

@@ -22,11 +22,11 @@ from src.util.util import local_formatted_date, text_to_dash_elements
 
 SCROLL_AREA_HEIGHT = 350
 
-def note_view(note: Note, file_height, test_icons = False):
+def note_view(note: Note, file_height, theme, test_icons = False):
     return dmc.Container(
         id=ID_NOTE_CONTAINER,
         children=[
-            *note_detail_view(note, file_height, test_icons)
+            *note_detail_view(note, file_height, theme, test_icons)
         ]
     )
 
@@ -74,14 +74,18 @@ icon_public= DashIconify(
 )
 
 
-def slideshow(): 
+def slideshow(theme): 
+    light_mode = theme["colorScheme"] == "light"
+    background = "#F2F2F2" if light_mode else "#373A40"
+
     return html.Div([
         html.Div(
             children=[
                 html.Img(id=ID_SLIDESHOW_IMAGE, className="cropped-ofp", src=""),
-                audio_player(id=ID_AUDIO_PLAYER),
+                audio_player(id=ID_AUDIO_PLAYER, light_mode=light_mode),
         ],
             className="image-box", 
+            style={"background": background}
         ),
         html.Button("❮", id=ID_SLIDESHOW_BTN_LEFT, className="slide-btn slide-btn-left"), 
         html.Button("❯", id=ID_SLIDESHOW_BTN_RIGHT, className="slide-btn slide-btn-right"), 
@@ -116,7 +120,7 @@ def note_form_view(note: Note, all_tags):
     ])
 
 
-def note_detail_view(note: Note, file_height, test_icons):
+def note_detail_view(note: Note, file_height, theme, test_icons):
     user       = get_user_from_cookies()
     title      = note.title
     files      = list(sorted(note.files, key=lambda file: file.name.lower()))
@@ -163,7 +167,7 @@ def note_detail_view(note: Note, file_height, test_icons):
             children=[
                 dmc.Grid([
                     dmc.Col(text_to_html_list(note.description), span=8),
-                    dmc.Col(slideshow() if user and has_images else {}, className="image-col", span=4),
+                    dmc.Col(slideshow(theme) if user and has_images else {}, className="image-col", span=4),
                 ], justify="space-between", grow=True),
                 dmc.Space(h=10),
                 *attachment_area(note.files, False),
@@ -291,20 +295,24 @@ def update_focused_image(data):
 
 
 @app.callback(
-    Output({"element": "media", "file_id": ALL}, "className"),
+    Output({"element": "card", "file_id": ALL}, "style"),
     Input(ID_FOCUSED_MEDIA_STORE, "data"),
+    Input(ID_APP_THEME, 'theme'),
 )
-def mark_active_card(data):
-    classes = ["attachment-card"] * len(ctx.outputs_list)
+def mark_active_card(data, theme):
+    default_style = {}
+    primary_color = theme["colors"]["mitwelten_green"][6] if theme["colorScheme"] == "light" else theme["colors"]["mitwelten_green"][8]
+    active_style = {"border-color": primary_color}
+    styles = [default_style] * len(ctx.outputs_list)
 
     if ctx.triggered_id == None:
-        classes[0] = f"{classes[0]} attachment-card-active"
-
+        styles[0] = active_style
     for idx, i in enumerate(ctx.outputs_list):
         if i["id"]["file_id"] == data["id"]:
-            classes[idx] = f"{classes[idx]} attachment-card-active"
+            styles[idx] = active_style
 
-    return classes
+    return styles 
+
 
 @app.callback(
     Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),

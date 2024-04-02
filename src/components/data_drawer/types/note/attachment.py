@@ -1,8 +1,7 @@
 import dash_mantine_components as dmc
 import flask
-from pprint import pprint
 
-from dash import  html, dcc, Output, Input, State, ctx, ALL, MATCH
+from dash import  html, dcc, Output, Input, State, ctx, ALL
 from dash.exceptions import PreventUpdate
 from src.api.api_files import get_file
 from src.components.button.components.action_button import action_button
@@ -33,7 +32,7 @@ def attachment_area(files: list[File], editable = False):
         dmc.Space(h=20),
         dmc.SimpleGrid(
             cols=3,
-            spacing="lg",
+            spacing="sm",
             breakpoints=[
                 {"maxWidth": 980 + 400, "cols": 3, "spacing": "lg"},
                 {"maxWidth": 800 + 400, "cols": 2, "spacing": "md"},
@@ -53,63 +52,62 @@ def _attachment_card(file: File, auth_cookie, editable = False):
     if is_image or file.type in audio_types:
         element = "media"
 
-    name_length   = 15 if editable else 25
-    long_filename = len(file.name) > name_length
-    file_name     = (file.name[:name_length] + '...') if long_filename else file.name
+    name_length       = 15 if editable else 25
+    is_long_filename  = len(file.name) > name_length
+    short_filename    = (file.name[:name_length] + '...') if is_long_filename else file.name
 
-    file_name_component = dmc.Text(file_name, style={"margin": "0 10px"})
-    card_title = file_name_component 
-
-    if long_filename:
-        card_title = dmc.HoverCard(
-            withArrow=True,
-            shadow="md",
-            children=[
-                dmc.HoverCardTarget(file_name_component),
-                dmc.HoverCardDropdown(dmc.Text(file.name))
-            ]
-        )
-
-    return html.Div(
-        id={"element": element, "file_id": file.id} if not editable else "",
+    return dmc.HoverCard(
+        withArrow=True,
+        shadow="md",
+        style={"cursor":"pointer", "margin": 0, "height": "50px"} if not editable else {"margin": 0, "height": "50px"},
         children=[
-            html.Div(
-                style={
-                    "display": "flex",
-                    "overflow": "hidden",
-                    "alignItems": "center",
-                    "textDecoration": "none",
-                    "color": "black",
-                },
-                children=[
-                    dmc.Image(
-                        src=get_file(
-                            thumbnail, 
-                            file.type, 
-                            auth_cookie) if is_image else f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
-                        withPlaceholder=True, 
-                        width=48,
-                        height=48,
-                    ),
-                    card_title
-                ]),
-            dmc.Group([
-                action_button(
-                    button_id={"element": "delete_button", "file_id": file.id},
-                    icon="material-symbols:delete",
-                    size="sm"
-                ) if editable else {},
-                
-                action_button(
-                    button_id={"element": "download_button", "file_id": file.id}, 
-                    icon="material-symbols:download", 
-                    size="sm"
-                ),
-            ], ),
-        ],
-        className="attachment-card",
-        style={"cursor":"pointer"} if not editable else {}
+            dmc.HoverCardTarget(
+                children=html.P(dmc.Card(
+                    id={"element": "card", "file_id": file.id} if not editable else "",
+                    children=[
+                        dmc.CardSection(
+                            style={
+                                "display": "flex",
+                                "overflow": "hidden",
+                                "alignItems": "center",
+                                "justify-content": "space-between",
+                            },
+                            children=[
+                                dmc.Image(
+                                    src=get_file(
+                                        thumbnail, 
+                                        file.type, 
+                                        auth_cookie) if is_image else f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
+                                    withPlaceholder=True, 
+                                    width=48,
+                                    height=48,
+                                ),
+                                dmc.Text(short_filename, style={"margin": "0 10px"}),
+
+                                dmc.Group([
+                                    action_button(
+                                        button_id={"element": "delete_button", "file_id": file.id},
+                                        icon="material-symbols:delete",
+                                        size="sm"
+                                    ) if editable else {},
+
+                                    action_button(
+                                        button_id={"element": "download_button", "file_id": file.id}, 
+                                        icon="material-symbols:download", 
+                                        size="sm"
+                                    ),
+                                ]),
+                            ]),
+                    ],
+                    withBorder=True,
+                    shadow="sm",
+                    radius="sm",
+                ), id={"element": element, "file_id": file.id} if not editable else ""),
+            ),
+            dmc.HoverCardDropdown(dmc.Text(file.name)) if is_long_filename else {}
+        ]
     )
+
 
 
 @app.callback(
