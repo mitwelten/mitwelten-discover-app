@@ -11,7 +11,7 @@ from src.api.api_deployment import get_pax_timeseries
 from src.components.data_drawer.charts import create_themed_figure
 
 
-def create_pax_chart(marker_data, date_range, light_mode=True):
+def create_pax_chart(marker_data, date_range, theme):
     d = Deployment(marker_data)
     resp = get_pax_timeseries(
         deployment_id=d.id,
@@ -19,19 +19,25 @@ def create_pax_chart(marker_data, date_range, light_mode=True):
         time_from=date_range["start"],
         time_to=date_range["end"]
     )
-    figure = create_themed_figure(light_mode)
-    figure.update_layout(yaxis_title="Number of People Detected")
-    figure.add_trace(go.Bar(
-        x=resp["buckets"],
-        y=resp["pax"],
-    ))
+    figure = create_themed_figure(theme)
+    if resp is not None and len(resp["buckets"]) != 0:
+        figure.update_layout(
+            yaxis_title="Number of People Detected",
+            annotations=[{"visible":False}],
+            xaxis={"visible": True},
+            yaxis={"visible": True},
+        )
+        figure.add_trace(go.Bar(
+            x=resp["buckets"],
+            y=resp["pax"],
+        ))
     graph = dcc.Graph(
         figure=figure,
         responsive=True,
         style={"width":"100%", "height":"100%"}
     )
     return [
-        bottom_drawer_content("PAX Counter", PAX_DESCRIPTION, d.tags, date_range["start"], date_range["end"], "PAX.svg", True), 
+        bottom_drawer_content("PAX Counter", PAX_DESCRIPTION, d.tags, "PAX.svg", theme, True), 
         dmc.Paper(
             children=graph,
             shadow="md",
