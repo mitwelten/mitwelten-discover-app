@@ -20,15 +20,13 @@ from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
 from src.util.util import local_formatted_date, text_to_dash_elements
 
-
 SCROLL_AREA_HEIGHT = 350
 
-
-def note_view(note: Note, theme, test_icons = False):
+def note_view(note: Note, file_height, theme, test_icons = False):
     return dmc.Container(
         id=ID_NOTE_CONTAINER,
         children=[
-            *note_detail_view(note, theme, test_icons)
+            *note_detail_view(note, file_height, theme, test_icons)
         ]
     )
 
@@ -121,7 +119,7 @@ def note_form_view(note: Note, all_tags):
     ])
 
 
-def note_detail_view(note: Note, theme, test_icons):
+def note_detail_view(note: Note, file_height, theme, test_icons):
     user       = get_user_from_cookies()
     title      = note.title
     files      = list(sorted(note.files, key=lambda file: file.name.lower()))
@@ -168,7 +166,7 @@ def note_detail_view(note: Note, theme, test_icons):
             children=[
                 dmc.Grid([
                 dmc.Col(text_to_html_list(note.description), span=8),
-                dmc.Col( html.Div(id="id-slideshow-container", className="image-container", children=slideshow(theme) if user and has_images else {}), 
+                dmc.Col( html.Div(id="id-slideshow-container", className="image-container", children=slideshow(theme) if has_images else {}), 
                 className="image-col", span=4),
                 ], justify="space-between", grow=True),
                 dmc.Space(h=10),

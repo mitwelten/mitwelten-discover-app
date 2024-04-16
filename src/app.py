@@ -198,5 +198,5 @@ def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, test_i
             n = Note(note)
             file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
             drawer_size -= 116 - file_height                    
-            return dict(data=None), drawer_size, True, note_detail_view(Note(note), drawer_size, test_icons)
+            return dict(data=None), drawer_size, True, note_detail_view(Note(note), file_height, drawer_size, test_icons)
 

@@ -15,9 +15,6 @@ from src.util.user_validation import get_user_from_cookies
 from configuration import API_URL
 
 def attachment_area(files: list[File], editable = False):
-    user = get_user_from_cookies()
-    if user is None:
-        return dmc.Text("Login to see attachments!", color="gray")
     auth_cookie = flask.request.cookies.get("auth")
     files = list(sorted(files, key=lambda file: file.name.lower()))
 
