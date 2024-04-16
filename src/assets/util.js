@@ -55,8 +55,20 @@ const extractFromCookie = (name, cookie) => {
   return cookieValue;
 };
 
+const getBlobUrl = async (api_url, file) => {
+    const requestOptions = {
+      method: 'GET',
+      mode: "cors",
+      redirect: 'follow'
+    };
 
-const getBlobUrl = async (api_url, auth_token, file) => {
+    const result  = await fetch(`${api_url}/files/${file["object_name"]}`, requestOptions);
+    const blob    = await result.blob();
+    const blobObj = new Blob([blob], {type: file["type"]});
+    return URL.createObjectURL(blobObj);
+};
+
+const getBlobUrlAuth = async (api_url, auth_token, file) => {
     const requestOptions = {
       method: 'GET',
       mode: "cors",

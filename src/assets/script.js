@@ -61,7 +61,7 @@ window.dash_clientside.attachment = {
     }
 
     const auth_token = extractFromCookie("auth", document.cookie);
-    const blob_url   = await getBlobUrl(blob_store.api_url, auth_token, file);
+    const blob_url   = await getBlobUrlAuth(blob_store.api_url, auth_token, file);
 
     blob_store.files.push({id: file.id, url: blob_url});
     blob_store.active_id = file.id;
@@ -71,11 +71,13 @@ window.dash_clientside.attachment = {
   },
 
 
-  load_text_blob: async (_click, file_store, blob_store) => {
+  load_text_blob: async (_click, file_store) => {
+    docs = file_store.documents
+    api_url = file_store.API_URL
 
     // no files to load
-    if (file_store.files && file_store.files.length === 0) {
-      return ["", blob_store];
+    if (docs && docs.length === 0) {
+      throw dash_clientside.PreventUpdate;
     }
 
     // check if the callback was triggered on initialization
@@ -86,26 +88,18 @@ window.dash_clientside.attachment = {
       throw dash_clientside.PreventUpdate;
     }
 
-    const file = getFileBasedOnTrigger(isInitCall, triggered_id, file_store, blob_store.active_id);
-
-    // if file is already in blob store, return its url
-    const isFileLoaded = blob_store.files.find(it => it && it["id"] === file.id);
-    if (isFileLoaded !== undefined) {
-      window.open(isFileLoaded.url, "_blank");
-      return blob_store;
-    }
+    const file = docs.filter(it => it.id == triggered_id.file_id)[0]
 
     if (file === undefined) {
       throw dash_clientside.PreventUpdate;
     }
 
-    const auth_token = extractFromCookie("auth", document.cookie);
-    const blob_url   = await getBlobUrl(blob_store.api_url, auth_token, file);
+    const blob_url = await getBlobUrl(api_url, file);
 
     window.open(blob_url, "_blank");
+    //URL.revokeObjectURL(blobObj);
 
-    blob_store.files.push({id: file.id, url: blob_url});
-    return blob_store;
+    throw dash_clientside.PreventUpdate;
   },
 
 
