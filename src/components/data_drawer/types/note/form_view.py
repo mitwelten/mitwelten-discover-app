@@ -3,6 +3,7 @@ import json
 import flask
 from datetime import datetime
 import dash_mantine_components as dmc
+from itertools import chain
 from dash import Output, Input, ALL, State, dcc, ctx, html, no_update
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
@@ -41,6 +42,8 @@ def get_form_controls(public:bool = False):
 min_width_style = {"minWidth": "200px"}
 
 def form_content(note: Note, all_tags):
+
+    accepted_types =",".join( list(chain.from_iterable(supported_mime_types.values())))
     return [
         dmc.Grid([
             # title and description section
@@ -102,7 +105,7 @@ def form_content(note: Note, all_tags):
                 "Drag and Drop or ", 
                 html.A("Select files", style={"fontWeight": "bold"})
             ] ,
-            accept=",".join(supported_mime_types),
+            accept=accepted_types,
             style={
                 'width': '100%',
                 'height': '60px',

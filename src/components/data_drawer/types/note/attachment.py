@@ -3,28 +3,37 @@ import flask
 
 from dash import  html, dcc, Output, Input, State, ctx, ALL
 from dash.exceptions import PreventUpdate
-from src.api.api_files import get_file
+from src.api.api_files import get_file, get_file_url
 from src.components.button.components.action_button import action_button
 from src.config.id_config import *
-from src.config.app_config import thumbnail_size, image_types, audio_types
+from src.config.app_config import thumbnail_size, supported_mime_types
 from src.main import app
 from src.model.file import File
 from src.util.helper_functions import safe_reduce
-from src.util.user_validation import get_user_from_cookies
 
-from configuration import API_URL
 
 def attachment_area(files: list[File], editable = False):
     auth_cookie = flask.request.cookies.get("auth")
+
+    media_files = []
+    documents   = []
+
+    for file in files:
+        if file.type in supported_mime_types["image"] or file.type in supported_mime_types["audio"]:
+            media_files.append(file)
+        else:
+            documents.append(file)
+
+
+    media_files = list(sorted(media_files, key=lambda file: file.name.lower()))
+    documents   = list(sorted(documents, key=lambda file: file.name.lower()))
+
     files = list(sorted(files, key=lambda file: file.name.lower()))
+    files = [*media_files, *documents]
 
     image_cards = [_attachment_card(file, auth_cookie, editable) for file in files]
 
     return [
-        dcc.Store(
-            id=ID_NOTE_FILE_STORE, 
-            data=dict(url=API_URL, files=[f.to_dict() for f in files]),
-        ),
         dcc.Download(id=ID_DOWNLOAD),
         dmc.Space(h=20),
         dmc.SimpleGrid(
@@ -43,15 +52,16 @@ def attachment_area(files: list[File], editable = False):
 def _attachment_card(file: File, auth_cookie, editable = False): 
     name, ext = file.object_name.split('.')
     thumbnail = f"{name}_{thumbnail_size[0]}x{thumbnail_size[1]}.{ext}"
-    is_image = file.type in image_types
+    is_image = file.type in supported_mime_types["image"]
 
     element = "text"
-    if is_image or file.type in audio_types:
+    if is_image or file.type in supported_mime_types["audio"]:
         element = "media"
 
     name_length       = 15 if editable else 25
     is_long_filename  = len(file.name) > name_length
     short_filename    = (file.name[:name_length] + '...') if is_long_filename else file.name
+
 
     return dmc.HoverCard(
         withArrow=True,
@@ -59,7 +69,8 @@ def _attachment_card(file: File, auth_cookie, editable = False):
         style={"cursor":"pointer", "margin": 0, "height": "50px"} if not editable else {"margin": 0, "height": "50px"},
         children=[
             dmc.HoverCardTarget(
-                children=html.P(dmc.Card(
+                children=html.P(
+                    children=dmc.Card(
                     id={"element": "card", "file_id": file.id} if not editable else "",
                     children=[
                         dmc.CardSection(
@@ -73,8 +84,7 @@ def _attachment_card(file: File, auth_cookie, editable = False):
                                 dmc.Image(
                                     src=get_file(
                                         thumbnail, 
-                                        file.type, 
-                                        auth_cookie) if is_image else f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
+                                        file.type) if is_image else f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
                                     withPlaceholder=True, 
                                     width=48,
                                     height=48,

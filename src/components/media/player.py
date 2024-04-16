@@ -20,7 +20,7 @@ ID_AUDIO_STOP_ICON = "id-audio-stop-icon"
 ID_AUDIO_MUTE_ICON = "id-audio-mute-icon"
 ID_EVENT_LISTENER = "id-event-listener"
 
-def audio_player(id: str, light_mode):
+def audio_player(id: str, src: str, light_mode):
     player_background = "#F8F9FA" if light_mode else "#25262B"
 
     return dmc.Stack(
@@ -29,7 +29,7 @@ def audio_player(id: str, light_mode):
         style={"display": "none"},
         children=[
             EventListener(
-                 html.Audio(id=ID_AUDIO),
+                 html.Audio(id=ID_AUDIO, src=src),
                  events = [{"event": "timeupdate"}, {"event": "loadeddata"}],
                  id=ID_EVENT_LISTENER
             ),
