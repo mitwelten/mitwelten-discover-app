@@ -29,6 +29,8 @@ window.dash_clientside.browser_properties = {
 };
 
 window.dash_clientside.attachment = {
+  singleImage: async (url) => {
+  },
 
   create_blob: async (_click, _prev, _next, file_store, blob_store) => {
 

@@ -65,7 +65,7 @@
 @media screen and (max-width: 380px) {
     .chart-drawer {
         left: 0;
-        height: 50vh;
+        height: 75vh;
         width: 100vw;
     }
 
