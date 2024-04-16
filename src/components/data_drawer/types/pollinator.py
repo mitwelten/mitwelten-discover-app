@@ -1,10 +1,16 @@
 from datetime import datetime, timedelta
 
+from pprint import pprint
 import plotly.graph_objects as go
+from plotly.colors import hex_to_rgb
 from dash import Output, Input, State, html, callback, dcc
 import dash_mantine_components as dmc
+from plotly.graph_objs.layout import xaxis
+from src.model.deployment import Deployment
+from src.config.app_config import PAX_DESCRIPTION, SECONDARY_COLOR, app_theme
+from src.components.data_drawer.header import bottom_drawer_content
 
-from src.api.api_deployment import get_pollinator_timeseries
+from src.api.api_deployment import get_pollinator_heatmap, get_pollinator_timeseries
 from src.components.data_drawer.charts import create_themed_figure
 from src.config.id_config import *
 
@@ -79,3 +85,59 @@ def render_content(active, data, theme):
     return create_graph(
         tabs[int(active)]["pollinator_class"], data["data"]["id"], theme
     )
+
+
+def create_pollinator_chart2(marker_data, date_range, theme):
+    d = Deployment(marker_data)
+    resp = get_pollinator_heatmap(d.id, confidence=0.75, time_from=date_range["start"], time_to=date_range["end"])
+    figure = create_themed_figure(theme)
+    if resp is not None and len(resp["datapoints"]) != 0:
+        figure.update_layout(
+            xaxis_title="Month",
+            annotations=[{"visible":False}],
+            xaxis={"visible": True},
+            yaxis={"visible": True},
+        )
+
+        types = ["Fliege", "Honigbiene", "Hummel", "Schwebfliege", "Wildbiene"]
+        months = [it["month"] for it in resp["datapoints"]]
+
+        nof_month = max(months) - min(months) + 1
+        heat_data = {t: [0] * nof_month for t in types}
+
+        for t in types:
+            for entry in resp["datapoints"]:
+                if entry["class"] == t.lower():
+                    heat_data[t][int(entry["month"]) - min(months)] = int(entry["count"])
+
+        colorscale=[
+            [0, f"rgb{hex_to_rgb(app_theme['colors'][SECONDARY_COLOR][0])}"],
+            [1, f"rgb{hex_to_rgb(app_theme['colors'][SECONDARY_COLOR][-1])}"]
+        ]
+        figure.add_trace(go.Heatmap(
+            z=list(heat_data.values()),
+            x=[str(value) for value in range(min(months), max(months) + 1)],
+            y=types,
+            colorscale=colorscale,
+            opacity=0.8,
+            text=list(heat_data.values()),
+            texttemplate="%{text}",
+        ))
+        figure.update_xaxes(side="top")
+
+    graph = dcc.Graph(
+        figure=figure,
+        responsive=True,
+        style={"height":"100%", "width": "100%"}
+     )
+
+    return [
+        bottom_drawer_content("Pollinator", "tbd", d.tags, "pollinator.svg", theme, True), 
+        dmc.Paper(
+            children=graph,
+            shadow="md",
+            p="md",
+            radius="md",
+            style={"margin":"20px", "height":"360px"}
+        ),
+    ]
