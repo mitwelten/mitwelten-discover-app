@@ -77,7 +77,8 @@ def update_picker_from_segment(segment_data, picker_value):
     if segment_data == "":
         return dash.no_update, dash.no_update, dash.no_update, dash.no_update
     if segment_data == "custom":
-        return dict(start=picker_value[0], end=picker_value[1]), {"display": "block"}, {"display": "none"}, dash.no_update
+        store_data=dict(start=datetime.fromisoformat(picker_value[0]), end=datetime.fromisoformat(picker_value[1]))
+        return store_data, {"display": "block"}, {"display": "none"}, dash.no_update
 
     if not segment_data:
         seg_time_range = 7
