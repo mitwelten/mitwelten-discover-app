@@ -5,12 +5,13 @@ from pprint import pprint
 from src.api.api_client import construct_url
 
 
-def get_file(object_name, media_type, auth_cookie):
-    print("get_file")
-    url = construct_url(f"files/{object_name}")
-    headers={"Authorization": f"Bearer {auth_cookie}"} if auth_cookie is not None else {}
+def get_file_url(object_name: str):
+    return construct_url(f"files/{object_name}")
 
-    res = requests.get(url=url, headers=headers)
+def get_file(object_name, media_type):
+    url = construct_url(f"files/{object_name}")
+
+    res = requests.get(url=url)
 
     encoded_file = base64.b64encode(res.content).decode()
     encoded_file = f"data:{media_type};base64,{encoded_file}"
