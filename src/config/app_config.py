@@ -64,19 +64,12 @@ EXCLUDED_DEPLOYMENTS = ["Access Point", "Phaeno Cam"]
 CONFIRM_UNSAVED_CHANGES_MESSAGE = "You have unsaved changes. Do you want to discard them?"
 CONFIRM_DELETE_MESSAGE          = "Are you sure you want to permanently remove this item?"
 
-supported_mime_types = [
-    "image/png", 
-    "image/jpeg",
-    "image/jpg",
-    "image/gif",
-    "image/webp",
-    "application/pdf",
-    "text/plain",
-    "audio/mpeg"
-]
+supported_mime_types = dict(
+        image = ["image/png", "image/jpg", "image/jpeg", "image/gif", "image/webp"],
+        audio = ["audio/mpeg"],
+        doc   = ["application/pdf", "text/plain"],
+        )
 
-image_types = ["image/png", "image/jpg", "image/jpeg", "image/gif", "image/webp"]
-audio_types = ["audio/mpeg"]
 
 thumbnail_size = (64, 64)
 

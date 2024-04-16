@@ -3,16 +3,17 @@ from http.client import responses
 import dash
 import dash_mantine_components as dmc
 import flask
-from pprint import pprint
 from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_update
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 import dash_core_components as dcc
+from pprint import pprint
 
 from configuration import API_URL
+from src.components.data_drawer.header import bottom_drawer_content
 from src.api.api_note import delete_note
+from src.components.media.slideshow import slideshow
 from src.api.api_files import get_file_url
-from src.components.media.player import audio_player
 from src.components.button.components.action_button import action_button
 from src.components.data_drawer.types.note.attachment import attachment_area
 from src.components.data_drawer.types.note.form_view import form_content, get_form_controls
@@ -20,7 +21,6 @@ from src.config.app_config import CHART_DRAWER_HEIGHT, PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
-from src.model.file import File
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
 from src.util.util import local_formatted_date, text_to_dash_elements
@@ -51,10 +51,7 @@ def note_view(note: Note, file_height, theme, test_icons = False):
                 ),
             dmc.Container(
                 id=ID_NOTE_CONTAINER,
-                children=[
-                    *note_detail_view(note, file_height, theme, test_icons)
-                    ]
-                )
+                children=[*note_detail_view(note, file_height, theme, test_icons)])
             ]
 
 
@@ -67,26 +64,6 @@ def text_to_html_list(text: str):
         maxHeight=150
     )
 
-
-def list_item(text, icon):
-    return dmc.ListItem(
-        text,
-        icon=dmc.ThemeIcon(
-            DashIconify(icon=icon, width=16),
-            radius="xl",
-            color=PRIMARY_COLOR,
-            size=24,
-        ),
-    )
-
-
-def get_view_controls(user):
-    return [
-        action_button(
-            button_id=ID_NOTE_EDIT_BUTTON,
-            icon="material-symbols:edit",
-            disabled=True if user is None else False),
-    ]
 
 icon_private = DashIconify(
     icon="material-symbols:lock",                    
@@ -101,54 +78,15 @@ icon_public= DashIconify(
 )
 
 
-def slideshow(theme, files: list[File]): 
-    light_mode = theme["colorScheme"] == "light"
-    background = "#F2F2F2" if light_mode else "#373A40"
-
-    file = files[0]
-
-    slideshow_buttons = []
-    if len(files) > 1:
-        slideshow_buttons = [
-                html.Button("❮", id=ID_SLIDESHOW_BTN_LEFT, className="slide-btn slide-btn-left"), 
-                html.Button("❯", id=ID_SLIDESHOW_BTN_RIGHT, className="slide-btn slide-btn-right"), 
-                ]
-
-    url = get_file_url(file.object_name)
-    image_src = ""
-    audio_src = ""
-    if file.type.startswith("image/"):
-        image_src = url
-    else:
-        audio_src = url
-
-    return [html.Div(
-            children=[
-                html.Img(id=ID_SLIDESHOW_IMAGE, className="cropped-ofp", src=image_src),
-                audio_player(id=ID_AUDIO_PLAYER, light_mode=light_mode, src=audio_src),
-        ],
-            className="image-box", 
-            style={"background": background}
-        ),
-            *slideshow_buttons
-    ]
-
-
 def note_form_view(note: Note, all_tags):
-
     is_public = True if note.public == True else False
 
     return dmc.Container([
-        dmc.Grid([
-            dmc.Col([
-                dmc.Title("Edit / Create Note"),
-                dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm")
-            ],span="content"),
-            dmc.Col(dmc.Group(get_form_controls(is_public),spacing="sm", style={"justify-content":"flex-end"}), span="content")
-        ],
-            justify="space-between",
-            grow=True
-        ),
+        dmc.Group([
+            dmc.Title("Edit Note"),
+            dmc.Group(get_form_controls(is_public),spacing="sm", style={"justify-content":"flex-end"})
+            ], position="apart"),
+        dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm"),
         dmc.ScrollArea(
             children=[
                 *form_content(note, all_tags),
@@ -157,59 +95,23 @@ def note_form_view(note: Note, all_tags):
                     children=attachment_area(note.files, True),
                 )
             ],
-            h=435,
+            h=425,
             type="hover",
             offsetScrollbars=True
         )
-    ])
+        ], fluid=True, style={"margin-top": "20px"})
 
 
 def note_detail_view(note: Note, file_height, theme, test_icons):
-    user        = get_user_from_cookies()
-    title       = note.title
-    files       = list(sorted(note.files, key=lambda file: file.name.lower()))
-    media_files = list(filter(lambda f: f.type.startswith("image/") or f.type.startswith("audio/"), files))
-
+    user            = get_user_from_cookies()
+    files           = list(sorted(note.files, key=lambda file: file.name.lower()))
+    media_files     = list(filter(lambda f: f.type.startswith("image/") or f.type.startswith("audio/"), files))
     has_media_files = len(media_files) != 0
+    edit_button     = action_button(button_id={"button":"edit_note", "note_id": note.id},
+                                icon="material-symbols:edit", 
+                                disabled=True if user is None else False)
 
-    return [dmc.Grid([
-            dmc.Col(
-                dmc.Stack([
-                    dmc.Group([
-                        dmc.Title(title),
-                        action_button(
-                            button_id={"button":"edit_note", "note_id": note.id},
-                            icon="material-symbols:edit", 
-                            disabled=True if user is None else False
-                        ),
-                    ]),
-                    dmc.Grid(
-                        children=[
-                        dmc.Col(dmc.ChipGroup([dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in note.tags]), span="content"),
-                        dmc.Col(dmc.Text(f"{note.author} | {local_formatted_date(note.date)}", align="end", color="dimmed", size="sm"), span="content"),
-                    ],
-                        justify="space-between",
-                        grow=True
-                    ),
-                ]), span=11),
-            dmc.Col(
-
-            dmc.MediaQuery(
-                dmc.Image(
-                    src="assets/markers/test/info_comment.svg" if test_icons else "assets/markers/note.svg",
-                    alt="note icon", 
-                    style={"justifyContent": "flex-end", "width": "50px"}), 
-                smallerThan=1015,
-                styles={"display":"none"}
-            ),
-            style={"min-width":"50px"},
-                span="content"),
-        ], justify="space-between", grow=True),
-    
-        dmc.Space(h=10),
-        dmc.Divider(size="xs"),
-        dmc.Space(h=10),
-            dmc.ScrollArea(
+    content = dmc.ScrollArea(
             children=[
                 dmc.Grid([
                 dmc.Col(text_to_html_list(note.description), span=8),
@@ -222,11 +124,11 @@ def note_detail_view(note: Note, file_height, theme, test_icons):
                     ], justify="space-between", grow=True),
                 dmc.Space(h=10),
                 *attachment_area(note.files, False),
-            ],
-            type="hover",
-            h=360,
-            offsetScrollbars=True)
-    ]
+            ], type="hover", h=360, offsetScrollbars=True)
+    return [
+            bottom_drawer_content(note.title, "", note.tags, "info_comment.svg", theme, edit_button, True),
+            content
+            ]
 
 
 @app.callback(
@@ -294,21 +196,6 @@ def activate_edit_mode(click, notes, all_tags):
     for note in notes["entries"]:
        if note["id"] == ctx.triggered_id["note_id"]:
             return dict(data=note), note_form_view(Note(note), all_tags), False, CHART_DRAWER_HEIGHT
-
-
-# app.clientside_callback(
-#     ClientsideFunction(
-#         namespace="attachment", function_name="create_blob"
-#     ),
-#     Output(ID_FOCUSED_MEDIA_STORE, "data"),
-#     Output(ID_BLOB_URLS_STORE, "data", allow_duplicate=True),
-#     Input({"element": "media", "file_id": ALL}, "n_clicks"),
-#     Input(ID_SLIDESHOW_BTN_LEFT, "n_clicks"),
-#     Input(ID_SLIDESHOW_BTN_RIGHT, "n_clicks"),
-#     State(ID_NOTE_FILE_STORE, "data"),
-#     State(ID_BLOB_URLS_STORE, "data"),
-#     prevent_initial_call=True
-# )
 
 
 app.clientside_callback(
@@ -398,8 +285,11 @@ def update_focused_image(data):
     Output({"element": "card", "file_id": ALL}, "style"),
     Input(ID_NOTE_FILE_STORE, "data"),
     Input(ID_APP_THEME, 'theme'),
+    State({"element": "card", "file_id": ALL}, "style"),
 )
-def mark_active_card(data, theme):
+def mark_active_card(data, theme, cards):
+    pprint(data)
+    pprint(cards)
     default_style = {}
     green_light   = theme["colors"]["mitwelten_green"][6]
     green_dark    = theme["colors"]["mitwelten_green"][8]
@@ -416,16 +306,18 @@ def mark_active_card(data, theme):
 @app.callback(
     Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_EDIT_NOTE_STORE, "data"),
     State(ID_CHART_DRAWER, "size"),
+    State(ID_APP_THEME, "theme"),
     State("id-test-icon-store", "data"),
     prevent_initial_call=True
 )
-def cancel_click(cancel_click, notes, selected_note, drawer_size, test_icons):
+def cancel_click(cancel_click, notes, selected_note, drawer_size, theme, test_icons):
 
     if ctx.triggered_id == ID_NOTE_FORM_CANCEL_BUTTON:
         if cancel_click is None or cancel_click == 0:
@@ -438,12 +330,13 @@ def cancel_click(cancel_click, notes, selected_note, drawer_size, test_icons):
     for note in notes["entries"]:
         if note["id"] == selected_note["data"]["id"]:
             n = Note(note)
-            file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
-            drawer_size -= 116 - file_height                    
             if n != Note(selected_note["data"]):
                 return True, no_update, no_update, no_update, drawer_size
 
-        return no_update, dict(data=None), note_detail_view(Note(selected_note["data"]), file_height, drawer_size, test_icons), drawer_size 
+            file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
+            drawer_size -= 116 - file_height                    
+
+            return no_update, dict(data=None), note_view(Note(note), file_height, theme, test_icons), drawer_size, True
 
 
 @app.callback(

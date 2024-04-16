@@ -71,7 +71,7 @@ def _attachment_card(file: File, auth_cookie, editable = False):
             dmc.HoverCardTarget(
                 children=html.P(
                     children=dmc.Card(
-                    id={"element": "card", "file_id": file.id} if not editable else "",
+                    id={"element": "card", "file_id": file.id} if not editable and element == "media" else "",
                     children=[
                         dmc.CardSection(
                             style={
@@ -95,15 +95,17 @@ def _attachment_card(file: File, auth_cookie, editable = False):
                                     action_button(
                                         button_id={"element": "delete_button", "file_id": file.id},
                                         icon="material-symbols:delete",
-                                        size="sm"
+                                        size="sm",
+                                        variant="transparent"
                                     ) if editable else {},
 
                                     action_button(
                                         button_id={"element": "download_button", "file_id": file.id}, 
                                         icon="material-symbols:download", 
-                                        size="sm"
+                                        size="sm",
+                                        variant="transparent"
                                     ),
-                                ]),
+                                    ], style={"margin-right": "5px"}),
                             ]),
                     ],
                     withBorder=True,

@@ -13,7 +13,7 @@ from dash import (
     no_update,
 )
 from dash.exceptions import PreventUpdate
-from src.components.data_drawer.types.note.note_view import note_detail_view
+from src.components.data_drawer.types.note.note_view import note_view
 
 from src.components.alert.alert import alert_danger, alert_warning, alert_info
 from src.model.note import Note
@@ -23,7 +23,6 @@ from src.components.map.init_map import map_figure
 from src.components.settings_drawer.settings_drawer import settings_drawer
 from src.components.data_drawer.data_drawer import chart_drawer
 from src.config.app_config import (
-    CHART_DRAWER_HEIGHT,
     app_theme,
     CONFIRM_UNSAVED_CHANGES_MESSAGE,
     CONFIRM_DELETE_MESSAGE,
@@ -182,21 +181,23 @@ def map_click(_, selected_note, notes):
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
     State(ID_EDIT_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_CHART_DRAWER, "size"),
+    State(ID_APP_THEME, "theme"),
     State("id-test-icon-store", "data"),
     prevent_initial_call=True,
 )
-def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, test_icons):
+def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, theme, test_icons):
     if cancel_click is None or cancel_click == 0:
         return no_update, no_update, True, no_update
+    
     for note in notes["entries"]:
-
         if note["id"] == selected_note["data"]["id"]:
             n = Note(note)
             file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
             drawer_size -= 116 - file_height                    
-            return dict(data=None), drawer_size, True, note_detail_view(Note(note), file_height, drawer_size, test_icons)
+            return dict(data=None), drawer_size, True, note_view(n, file_height, theme, test_icons), True
 

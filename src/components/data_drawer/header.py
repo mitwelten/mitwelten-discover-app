@@ -6,7 +6,26 @@ from src.config.app_config import PRIMARY_COLOR
 from dash_iconify import DashIconify
 from src.util.util import  local_formatted_date
 
-def bottom_drawer_content(title, desc, tags, icon, theme, test_icons = False):
+def bottom_drawer_content(title, desc, tags, icon, theme, action_button=None, test_icons = False):
+
+    info_text = dmc.HoverCard(
+            position="top",
+            withArrow=True,
+            width="200px",
+            shadow="md",
+            style={"display": "flex", "align-items":"center"},
+            children=[
+                dmc.HoverCardTarget(
+                    children=dmc.ThemeIcon(
+                        size="sm",
+                        color=PRIMARY_COLOR,
+                        variant="light",
+                        children=DashIconify(icon="material-symbols:help", width=25),
+                        ),
+                    ),
+                dmc.HoverCardDropdown(children=dmc.Text(desc, size="sm"))
+                ],
+            )
 
     return dmc.Container([
         dmc.Grid([
@@ -21,26 +40,8 @@ def bottom_drawer_content(title, desc, tags, icon, theme, test_icons = False):
                             align="center",
                             children=[
                                 dmc.Title(title),
-                                dmc.HoverCard(
-                                    position="top",
-                                    withArrow=True,
-                                    width="200px",
-                                    shadow="md",
-                                    style={"display": "flex", "align-items":"center"},
-                                    children=[
-                                        dmc.HoverCardTarget(
-                                            children=dmc.ThemeIcon(
-                                                size="sm",
-                                                color=PRIMARY_COLOR,
-                                                variant="light",
-                                                children=DashIconify(icon="material-symbols:help", width=25),
-                                            ),
-                                        ),
-                                        dmc.HoverCardDropdown(
-                                            children=dmc.Text(desc, size="sm")
-                                        )
-                                    ],
-                                ),
+                                info_text if desc != "" else None,
+                                action_button
                             ], 
                         ),
                         dmc.Grid(
