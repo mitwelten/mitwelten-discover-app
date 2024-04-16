@@ -6,17 +6,46 @@ from dash import html, Input, Output, State
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
+from src.util.decorators import spaced_section
 from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
 
+fs_desc = dmc.Stack([
+    dmc.Text("Field Study 1: Merian Gärten", size="sm"),
+    dmc.Text("Field Study 2: Dreispitz", size="sm"),
+    dmc.Text("Field Study 3: Reinacher Heide", size="sm"),
+], spacing="sm")
 
+
+@spaced_section
 def tag_filter():
     return html.Div([
-        dmc.Text("Field Study",
+        dmc.Group([
+            dmc.Text("Field Study",
                  color="dimmed",
                  size="sm",
                  ),
+            dmc.HoverCard(
+                position="top",
+                withArrow=True,
+                width="240px",
+                shadow="lg",
+                style={"display": "flex", "align-items":"center"},
+                children=[
+                    dmc.HoverCardTarget(
+                        children=dmc.ThemeIcon(
+                            size="sm",
+                            variant="light",
+                        ),
+                    ),
+                    dmc.HoverCardDropdown(
+                        children=fs_desc
+                    )
+                ],
+            ),
+
+        ], spacing="xs", position="apart"),
         dmc.Center([
             dmc.SegmentedControl(
                 color=PRIMARY_COLOR,
