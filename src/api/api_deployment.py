@@ -66,6 +66,15 @@ def get_audio_timeseries(
     return None
 
 
+def get_audio_top3(deployment_id):
+    url = construct_url(f"discover/birds/top3/{deployment_id}")
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+
+    return None
+
+
 def get_pollinator_timeseries(
         pollinator_class, deployment_id, confidence, bucket_width, time_from=None, time_to=None
 ):
@@ -79,6 +88,22 @@ def get_pollinator_timeseries(
             "from": time_from,
             "to": time_to,
         },
+    )
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+
+    return None
+
+
+def get_pollinator_heatmap( deployment_id, confidence, time_from=None, time_to=None):
+    url = construct_url(
+        f"discover/pollinators/{deployment_id}", 
+        {
+            "conf": confidence,
+            "from": time_from,
+            "to": time_to,
+        }
     )
     response = requests.get(url)
     if response.status_code == 200:
