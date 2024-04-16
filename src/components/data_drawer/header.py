@@ -6,11 +6,12 @@ from src.config.app_config import PRIMARY_COLOR
 from dash_iconify import DashIconify
 from src.util.util import  local_formatted_date
 
-def bottom_drawer_content(title, desc, tags, date_from, date_to, icon, test_icons = False):
+def bottom_drawer_content(title, desc, tags, icon, theme, test_icons = False):
 
     return dmc.Container([
-        dmc.Group(
-            [
+        dmc.Grid([
+            dmc.Col(
+                children=[
                 dmc.Stack(
                     style={"width":"90%"},
                     spacing="xs",
@@ -53,7 +54,7 @@ def bottom_drawer_content(title, desc, tags, date_from, date_to, icon, test_icon
                                             )
                                         ],
                                         type="hover",
-                                        offsetScrollbars=False
+                                        offsetScrollbars=True
                                     ),
 
                                 ],span=12),
@@ -64,17 +65,22 @@ def bottom_drawer_content(title, desc, tags, date_from, date_to, icon, test_icon
                             ]
 
                         ),
-                    ]),
-                dmc.Image(
+                    ])
+            ],
+                span=9,
+                sm=10
+            ),
+            dmc.Col(
+                children=dmc.Image(
                     src=f"assets/markers/test/{icon}" if test_icons else f"assets/markers/{icon}",
                     alt="note icon", 
-                    style={"justifyContent": "flex-end", "min-width": "50px", "width": "50px",}
+                    style={"min-width": "25px", "width": "50px"}
                 ),
-            ], 
-            position="apart",
-            noWrap=True,
-            align="start"
-        ),
+                span=3,
+                sm=2,
+                style={"display":"flex", "justify-content":"flex-end"}
+            )
+        ]), 
         dmc.Space(h=10),
         dmc.Divider(size="xs"),
     ], fluid=True
