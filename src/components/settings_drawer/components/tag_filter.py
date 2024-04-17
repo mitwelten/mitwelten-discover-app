@@ -35,13 +35,14 @@ def tag_filter():
                 children=[
                     dmc.HoverCardTarget(
                         children=dmc.ThemeIcon(
-                            size="sm",
+                            size="md",
                             variant="light",
+                            radius="xl",
+                            color=PRIMARY_COLOR, 
+                            children=DashIconify(icon="material-symbols:help-outline")
                         ),
                     ),
-                    dmc.HoverCardDropdown(
-                        children=fs_desc
-                    )
+                    dmc.HoverCardDropdown(children=fs_desc)
                 ],
             ),
 
