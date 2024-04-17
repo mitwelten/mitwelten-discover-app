@@ -1,5 +1,9 @@
 from datetime import datetime, timedelta
 
+import pandas as pd
+from datetime import datetime
+from pprint import pprint
+from pandas.core.tools import times
 import plotly.graph_objects as go
 from dash import dcc
 from src.config.app_config import PAX_DESCRIPTION
@@ -15,7 +19,7 @@ def create_pax_chart(marker_data, date_range, theme):
     d = Deployment(marker_data)
     resp = get_pax_timeseries(
         deployment_id=d.id,
-        bucket_width="1h",
+        bucket_width="1d",
         time_from=date_range["start"],
         time_to=date_range["end"]
     )
@@ -27,9 +31,19 @@ def create_pax_chart(marker_data, date_range, theme):
             xaxis={"visible": True},
             yaxis={"visible": True},
         )
+
+        timeseries = pd.bdate_range(date_range["start"], date_range["end"], tz="UTC", freq="D")
+        empty_head = [0] * (pd.to_datetime(resp["buckets"][0]) - pd.to_datetime(timeseries[0])).days
+        empty_tail = [0] * (pd.to_datetime(timeseries[-1]) - pd.to_datetime(resp["buckets"][-1])).days
+        pax_data = []
+
+        pax_data.extend(empty_head)
+        pax_data.extend(resp["pax"])
+        pax_data.extend(empty_tail)
+
         figure.add_trace(go.Bar(
-            x=resp["buckets"],
-            y=resp["pax"],
+            x=timeseries,
+            y=pax_data,
         ))
     graph = dcc.Graph(
         figure=figure,
@@ -37,7 +51,7 @@ def create_pax_chart(marker_data, date_range, theme):
         style={"width":"100%", "height":"100%"}
     )
     return [
-        bottom_drawer_content("PAX Counter", PAX_DESCRIPTION, d.tags, "PAX.svg", theme, True), 
+        bottom_drawer_content("PAX Counter", PAX_DESCRIPTION, d.tags, "PAX.svg", theme, test_icons=True), 
         dmc.Paper(
             children=graph,
             shadow="md",
