@@ -64,7 +64,6 @@ def bottom_drawer_content(title, desc, tags, icon, theme, action_button=None, te
                                 #    dmc.Text(f" {date_from} - {date_to}", align="end", color="dimmed", size="sm"), 
                                 #],span=12, sm=5),
                             ]
-
                         ),
                     ])
             ],

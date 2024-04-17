@@ -116,7 +116,7 @@ def create_env_chart(deployment_data, theme):
 
 
     return [
-        bottom_drawer_content("Environment Sensor", "tbd", d.tags, "thermo.svg", theme, True), 
+        bottom_drawer_content("Environment Sensor", "tbd", d.tags, "thermo.svg", theme, test_icons=True), 
         dmc.Paper(
             children=tabs,
             shadow="md",

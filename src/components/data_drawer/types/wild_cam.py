@@ -22,7 +22,7 @@ def create_wild_cam_view(deployment_data, theme):
 
     return [
         dcc.Store("id-wild-cam-image-store", data=deployment_data["id"]),
-        bottom_drawer_content("Wild Cam", "tbd", d.tags, "camera1.svg", theme, True), 
+        bottom_drawer_content("Wild Cam", "tbd", d.tags, "camera1.svg", theme, test_icons=True), 
         dmc.Paper(
             children=view,
             shadow="md",

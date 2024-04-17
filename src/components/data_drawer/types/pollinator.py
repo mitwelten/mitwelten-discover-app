@@ -132,7 +132,7 @@ def create_pollinator_chart2(marker_data, date_range, theme):
      )
 
     return [
-        bottom_drawer_content("Pollinator", "tbd", d.tags, "pollinator.svg", theme, True), 
+        bottom_drawer_content("Pollinator", "tbd", d.tags, "pollinator.svg", theme, test_icons=True), 
         dmc.Paper(
             children=graph,
             shadow="md",

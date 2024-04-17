@@ -45,7 +45,7 @@ def create_audio_chart(deployment_data, theme):
 
     )
     return [
-        bottom_drawer_content("Audio", "tbd", d.tags, "audio.svg", theme, True), 
+        bottom_drawer_content("Audio", "tbd", d.tags, "audio.svg", theme, test_icons=True), 
         dmc.Paper(
             children=graph,
             shadow="md",

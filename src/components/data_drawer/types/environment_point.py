@@ -24,7 +24,7 @@ def create_environment_point_chart(legend, id, theme):
     )
 
     return [
-        bottom_drawer_content("Environment", "tbd", [], "habitat1.svg", theme, True), 
+        bottom_drawer_content("Environment", "tbd", [], "habitat1.svg", theme, test_icons=True), 
         dmc.Paper(
             children=graph,
             shadow="md",

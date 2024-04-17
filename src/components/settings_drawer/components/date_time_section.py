@@ -70,7 +70,7 @@ def change_visibility_of_date_range_picker(value):
     Output("id-date-range-label", "style"),
     Output("id-date-range-label", "children"),
     Input(ID_DATE_RANGE_SEGMENT, "value"),
-    State(ID_DATE_RANGE_PICKER, "value"),
+    Input(ID_DATE_RANGE_PICKER, "value"),
     prevent_initial_call=True
 )
 def update_picker_from_segment(segment_data, picker_value):
