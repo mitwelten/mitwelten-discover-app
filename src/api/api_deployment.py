@@ -18,7 +18,7 @@ def get_deployments():
     return None
 
 
-def get_env_timeseries(deployment_id, measurement_type, aggregation, bucket_width_m, time_from=None, time_to=None):
+def get_env_timeseries(deployment_id: int, measurement_type, aggregation, bucket_width_m, time_from=None, time_to=None):
     url = construct_url(
         f"sensordata/{measurement_type}/{deployment_id}",
         {"aggregation": aggregation, "bucket_width_m": bucket_width_m, "from": time_from, "to": time_to})
@@ -28,7 +28,7 @@ def get_env_timeseries(deployment_id, measurement_type, aggregation, bucket_widt
     return None
 
 
-def get_pax_timeseries(deployment_id, bucket_width, time_from=None, time_to=None):
+def get_pax_timeseries(deployment_id: int, bucket_width: str, time_from=None, time_to=None):
     url = construct_url(
         f"sensordata/pax/{deployment_id}",
         {"bucket_width": bucket_width, "from": time_from, "to": time_to})
@@ -76,7 +76,7 @@ def get_audio_top3(deployment_id):
 
 
 def get_pollinator_timeseries(
-        pollinator_class, deployment_id, confidence, bucket_width, time_from=None, time_to=None
+        pollinator_class, deployment_id: int, confidence: float, bucket_width: str, time_from=None, time_to=None
 ):
     url = construct_url(
         f"pollinators/date",
@@ -96,10 +96,27 @@ def get_pollinator_timeseries(
     return None
 
 
-def get_pollinator_heatmap( deployment_id, confidence, time_from=None, time_to=None):
+def get_pollinator_heatmap( deployment_id: int, confidence, time_from=None, time_to=None):
     url = construct_url(
-        f"discover/pollinators/{deployment_id}", 
+        f"discover/pollinators/heatmap/{deployment_id}", 
         {
+            "from": time_from,
+            "to": time_to,
+            "conf": confidence,
+        }
+    )
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+
+    return None
+
+
+def get_bird_stacked_bar(deployment_id: int, time_from=None, time_to=None, bucket_width="1d", confidence=0.7):
+    url = construct_url(
+        f"discover/birds/top/{deployment_id}", 
+        {
+            "bucket_width": bucket_width,
             "conf": confidence,
             "from": time_from,
             "to": time_to,
@@ -110,4 +127,3 @@ def get_pollinator_heatmap( deployment_id, confidence, time_from=None, time_to=N
         return response.json()
 
     return None
-
