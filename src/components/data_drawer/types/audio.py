@@ -135,7 +135,7 @@ def create_audio_chart3(deployment_data, date_range, theme):
 
         figure.add_traces(bars)
         figure.add_traces(go.Bar(x=timeseries, y=[0] * len(timeseries)))
-        figure.update_layout(barmode='stack')
+        figure.update_layout(barmode='stack', margin_pad=20, font_size=12)
                 
     graph = dcc.Graph(
         figure=figure,

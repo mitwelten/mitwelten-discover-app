@@ -15,8 +15,6 @@ from src.components.data_drawer.charts import create_themed_figure
 
 def create_wild_cam_view(deployment_data, theme):
     d = Deployment(deployment_data)
-    print(deployment_data)
-
 
     view = dmc.Image(id="id-wild-cam-image")
 

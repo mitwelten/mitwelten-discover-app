@@ -1,23 +1,19 @@
-from datetime import datetime
 import dash_mantine_components as dmc
-from dash import ctx, Output, Input, html, State, no_update
+from dash import Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
-from src.components.data_drawer.types.wild_cam import create_wild_cam_view
 from src.components.data_drawer.types.note.note_view import note_view
 from src.model.note import Note
 
-from src.util.user_validation import get_user_from_cookies
-from src.components.data_drawer.types.audio import create_audio_chart2
-from src.components.button.components.action_button import action_button
+from src.components.data_drawer.types.audio import create_audio_chart3
 from src.components.data_drawer.types.env import create_env_chart
 from src.components.data_drawer.types.environment_point import create_environment_point_chart
 from src.components.data_drawer.types.pax import create_pax_chart
 from src.components.data_drawer.types.pollinator import create_pollinator_chart2
-from src.config.app_config import CHART_DRAWER_HEIGHT, SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
+from src.config.app_config import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from src.config.id_config import *
-from src.config.app_config import CHART_DRAWER_HEIGHT, PRIMARY_COLOR
+from src.config.app_config import CHART_DRAWER_HEIGHT
 from src.main import app
-from src.util.util import get_identification_label, local_formatted_date
+from src.util.util import get_identification_label
 
 
 
@@ -100,9 +96,9 @@ def update_drawer_content_from_marker_store(selected_marker, date_range, theme, 
 
     match selected_marker["type"]:
         case "Audio Logger":
-            drawer_content = create_audio_chart2(marker_data, theme)
-        case "Wild Cam":
-            drawer_content = create_wild_cam_view(marker_data, theme)
+            drawer_content = create_audio_chart3(marker_data, date_range, theme)
+        #case "Wild Cam":
+        #    drawer_content = create_wild_cam_view(marker_data, theme)
         case "Env Sensor":
             drawer_content = create_env_chart(marker_data, theme)
         case "Pax Counter":

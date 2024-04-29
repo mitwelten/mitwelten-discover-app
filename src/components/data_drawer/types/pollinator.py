@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+import calendar as cal
 import plotly.graph_objects as go
 from plotly.colors import hex_to_rgb
 from dash import Output, Input, State, html, callback, dcc
@@ -91,7 +92,6 @@ def create_pollinator_chart2(marker_data, date_range, theme):
     figure = create_themed_figure(theme)
     if resp is not None and len(resp["datapoints"]) != 0:
         figure.update_layout(
-            xaxis_title="Month",
             annotations=[{"visible":False}],
             xaxis={"visible": True},
             yaxis={"visible": True},
@@ -99,6 +99,7 @@ def create_pollinator_chart2(marker_data, date_range, theme):
 
         types = ["Fliege", "Honigbiene", "Hummel", "Schwebfliege", "Wildbiene"]
         months = [it["month"] for it in resp["datapoints"]]
+        
 
         nof_month = max(months) - min(months) + 1
         heat_data = {t: [0] * nof_month for t in types}
@@ -114,12 +115,13 @@ def create_pollinator_chart2(marker_data, date_range, theme):
         ]
         figure.add_trace(go.Heatmap(
             z=list(heat_data.values()),
-            x=[str(value) for value in range(min(months), max(months) + 1)],
+            x=[cal.month_name[value] for value in range(min(months), max(months) + 1)],
             y=types,
             colorscale=colorscale,
             opacity=0.8,
             text=list(heat_data.values()),
             texttemplate="%{text}",
+            
         ))
         figure.update_xaxes(side="top")
         figure.update_layout(margin_pad=20, font_size=12)
