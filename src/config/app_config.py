@@ -1,4 +1,4 @@
-DATA_SOURCES_WITHOUT_CHART_SUPPORT = ["Access Point"]
+DATA_SOURCES_WITHOUT_CHART_SUPPORT = ["Access Point", "Wild Cam"]
 DATE_FORMAT = "%Y-%m-%d"
 TIMEZONE = "Europe/Zurich"
 
@@ -75,3 +75,5 @@ thumbnail_size = (64, 64)
 
 
 PAX_DESCRIPTION = "The PAX sensor counts people by detecting nearby smartphones' signals. It's used to measure crowds or occupancy without invading privacy. The chart shows the number of detections, indicating how many people were nearby based on their phone signals."
+AUDIO_DESCRIPTION = "An audio sensor is a device that picks up sounds in the environment. Bird songs are analysed and assigned to species using machine learning."
+POLLINATOR_DESCRIPTION = "Pollinator sensors are cameras that take frequent pictures of selected plants. A machine learning model is used to search for insects on the plants and determine their genus."
