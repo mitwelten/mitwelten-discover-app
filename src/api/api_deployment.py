@@ -117,7 +117,7 @@ def get_bird_stacked_bar(deployment_id: int, time_from=None, time_to=None, bucke
         f"discover/birds/top/{deployment_id}", 
         {
             "bucket_width": bucket_width,
-            "conf": confidence,
+            "confidence": confidence,
             "from": time_from,
             "to": time_to,
         }
