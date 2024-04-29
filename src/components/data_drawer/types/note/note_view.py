@@ -107,6 +107,7 @@ def note_detail_view(note: Note, file_height, theme, test_icons):
     files           = list(sorted(note.files, key=lambda file: file.name.lower()))
     media_files     = list(filter(lambda f: f.type.startswith("image/") or f.type.startswith("audio/"), files))
     has_media_files = len(media_files) != 0
+    private         = icon_private if not note.public else None
     edit_button     = action_button(button_id={"button":"edit_note", "note_id": note.id},
                                 icon="material-symbols:edit", 
                                 disabled=True if user is None else False)
@@ -126,7 +127,15 @@ def note_detail_view(note: Note, file_height, theme, test_icons):
                 *attachment_area(note.files, False),
             ], type="hover", h=360, offsetScrollbars=True)
     return [
-            bottom_drawer_content(note.title, "", note.tags, "info_comment.svg", theme, edit_button, True),
+            bottom_drawer_content(
+                note.title,
+                "",
+                note.tags,
+                "info_comment.svg",
+                theme,
+                dmc.Group([private, edit_button]),
+                True
+                ),
             content
             ]
 
@@ -288,8 +297,6 @@ def update_focused_image(data):
     State({"element": "card", "file_id": ALL}, "style"),
 )
 def mark_active_card(data, theme, cards):
-    pprint(data)
-    pprint(cards)
     default_style = {}
     green_light   = theme["colors"]["mitwelten_green"][6]
     green_dark    = theme["colors"]["mitwelten_green"][8]
