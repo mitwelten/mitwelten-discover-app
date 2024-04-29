@@ -4,9 +4,9 @@ import dash_mantine_components as dmc
 from src.config.id_config import *
 from src.config.app_config import PRIMARY_COLOR
 from dash_iconify import DashIconify
-from src.util.util import  local_formatted_date
 
-def bottom_drawer_content(title, desc, tags, icon, theme, action_button=None, test_icons = False):
+def bottom_drawer_content(title, desc, tags, icon, theme, title_icons=None, test_icons = False):
+
 
     info_text = dmc.HoverCard(
             position="top",
@@ -41,7 +41,7 @@ def bottom_drawer_content(title, desc, tags, icon, theme, action_button=None, te
                             children=[
                                 dmc.Title(title),
                                 info_text if desc != "" else None,
-                                action_button
+                                title_icons
                             ], 
                         ),
                         dmc.Grid(
