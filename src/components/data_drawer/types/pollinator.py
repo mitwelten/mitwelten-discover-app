@@ -1,13 +1,11 @@
 from datetime import datetime, timedelta
 
-from pprint import pprint
 import plotly.graph_objects as go
 from plotly.colors import hex_to_rgb
 from dash import Output, Input, State, html, callback, dcc
 import dash_mantine_components as dmc
-from plotly.graph_objs.layout import xaxis
 from src.model.deployment import Deployment
-from src.config.app_config import PAX_DESCRIPTION, SECONDARY_COLOR, app_theme
+from src.config.app_config import POLLINATOR_DESCRIPTION, SECONDARY_COLOR, app_theme
 from src.components.data_drawer.header import bottom_drawer_content
 
 from src.api.api_deployment import get_pollinator_heatmap, get_pollinator_timeseries
@@ -124,6 +122,7 @@ def create_pollinator_chart2(marker_data, date_range, theme):
             texttemplate="%{text}",
         ))
         figure.update_xaxes(side="top")
+        figure.update_layout(margin_pad=20, font_size=12)
 
     graph = dcc.Graph(
         figure=figure,
@@ -132,12 +131,12 @@ def create_pollinator_chart2(marker_data, date_range, theme):
      )
 
     return [
-        bottom_drawer_content("Pollinator", "tbd", d.tags, "pollinator.svg", theme, test_icons=True), 
+        bottom_drawer_content("Pollinator", POLLINATOR_DESCRIPTION, d.tags, "pollinator.svg", theme, test_icons=True), 
         dmc.Paper(
             children=graph,
             shadow="md",
             p="md",
             radius="md",
             style={"margin":"20px", "height":"360px"}
-        ),
+        )
     ]
