@@ -4,7 +4,7 @@ TAG=${1:-latest}
 
 IMAGE_NAME="cr.gitlab.fhnw.ch/mitwelten/docker-infrastructure/mitwelten-discover_app:$TAG"
 
-docker build -t $IMAGE_NAME .
+docker build --network=host -t $IMAGE_NAME .
 
 if [ $? -eq 0 ]; then
     echo "Docker-Image '$IMAGE_NAME' built successfuly."
