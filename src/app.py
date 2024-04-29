@@ -14,6 +14,7 @@ from dash import (
 )
 from dash.exceptions import PreventUpdate
 from src.components.data_drawer.types.note.note_view import note_view
+from configuration import DOMAIN_NAME
 
 from src.components.alert.alert import alert_danger, alert_warning, alert_info
 from src.model.note import Note
@@ -120,15 +121,17 @@ def create_backend_request_to_stay_logged_in(_, avatar_clicks):
 
 @app.callback(
     Output(ID_URL_LOCATION, "search"),
+    Output(ID_LOGIN_BUTTON_HREF, "href"),
     Input(ID_MAP, "clickData"),
-    Input(ID_MAP, "zoom"),
+    State(ID_MAP, "zoom"),
     prevent_initial_call=True,
 )
 def map_click_handle(click_data, zoom):
     loc = ""
+    url = f"{DOMAIN_NAME}/login"
     if click_data is not None:
         loc = f"?lat={click_data['latlng']['lat']}&lon={click_data['latlng']['lng']}&zoom={zoom}"
-    return loc
+    return loc, url + loc
 
 
 def handle_marker_click(data_source, marker_click, prevent_event, store, clickdata):

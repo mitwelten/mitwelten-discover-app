@@ -71,4 +71,5 @@ def display_page(href):
         lon = float(query_params["lon"][0])
         zoom = float(query_params["zoom"][0])
 
+    
     return dict(center=[lat, lon], zoom=zoom, transition="flyTo")

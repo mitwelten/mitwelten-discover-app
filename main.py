@@ -6,6 +6,7 @@ from fastapi.middleware.wsgi import WSGIMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from keycloak import KeycloakOpenID
+from urllib import parse
 
 from configuration import (
     KC_SERVER_URL,
@@ -92,15 +93,17 @@ def get_auth_url(state):
 
 
 @app.get("/login")
-def login_redirect():
-    return RedirectResponse(get_auth_url(f"{DOMAIN_NAME}/app"))
+def login_redirect(request: Request):
+    parsed_params = parse.quote(str(request.query_params))
+    return RedirectResponse(get_auth_url(f"{DOMAIN_NAME}/app/?{parsed_params}"))
 
 
 @app.get("/logout")
 def logout(request: Request):
+    parsed_params = parse.quote(str(request.query_params))
     cookies = request.cookies
     auth_r_cookie = cookies.get("auth_r")
-    response = RedirectResponse(f"{DOMAIN_NAME}/app")
+    response = RedirectResponse(f"{DOMAIN_NAME}/app/?{parsed_params}")
     keycloak_openid.logout(auth_r_cookie)
     response.delete_cookie("auth")
     response.delete_cookie("auth_r")

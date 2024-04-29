@@ -19,10 +19,10 @@ from src.util.user_validation import get_user_from_cookies
 from src.components.data_drawer.types.note.note_view import note_form_view
 
 login_button = dmc.Anchor(
-    action_button(button_id="id-login-btn", icon="material-symbols:login"),
-    href=f"{DOMAIN_NAME}/login"
+    action_button(button_id="", icon="material-symbols:login"),
+    id=ID_LOGIN_BUTTON_HREF,
+    href=f"{DOMAIN_NAME}/login?lat=47.52&lon=7.61"
 )
-
 
 def create_avatar(user):
     return dmc.HoverCard([
