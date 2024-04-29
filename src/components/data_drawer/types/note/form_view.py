@@ -242,6 +242,11 @@ def add_attachment(list_of_contents, list_of_names, note):
     for content, name in zip(list_of_contents, list_of_names):
         content_type, content_string = content.split(',')
         decoded = base64.b64decode(content_string)
+        filename, ext = name.rsplit('.')
+        if ext == "jpg":
+            ext = "jpeg"
+            name = filename + "." + ext 
+
 
         # string to split: `data:image/png;base64`
         content_type = content_type.split(':')[1].split(';')[0]
