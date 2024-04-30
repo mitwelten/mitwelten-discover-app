@@ -3,6 +3,7 @@ import re
 import pytz
 from datetime import datetime
 from dash import html
+from urllib import parse 
 
 
 def local_formatted_date(date: str, date_format="%d %b %Y • %H:%M"):
@@ -69,3 +70,16 @@ def text_to_dash_elements(text):
             elements.append(html.Br())
 
     return elements
+
+
+def set_url_params(query_params, *args: list[tuple[str, object]]):
+    if len(query_params) > 0 and query_params[0] == "?":
+        query_params = query_params[1:] # remove the question mark
+
+    params = parse.parse_qs(query_params)
+    # since parameter are in a list, take always the first out
+    params = {k: v[0] for k,v in params.items()}
+    for arg in args[0]:
+        params[arg[0]] = arg[1]
+
+    return "?" + parse.urlencode(params)
