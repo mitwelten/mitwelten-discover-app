@@ -25,7 +25,7 @@ def get_checkbox_by_type(node_type: str):
 
 
 @spaced_section
-def source_filter():
+def source_filter(args):
     source_types = reduce(
         list.__add__,
         [list(map(lambda x: get_checkbox_by_type(x),  SOURCE_PROPS.keys()))],

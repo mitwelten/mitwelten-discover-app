@@ -2,8 +2,6 @@ from functools import partial
 
 import flask
 from dash.exceptions import PreventUpdate
-from configuration import API_URL
-from dash import clientside_callback, ClientsideFunction
 
 
 from src.components.data_drawer.types.pollinator import *
@@ -11,26 +9,27 @@ from src.config.map_config import SOURCE_PROPS, get_source_props
 from src.data.init import init_deployment_data, init_environment_data, init_notes, init_tags
 from src.main import app
 
-stores = [
-    *[dcc.Store(
-        {"role": source_type, "label": "Store", "type": get_source_props(source_type)["type"]},
-        data=dict(entries=[], type=source_type))
-        for source_type in SOURCE_PROPS.keys()
-    ],
-    *[dcc.Store(f"id-{source_type}-refresh-store", data=dict(pending=False))
-        for source_type in SOURCE_PROPS.keys()
-    ],
-    dcc.Store(id=ID_DEPLOYMENT_DATA_STORE,    data=None),
-    dcc.Store(id=ID_TAG_DATA_STORE,           data=None),
-    dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=None),
-    dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=0), storage_type="local"),
-    dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=0), storage_type="local"),
-    dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),
-    dcc.Store(id=ID_EDIT_NOTE_STORE,          data=dict(data=None)),
-    dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
-    dcc.Store(id=ID_NOTE_REFRESH_STORE,       data=dict(state=False)),
-    dcc.Store(id="id-test-icon-store",        data=False, storage_type="local"),
-]
+def stores(args): 
+    return[
+            *[dcc.Store(
+                {"role": source_type, "label": "Store", "type": get_source_props(source_type)["type"]},
+                data=dict(entries=[], type=source_type))
+              for source_type in SOURCE_PROPS.keys()
+              ],
+            *[dcc.Store(f"id-{source_type}-refresh-store", data=dict(pending=False))
+              for source_type in SOURCE_PROPS.keys()
+              ],
+            dcc.Store(id=ID_DEPLOYMENT_DATA_STORE,    data=None),
+            dcc.Store(id=ID_TAG_DATA_STORE,           data=dict(all=None, active_fs=args.get("FS", "ANY"))),
+            dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=None),
+            dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=0), storage_type="local"),
+            dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=0), storage_type="local"),
+            dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),
+            dcc.Store(id=ID_EDIT_NOTE_STORE,          data=dict(data=None)),
+            dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
+            dcc.Store(id=ID_NOTE_REFRESH_STORE,       data=dict(state=False)),
+            dcc.Store(id="id-test-icon-store",        data=False, storage_type="local"),
+            ]
 
 @app.callback(
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
@@ -59,15 +58,6 @@ def load_env_from_backend(data):
     raise PreventUpdate
 
 
-@app.callback(
-    Output(ID_TAG_DATA_STORE, "data"),
-    Input (ID_TAG_DATA_STORE, "data")
-)
-def load_tags_from_backend(data):
-    outdated = False  # TODO: implement data update
-    if data is None or outdated:
-        return init_tags()
-    raise PreventUpdate
 
 
 @app.callback(

@@ -20,10 +20,13 @@ app = Dash(
     suppress_callback_exceptions=True,
     requests_pathname_prefix="/app/",
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
+    use_pages=True,
+    pages_folder="",
 )
 
-#app.enable_dev_tools(
-#    dev_tools_ui=True,
-#    dev_tools_serve_dev_bundles=True,
-#    dev_tools_hot_reload=True
-#)
+
+app.enable_dev_tools(
+    dev_tools_ui=True,
+    dev_tools_serve_dev_bundles=True,
+    dev_tools_hot_reload=True
+)

@@ -9,7 +9,7 @@ from src.util.decorators import spaced_section
 
 
 @spaced_section
-def general_controls():
+def general_controls(args):
     return dmc.Stack([
         dmc.Group([
             dmc.Text("Theme (light / dark)", size="sm"),

@@ -6,20 +6,22 @@ from dash import html, Input, Output, State
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 
+from src.data.init import init_tags
 from src.util.decorators import spaced_section
 from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
+from src.util.util import set_url_params
 
 fs_desc = dmc.Stack([
-    dmc.Text("Field Study 1: Merian Gärten", size="sm"),
-    dmc.Text("Field Study 2: Dreispitz", size="sm"),
+    dmc.Text("Field Study 1: Merian Gärten",   size="sm"),
+    dmc.Text("Field Study 2: Dreispitz",       size="sm"),
     dmc.Text("Field Study 3: Reinacher Heide", size="sm"),
 ], spacing="sm")
 
 
 @spaced_section
-def tag_filter():
+def tag_filter(args):
     return html.Div([
         dmc.Group([
             dmc.Text("Field Study",
@@ -51,8 +53,8 @@ def tag_filter():
             dmc.SegmentedControl(
                 color=PRIMARY_COLOR,
                 id=ID_FS_TAG_CHIPS_GROUP,
-                data=[],
                 persistence=True,
+                data=[],
             ),
         ]),
         dmc.Space(h=20),
@@ -118,22 +120,25 @@ def tag_filter():
     Output(ID_FS_TAG_CHIPS_GROUP, "data"),
     Output(ID_FS_TAG_CHIPS_GROUP, "value"),
     Output(ID_MODAL_CHIPS_GROUP, "children"),
+    Output(ID_TAG_DATA_STORE, "data"),
     Input(ID_TAG_DATA_STORE, "data"),
-    State(ID_FS_TAG_CHIPS_GROUP, "value"),
-    prevent_initial_call=True
 )
-def update_fs_tags_from_store(all_tags, active_tag):
+def init_fs_tags_from_store(tags):
+    all_tags  = tags["all"]
+    active_fs = tags["active_fs"]
+    if all_tags is None:
+        all_tags= init_tags()
+
     if all_tags is None:
         raise PreventUpdate
-    predicate = re.compile("FS\d")
 
+    predicate = re.compile("FS\d")
     fs_tags = list(sorted(([tag["name"] for tag in all_tags if predicate.match(tag["name"])])))
     fs_tags.insert(0, "ANY")
-    value   = active_tag if active_tag is not None else fs_tags[0]
 
     tags    = [t["name"] for t in all_tags if t["name"] not in fs_tags]
     chips   = [dmc.Chip(tag, value=tag, size="xs", styles={"iconWrapper": {"className": ""}}) for tag in sorted(tags)],
-    return fs_tags, value, *chips
+    return fs_tags, active_fs, *chips, dict(all=all_tags, active_fs=active_fs)
 
 
 @app.callback(
@@ -171,3 +176,14 @@ def select_tags(_1, _2, modal_value, active_chips, children, opened):
     if trigger_id == ID_CLOSE_CHIP_MODAL_BUTTON or trigger_id == ID_OPEN_CHIP_MODAL_BUTTON:
         return not opened, new_children, new_active_chips
     return opened, children, active_chips
+
+
+@app.callback(
+    Output(ID_URL_LOCATION, "search", allow_duplicate=True),
+    Input(ID_FS_TAG_CHIPS_GROUP, "value"),
+    State(ID_URL_LOCATION, "search"),
+    prevent_initial_call=True,
+)
+def update_fs_tag_in_url_params(value, url_params):
+    return set_url_params(url_params, [("FS",value)])
+

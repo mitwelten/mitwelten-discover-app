@@ -12,33 +12,34 @@ def divider(title: str):
     return dmc.Divider(label=title, labelPosition="center", size="md")
 
 
-drawer_content = dmc.Container(
-    children=[
-        dmc.Title("Mitwelten Discover", align="center", order=1),
-        dmc.Space(h=30),
-        dmc.ScrollArea([
-            divider("Time Frame"),
-            date_time_section(),
-            divider("Data Sets"),
-            source_filter(),
-            divider("Tags"),
-            tag_filter(),
-            divider("Settings"),
-            general_controls(),
-            dmc.Group([
-                dmc.Text("Found a bug?", size="sm"),
-                dmc.Anchor(
-                    "Submit an issue",
-                    href="https://github.com/mitwelten/mitwelten-discover-app/issues",
-                    target="_blank",
-                    size="sm"
-                ),
-            ])
-        ],
-            offsetScrollbars=True,
-            type="scroll",
-            style={"height": "100%"}
-        )],
-    #fluid=True,
-    style={"height": "calc(100vh - 100px)", "paddingRight": "0px", "paddingLeft": "0px"}
-)
+def drawer_content(args): 
+    return dmc.Container(
+            children=[
+                dmc.Title("Mitwelten Discover", align="center", order=1),
+                dmc.Space(h=30),
+                dmc.ScrollArea([
+                    divider("Time Frame"),
+                    date_time_section(args),
+                    divider("Data Sets"),
+                    source_filter(args),
+                    divider("Tags"),
+                    tag_filter(args),
+                    divider("Settings"),
+                    general_controls(args),
+                    dmc.Group([
+                        dmc.Text("Found a bug?", size="sm"),
+                        dmc.Anchor(
+                            "Submit an issue",
+                            href="https://github.com/mitwelten/mitwelten-discover-app/issues",
+                            target="_blank",
+                            size="sm"
+                            ),
+                        ])
+                    ],
+                               offsetScrollbars=True,
+                               type="scroll",
+                               style={"height": "100%"}
+                               )],
+                #fluid=True,
+                style={"height": "calc(100vh - 100px)", "paddingRight": "0px", "paddingLeft": "0px"}
+                )

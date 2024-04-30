@@ -7,14 +7,15 @@ from src.config.id_config import *
 from src.main import app
 
 
-settings_drawer = dmc.Drawer(
-    id=ID_SETTINGS_DRAWER,
-    children=drawer_content,
-    opened=True,
-    size=SETTINGS_DRAWER_WIDTH,
-    padding="md",
-    withOverlay=False,
-    zIndex=90000,
+def settings_drawer(args): 
+    return dmc.Drawer(
+            id=ID_SETTINGS_DRAWER,
+            children=drawer_content(args),
+            opened=True,
+            size=SETTINGS_DRAWER_WIDTH,
+            padding="md",
+            withOverlay=False,
+            zIndex=90000,
 )
 
 

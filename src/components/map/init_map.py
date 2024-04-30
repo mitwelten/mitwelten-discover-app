@@ -15,7 +15,8 @@ import src.components.map.markers
 
 initial_map = map_config.MAPS[1]
 
-map_figure = dl.Map([
+def map_figure(args): 
+    return dl.Map([
     dl.TileLayer(
         id=ID_BASE_LAYER_MAP,
         url=initial_map.source,
@@ -41,8 +42,8 @@ map_figure = dl.Map([
     ],
     id=ID_MAP,
     # viewport=dict(center=[47.5339807306196, 7.6169566067567], zoom=10, transition="flyTo"),
-    center=[47.5339807306196, 7.6169566067567],
-    zoom=10,
+    center=[args.get("lat", 47.5339807306196), args.get("lon", 7.6169566067567)],
+    zoom=args.get("zoom", 12),
     doubleClickZoom=False,
     className="id-map",
     trackResize=True,
@@ -55,21 +56,21 @@ map_figure = dl.Map([
     },
 )
 
-@app.callback(
-    Output(ID_MAP, "viewport", allow_duplicate=True),
-    Input(ID_URL_LOCATION, 'href'),
-    prevent_initial_call=True
-)
-def display_page(href):
-    lat = DEFAULT_LAT
-    lon = DEFAULT_LON
-    zoom = DEFAULT_ZOOM
-    query = urlparse(href).query
-    query_params: dict = parse_qs(query)
-    if query_params:
-        lat = float(query_params["lat"][0])
-        lon = float(query_params["lon"][0])
-        zoom = float(query_params["zoom"][0])
-
-    
-    return dict(center=[lat, lon], zoom=zoom, transition="flyTo")
+#@app.callback(
+#    Output(ID_MAP, "viewport", allow_duplicate=True),
+#    Input(ID_URL_LOCATION, 'href'),
+#    prevent_initial_call=True
+#)
+#def display_page(href):
+#    lat = DEFAULT_LAT
+#    lon = DEFAULT_LON
+#    zoom = DEFAULT_ZOOM
+#    query = urlparse(href).query
+#    query_params: dict = parse_qs(query)
+#    if query_params:
+#        lat = float(query_params["lat"][0])
+#        lon = float(query_params["lon"][0])
+#        zoom = float(query_params["zoom"][0])
+#
+#    
+#    return dict(center=[lat, lon], zoom=zoom, transition="flyTo")

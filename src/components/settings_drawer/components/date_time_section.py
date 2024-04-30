@@ -15,7 +15,7 @@ from src.util.util import local_formatted_date
 
 
 @spaced_section
-def date_time_section():
+def date_time_section(args):
     return html.Div([
         dcc.Store(
             id=ID_DATE_RANGE_STORE,

@@ -1,9 +1,11 @@
 import time
 from functools import partial
+from urllib import parse 
 
 import dash_mantine_components as dmc
 import dash_core_components as dcc
 from dash import (
+    register_page,
     ALL,
     html,
     Output,
@@ -33,14 +35,16 @@ from src.data.stores import stores
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_expiration_date_from_cookies
 from src.main import app
+from src.util.util import set_url_params
 
 
-app_content = [
+def app_content(args):
+    return [
     dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
     alert_danger,
     alert_warning,
     alert_info,
-    *stores,
+    *stores(args),
     html.Div(
         html.A(
             "MITWELTEN",
@@ -51,58 +55,35 @@ app_content = [
         ),
         id=ID_LOGO_CONTAINER,
     ),
-    # dmc.MediaQuery(
-    #     html.Div(
-    #         dmc.Select(
-    #             id=ID_DEPLOYMENT_SELECT_SEARCH_BAR,
-    #             allowDeselect=True,
-    #             data=[],
-    #             placeholder="Search for Deployments",
-    #             searchable=True,
-    #             nothingFound="ID not found",
-    #             style={"width": "300px"},
-    #             size="md",
-    #             radius="xl",
-    #             icon=DashIconify(icon="material-symbols:search", width=20),
-    #             rightSection=dmc.ActionIcon(
-    #                 DashIconify(icon="material-symbols:my-location", width=20),
-    #                 size="lg",
-    #                 variant="subtle",
-    #                 id=ID_SEARCHBAR_SEARCH_DEPLOYMENT_BUTTON,
-    #                 n_clicks=0,
-    #                 color=PRIMARY_COLOR,
-    #             ),
-    #         ),
-    #         id="id-search-bar-container"
-    #     ),
-    #     smallerThan="md",
-    #     styles={"display": "none"}
-    # ),
     dcc.ConfirmDialog(
         id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG, message=CONFIRM_UNSAVED_CHANGES_MESSAGE
     ),
     dcc.ConfirmDialog(id=ID_CONFIRM_DELETE_DIALOG, message=CONFIRM_DELETE_MESSAGE),
-    map_figure,
+    map_figure(args),
     chart_drawer,
     *control_buttons,
-    settings_drawer,
+    settings_drawer(args),
     dmc.Modal(id=ID_NOTE_ATTACHMENT_MODAL, size="lg", opened=False, zIndex=30000),
-    dcc.Location(id=ID_URL_LOCATION, refresh=False, search=""),
+    dcc.Location(id=ID_URL_LOCATION, refresh=False),
 ]
 
 attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
-discover_app = dmc.MantineProvider(
+
+def discover_app(**kwargs): 
+    print("kwaer: ", kwargs)
+    return dmc.MantineProvider(
     id=ID_APP_THEME,
     theme=app_theme,
     inherit=True,
     withGlobalStyles=True,
     withNormalizeCSS=True,
     children=[
-        html.Div(children=app_content, id=ID_APP_CONTAINER),
+        html.Div(children=app_content(kwargs), id=ID_APP_CONTAINER),
     ],
 )
 
-app.layout = discover_app
+register_page("home", layout=discover_app, path="/")
+#app.layout = discover_app
 
 
 @app.callback(
@@ -120,18 +101,28 @@ def create_backend_request_to_stay_logged_in(_, avatar_clicks):
 
 
 @app.callback(
-    Output(ID_URL_LOCATION, "search"),
+    Output(ID_URL_LOCATION, "search", allow_duplicate=True),
     Output(ID_LOGIN_BUTTON_HREF, "href"),
     Input(ID_MAP, "clickData"),
     State(ID_MAP, "zoom"),
+    State(ID_URL_LOCATION, "search"),
     prevent_initial_call=True,
 )
-def map_click_handle(click_data, zoom):
-    loc = ""
-    url = f"{DOMAIN_NAME}/login"
-    if click_data is not None:
-        loc = f"?lat={click_data['latlng']['lat']}&lon={click_data['latlng']['lng']}&zoom={zoom}"
-    return loc, url + loc
+def map_click_handle(click_data, zoom, url_params):
+    if click_data is None:
+        raise PreventUpdate
+
+    print(url_params)
+    location = click_data["latlng"]
+    new_params = set_url_params(
+            url_params, 
+            [("zoom", zoom),
+             ("lat", location["lat"]),
+             ("lon", location["lng"])
+             ])
+
+    login_url = f"{DOMAIN_NAME}/login{new_params}" 
+    return new_params, login_url
 
 
 def handle_marker_click(data_source, marker_click, prevent_event, store, clickdata):
