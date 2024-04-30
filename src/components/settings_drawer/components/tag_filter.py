@@ -33,7 +33,7 @@ def tag_filter(args):
                 withArrow=True,
                 width="240px",
                 shadow="lg",
-                style={"display": "flex", "align-items":"center"},
+                style={"display": "flex", "alignItems":"center"},
                 children=[
                     dmc.HoverCardTarget(
                         children=dmc.ThemeIcon(

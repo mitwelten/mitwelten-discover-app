@@ -59,9 +59,9 @@ def app_content(args):
         id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG, message=CONFIRM_UNSAVED_CHANGES_MESSAGE
     ),
     dcc.ConfirmDialog(id=ID_CONFIRM_DELETE_DIALOG, message=CONFIRM_DELETE_MESSAGE),
+    *control_buttons,
     map_figure(args),
     chart_drawer,
-    *control_buttons,
     settings_drawer(args),
     dmc.Modal(id=ID_NOTE_ATTACHMENT_MODAL, size="lg", opened=False, zIndex=30000),
     dcc.Location(id=ID_URL_LOCATION, refresh=False),
@@ -70,7 +70,7 @@ def app_content(args):
 attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
 
 def discover_app(**kwargs): 
-    print("kwaer: ", kwargs)
+    print("app args: ", kwargs)
     return dmc.MantineProvider(
     id=ID_APP_THEME,
     theme=app_theme,

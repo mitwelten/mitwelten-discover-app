@@ -88,7 +88,6 @@ control_buttons = [
                 smallerThan="sm",
                 styles={"display": "none"}
             ),
-
         ],
             id=ID_FAB_CONTAINER
         )
@@ -141,7 +140,7 @@ def create_note_on_map(
             dmc.Title("Operation not permitted", order=6),
             dmc.Text("Log in to create notes!")
         ]
-        return no_update, True, notification
+        return no_update, True, notification, no_update, no_update, no_update
     
     new_note = Note(empty_note)
 
@@ -174,5 +173,5 @@ def create_note_on_map(
     new_note["author"] = user.full_name
     notes = dict(entires=[])
 
-    return notes, no_update, no_update, dict(data=new_note), note_form_view(Note(new_note), all_tags), True
+    return notes, no_update, no_update, dict(data=new_note), note_form_view(Note(new_note), all_tags["all"]), True
 
