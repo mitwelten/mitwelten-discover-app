@@ -11,7 +11,7 @@ from src.util.decorators import spaced_section
 from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
-from src.util.util import set_url_params
+from src.util.util import update_query_data
 
 fs_desc = dmc.Stack([
     dmc.Text("Field Study 1: Merian Gärten",   size="sm"),
@@ -179,11 +179,11 @@ def select_tags(_1, _2, modal_value, active_chips, children, opened):
 
 
 @app.callback(
-    Output(ID_URL_LOCATION, "search", allow_duplicate=True),
+    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
-    State(ID_URL_LOCATION, "search"),
+    State(ID_QUERY_PARAM_STORE, "data"),
     prevent_initial_call=True,
 )
-def update_fs_tag_in_url_params(value, url_params):
-    return set_url_params(url_params, [("FS",value)])
+def update_fs_tag_in_url_params(value, data):
+    return update_query_data(data, {"FS": value})
 

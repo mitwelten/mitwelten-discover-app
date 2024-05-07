@@ -42,6 +42,7 @@ ID_BROWSER_PROPERTIES_STORE = "id-browser-properties-store"
 ID_NOTE_REFRESH_STORE = "id-note-refresh-store"
 ID_BLOB_URLS_STORE = "id-blob-urls-store"
 ID_NOTE_FILE_STORE = "id-note-file-store"
+ID_QUERY_PARAM_STORE = "id-query-param-store"
 
 # node types
 ID_ALL_ACTIVE_STORE = "id-active-all-checkbox"

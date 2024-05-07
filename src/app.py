@@ -35,7 +35,7 @@ from src.data.stores import stores
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_expiration_date_from_cookies
 from src.main import app
-from src.util.util import set_url_params
+from src.util.util import query_data_to_string, update_query_data
 
 
 def app_content(args):
@@ -101,28 +101,35 @@ def create_backend_request_to_stay_logged_in(_, avatar_clicks):
 
 
 @app.callback(
-    Output(ID_URL_LOCATION, "search", allow_duplicate=True),
-    Output(ID_LOGIN_BUTTON_HREF, "href"),
+    Output(ID_QUERY_PARAM_STORE, "data",allow_duplicate=True),
     Input(ID_MAP, "clickData"),
     State(ID_MAP, "zoom"),
-    State(ID_URL_LOCATION, "search"),
+    State(ID_QUERY_PARAM_STORE, "data"),
     prevent_initial_call=True,
 )
-def map_click_handle(click_data, zoom, url_params):
+def map_click_handle(click_data, zoom, data):
     if click_data is None:
         raise PreventUpdate
 
-    print(url_params)
     location = click_data["latlng"]
-    new_params = set_url_params(
-            url_params, 
-            [("zoom", zoom),
-             ("lat", location["lat"]),
-             ("lon", location["lng"])
-             ])
+    return update_query_data(data,
+                             { "zoom": zoom,
+                              "lat": location["lat"],
+                              "lon": location["lng"]
+                              }
+                             )
 
-    login_url = f"{DOMAIN_NAME}/login{new_params}" 
-    return new_params, login_url
+
+@app.callback(
+    Output(ID_URL_LOCATION, "search", allow_duplicate=True),
+    Output(ID_LOGIN_BUTTON_HREF, "href"),
+    Input(ID_QUERY_PARAM_STORE, "data"),
+    prevent_initial_call=True,
+    )
+def update_url(data):
+    query_params = query_data_to_string(data)
+    login_url = f"{DOMAIN_NAME}/login{query_params}" 
+    return query_params, login_url
 
 
 def handle_marker_click(data_source, marker_click, prevent_event, store, clickdata):
