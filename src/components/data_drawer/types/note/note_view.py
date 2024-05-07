@@ -84,7 +84,7 @@ def note_form_view(note: Note, all_tags):
     return dmc.Container([
         dmc.Group([
             dmc.Title("Edit Note"),
-            dmc.Group(get_form_controls(is_public),spacing="sm", style={"justify-content":"flex-end"})
+            dmc.Group(get_form_controls(is_public),spacing="sm", style={"justifyContent":"flex-end"})
             ], position="apart"),
         dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm"),
         dmc.ScrollArea(
@@ -99,7 +99,7 @@ def note_form_view(note: Note, all_tags):
             type="hover",
             offsetScrollbars=True
         )
-        ], fluid=True, style={"margin-top": "20px"})
+        ], fluid=True, style={"marginTop": "20px"})
 
 
 def note_detail_view(note: Note, file_height, theme, test_icons):
@@ -204,7 +204,7 @@ def activate_edit_mode(click, notes, all_tags):
 
     for note in notes["entries"]:
        if note["id"] == ctx.triggered_id["note_id"]:
-            return dict(data=note), note_form_view(Note(note), all_tags), False, CHART_DRAWER_HEIGHT
+            return dict(data=note), note_form_view(Note(note), all_tags["all"]), False, CHART_DRAWER_HEIGHT
 
 
 app.clientside_callback(
