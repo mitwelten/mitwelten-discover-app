@@ -78,7 +78,7 @@ def _attachment_card(file: File, auth_cookie, editable = False):
                                 "display": "flex",
                                 "overflow": "hidden",
                                 "alignItems": "center",
-                                "justify-content": "space-between",
+                                "justifyContent": "space-between",
                             },
                             children=[
                                 dmc.Image(

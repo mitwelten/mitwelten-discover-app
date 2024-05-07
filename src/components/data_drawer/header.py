@@ -74,11 +74,11 @@ def bottom_drawer_content(title, desc, tags, icon, theme, title_icons=None, test
                 children=dmc.Image(
                     src=f"assets/markers/test/{icon}" if test_icons else f"assets/markers/{icon}",
                     alt="note icon", 
-                    style={"min-width": "25px", "width": "50px"}
+                    style={"minWidth": "25px", "width": "50px"}
                 ),
                 span=3,
                 sm=2,
-                style={"display":"flex", "justify-content":"flex-end"}
+                style={"display":"flex", "justifyContent":"flex-end"}
             )
         ]), 
         dmc.Space(h=10),

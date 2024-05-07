@@ -66,7 +66,7 @@ def audio_player(id: str, src: str, light_mode):
                     ),
                 ]),
 
-            ], style={"display":"flex", "align-items": "center", "justify-content": "center"}),
+            ], style={"display":"flex", "align-items": "center", "justifyContent": "center"}),
             dmc.Text("-:- / -:-", id=ID_AUDIO_TIME_PROGRESS)
         ])
 
