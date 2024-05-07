@@ -5,7 +5,7 @@ from src.config.id_config import *
 from src.config.app_config import PRIMARY_COLOR
 from dash_iconify import DashIconify
 
-def bottom_drawer_content(title, desc, tags, icon, theme, title_icons=None, test_icons = False):
+def bottom_drawer_content(title, desc, tags, icon, theme, title_icons=None):
 
 
     info_text = dmc.HoverCard(
@@ -72,7 +72,7 @@ def bottom_drawer_content(title, desc, tags, icon, theme, title_icons=None, test
             ),
             dmc.Col(
                 children=dmc.Image(
-                    src=f"assets/markers/test/{icon}" if test_icons else f"assets/markers/{icon}",
+                    src=f"assets/markers/{icon}",
                     alt="note icon", 
                     style={"minWidth": "25px", "width": "50px"}
                 ),

@@ -12,10 +12,10 @@ from src.util.decorators import spaced_section
 def get_checkbox_by_type(node_type: str):
     return dmc.Checkbox(
         label=dmc.Group([
-            html.Div(
-                className="color-point",
-                style={"background": get_source_props(node_type)["color"]}
-            ),
+            dmc.Image(
+                src=get_source_props(node_type)["marker"],
+                width="24px",
+                ),
             node_type,
         ]),
         value=node_type,

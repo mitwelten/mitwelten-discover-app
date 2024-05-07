@@ -80,10 +80,9 @@ def open_drawer(selected_marker):
     Input(ID_APP_THEME, "theme"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State({"role": "Environment", "label": "Store", "type": "virtual"}, "data"),
-    State("id-test-icon-store", "data"),
     prevent_initial_call=True
 )
-def update_drawer_content_from_marker_store(selected_marker, date_range, theme, notes, environment_data, test_icons):
+def update_drawer_content_from_marker_store(selected_marker, date_range, theme, notes, environment_data):
     if selected_marker is None:
         raise PreventUpdate
 
@@ -113,7 +112,7 @@ def update_drawer_content_from_marker_store(selected_marker, date_range, theme, 
                     n = Note(note)
                     file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
                     drawer_size -= 116 - file_height                    
-                    drawer_content = note_view(n, file_height, theme, test_icons)
+                    drawer_content = note_view(n, file_height, theme)
         case _:
             notification = [
                 dmc.Title(f"Deployment: {selected_marker['type']}", order=6),

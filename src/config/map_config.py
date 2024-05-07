@@ -1,9 +1,10 @@
 from src.model.map_configuration import MapConfiguration
+from pprint import pprint
 
 DEFAULT_LAT = 47.53522891224535
 DEFAULT_LON = 7.606299048260731
 DEFAULT_ZOOM = 11.5
-DEFAULT_MAX_ZOOM = 20.9
+DEFAULT_MAX_ZOOM = 20
 DEFAULT_MAP_INDEX = 1
 
 MAP_TYPES = ["base", "overlay"]
@@ -22,41 +23,20 @@ DEFAULT_MARKER_COLORS = [
 ]
 
 SOURCE_PROPS = {
-#    "Access Point":           dict(color="#FF5733", marker="location-0.svg", type="physical"),
-    "Audio Logger":           dict(color="#9B59B6", marker="location-1.svg", type="physical"),
-    "Env Sensor":             dict(color="#F1C40F", marker="location-2.svg", type="physical"),
-    "Pax Counter":            dict(color="#3498DB", marker="location-3.svg", type="physical"),
-    "Pollinator Cam":         dict(color="#E67E22", marker="location-4.svg", type="physical"),
-    "Wild Cam":               dict(color="#2ECC71", marker="location-5.svg", type="physical"),
-    "Environment":            dict(color="#946000", marker="location-6.svg", type="virtual"),
-    "Note":                   dict(color="#FFd800", marker="note.svg"      , type="virtual"),
+#    "Access Point":  dict(color="#FF5733", marker="location-0.svg", type="physical"),
+    "Audio Logger":   dict(name="Audio Logger",           color="#99FFFF", marker="assets/markers/audioLogger.svg",   type="physical"),
+    "Env Sensor":     dict(name="Environmental Sensor",   color="#9999FF", marker="assets/markers/environSensor.svg", type="physical"),
+    "Pax Counter":    dict(name="Pax Counter",            color="#FF9999", marker="assets/markers/paxCounter.svg",    type="physical"),
+    "Pollinator Cam": dict(name="Pollinator Camera",      color="#FFCCFF", marker="assets/markers/polliCam.svg",      type="physical"),
+    "Wild Cam":       dict(name="Wild Camera",            color="#FFCC99", marker="assets/markers/wildCam.svg",       type="physical"),
+    "Environment":    dict(name="Habitat Type",           color="#CCFF99", marker="assets/markers/habitat.svg",       type="virtual"),
+    "Note":           dict(name="Experiments & Findinds", color="#FFFF99", marker="assets/markers/docu.svg",          type="virtual"),
 }
 
 
-TEST_SOURCE_PROPS = {
-#    "Access Point":           dict(color="#FF5733", marker="test/internet.svg", type="physical"),
-    "Audio Logger":           dict(color="#9B59B6", marker="test/audio.svg", type="physical"),
-    "Env Sensor":             dict(color="#F1C40F", marker="test/habitat2.svg", type="physical"),
-    "Pax Counter":            dict(color="#3498DB", marker="test/PAX.svg", type="physical"),
-    "Pollinator Cam":         dict(color="#E67E22", marker="test/pollinator2.svg", type="physical"),
-    "Wild Cam":               dict(color="#2ECC71", marker="test/image-cam.svg", type="physical"),
-    "Environment":            dict(color="#946000", marker="test/habitat1.svg", type="virtual"),
-    "Note":                   dict(color="#FFd800", marker="test/info_comment.svg"      , type="virtual"),
-}
-
-def get_source_props(source, test=False):
-    default_marker = "assets/markers/location-default.svg"
-    default_color  = "#000000"
-    default_type   = "physical"
-    source_marker  = TEST_SOURCE_PROPS.get(source).get("marker") if test else SOURCE_PROPS.get(source).get("marker")
-    source_color   = SOURCE_PROPS.get(source).get("color")
-    source_type    = SOURCE_PROPS.get(source).get("type")
-
-    marker = source_marker if source_marker is not None else default_marker
-    color  = source_color  if source_color  is not None else default_color
-    type   = source_type   if source_type   is not None else default_type
-
-    return dict(marker=f"assets/markers/{marker}", color=color, type=type)
+def get_source_props(source):
+    data = SOURCE_PROPS.get(source)
+    return data
 
 
 MAPS = [

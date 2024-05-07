@@ -5,6 +5,7 @@ import pytz
 from datetime import datetime, timezone
 
 
+from src.config.map_config import get_source_props
 from src.model.note import Note
 from src.util.util import apply_newlines, local_formatted_date
 
@@ -12,10 +13,7 @@ from src.util.util import apply_newlines, local_formatted_date
 def header(source_type, label, color):
     return [dmc.Group([
         dmc.Group([
-            html.Div(
-                className="color-point",
-                style={"background": f"{color}"}
-            ),
+            dmc.Image(src=get_source_props(source_type)["marker"], width="16px"),
             dmc.Text(source_type, weight=700, size="sm"),
         ],
             position="left",
@@ -90,8 +88,8 @@ def note_tooltip(note: Note):
 
     html.Div([
         html.Div([
+            dmc.Image(src=get_source_props("Note")["marker"], width="16px"),
             dmc.Text(note.title, weight=700, size="xs", className="note-marker-title"),
-            html.Div(className="color-point"),
         ], style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'start'})
     ]),
         dmc.Space(h=5),

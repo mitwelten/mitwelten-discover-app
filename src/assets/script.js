@@ -3,21 +3,21 @@ if (!window.dash_clientside) {
   window.activePopup = "";
 }
 
-window.addEventListener("keydown", (e) => {
-  const evtobj = window.event? event : e;
-
-  if (evtobj.keyCode == 32 && evtobj.ctrlKey) {
-    const store = localStorage.getItem("id-test-icon-store");
-    let alertText = "Switched to colored icons.";
-    if (store === "false" || store === false) {
-      localStorage.setItem("id-test-icon-store", true);
-      alertText = "Switched to graphical icons.";
-    } else {
-      localStorage.setItem("id-test-icon-store", false);
-    }
-    alert(`${alertText}\nReload the page to make changes visible!`);
-  }
-}),
+//window.addEventListener("keydown", (e) => {
+//  const evtobj = window.event? event : e;
+//
+//  if (evtobj.keyCode == 32 && evtobj.ctrlKey) {
+//    const store = localStorage.getItem("id-test-icon-store");
+//    let alertText = "Switched to colored icons.";
+//    if (store === "false" || store === false) {
+//      localStorage.setItem("id-test-icon-store", true);
+//      alertText = "Switched to graphical icons.";
+//    } else {
+//      localStorage.setItem("id-test-icon-store", false);
+//    }
+//    alert(`${alertText}\nReload the page to make changes visible!`);
+//  }
+//}),
 
 
 window.dash_clientside.browser_properties = {

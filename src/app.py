@@ -188,10 +188,9 @@ def map_click(_, selected_note, notes):
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_CHART_DRAWER, "size"),
     State(ID_APP_THEME, "theme"),
-    State("id-test-icon-store", "data"),
     prevent_initial_call=True,
 )
-def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, theme, test_icons):
+def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, theme):
     if cancel_click is None or cancel_click == 0:
         return no_update, no_update, True, no_update
     
@@ -200,5 +199,5 @@ def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, theme,
             n = Note(note)
             file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
             drawer_size -= 116 - file_height                    
-            return dict(data=None), drawer_size, True, note_view(n, file_height, theme, test_icons), True
+            return dict(data=None), drawer_size, True, note_view(n, file_height, theme), True
 

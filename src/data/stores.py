@@ -29,8 +29,6 @@ def stores(args):
             dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
             dcc.Store(id=ID_NOTE_REFRESH_STORE,       data=dict(state=False)),
             dcc.Store(id=ID_QUERY_PARAM_STORE,        data=args),
-
-            dcc.Store(id="id-test-icon-store",        data=False, storage_type="local"),
             ]
 
 @app.callback(

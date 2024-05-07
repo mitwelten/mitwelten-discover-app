@@ -17,7 +17,7 @@ from src.api.api_files import get_file_url
 from src.components.button.components.action_button import action_button
 from src.components.data_drawer.types.note.attachment import attachment_area
 from src.components.data_drawer.types.note.form_view import form_content, get_form_controls
-from src.config.app_config import CHART_DRAWER_HEIGHT, PRIMARY_COLOR
+from src.config.app_config import CHART_DRAWER_HEIGHT
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
@@ -28,7 +28,7 @@ from src.config.app_config import supported_mime_types
 
 SCROLL_AREA_HEIGHT = 350
 
-def note_view(note: Note, file_height, theme, test_icons = False):
+def note_view(note: Note, file_height, theme):
     media_files = []
     documents   = []
 
@@ -51,7 +51,7 @@ def note_view(note: Note, file_height, theme, test_icons = False):
                 ),
             dmc.Container(
                 id=ID_NOTE_CONTAINER,
-                children=[*note_detail_view(note, file_height, theme, test_icons)])
+                children=[*note_detail_view(note, file_height, theme)])
             ]
 
 
@@ -102,7 +102,7 @@ def note_form_view(note: Note, all_tags):
         ], fluid=True, style={"marginTop": "20px"})
 
 
-def note_detail_view(note: Note, file_height, theme, test_icons):
+def note_detail_view(note: Note, file_height, theme):
     user            = get_user_from_cookies()
     files           = list(sorted(note.files, key=lambda file: file.name.lower()))
     media_files     = list(filter(lambda f: f.type.startswith("image/") or f.type.startswith("audio/"), files))
@@ -131,10 +131,9 @@ def note_detail_view(note: Note, file_height, theme, test_icons):
                 note.title,
                 "",
                 note.tags,
-                "info_comment.svg",
+                "docu.svg",
                 theme,
                 dmc.Group([private, edit_button]),
-                True
                 ),
             content
             ]
@@ -321,10 +320,9 @@ def mark_active_card(data, theme, cards):
     State(ID_EDIT_NOTE_STORE, "data"),
     State(ID_CHART_DRAWER, "size"),
     State(ID_APP_THEME, "theme"),
-    State("id-test-icon-store", "data"),
     prevent_initial_call=True
 )
-def cancel_click(cancel_click, notes, selected_note, drawer_size, theme, test_icons):
+def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
 
     if ctx.triggered_id == ID_NOTE_FORM_CANCEL_BUTTON:
         if cancel_click is None or cancel_click == 0:
@@ -343,7 +341,7 @@ def cancel_click(cancel_click, notes, selected_note, drawer_size, theme, test_ic
             file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
             drawer_size -= 116 - file_height                    
 
-            return no_update, dict(data=None), note_view(Note(note), file_height, theme, test_icons), drawer_size, True
+            return no_update, dict(data=None), note_view(Note(note), file_height, theme), drawer_size, True
 
 
 @app.callback(
