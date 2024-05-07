@@ -13,7 +13,7 @@ def bottom_drawer_content(title, desc, tags, icon, theme, title_icons=None):
             withArrow=True,
             width="200px",
             shadow="md",
-            style={"display": "flex", "align-items":"center"},
+            style={"display": "flex", "alignItems":"center"},
             children=[
                 dmc.HoverCardTarget(
                     children=dmc.ThemeIcon(

@@ -141,12 +141,11 @@ def note_detail_view(note: Note, file_height, theme):
 
 @app.callback(
     Output(ID_SLIDESHOW_IMAGE, "src", allow_duplicate=True),
-    Output(ID_FOCUSED_MEDIA_STORE, "data", allow_duplicate=True),
     Input(ID_MAP, "clickData"),
     prevent_initial_call=True
 )
 def map_click(_):
-    return "", None
+    return ""
 
 @app.callback(
     Output(ID_CONFIRM_DELETE_DIALOG, "displayed", allow_duplicate=True),
@@ -301,7 +300,7 @@ def mark_active_card(data, theme, cards):
     green_dark    = theme["colors"]["mitwelten_green"][8]
 
     primary_color =  green_light if theme["colorScheme"] == "light" else green_dark
-    active_style  = {"border-color": primary_color}
+    active_style  = {"borderColor": primary_color}
 
     styles = [default_style] * len(ctx.outputs_list)
     styles[data["focus"]] = active_style

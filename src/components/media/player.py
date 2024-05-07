@@ -53,7 +53,7 @@ def audio_player(id: str, src: str, light_mode):
                             style={"width": "60px", "height": "60px"}
                         ),
                         className="audio-player-circle",
-                        style={ "width": "80px", "height": "80px", "box-shadow": "0 2px 4px rgba(0,0,0,0.2)", "background": player_background} 
+                        style={ "width": "80px", "height": "80px", "boxShadow": "0 2px 4px rgba(0,0,0,0.2)", "background": player_background} 
                     ),
                     html.Div(
                         dmc.ActionIcon(
@@ -66,7 +66,7 @@ def audio_player(id: str, src: str, light_mode):
                     ),
                 ]),
 
-            ], style={"display":"flex", "align-items": "center", "justifyContent": "center"}),
+            ], style={"display":"flex", "alignItems": "center", "justifyContent": "center"}),
             dmc.Text("-:- / -:-", id=ID_AUDIO_TIME_PROGRESS)
         ])
 

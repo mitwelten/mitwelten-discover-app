@@ -69,7 +69,7 @@ def _attachment_card(file: File, auth_cookie, editable = False):
         style={"cursor":"pointer", "margin": 0, "height": "50px"} if not editable else {"margin": 0, "height": "50px"},
         children=[
             dmc.HoverCardTarget(
-                children=html.P(
+                children=html.Span(
                     children=dmc.Card(
                     id={"element": "card", "file_id": file.id} if not editable and element == "media" else "",
                     children=[
@@ -105,7 +105,7 @@ def _attachment_card(file: File, auth_cookie, editable = False):
                                         size="sm",
                                         variant="transparent"
                                     ),
-                                    ], style={"margin-right": "5px"}),
+                                    ], style={"marginRight": "5px"}),
                             ]),
                     ],
                     withBorder=True,
