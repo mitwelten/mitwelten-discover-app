@@ -72,19 +72,6 @@ def text_to_dash_elements(text):
     return elements
 
 
-#def set_url_params(query_params, *args: list[tuple[str, object]]):
-#    if len(query_params) > 0 and query_params[0] == "?":
-#        query_params = query_params[1:] # remove the question mark
-#
-#    params = parse.parse_qs(query_params)
-#    # since parameter are in a list, take always the first out
-#    params = {k: v[0] for k,v in params.items()}
-#    for arg in args[0]:
-#        params[arg[0]] = arg[1]
-#
-#    return "?" + parse.urlencode(params)
-
-
 def query_data_to_string(data):
     return "?" + parse.urlencode(data)
 
@@ -96,10 +83,10 @@ def query_string_to_dict(query:str):
     return {k: v[0] for k,v in params.items()}
 
 
-def update_query_data(data, params):
-    print("update query data", params)
+def update_query_data(data, params: dict):
     # update data dict with params
     for param in params.keys():
         data[param] = params[param]
-    return data
+
+    return dict(sorted(data.items()))
 
