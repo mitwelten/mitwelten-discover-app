@@ -47,6 +47,7 @@ def form_content(note: Note, all_tags):
     return [
         dmc.Grid([
             # title and description section
+            # TODO: replace with dmc.TagsInput
             dmc.Col(dmc.MultiSelect(
                 id=ID_NOTE_TAG_SELECT,
                 label="Select Tags",

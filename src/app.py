@@ -15,6 +15,7 @@ from dash import (
     no_update,
 )
 from dash.exceptions import PreventUpdate
+from numpy import size
 from src.components.data_drawer.types.note.note_view import note_view
 from configuration import DOMAIN_NAME
 
@@ -26,6 +27,7 @@ from src.components.map.init_map import map_figure
 from src.components.settings_drawer.settings_drawer import settings_drawer
 from src.components.data_drawer.data_drawer import chart_drawer
 from src.config.app_config import (
+    DISCOVER_DESCRIPTION,
     app_theme,
     CONFIRM_UNSAVED_CHANGES_MESSAGE,
     CONFIRM_DELETE_MESSAGE,
@@ -65,6 +67,22 @@ def app_content(args):
     settings_drawer(args),
     dmc.Modal(id=ID_NOTE_ATTACHMENT_MODAL, size="lg", opened=False, zIndex=30000),
     dcc.Location(id=ID_URL_LOCATION, refresh=False),
+    dmc.Modal(
+            id="modal-simple",
+            title="Welcome to the web map Discover of the Mitwelten project!",
+            zIndex=1000000,
+            centered=True,
+            withCloseButton=False,
+            opened=True,
+            children=[
+                dmc.Text(DISCOVER_DESCRIPTION, size="sm"),
+                dmc.Space(h=20),
+                dmc.Button(
+                    children=dmc.Text("Close"),
+                    id="modal-close-button",
+                    ),
+                ],
+        ),
 ]
 
 attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
@@ -84,6 +102,14 @@ def discover_app(**kwargs):
 
 register_page("home", layout=discover_app, path="/")
 #app.layout = discover_app
+
+@app.callback(
+    Output("modal-simple", "opened"),
+    Input("modal-close-button", "n_clicks"),
+    prevent_initial_call=True,
+)
+def modal_demo(_click):
+    return False
 
 
 @app.callback(
