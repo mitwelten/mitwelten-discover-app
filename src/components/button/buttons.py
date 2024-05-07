@@ -54,7 +54,8 @@ def create_avatar(user):
         withArrow=True,
         arrowSize=10,
         arrowOffset=15,
-        zIndex=500000
+        zIndex=500000,
+        styles={"display": "none"}
     )
 
 
@@ -67,6 +68,7 @@ control_buttons = [
             html.Div(
                 id=ID_LOGIN_AVATAR_CONTAINER
             ),
+            login_button,
             action_button(button_id=ID_ADD_NOTE_BUTTON, icon="material-symbols:add-comment-outline"),
             dmc.MediaQuery([
                 action_button(button_id=ID_BOTTOM_DRAWER_BUTTON, icon="material-symbols:layers-outline"),
@@ -96,13 +98,17 @@ control_buttons = [
 
 @app.callback(
     Output(ID_LOGIN_AVATAR_CONTAINER, "children"),
+    Output(ID_LOGIN_AVATAR_CONTAINER, "style"),
+    Output(ID_LOGIN_BUTTON_HREF, "style"),
     Input(ID_LOGIN_AVATAR_CONTAINER, "n_clicks"),
 )
 def login(_):
     user = get_user_from_cookies()
+    visible = {"display": "block"}
+    hidden  = {"display": "none"}
     if user is None:
-        return login_button
-    return create_avatar(user)
+        return no_update, hidden, visible 
+    return create_avatar(user), visible, hidden
 
 
 @app.callback(
