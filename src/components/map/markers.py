@@ -30,7 +30,7 @@ popup_events=dict(
 
 @app.callback(
     Output(ID_MAP_LAYER_GROUP, "children"),
-    Output(ID_MAP, "viewport"),
+    Output(ID_MAP, "viewport", allow_duplicate=True),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_TAG_CHIPS_GROUP, "value"),
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
@@ -117,7 +117,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, bounds):
                     position=[d.lat, d.lon],
                     children=[
                         dl.Popup(
-                            children=[device_popup(d, get_source_props(d.node_type)["color"])],
+                            children=device_popup(d),
                             closeButton=False,
                             id=f"{d.id}",
                             autoPan=False,
@@ -213,7 +213,6 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
                         closeButton=False,
                         autoPan=False,
                         autoClose=False,
-                        className="colored-popup"
                         ),
                 ],
                 icon=marker_icon_draggable if in_edit_mode else marker_icon,

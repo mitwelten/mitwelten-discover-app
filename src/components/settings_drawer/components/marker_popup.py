@@ -1,8 +1,5 @@
 import dash_mantine_components as dmc
 from dash import html
-import time
-import pytz
-from datetime import datetime, timezone
 
 
 from src.config.map_config import get_source_props
@@ -10,26 +7,24 @@ from src.model.note import Note
 from src.util.util import apply_newlines, local_formatted_date
 
 
-def header(source_type, label, color):
-    return [dmc.Group([
-        dmc.Group([
+def header(source_type, title=None):
+    return [
+        html.Div([
+            dmc.Text(get_source_props(source_type)["name"] if title is None else title, weight=700, size="xs", className="note-marker-title"),
             dmc.Image(src=get_source_props(source_type)["marker"], width="16px"),
-            dmc.Text(source_type, weight=700, size="sm"),
-        ],
-            position="left",
-            spacing="sm"
-        ),
-        dmc.Text(label, size="sm"),
-    ],
-        position="apart"
-    ),
+        ], style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'start'}),
         dmc.Space(h=10),
         dmc.Divider(),
         dmc.Space(h=10),
     ]
 
 
-def time_section(fst_label, fst_time, snd_label=None, snd_time=None):
+def details(label, fst_label, fst_time, snd_label=None, snd_time=None):
+    label = dmc.Group([
+            dmc.Text("ID", size="xs"),
+            dmc.Text(label, size="xs", color="dimmed"),
+        ], position="apart") if label is not None else {}
+
     snd_date_section = None
     if snd_label is not None:
         snd_date_section = dmc.Group([
@@ -38,7 +33,9 @@ def time_section(fst_label, fst_time, snd_label=None, snd_time=None):
         ],
             position="apart"
         )
+
     return [
+        label,
         dmc.Group([
             dmc.Text(fst_label, size="xs"),
             dmc.Text(fst_time, size="xs", color="dimmed"),
@@ -50,14 +47,14 @@ def time_section(fst_label, fst_time, snd_label=None, snd_time=None):
     ]
 
 
-def device_popup(deployment, color):
+def device_popup(deployment):
     start = local_formatted_date(deployment.period_start)
     end   = local_formatted_date(deployment.period_end) if deployment.period_end else "-"
     return dmc.Container([
-        *header(deployment.node_type, deployment.node_label, color),
-        *time_section("Start", start, "End", end),
+        *header(deployment.node_type),
+        *details(deployment.node_label, "Start", start, "End", end),
         dmc.Space(h=10),
-        #dmc.Group(
+        #dmc.Group
         #    children=[dmc.Badge(t, size="sm", variant="outline") for t in deployment.tags],
         #    spacing="xs"
         #),
@@ -71,8 +68,8 @@ def environment_popup(environment):
     created_at = local_formatted_date(environment.created_at)
     updated_at = local_formatted_date(environment.updated_at) if environment.updated_at else "-"
     return dmc.Container([
-        *header("Environment", "", "#946000"),
-        *time_section("Created", created_at, "Updated", updated_at),
+        *header("Environment"),
+        *details(None, "Created", created_at, "Updated", updated_at),
     ],
         fluid=True,
         style={"width": "240px"}
@@ -86,15 +83,7 @@ def note_tooltip(note: Note):
 
     return dmc.Container([
 
-    html.Div([
-        html.Div([
-            dmc.Image(src=get_source_props("Note")["marker"], width="16px"),
-            dmc.Text(note.title, weight=700, size="xs", className="note-marker-title"),
-        ], style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'start'})
-    ]),
-        dmc.Space(h=5),
-        dmc.Divider(),
-        dmc.Space(h=5),
+    html.Div(header("Note", note.title)),
         html.Div(
             dmc.Text(apply_newlines(description), lineClamp=3, size="xs"),
             style={"maxHeight":"70px", "overflow": "hidden"}

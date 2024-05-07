@@ -1,7 +1,9 @@
 from urllib.parse import urlparse, parse_qs
 
+
 import dash_leaflet as dl
-from dash import Output, Input
+from dash import Output, Input, State
+from dash.exceptions import PreventUpdate
 from dash_extensions.javascript import assign
 
 from src.main import app
@@ -41,7 +43,7 @@ def map_figure(args):
 
     ],
     id=ID_MAP,
-    viewport=dict(center=[47.5339807306196, 7.6169566067567], zoom=10, transition="flyTo"),
+    #viewport=dict(center=[47.5339807306196, 7.6169566067567], zoom=10, transition="flyTo"),
     center=[args.get("lat", 47.5339807306196), args.get("lon", 7.6169566067567)],
     zoom=args.get("zoom", 12),
     maxZoom=DEFAULT_MAX_ZOOM,
@@ -56,4 +58,3 @@ def map_figure(args):
         "zIndex": 0,
     },
 )
-
