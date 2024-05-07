@@ -9,22 +9,26 @@ from src.util.util import apply_newlines, local_formatted_date
 
 def header(source_type, title=None):
     return [
-        html.Div([
-            dmc.Text(get_source_props(source_type)["name"] if title is None else title, weight=700, size="xs", className="note-marker-title"),
-            dmc.Image(src=get_source_props(source_type)["marker"], width="16px"),
-        ], style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'start'}),
+            html.Div([
+                dmc.Text(
+                    get_source_props(source_type)["name"] if title is None else title, 
+                    weight=700,
+                    size="xs", 
+                    className="note-marker-title"
+                    ),
+                dmc.Image(src=get_source_props(source_type)["marker"], width="16px"),
+                ], style={
+                    'display': 'flex',
+                    'justifyContent': 'space-between',
+                    'alignItems': 'start'
+                    }),
         dmc.Space(h=10),
         dmc.Divider(),
         dmc.Space(h=10),
     ]
 
 
-def details(label, fst_label, fst_time, snd_label=None, snd_time=None):
-    label = dmc.Group([
-            dmc.Text("ID", size="xs"),
-            dmc.Text(label, size="xs", color="dimmed"),
-        ], position="apart") if label is not None else {}
-
+def details(fst_label, fst_time, snd_label=None, snd_time=None):
     snd_date_section = None
     if snd_label is not None:
         snd_date_section = dmc.Group([
@@ -35,7 +39,6 @@ def details(label, fst_label, fst_time, snd_label=None, snd_time=None):
         )
 
     return [
-        label,
         dmc.Group([
             dmc.Text(fst_label, size="xs"),
             dmc.Text(fst_time, size="xs", color="dimmed"),
@@ -52,15 +55,10 @@ def device_popup(deployment):
     end   = local_formatted_date(deployment.period_end) if deployment.period_end else "-"
     return dmc.Container([
         *header(deployment.node_type),
-        *details(deployment.node_label, "Start", start, "End", end),
-        dmc.Space(h=10),
-        #dmc.Group
-        #    children=[dmc.Badge(t, size="sm", variant="outline") for t in deployment.tags],
-        #    spacing="xs"
-        #),
+        *details("Start", start, "End", end),
     ],
         fluid=True,
-        style={"width": "240px"}
+        style={"width": "240px", "padding": "0px", "height": "75px"}
     )
 
 
@@ -69,10 +67,10 @@ def environment_popup(environment):
     updated_at = local_formatted_date(environment.updated_at) if environment.updated_at else "-"
     return dmc.Container([
         *header("Environment"),
-        *details(None, "Created", created_at, "Updated", updated_at),
+        *details("Created", created_at, "Updated", updated_at),
     ],
         fluid=True,
-        style={"width": "240px"}
+        style={"width": "240px", "padding": "0px", "height": "75px"}
     )
 
 def note_tooltip(note: Note):
@@ -90,5 +88,5 @@ def note_tooltip(note: Note):
         )
     ],
         fluid=True,
-        style={"width": "220px", "maxHeight": "144px", "overflow": "hidden"},
+        style={"width": "220px", "maxHeight": "144px", "overflow": "hidden", "padding": "0px"},
     )

@@ -15,7 +15,6 @@ from dash import (
     no_update,
 )
 from dash.exceptions import PreventUpdate
-from numpy import size
 from src.components.data_drawer.types.note.note_view import note_view
 from configuration import DOMAIN_NAME
 
@@ -73,7 +72,7 @@ def app_content(args):
             zIndex=1000000,
             centered=True,
             withCloseButton=False,
-            opened=True,
+            opened=False,
             children=[
                 dmc.Text(DISCOVER_DESCRIPTION, size="sm"),
                 dmc.Space(h=20),

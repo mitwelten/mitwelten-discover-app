@@ -1,7 +1,7 @@
 import dash_mantine_components as dmc
 from dash import html
 
-from src.config.app_config import PRIMARY_COLOR
+from src.config.app_config import DISCOVER_DESCRIPTION, PRIMARY_COLOR
 from src.components.settings_drawer.components.date_time_section import date_time_section
 from src.components.settings_drawer.components.general_controls import general_controls
 from src.components.settings_drawer.components.source_filter import source_filter
@@ -22,20 +22,20 @@ def drawer_content(args):
                     dmc.HoverCard(
                         position="top",
                         withArrow=True,
-                        width="240px",
+                        width="500px",
                         shadow="lg",
                         style={"display": "flex", "alignItems":"center"},
                         children=[
                             dmc.HoverCardTarget(
                                 children=dmc.ThemeIcon(
-                                    size="md",
-                                    variant="light",
-                                    radius="xl",
-                                    color=PRIMARY_COLOR, 
-                                    children=DashIconify(icon="material-symbols:info-i-rounded", width=42)
+                                    size="sm",
+                                    variant="filled",
+                                    radius="sm",
+                                    color=PRIMARY_COLOR,
+                                    children=DashIconify(icon="material-symbols:info-i-rounded", width=16)
                                     ),
                                 ),
-                            dmc.HoverCardDropdown(children="App description")
+                            dmc.HoverCardDropdown(children=DISCOVER_DESCRIPTION)
                             ],
                         ),
                     ]),

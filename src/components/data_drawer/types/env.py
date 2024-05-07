@@ -8,6 +8,7 @@ from src.api.api_deployment import get_env_timeseries
 from src.components.data_drawer.charts import create_themed_figure
 from src.config.api_config import *
 from src.util.validations import cleanup_timeseries
+from src.config.map_config import get_source_props
 
 
 def create_env_temp_chart(trigger_id, bucket_width, light_mode):
@@ -116,7 +117,7 @@ def create_env_chart(deployment_data, theme):
 
 
     return [
-        bottom_drawer_content("Environment Sensor", "tbd", d.tags, "environSensor.svg", theme), 
+        bottom_drawer_content(get_source_props("Environment Sensor")["name"], "tbd", d.tags, "environSensor.svg", theme), 
         dmc.Paper(
             children=tabs,
             shadow="md",

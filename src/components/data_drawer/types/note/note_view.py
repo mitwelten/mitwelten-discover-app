@@ -17,7 +17,7 @@ from src.api.api_files import get_file_url
 from src.components.button.components.action_button import action_button
 from src.components.data_drawer.types.note.attachment import attachment_area
 from src.components.data_drawer.types.note.form_view import form_content, get_form_controls
-from src.config.app_config import CHART_DRAWER_HEIGHT
+from src.config.app_config import CHART_DRAWER_HEIGHT, EXPERIMENT_AND_FINDING_DESCRIPTION
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
@@ -129,7 +129,7 @@ def note_detail_view(note: Note, file_height, theme):
     return [
             bottom_drawer_content(
                 note.title,
-                "",
+                EXPERIMENT_AND_FINDING_DESCRIPTION,
                 note.tags,
                 "docu.svg",
                 theme,

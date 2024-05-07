@@ -31,6 +31,7 @@ def date_time_section(args):
             fullWidth=True,
             data=DEFAULT_DATE_RANGES,
             mt=10,
+            size="xs"
         ),
         dmc.Space(h=20),
         dmc.Center([

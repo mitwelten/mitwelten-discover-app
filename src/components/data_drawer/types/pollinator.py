@@ -9,6 +9,7 @@ from src.model.deployment import Deployment
 from src.config.app_config import POLLINATOR_DESCRIPTION, SECONDARY_COLOR, app_theme
 from src.components.data_drawer.header import bottom_drawer_content
 
+from src.config.map_config import get_source_props
 from src.api.api_deployment import get_pollinator_heatmap, get_pollinator_timeseries
 from src.components.data_drawer.charts import create_themed_figure
 from src.config.id_config import *
@@ -133,7 +134,7 @@ def create_pollinator_chart2(marker_data, date_range, theme):
      )
 
     return [
-        bottom_drawer_content("Pollinator", POLLINATOR_DESCRIPTION, d.tags, "polliCam.svg", theme), 
+        bottom_drawer_content(get_source_props("Pollinator Cam")["name"], POLLINATOR_DESCRIPTION, d.tags, "polliCam.svg", theme), 
         dmc.Paper(
             children=graph,
             shadow="md",

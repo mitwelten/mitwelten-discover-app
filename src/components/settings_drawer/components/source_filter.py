@@ -12,15 +12,17 @@ from src.util.decorators import spaced_section
 def get_checkbox_by_type(node_type: str):
     return dmc.Checkbox(
         label=dmc.Group([
+            dmc.Space(w=1), 
             dmc.Image(
                 src=get_source_props(node_type)["marker"],
                 width="24px",
                 ),
-            node_type,
+            get_source_props(node_type)["name"],
         ]),
         value=node_type,
         size="xs",
         persistence=True,
+        color="#003399"
     )
 
 
@@ -29,7 +31,7 @@ def source_filter(args):
     source_types = reduce(
         list.__add__,
         [list(map(lambda x: get_checkbox_by_type(x),  SOURCE_PROPS.keys()))],
-        [dmc.Checkbox(label="All", value="all", size="xs")]
+        [dmc.Checkbox(label=dmc.Group([dmc.Space(w=4),"All"]), value="all", size="xs")]
     )
 
     return html.Div([

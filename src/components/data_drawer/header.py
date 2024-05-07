@@ -19,8 +19,8 @@ def bottom_drawer_content(title, desc, tags, icon, theme, title_icons=None):
                     children=dmc.ThemeIcon(
                         size="sm",
                         color=PRIMARY_COLOR,
-                        variant="light",
-                        children=DashIconify(icon="material-symbols:help", width=25),
+                        variant="filled",
+                        children=DashIconify(icon="material-symbols:info-i-rounded", width=16, color="white"),
                         ),
                     ),
                 dmc.HoverCardDropdown(children=dmc.Text(desc, size="sm"))

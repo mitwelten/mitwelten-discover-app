@@ -29,7 +29,7 @@ def create_avatar(user):
         dmc.HoverCardTarget(dmc.Avatar(user.initials, size="md", radius="xl")),
         dmc.HoverCardDropdown([
             dmc.Stack([
-                dmc.Avatar(user.initials, size="60px", radius="xl", color=PRIMARY_COLOR),
+                dmc.Avatar(user.initials, size="60px", radius="xl", color=PRIMARY_COLOR, variant="filled"),
                 dmc.Text(user.full_name),
                 dmc.Text(user.username, color="dimmed"),
                 dmc.Divider(size="md", color="black"),
@@ -37,7 +37,7 @@ def create_avatar(user):
                     dmc.Button(
                         "Logout",
                         rightIcon=DashIconify(icon="material-symbols:logout"),
-                        variant="light",
+                        variant="filled",
                         fullWidth=True,
                     ),
                     href="/logout",

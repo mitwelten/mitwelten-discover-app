@@ -37,11 +37,11 @@ def tag_filter(args):
                 children=[
                     dmc.HoverCardTarget(
                         children=dmc.ThemeIcon(
-                            size="md",
-                            variant="light",
-                            radius="xl",
+                            size="sm",
+                            variant="filled",
+                            radius="sm",
                             color=PRIMARY_COLOR, 
-                            children=DashIconify(icon="material-symbols:help-outline")
+                            children=DashIconify(icon="material-symbols:info-i-rounded", width=16)
                         ),
                     ),
                     dmc.HoverCardDropdown(children=fs_desc)
@@ -55,6 +55,7 @@ def tag_filter(args):
                 id=ID_FS_TAG_CHIPS_GROUP,
                 persistence=True,
                 data=[],
+                size="xs"
             ),
         ]),
         dmc.Space(h=20),
@@ -68,17 +69,18 @@ def tag_filter(args):
                 dmc.ActionIcon(
                     DashIconify(
                         icon="material-symbols:add",
-                        color=PRIMARY_COLOR,
                     ),
                     variant="light",
                     id=ID_OPEN_CHIP_MODAL_BUTTON,
-                    size="md",
+                    size="sm",
+                    color=PRIMARY_COLOR,
                     n_clicks=0,
-                    radius="xl",
+                    radius="sm",
                 ),
                 dmc.Button(
                     "Clear",
                     variant="light",
+                    color=PRIMARY_COLOR,
                     compact=True,
                     size="xs",
                     radius="xl",

@@ -1,9 +1,7 @@
 from datetime import datetime, timedelta
 
 import pandas as pd
-from datetime import datetime
-from pprint import pprint
-from pandas.core.tools import times
+from src.config.map_config import get_source_props
 import plotly.graph_objects as go
 from dash import dcc
 from src.config.app_config import PAX_DESCRIPTION
@@ -51,7 +49,7 @@ def create_pax_chart(marker_data, date_range, theme):
         style={"width":"100%", "height":"100%"}
     )
     return [
-        bottom_drawer_content("PAX Counter", PAX_DESCRIPTION, d.tags, "paxCounter.svg", theme), 
+        bottom_drawer_content(get_source_props("PAX Counter")["name"], PAX_DESCRIPTION, d.tags, "paxCounter.svg", theme), 
         dmc.Paper(
             children=graph,
             shadow="md",

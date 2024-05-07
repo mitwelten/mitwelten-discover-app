@@ -7,6 +7,7 @@ from dash import dcc
 import dash_mantine_components as dmc
 from src.config.app_config import AUDIO_DESCRIPTION, SECONDARY_COLOR
 from src.model.deployment import Deployment
+from src.config.map_config import get_source_props
 
 from src.api.api_deployment import get_audio_timeseries, get_audio_top3, get_bird_stacked_bar
 from src.components.data_drawer.header import bottom_drawer_content
@@ -144,7 +145,7 @@ def create_audio_chart3(deployment_data, date_range, theme):
 
     )
     return [
-        bottom_drawer_content("Audio", AUDIO_DESCRIPTION, d.tags, "audioLogger.svg", theme), 
+        bottom_drawer_content(get_source_props("Audio Logger")["name"], AUDIO_DESCRIPTION, d.tags, "audioLogger.svg", theme), 
         dmc.Paper(
             children=graph,
             shadow="md",
