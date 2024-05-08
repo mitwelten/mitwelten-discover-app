@@ -86,7 +86,11 @@ def query_string_to_dict(query:str):
 def update_query_data(data, params: dict):
     # update data dict with params
     for param in params.keys():
-        data[param] = params[param]
+        if params[param] is not None:
+            data[param] = params[param]
+        else:
+            if data.get(param) is not None:
+                del data[param]
 
     return dict(sorted(data.items()))
 
