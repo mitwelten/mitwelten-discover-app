@@ -49,9 +49,6 @@ def map_figure(args):
     maxZoom=DEFAULT_MAX_ZOOM,
     doubleClickZoom=False,
     className="id-map",
-    trackResize=True,
-    trackViewport=True,
-    easeLinearity=10.5,
     style={
         "width": "100vw",
         "height": "100vh",
