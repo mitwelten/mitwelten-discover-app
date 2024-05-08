@@ -260,6 +260,9 @@ def ensure_marker_visibility_in_viewport(
     if marker is None:
         raise PreventUpdate
 
+    if bounds is None:
+        raise PreventUpdate
+
     top    = bounds[1][0]
     bottom = bounds[0][0]
     left   = bounds[0][1]
