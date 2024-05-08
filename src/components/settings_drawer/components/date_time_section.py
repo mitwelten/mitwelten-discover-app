@@ -115,5 +115,5 @@ def update_picker_from_segment(segment_data, picker_value):
 def update_query_params(data, segment, params):
     if segment == "custom":
         return update_query_data(params, {"start": data["start"], "end": data["end"], "timerange": "custom"})
-    return update_query_data(params, {"timerange": segment})
+    return update_query_data(params, {"start": None, "end": None, "timerange": segment})
     
