@@ -11,23 +11,36 @@ from src.config.settings_config import DEFAULT_DATE_RANGES
 from src.config.settings_config import FIRST_DEPLOYMENT_WEEKS_AGO
 from src.main import app
 from src.util.decorators import spaced_section
-from src.util.util import local_formatted_date
+from src.util.util import local_formatted_date, update_query_data
 
 
 @spaced_section
 def date_time_section(args):
+    timerange = args.get("timerange", "custom")
+
+    if args.get("start") is None or args.get("end") is None:
+        start = datetime.now() - timedelta(weeks=FIRST_DEPLOYMENT_WEEKS_AGO)
+        end = datetime.now()
+    else:
+        start = datetime.fromisoformat(args.get("start"))
+        end   = datetime.fromisoformat(args.get("end"))
+
+    if timerange == "custom":
+        label_start = local_formatted_date(start.isoformat(), '%d %b %Y')
+        label_end   = local_formatted_date(end.isoformat(), '%d %b %Y')
+    else:
+        label_start = local_formatted_date(datetime.isoformat(datetime.now() - timedelta(weeks=int(timerange))), "%d %b %Y")
+        label_end   = local_formatted_date(datetime.isoformat(datetime.now()), "%d %b %Y")
+
     return html.Div([
         dcc.Store(
             id=ID_DATE_RANGE_STORE,
-            data=dict(
-                start=datetime.now() - timedelta(weeks=FIRST_DEPLOYMENT_WEEKS_AGO),
-                end=datetime.now()
-            )
+            data=dict(start=start, end=end)
         ),
         dmc.SegmentedControl(
             id=ID_DATE_RANGE_SEGMENT,
             color=PRIMARY_COLOR,
-            value="custom",
+            value=timerange,
             fullWidth=True,
             data=DEFAULT_DATE_RANGES,
             mt=10,
@@ -40,14 +53,16 @@ def date_time_section(args):
                 inputFormat="DD MMM, YY",
                 description="",
                 minDate=date(2020, 1, 1),
-                value=[datetime.now().date() - timedelta(weeks=FIRST_DEPLOYMENT_WEEKS_AGO), datetime.now().date()],
+                value=[start, end],
                 styles={"root": {"width": 220}},
+                style={"display": "block"} if timerange == "custom" else {"display": "none"},
             ),
             dmc.Text(
-                id="id-date-range-label",
+                f"{label_start }- {label_end}",
+                id=ID_DATE_RANGE_LABEL,
                 color="dimmed",
                 size="sm",
-                style={"display": "none"},
+                style={"display": "none"} if timerange == "custom" else {"display": "block"},
             )
             ],
             style={"height": "40px"}
@@ -68,8 +83,8 @@ def change_visibility_of_date_range_picker(value):
 @app.callback(
     Output(ID_DATE_RANGE_STORE, "data", allow_duplicate=True),
     Output(ID_DATE_RANGE_PICKER, "style"),
-    Output("id-date-range-label", "style"),
-    Output("id-date-range-label", "children"),
+    Output(ID_DATE_RANGE_LABEL, "style"),
+    Output(ID_DATE_RANGE_LABEL, "children"),
     Input(ID_DATE_RANGE_SEGMENT, "value"),
     Input(ID_DATE_RANGE_PICKER, "value"),
     prevent_initial_call=True
@@ -91,3 +106,14 @@ def update_picker_from_segment(segment_data, picker_value):
     label_data_end   = local_formatted_date(datetime.isoformat(datetime.now()), "%d %b %Y")
     return store_data, {"display": "none"}, {"display": "block"}, f"{label_data_start} - {label_data_end}"
 
+@app.callback(
+    Output(ID_QUERY_PARAM_STORE , "data"),
+    Input(ID_DATE_RANGE_STORE, "data"),
+    Input(ID_DATE_RANGE_SEGMENT, "value"),
+    State(ID_QUERY_PARAM_STORE , "data"),
+)
+def update_query_params(data, segment, params):
+    if segment == "custom":
+        return update_query_data(params, {"start": data["start"], "end": data["end"], "timerange": "custom"})
+    return update_query_data(params, {"timerange": segment})
+    

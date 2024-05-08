@@ -51,6 +51,7 @@ ID_TYPE_CHECKBOX_GROUP = "id-type-checkbox-group"
 # date_time
 ID_DATE_RANGE_PICKER = "id-date-range-picker"
 ID_DATE_RANGE_SEGMENT = "id-time-range-segment"
+ID_DATE_RANGE_LABEL = "id-date-range-label"
 
 # tags
 ID_TAG_CHIPS_GROUP = "id-tag-chips-group"
