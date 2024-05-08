@@ -49,7 +49,7 @@ def create_pax_chart(marker_data, date_range, theme):
         style={"width":"100%", "height":"100%"}
     )
     return [
-        bottom_drawer_content(get_source_props("PAX Counter")["name"], PAX_DESCRIPTION, d.tags, "paxCounter.svg", theme), 
+        bottom_drawer_content(get_source_props("Pax Counter")["name"], PAX_DESCRIPTION, d.tags, "paxCounter.svg", theme), 
         dmc.Paper(
             children=graph,
             shadow="md",
