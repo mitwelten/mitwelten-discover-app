@@ -1,15 +1,9 @@
-from urllib.parse import urlparse, parse_qs
-
-
 import dash_leaflet as dl
-from dash import Output, Input, State
-from dash.exceptions import PreventUpdate
 from dash_extensions.javascript import assign
 
-from src.main import app
 from src.config import map_config as map_config
 from src.config.id_config import *
-from src.config.map_config import DEFAULT_MAX_ZOOM, DEFAULT_LAT, DEFAULT_LON, DEFAULT_ZOOM
+from src.config.map_config import DEFAULT_MAX_ZOOM
 
 # import marker callbacks
 import src.components.map.layer_selection.callbacks
@@ -24,6 +18,7 @@ def map_figure(args):
         url=initial_map.source,
         attribution="",
         maxZoom=DEFAULT_MAX_ZOOM,
+        maxNativeZoom=19,
     ),
 
     dl.TileLayer(
@@ -32,6 +27,7 @@ def map_figure(args):
         id=ID_OVERLAY_MAP,
         maxZoom=DEFAULT_MAX_ZOOM,
         opacity=0.5,
+        maxNativeZoom=19,
     ),
 
     dl.ScaleControl(position="bottomright"),
