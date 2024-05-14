@@ -40,7 +40,7 @@ def apply_newlines(text: str):
 
 def text_to_dash_elements(text):
     elements = []
-    if text is None or text is "":
+    if text is None or text == "":
         return []
     lines = text.split('\n')
 
