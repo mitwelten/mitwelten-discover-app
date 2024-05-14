@@ -17,6 +17,18 @@ from src.main import app
 from src.model.note import Note, empty_note
 from src.util.user_validation import get_user_from_cookies
 from src.components.data_drawer.types.note.note_view import note_form_view
+from src.config.app_config import DISCOVER_DESCRIPTION
+
+info_dialog = dmc.Modal(
+            title="Mitwelten Disvocer App",
+            id="id-info-dialog",
+            zIndex=100000,
+            children=[
+                #dmc.Text(""),
+                #dmc.Space(h=20),
+                dmc.Text(DISCOVER_DESCRIPTION),
+            ],
+        )
 
 login_button = dmc.Anchor(
     action_button(button_id="", icon="material-symbols:login"),
@@ -90,11 +102,20 @@ control_buttons = [
                 smallerThan="sm",
                 styles={"display": "none"}
             ),
+            action_button(button_id="id-info-button", icon="material-symbols:info-outline"),
+            info_dialog
         ],
             id=ID_FAB_CONTAINER
         )
     ]
 
+@app.callback(
+        Output("id-info-dialog", "opened"),
+        Input("id-info-button", "n_clicks"),
+        prevent_initial_call=True
+)
+def open_info_dialog(click):
+    return True
 
 @app.callback(
     Output(ID_LOGIN_AVATAR_CONTAINER, "children"),

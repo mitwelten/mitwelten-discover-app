@@ -17,27 +17,32 @@ def divider(title: str):
 def drawer_content(args): 
     return dmc.Container(
             children=[
-                dmc.Group([
                     dmc.Title("Mitwelten Discover", align="center", order=1),
-                    dmc.HoverCard(
-                        position="top",
-                        withArrow=True,
-                        width="500px",
-                        shadow="lg",
-                        style={"display": "flex", "alignItems":"center"},
-                        children=[
-                            dmc.HoverCardTarget(
-                                children=dmc.ThemeIcon(
-                                    size="sm",
-                                    variant="filled",
-                                    radius="sm",
-                                    color=PRIMARY_COLOR,
-                                    children=DashIconify(icon="material-symbols:info-i-rounded", width=16)
-                                    ),
-                                ),
-                            dmc.HoverCardDropdown(children=DISCOVER_DESCRIPTION)
-                            ],
-                        ),
+                dmc.Group([
+                    #dmc.Title("Mitwelten Discover", align="center", order=1),
+                    #dmc.HoverCard(
+                    #    position="top",
+                    #    withArrow=True,
+                    #    width="500px",
+                    #    shadow="lg",
+                    #    style={"display": "flex", "alignItems":"center"},
+                    #    children=[
+                    #        dmc.HoverCardTarget(
+                    #            children=dmc.ThemeIcon(
+                    #                size="sm",
+                    #                variant="filled",
+                    #                radius="sm",
+                    #                color=PRIMARY_COLOR,
+                    #                children=DashIconify(icon="material-symbols:info-i-rounded", width=16),
+                    #                style={"cursor": "pointer"}
+                    #                ),
+                    #            ),
+                    #        dmc.HoverCardDropdown(
+                    #            children=DISCOVER_DESCRIPTION,
+                    #            style={"padding": "30px"}
+                    #            )
+                    #        ],
+                    #    ),
                     ]),
                 dmc.Space(h=30),
                 dmc.ScrollArea([

@@ -24,10 +24,7 @@ fs_desc = dmc.Stack([
 def tag_filter(args):
     return html.Div([
         dmc.Group([
-            dmc.Text("Field Study",
-                 color="dimmed",
-                 size="sm",
-                 ),
+            dmc.Text("Field Study", size="sm"),
             dmc.HoverCard(
                 position="top",
                 withArrow=True,
@@ -41,7 +38,8 @@ def tag_filter(args):
                             variant="filled",
                             radius="sm",
                             color=PRIMARY_COLOR, 
-                            children=DashIconify(icon="material-symbols:info-i-rounded", width=16)
+                            children=DashIconify(icon="material-symbols:info-i-rounded", width=16),
+                            style={"cursor": "pointer"}
                         ),
                     ),
                     dmc.HoverCardDropdown(children=fs_desc)
@@ -62,7 +60,6 @@ def tag_filter(args):
         dmc.Group([
             dmc.Text("Additional Tags",
                      size="sm",
-                     color="dimmed",
                      style={"display": "inline-block"}
                      ),
             dmc.Group([
@@ -70,7 +67,7 @@ def tag_filter(args):
                     DashIconify(
                         icon="material-symbols:add",
                     ),
-                    variant="light",
+                    variant="filled",
                     id=ID_OPEN_CHIP_MODAL_BUTTON,
                     size="sm",
                     color=PRIMARY_COLOR,
