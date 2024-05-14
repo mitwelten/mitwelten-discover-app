@@ -34,10 +34,10 @@ def tag_filter(args):
             fs_tags.append(tag)
     fs_tags = list(sorted(fs_tags))
     fs_tags.insert(0, "ANY")
-    fs_value = args.get("FS", "ANY")
+    fs_value = args.get("fs", "ANY")
 
     tags = sorted([t for t in all_tags if t not in fs_tags])
-    tags_value = args.get("TAGS", [])
+    tags_value = args.get("tags", [])
     if tags_value:
         tags_value = tags_value.split(",")
 
@@ -192,7 +192,6 @@ def select_tags(_1, _2, modal_value, active_chips, children, opened):
     current_chips = list(map(lambda x: x["props"]["value"], children))
     filtered = list(filter(lambda d: d not in active_chips, current_chips))
     new_active_chips = list(filter(lambda x: x not in filtered, modal_value))
-    print(new_active_chips)
 
     new_children = [dmc.Chip(x, value=x, size="xs") for x in modal_value]
     trigger_id = dash.ctx.triggered_id
@@ -208,7 +207,7 @@ def select_tags(_1, _2, modal_value, active_chips, children, opened):
     prevent_initial_call=True,
 )
 def update_fs_tag_in_url_params(value, data):
-    return update_query_data(data, {"FS": value})
+    return update_query_data(data, {"fs": value})
 
 @app.callback(
     Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
@@ -217,4 +216,4 @@ def update_fs_tag_in_url_params(value, data):
     prevent_initial_call=True,
 )
 def update_tag_in_url_params(value, data):
-    return update_query_data(data, {"TAGS": value})
+    return update_query_data(data, {"tags": value})

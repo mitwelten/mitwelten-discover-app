@@ -1,12 +1,13 @@
 from functools import reduce
 
 import dash_mantine_components as dmc
-from dash import dash, html, dcc, Output, Input
+from dash import dash, html, dcc, Output, Input, State
 
 from src.config.id_config import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
 from src.main import app
 from src.util.decorators import spaced_section
+from src.util.util import update_query_data
 
 
 def get_checkbox_by_type(node_type: str):
@@ -31,6 +32,12 @@ def get_checkbox_by_type(node_type: str):
 
 @spaced_section
 def source_filter(args):
+
+    active = args.get("devices", ["all"])
+    if active[0] != "all":
+        active = active.split(",")
+        active = [x.replace("_", " ") for x in active]
+
     source_types = reduce(
         list.__add__,
         [list(map(lambda x: get_checkbox_by_type(x),  SOURCE_PROPS.keys()))],
@@ -38,7 +45,6 @@ def source_filter(args):
     )
 
     return html.Div([
-        dcc.Interval(id="remove-highlight", interval=3000, disabled=True),
         dcc.Store(id=ID_ALL_ACTIVE_STORE, data={"active": False}),
         dmc.CheckboxGroup(
             id=ID_TYPE_CHECKBOX_GROUP,
@@ -46,7 +52,7 @@ def source_filter(args):
             withAsterisk=False,
             offset="xs",
             children=source_types,
-            value=["all"],
+            value=active,
         ),
     ])
 
@@ -72,3 +78,17 @@ def activate_all(value, data, all_enabled):
 
     return dash.no_update
 
+
+@app.callback(
+    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
+    Input(ID_TYPE_CHECKBOX_GROUP, "value"),
+    State(ID_QUERY_PARAM_STORE, "data"),
+    prevent_initial_call=True,
+)
+def update_tag_in_url_params(value, data):
+    if "all" in value:
+        value = "all"
+    else:
+        value = [x.replace(" ", "_") for x in value if x != "all"]
+
+    return update_query_data(data, {"devices": value})
