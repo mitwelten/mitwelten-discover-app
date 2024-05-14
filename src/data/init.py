@@ -14,6 +14,16 @@ def init_deployment_data():
         all_deployments_json = []
 
     all_deployments = [Deployment(d) for d in all_deployments_json]
+
+    # filter out deployments with "Bats" in the tags
+    all_deployments = [d for d in all_deployments
+                       if not (
+                           d.node_type == "Audio Logger" 
+                           and "Bats" in d.tags
+                           )
+                       ]
+
+
     all_types       = sorted(set(map(lambda d: d.node_type, all_deployments)))
     all_types_filtered = []
 
