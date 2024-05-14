@@ -20,7 +20,11 @@ def stores(args):
               for source_type in SOURCE_PROPS.keys()
               ],
             dcc.Store(id=ID_DEPLOYMENT_DATA_STORE,    data=None),
-            dcc.Store(id=ID_TAG_DATA_STORE,           data=dict(all=None, active_fs=args.get("FS", "ANY"))),
+            dcc.Store(id=ID_TAG_DATA_STORE,           data=dict(
+                all=init_tags(), 
+                active_fs=args.get("FS", "ANY"),
+                active_additional=args.get("TAG", [])
+                ), storage_type="local"),
             dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=None),
             dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=0), storage_type="local"),
             dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=0), storage_type="local"),

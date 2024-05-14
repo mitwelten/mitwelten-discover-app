@@ -2,9 +2,10 @@ import re
 
 import dash
 import dash_mantine_components as dmc
-from dash import html, Input, Output, State
+from dash import html, Input, Output, State, no_update, ctx
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
+from urllib import parse 
 
 from src.data.init import init_tags
 from src.util.decorators import spaced_section
@@ -22,6 +23,24 @@ fs_desc = dmc.Stack([
 
 @spaced_section
 def tag_filter(args):
+    all_tags  = init_tags()
+    all_tags = [tag["name"] for tag in all_tags]
+
+    predicate = re.compile("FS\d")
+
+    fs_tags = []
+    for tag in all_tags:
+        if predicate.match(tag):
+            fs_tags.append(tag)
+    fs_tags = list(sorted(fs_tags))
+    fs_tags.insert(0, "ANY")
+    fs_value = args.get("FS", "ANY")
+
+    tags = sorted([t for t in all_tags if t not in fs_tags])
+    tags_value = args.get("TAGS", [])
+    if tags_value:
+        tags_value = tags_value.split(",")
+
     return html.Div([
         dmc.Group([
             dmc.Text("Field Study", size="sm"),
@@ -52,7 +71,8 @@ def tag_filter(args):
                 color=PRIMARY_COLOR,
                 id=ID_FS_TAG_CHIPS_GROUP,
                 persistence=True,
-                data=[],
+                data=fs_tags,
+                value=fs_value,
                 size="xs"
             ),
         ]),
@@ -90,9 +110,9 @@ def tag_filter(args):
         dmc.Space(h=10),
         dmc.Center([
             dmc.ChipGroup(
-                [dmc.Chip(x, value=x, size="xs") for x in []],
+                [dmc.Chip(x, value=x, size="xs") for x in tags_value],
                 id=ID_TAG_CHIPS_GROUP,
-                value=[],
+                value=tags_value,
                 multiple=True
             ),
             html.Div(
@@ -102,8 +122,9 @@ def tag_filter(args):
                     zIndex=10000,
                     children=[
                         dmc.ChipGroup(
+                            children=[dmc.Chip(x, value=x, size="xs") for x in tags],
                             id=ID_MODAL_CHIPS_GROUP,
-                            value=[],
+                            value=tags_value,
                             multiple=True
                         ),
                         dmc.Space(h=20),
@@ -115,31 +136,33 @@ def tag_filter(args):
     ])
 
 
-@app.callback(
-    Output(ID_FS_TAG_CHIPS_GROUP, "data"),
-    Output(ID_FS_TAG_CHIPS_GROUP, "value"),
-    Output(ID_MODAL_CHIPS_GROUP, "children"),
-    Output(ID_TAG_DATA_STORE, "data"),
-    Input(ID_TAG_DATA_STORE, "data"),
-)
-def init_fs_tags_from_store(tags):
-    all_tags  = tags["all"]
-    active_fs = tags["active_fs"]
-    if all_tags is None:
-        all_tags= init_tags()
-
-    if all_tags is None:
-        raise PreventUpdate
-
-    predicate = re.compile("FS\d")
-    fs_tags = list(sorted(([tag["name"] for tag in all_tags if predicate.match(tag["name"])])))
-    fs_tags.insert(0, "ANY")
-
-    tags    = [t["name"] for t in all_tags if t["name"] not in fs_tags]
-    chips   = [dmc.Chip(tag, value=tag, size="xs", styles={"iconWrapper": {"className": ""}}) for tag in sorted(tags)],
-    return fs_tags, active_fs, *chips, dict(all=all_tags, active_fs=active_fs)
 
 
+#@app.callback(
+#    Output(ID_FS_TAG_CHIPS_GROUP, "data"),
+#    Output(ID_FS_TAG_CHIPS_GROUP, "value"),
+#    Output(ID_MODAL_CHIPS_GROUP, "children"),
+#    Output(ID_TAG_DATA_STORE, "data"),
+#    Input(ID_TAG_DATA_STORE, "data"),
+#)
+#def init_fs_tags_from_store(tags):
+#    all_tags  = tags["all"]
+#    active_fs = tags["active_fs"]
+#    if all_tags is None:
+#        all_tags= init_tags()
+#
+#    if all_tags is None:
+#        raise PreventUpdate
+#
+#    predicate = re.compile("FS\d")
+#    fs_tags = list(sorted(([tag["name"] for tag in all_tags if predicate.match(tag["name"])])))
+#    fs_tags.insert(0, "ANY")
+#
+#    tags    = [t["name"] for t in all_tags if t["name"] not in fs_tags]
+#    chips   = [dmc.Chip(tag, value=tag, size="xs", styles={"iconWrapper": {"className": ""}}) for tag in sorted(tags)],
+#    return fs_tags, active_fs, *chips, dict(all=all_tags, active_fs=active_fs)
+#
+#
 @app.callback(
     Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),
     Output(ID_TAG_CHIPS_GROUP, "value", allow_duplicate=True),
@@ -150,9 +173,9 @@ def init_fs_tags_from_store(tags):
 def reset_tags(_):
     # TODO: fix bug marker still be visible after clearing additional tags
     return [], [], []
-
-
-# TODO: refactor
+#
+#
+## TODO: refactor
 @app.callback(
     Output(ID_CHIPS_MODAL, "opened"),
     Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),
@@ -169,6 +192,7 @@ def select_tags(_1, _2, modal_value, active_chips, children, opened):
     current_chips = list(map(lambda x: x["props"]["value"], children))
     filtered = list(filter(lambda d: d not in active_chips, current_chips))
     new_active_chips = list(filter(lambda x: x not in filtered, modal_value))
+    print(new_active_chips)
 
     new_children = [dmc.Chip(x, value=x, size="xs") for x in modal_value]
     trigger_id = dash.ctx.triggered_id
@@ -186,3 +210,11 @@ def select_tags(_1, _2, modal_value, active_chips, children, opened):
 def update_fs_tag_in_url_params(value, data):
     return update_query_data(data, {"FS": value})
 
+@app.callback(
+    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
+    Input(ID_TAG_CHIPS_GROUP, "value"),
+    State(ID_QUERY_PARAM_STORE, "data"),
+    prevent_initial_call=True,
+)
+def update_tag_in_url_params(value, data):
+    return update_query_data(data, {"TAGS": value})

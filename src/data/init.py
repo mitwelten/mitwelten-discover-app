@@ -24,13 +24,13 @@ def init_deployment_data():
                        ]
 
 
-    all_types       = sorted(set(map(lambda d: d.node_type, all_deployments)))
-    all_types_filtered = []
+    all_types = sorted(set(map(lambda d: d.node_type, all_deployments)))
+    excluded  = [excl.lower().strip() for excl in EXCLUDED_DEPLOYMENTS]
 
+    all_types_filtered = []
     for depl_type in all_types.copy():
-        for excl in EXCLUDED_DEPLOYMENTS:
-            if depl_type.lower().strip() != excl.lower().strip():
-                all_types_filtered.append(depl_type)
+        if depl_type.lower().strip() not in excluded:
+            all_types_filtered.append(depl_type)
 
 
     # {type: deployment}

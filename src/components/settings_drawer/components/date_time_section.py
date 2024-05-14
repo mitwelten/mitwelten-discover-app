@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import dash
 import dash_mantine_components as dmc
 from dash import html, Output, Input, dcc, State
+from dash.exceptions import PreventUpdate
 
 from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
@@ -35,7 +36,7 @@ def date_time_section(args):
     return html.Div([
         dcc.Store(
             id=ID_DATE_RANGE_STORE,
-            data=dict(start=start, end=end)
+            data=dict(start=start.isoformat(timespec="seconds"), end=end.isoformat(timespec="seconds"))
         ),
         dmc.SegmentedControl(
             id=ID_DATE_RANGE_SEGMENT,
@@ -91,9 +92,11 @@ def change_visibility_of_date_range_picker(value):
 )
 def update_picker_from_segment(segment_data, picker_value):
     if segment_data == "":
-        return dash.no_update, dash.no_update, dash.no_update, dash.no_update
+        raise PreventUpdate
     if segment_data == "custom":
-        store_data=dict(start=datetime.fromisoformat(picker_value[0]), end=datetime.fromisoformat(picker_value[1]))
+        start = datetime.fromisoformat(picker_value[0]).isoformat(timespec="seconds")
+        end   = datetime.fromisoformat(picker_value[1]).isoformat(timespec="seconds")
+        store_data=dict(start=start, end=end)
         return store_data, {"display": "block"}, {"display": "none"}, dash.no_update
 
     if not segment_data:
@@ -101,7 +104,10 @@ def update_picker_from_segment(segment_data, picker_value):
     else:
         seg_time_range = int(segment_data)
 
-    store_data = dict(start=datetime.now() - timedelta(weeks=seg_time_range), end=datetime.now())
+    start = (datetime.now() - timedelta(weeks=seg_time_range)).isoformat(timespec="seconds")
+    end   = datetime.now().isoformat(timespec="seconds")
+    store_data = dict(start=start, end=end)
+
     label_data_start = local_formatted_date(datetime.isoformat(datetime.now() - timedelta(weeks=seg_time_range)), "%d %b %Y")
     label_data_end   = local_formatted_date(datetime.isoformat(datetime.now()), "%d %b %Y")
     return store_data, {"display": "none"}, {"display": "block"}, f"{label_data_start} - {label_data_end}"
@@ -114,6 +120,7 @@ def update_picker_from_segment(segment_data, picker_value):
 )
 def update_query_params(data, segment, params):
     if segment == "custom":
+        print(data)
         return update_query_data(params, {"start": data["start"], "end": data["end"], "timerange": "custom"})
     return update_query_data(params, {"start": None, "end": None, "timerange": segment})
     

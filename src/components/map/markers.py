@@ -81,7 +81,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, bounds):
     for key in depl_to_show.keys():
         fs_tags = depl_fs_filtered.get(key, [])
         tags = depl_tags_filtered.get(key, []) 
-        depl_to_show[key] = fs_tags + tags
+        depl_to_show[key] = set(fs_tags + tags)
 
     # time filter
     for key in depl_to_show.keys():

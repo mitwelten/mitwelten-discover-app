@@ -71,9 +71,24 @@ def text_to_dash_elements(text):
 
     return elements
 
+def get_param_if_present(param, data):
+
+    if data.get(param) is not None and data[param]:
+        if isinstance(data[param], list):
+            print("list", data[param])
+            return f"{param}={','.join(data[param])}"
+        else:
+            return f"{param}={data[param]}"
+    return None
+
 
 def query_data_to_string(data):
-    return "?" + parse.urlencode(data)
+    params : list[str] = []
+    for key in ["start", "end", "timerange", "FS", "lat", "lon", "zoom", "TAGS"]:
+        param = get_param_if_present(key, data)
+        if param is not None and param != "":
+            params.append(param)
+    return "?" + "&".join(params)
 
 
 def query_string_to_dict(query:str):
