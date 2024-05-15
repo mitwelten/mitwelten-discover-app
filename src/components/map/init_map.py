@@ -11,7 +11,11 @@ import src.components.map.markers
 
 initial_map = map_config.MAPS[1]
 
-def map_figure(args): 
+def map_figure(args, active_depl): 
+    if active_depl is not None:
+        print(active_depl)
+        print(active_depl)
+
     return dl.Map([
     dl.TileLayer(
         id=ID_BASE_LAYER_MAP,

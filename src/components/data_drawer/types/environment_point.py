@@ -26,12 +26,18 @@ def create_environment_point_chart(legend, id, theme):
     )
 
     return [
-        bottom_drawer_content(get_source_props("Environment")["name"], ENVIRONMENT_SENSOR_DESCRIPTION, [], "habitat.svg", theme), 
+        bottom_drawer_content(
+            get_source_props("Environment")["name"], 
+            ENVIRONMENT_SENSOR_DESCRIPTION, 
+            [], 
+            "habitat.svg", 
+            theme
+        ), 
         dmc.Paper(
             children=graph,
             shadow="md",
             p="md",
             radius="md",
             style={"margin":"20px", "height":"360px"}
-        ),
+        )
     ]

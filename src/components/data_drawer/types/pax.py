@@ -21,15 +21,17 @@ def create_pax_chart(marker_data, date_range, theme):
         time_from=date_range["start"],
         time_to=date_range["end"]
     )
+
     figure = create_themed_figure(theme)
+
     if resp is not None and len(resp["buckets"]) != 0:
+
         figure.update_layout(
             yaxis_title="Number of People Detected",
             annotations=[{"visible":False}],
             xaxis={"visible": True},
             yaxis={"visible": True},
         )
-
         timeseries = pd.bdate_range(date_range["start"], date_range["end"], tz="UTC", freq="D")
         empty_head = [0] * (pd.to_datetime(resp["buckets"][0]) - pd.to_datetime(timeseries[0])).days
         empty_tail = [0] * (pd.to_datetime(timeseries[-1]) - pd.to_datetime(resp["buckets"][-1])).days
@@ -48,6 +50,7 @@ def create_pax_chart(marker_data, date_range, theme):
         responsive=True,
         style={"width":"100%", "height":"100%"}
     )
+
     return [
         bottom_drawer_content(get_source_props("Pax Counter")["name"], PAX_DESCRIPTION, d.tags, "paxCounter.svg", theme), 
         dmc.Paper(

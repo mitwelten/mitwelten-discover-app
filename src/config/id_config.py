@@ -28,6 +28,8 @@ ID_ADD_NOTE_BUTTON = "id-add-note-button"
 ID_DATA_DRAWER_TITLE = "id-data-drawer-title"
 ID_STAY_LOGGED_IN_INTERVAL = "id-stay-logged-in-interval"
 ID_LOGIN_BUTTON_HREF = "id_login_button_href"
+ID_INFO_DIALOG_BUTTON = "id-info-dialog-button"
+ID_INFO_DIALOG_MODAL = "id-info-dialog-modal"
 
 # stores
 ID_TAG_DATA_STORE = "id-tags-data-store"
@@ -81,7 +83,6 @@ ID_FOCUS_ON_MAP_LOCATION = "id-focus-on-map-position"
 ID_MAP_IN_PROGRES = "id-map-in-progres"
 
 # notes
-ID_NOTE_ATTACHMENT_MODAL = "id-note-attachment-modal"
 ID_NOTE_OPEN_MODAL_BUTTON = "id-note-open-modal-button"
 ID_NOTE_EDIT_BUTTON = "id-note-edit-button"
 ID_NOTE_ATTACHMENT_BUTTON = "id-note-attachment-button"

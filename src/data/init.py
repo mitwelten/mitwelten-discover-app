@@ -54,6 +54,7 @@ def init_environment_data():
     return all_environments, environment_legend
 
 
+
 def init_notes(auth_cookie=None):
     all_notes = get_all_notes(auth_cookie)
     # standardize dictionary properties

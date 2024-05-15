@@ -83,7 +83,7 @@ def get_param_if_present(param, data):
 
 def query_data_to_string(data):
     params : list[str] = []
-    for key in ["start", "end", "timerange", "fs", "lat", "lon", "zoom", "tags", "devices"]:
+    for key in ["start", "end", "timerange", "fs", "lat", "lon", "zoom", "tags", "devices", "id"]:
         param = get_param_if_present(key, data)
         if param is not None and param != "":
             params.append(param)

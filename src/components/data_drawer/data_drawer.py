@@ -13,15 +13,70 @@ from src.config.app_config import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CH
 from src.config.id_config import *
 from src.config.app_config import CHART_DRAWER_HEIGHT
 from src.main import app
-from src.util.util import get_identification_label
+from pprint import pprint
+
+def create_chart_from_source(selected_marker, date_range, theme, notes, environment_data):
+    marker_data    = selected_marker.get("data")
+    marker_id      = marker_data.get("id")
+    drawer_content = html.Div("Somthing went wrong, not device found!")
+    drawer_size    = CHART_DRAWER_HEIGHT
+
+    
+    match selected_marker["type"]:
+        case "Audio Logger":
+            drawer_content = create_audio_chart3(marker_data, date_range, theme)
+        #case "Wild Cam":
+        #    drawer_content = create_wild_cam_view(marker_data, theme)
+        case "Env Sensor":
+            drawer_content = create_env_chart(marker_data, theme)
+        case "Pax Counter":
+
+            drawer_content = create_pax_chart(marker_data, date_range, theme)
+        case "Pollinator Cam":
+            drawer_content = create_pollinator_chart2(marker_data, date_range, theme)
+        case "Environment":
+            drawer_content = create_environment_point_chart(environment_data["legend"], marker_id, theme)
+        case "Note":
+            for note in notes["entries"]:
+                if note["id"] == marker_id:
+                    n = Note(note)
+                    file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
+                    drawer_size -= 116 - file_height                    
+                    drawer_content = note_view(n, file_height, theme)
+    return drawer_content, drawer_size
 
 
 
-chart_drawer = dmc.Drawer(
-        opened=False,
+def chart_drawer(args, active_device, all_notes, env):
+    # initially show chart of deivce, if a node_label is set in the query params
+    notes = {}
+    notes["entries"] = all_notes
+    
+    drawer_size = 500
+    chart = []
+    drawer_state = False
+
+    if active_device is not None:
+        start = args.get("start", None)
+        end   = args.get("end", None)
+
+        focues_deivce = {}
+        focues_deivce["type"] = active_device["node"]["type"]
+        focues_deivce["data"] = active_device
+        chart, drawer_size = create_chart_from_source(
+                focues_deivce, 
+                {"start": start, "end": end}, 
+                {"colorScheme": "light"}, 
+                notes, 
+                env
+                )
+        drawer_state = True
+
+    return dmc.Drawer(
+        opened=drawer_state,
         id=ID_CHART_DRAWER,
         zIndex=90000,
-        size=500,
+        size=drawer_size,
         closeOnClickOutside=True,
         closeOnEscape=True,
         withOverlay=False,
@@ -30,7 +85,11 @@ chart_drawer = dmc.Drawer(
         position="bottom",
         children=[
                 dmc.LoadingOverlay(
-                    html.Div(id=ID_CHART_CONTAINER, className=""),
+                    html.Div(
+                        id=ID_CHART_CONTAINER, 
+                        className="",
+                        children=chart
+                        ),
                     overlayBlur="0px",
                     overlayColor=None,
                     overlayOpacity=0,
@@ -39,10 +98,10 @@ chart_drawer = dmc.Drawer(
         ],
     )
 
+
 @app.callback(
     Output(ID_LOGO_CONTAINER, "style"),
     Output(ID_CHART_DRAWER, "styles"),
-    # Output("id-search-bar-container", "style"),
     Input(ID_SETTINGS_DRAWER, "opened"),
     State(ID_SETTINGS_DRAWER, "size")
 )
@@ -68,7 +127,7 @@ def open_drawer(selected_marker):
     return no_update
 
 
-# TODO: Refactor to a dispatch method
+
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
     Output(ID_CHART_DRAWER, "size"),
@@ -86,39 +145,20 @@ def update_drawer_content_from_marker_store(selected_marker, date_range, theme, 
     if selected_marker is None:
         raise PreventUpdate
 
-    marker_data    = selected_marker.get("data")
-    marker_id      = marker_data.get("id")
-    node_label     = get_identification_label(marker_data)
-    drawer_title   = f"{selected_marker['type']} - {node_label}"
-    drawer_content = html.Div("Somthing went wrong, not device found!")
-    drawer_size = CHART_DRAWER_HEIGHT
-
-    match selected_marker["type"]:
-        case "Audio Logger":
-            drawer_content = create_audio_chart3(marker_data, date_range, theme)
-        #case "Wild Cam":
-        #    drawer_content = create_wild_cam_view(marker_data, theme)
-        case "Env Sensor":
-            drawer_content = create_env_chart(marker_data, theme)
-        case "Pax Counter":
-            drawer_content = create_pax_chart(marker_data, date_range, theme)
-        case "Pollinator Cam":
-            drawer_content = create_pollinator_chart2(marker_data, date_range, theme)
-        case "Environment":
-            drawer_content = create_environment_point_chart(environment_data["legend"], marker_id, theme)
-        case "Note":
-            for note in notes["entries"]:
-                if note["id"] == marker_id:
-                    n = Note(note)
-                    file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
-                    drawer_size -= 116 - file_height                    
-                    drawer_content = note_view(n, file_height, theme)
-        case _:
-            notification = [
+    if selected_marker["type"] in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
+        notification = [
                 dmc.Title(f"Deployment: {selected_marker['type']}", order=6),
                 dmc.Text("No further data available!"),
             ]
-            return no_update, no_update, True, True, notification
+        return no_update, no_update, True, True, notification
+
+    drawer_content, drawer_size = create_chart_from_source(
+        selected_marker, 
+        date_range, 
+        theme, 
+        notes, 
+        environment_data
+        )
 
     return drawer_content, drawer_size, True, no_update, no_update
 

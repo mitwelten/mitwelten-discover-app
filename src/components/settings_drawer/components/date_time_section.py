@@ -113,14 +113,14 @@ def update_picker_from_segment(segment_data, picker_value):
     return store_data, {"display": "none"}, {"display": "block"}, f"{label_data_start} - {label_data_end}"
 
 @app.callback(
-    Output(ID_QUERY_PARAM_STORE , "data"),
+    Output(ID_QUERY_PARAM_STORE , "data", allow_duplicate=True),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input(ID_DATE_RANGE_SEGMENT, "value"),
     State(ID_QUERY_PARAM_STORE , "data"),
+    prevent_initial_call=True
 )
 def update_query_params(data, segment, params):
     if segment == "custom":
-        print(data)
         return update_query_data(params, {"start": data["start"], "end": data["end"], "timerange": "custom"})
     return update_query_data(params, {"start": None, "end": None, "timerange": segment})
     

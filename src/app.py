@@ -1,6 +1,5 @@
 import time
 from functools import partial
-from urllib import parse 
 
 import dash_mantine_components as dmc
 import dash_core_components as dcc
@@ -23,10 +22,10 @@ from src.model.note import Note
 from src.components.button.buttons import control_buttons
 from src.config.id_config import *
 from src.components.map.init_map import map_figure
+from src.components.map.banner import mitwelten_bannner
 from src.components.settings_drawer.settings_drawer import settings_drawer
 from src.components.data_drawer.data_drawer import chart_drawer
 from src.config.app_config import (
-    DISCOVER_DESCRIPTION,
     app_theme,
     CONFIRM_UNSAVED_CHANGES_MESSAGE,
     CONFIRM_DELETE_MESSAGE,
@@ -36,52 +35,55 @@ from src.data.stores import stores
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_expiration_date_from_cookies
 from src.main import app
+from src.data.init import init_deployment_data, init_environment_data, init_notes
 from src.util.util import query_data_to_string, update_query_data
+import flask
+
+
+def get_device_from_args(args, deployments):
+    active_id = args.get("id", None)
+    active_depl = None
+    #if active_id is not None:
+    #    for depl in deployments.values():
+    #        for d in depl:
+    #            if d["id"] == int(active_id):
+    #                active_depl = d  
+    #                break
+    return active_depl
 
 
 def app_content(args):
+
+    cookies      = flask.request.cookies
+    notes        = init_notes(cookies["auth"] if cookies else None)
+
+    data, legend = init_environment_data()
+    env_data     = {"entries": data, "legend": legend}
+
+    deployments  = init_deployment_data()
+    active_depl  = get_device_from_args(args, deployments)
+
     return [
     dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
     alert_danger,
     alert_warning,
     alert_info,
-    *stores(args),
-    html.Div(
-        html.A(
-            "MITWELTEN",
-            title="mitwelten.org",
-            href="https://mitwelten.org",
-            target="_blank",
-            className="mitwelten-logo",
-        ),
-        id=ID_LOGO_CONTAINER,
+    mitwelten_bannner,
+
+    dcc.ConfirmDialog(
+        id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG, 
+        message=CONFIRM_UNSAVED_CHANGES_MESSAGE
     ),
     dcc.ConfirmDialog(
-        id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG, message=CONFIRM_UNSAVED_CHANGES_MESSAGE
+        id=ID_CONFIRM_DELETE_DIALOG, 
+        message=CONFIRM_DELETE_MESSAGE
     ),
-    dcc.ConfirmDialog(id=ID_CONFIRM_DELETE_DIALOG, message=CONFIRM_DELETE_MESSAGE),
+
+    *stores(args, deployments, notes, env_data),
     *control_buttons,
-    map_figure(args),
-    chart_drawer,
+    map_figure(args, active_depl),
+    chart_drawer(args, active_depl, notes, env_data),
     settings_drawer(args),
-    dmc.Modal(id=ID_NOTE_ATTACHMENT_MODAL, size="lg", opened=False, zIndex=30000),
-    dcc.Location(id=ID_URL_LOCATION, refresh=False),
-    dmc.Modal(
-            id="modal-simple",
-            title="Welcome to the web map Discover of the Mitwelten project!",
-            zIndex=1000000,
-            centered=True,
-            withCloseButton=False,
-            opened=False,
-            children=[
-                dmc.Text(DISCOVER_DESCRIPTION, size="sm"),
-                dmc.Space(h=20),
-                dmc.Button(
-                    children=dmc.Text("Close"),
-                    id="modal-close-button",
-                    ),
-                ],
-        ),
 ]
 
 attribution = '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> '
@@ -95,20 +97,19 @@ def discover_app(**kwargs):
     withGlobalStyles=True,
     withNormalizeCSS=True,
     children=[
-        html.Div(children=app_content(kwargs), id=ID_APP_CONTAINER),
+        html.Div(
+            id=ID_APP_CONTAINER,
+            children=[
+                dcc.Location(id=ID_URL_LOCATION, refresh=False),
+                *app_content(kwargs)
+                ], 
+            ),
     ],
 )
 
 register_page("home", layout=discover_app, path="/")
 #app.layout = discover_app
 
-@app.callback(
-    Output("modal-simple", "opened"),
-    Input("modal-close-button", "n_clicks"),
-    prevent_initial_call=True,
-)
-def modal_demo(_click):
-    return False
 
 
 @app.callback(
@@ -126,7 +127,7 @@ def create_backend_request_to_stay_logged_in(_, avatar_clicks):
 
 
 @app.callback(
-    Output(ID_QUERY_PARAM_STORE, "data",allow_duplicate=True),
+    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
     Input(ID_MAP, "clickData"),
     State(ID_MAP, "zoom"),
     State(ID_QUERY_PARAM_STORE, "data"),
@@ -140,7 +141,8 @@ def map_click_handle(click_data, zoom, data):
     return update_query_data(data,
                              { "zoom": zoom,
                               "lat": location["lat"],
-                              "lon": location["lng"]
+                              "lon": location["lng"],
+                              "node_label": None
                               }
                              )
 
