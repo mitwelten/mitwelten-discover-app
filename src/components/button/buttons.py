@@ -20,14 +20,17 @@ from src.components.data_drawer.types.note.note_view import note_form_view
 from src.config.app_config import DISCOVER_DESCRIPTION
 
 info_dialog = dmc.Modal(
-            title="Mitwelten Disvocer App",
-            id="id-info-dialog",
-            zIndex=100000,
+            id=ID_INFO_DIALOG_MODAL,
+            title="Welcome to the web map Discover of the Mitwelten project!",
+            zIndex=1000000,
+            centered=True,
+            withCloseButton=False,
+            opened=False,
             children=[
-                #dmc.Text(""),
-                #dmc.Space(h=20),
-                dmc.Text(DISCOVER_DESCRIPTION),
-            ],
+                dmc.Text(DISCOVER_DESCRIPTION, size="sm"),
+                dmc.Space(h=20),
+                dmc.Button( children=dmc.Text("Close"),),
+                ],
         )
 
 login_button = dmc.Anchor(
@@ -102,7 +105,7 @@ control_buttons = [
                 smallerThan="sm",
                 styles={"display": "none"}
             ),
-            action_button(button_id="id-info-button", icon="material-symbols:info-outline"),
+            action_button(button_id=ID_INFO_DIALOG_BUTTON, icon="material-symbols:info-outline"),
             info_dialog
         ],
             id=ID_FAB_CONTAINER
@@ -110,8 +113,8 @@ control_buttons = [
     ]
 
 @app.callback(
-        Output("id-info-dialog", "opened"),
-        Input("id-info-button", "n_clicks"),
+        Output(ID_INFO_DIALOG_MODAL, "opened"),
+        Input(ID_INFO_DIALOG_BUTTON, "n_clicks"),
         prevent_initial_call=True
 )
 def open_info_dialog(click):
