@@ -42,8 +42,9 @@ def tag_filter(args):
         tags_value = tags_value.split(",")
 
     return html.Div([
-        dmc.Group([
-            dmc.Text("Field Study", size="sm"),
+        dmc.Text("Field Study", size="sm"),
+        dmc.Space(h=10),
+        dmc.Center(
             dmc.HoverCard(
                 position="top",
                 withArrow=True,
@@ -52,30 +53,31 @@ def tag_filter(args):
                 style={"display": "flex", "alignItems":"center"},
                 children=[
                     dmc.HoverCardTarget(
-                        children=dmc.ThemeIcon(
-                            size="sm",
-                            variant="filled",
-                            radius="sm",
-                            color=PRIMARY_COLOR, 
-                            children=DashIconify(icon="material-symbols:info-i-rounded", width=16),
-                            style={"cursor": "pointer"}
+                        children=
+                        dmc.Center([
+                            dmc.SegmentedControl(
+                                color=PRIMARY_COLOR,
+                                id=ID_FS_TAG_CHIPS_GROUP,
+                                persistence=True,
+                                data=fs_tags,
+                                value=fs_value,
+                                size="xs"
+                                ),
+                            ]),
+                        #dmc.ThemeIcon(
+                            #    size="sm",
+                            #    variant="filled",
+                            #    radius="sm",
+                            #    color=PRIMARY_COLOR, 
+                            #    children=DashIconify(icon="material-symbols:info-i-rounded", width=16),
+                            #    style={"cursor": "pointer"}
+                            #),
                         ),
-                    ),
                     dmc.HoverCardDropdown(children=fs_desc)
-                ],
+                    ],
+                ),
             ),
 
-        ], spacing="xs", position="apart"),
-        dmc.Center([
-            dmc.SegmentedControl(
-                color=PRIMARY_COLOR,
-                id=ID_FS_TAG_CHIPS_GROUP,
-                persistence=True,
-                data=fs_tags,
-                value=fs_value,
-                size="xs"
-            ),
-        ]),
         dmc.Space(h=20),
         dmc.Group([
             dmc.Text("Additional Tags",
@@ -86,14 +88,14 @@ def tag_filter(args):
                 dmc.ActionIcon(
                     DashIconify(
                         icon="material-symbols:add",
-                    ),
+                        ),
                     variant="filled",
                     id=ID_OPEN_CHIP_MODAL_BUTTON,
                     size="sm",
                     color=PRIMARY_COLOR,
                     n_clicks=0,
                     radius="sm",
-                ),
+                    ),
                 dmc.Button(
                     "Clear",
                     variant="light",
@@ -102,11 +104,11 @@ def tag_filter(args):
                     size="xs",
                     radius="xl",
                     id=ID_TAG_RESET_BUTTON,
-                ),
-            ]),
-        ],
-            position="apart"
-        ),
+                    ),
+                ]),
+            ],
+                  position="apart"
+                  ),
         dmc.Space(h=10),
         dmc.Center([
             dmc.ChipGroup(
@@ -114,7 +116,7 @@ def tag_filter(args):
                 id=ID_TAG_CHIPS_GROUP,
                 value=tags_value,
                 multiple=True
-            ),
+                ),
             html.Div(
                 dmc.Modal(
                     title="Select Tags",
@@ -126,14 +128,13 @@ def tag_filter(args):
                             id=ID_MODAL_CHIPS_GROUP,
                             value=tags_value,
                             multiple=True
-                        ),
+                            ),
                         dmc.Space(h=20),
                         dmc.Center(dmc.Button("Ok", id=ID_CLOSE_CHIP_MODAL_BUTTON)),
-                    ],
+                        ],
+                    ),
                 ),
-            ),
-        ]),
-    ])
+            ])])
 
 
 
