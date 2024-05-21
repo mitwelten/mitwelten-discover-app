@@ -11,14 +11,14 @@ from dash import ClientsideFunction, html, ctx
 play_icon = "material-symbols:play-arrow-rounded"
 pause_icon = "material-symbols:pause-rounded"
 
-ID_AUDIO_TIME_PROGRESS = "id-audio-time-progress"
-ID_AUDIO_STOP_BTN  = "id-audio-stop-button"
-ID_AUDIO_PLAY_PAUSE_BTN = "id-audio-play-pause-button"
-ID_AUDIO_MUTE_BTN  = "id-audio-mute-button"
+ID_AUDIO_TIME_PROGRESS   = "id-audio-time-progress"
+ID_AUDIO_STOP_BTN        = "id-audio-stop-button"
+ID_AUDIO_PLAY_PAUSE_BTN  = "id-audio-play-pause-button"
+ID_AUDIO_MUTE_BTN        = "id-audio-mute-button"
 ID_AUDIO_PLAY_PAUSE_ICON = "id-audio-play-pause-icon"
-ID_AUDIO_STOP_ICON = "id-audio-stop-icon"
-ID_AUDIO_MUTE_ICON = "id-audio-mute-icon"
-ID_EVENT_LISTENER = "id-event-listener"
+ID_AUDIO_STOP_ICON       = "id-audio-stop-icon"
+ID_AUDIO_MUTE_ICON       = "id-audio-mute-icon"
+ID_EVENT_LISTENER        = "id-event-listener"
 
 def audio_player(id: str, src: str, light_mode):
     player_background = "#F8F9FA" if light_mode else "#25262B"

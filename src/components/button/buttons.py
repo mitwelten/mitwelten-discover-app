@@ -1,6 +1,6 @@
 from dash.dash import flask
 import dash_mantine_components as dmc
-from dash import Output, Input, html, State, no_update
+from dash import Output, Input, html, State, no_update, ctx
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 from src.api.api_note import create_note
@@ -18,19 +18,29 @@ from src.model.note import Note, empty_note
 from src.util.user_validation import get_user_from_cookies
 from src.components.data_drawer.types.note.note_view import note_form_view
 from src.config.app_config import DISCOVER_DESCRIPTION
+from src.components.info.info import deployment_info
 
 info_dialog = dmc.Modal(
             id=ID_INFO_DIALOG_MODAL,
-            title="Welcome to the web map Discover of the Mitwelten project!",
+            title=dmc.Title("Welcome to the web map Discover of the Mitwelten project!"),
             zIndex=1000000,
             centered=True,
+            size="xl",
             withCloseButton=False,
             opened=False,
             children=[
                 dmc.Text(DISCOVER_DESCRIPTION, size="sm"),
-                dmc.Space(h=20),
-                dmc.Button( children=dmc.Text("Close"),),
-                ],
+                dmc.Space(h=40),
+                dmc.ScrollArea([
+                    deployment_info,
+                    ]),
+                dmc.Group([
+                    dmc.Button(
+                        id="id-info-modal-close-button", 
+                        children=dmc.Text("Close")
+                        ),
+                    ], position="right"
+                )],
         )
 
 login_button = dmc.Anchor(
@@ -115,10 +125,13 @@ control_buttons = [
 @app.callback(
         Output(ID_INFO_DIALOG_MODAL, "opened"),
         Input(ID_INFO_DIALOG_BUTTON, "n_clicks"),
+        Input("id-info-modal-close-button", "n_clicks"),
         prevent_initial_call=True
 )
-def open_info_dialog(click):
-    return True
+def open_info_dialog(click, close_click):
+    if ctx.triggered_id == ID_INFO_DIALOG_BUTTON:
+        return True
+    return False
 
 @app.callback(
     Output(ID_LOGIN_AVATAR_CONTAINER, "children"),
