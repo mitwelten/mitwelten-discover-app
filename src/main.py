@@ -1,5 +1,6 @@
 from dash import Dash
 import dash_bootstrap_components as dbc
+import datetime
 
 import diskcache
 from dash.long_callback import DiskcacheLongCallbackManager
@@ -11,6 +12,7 @@ external_stylesheets = [
     dbc.themes.BOOTSTRAP,
 ]
 
+print(f"[INIT APPLICATION] @ {datetime.datetime.now()}")
 app = Dash(
     __name__,
     title="Mitwelten Discover",

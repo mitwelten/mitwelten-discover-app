@@ -73,7 +73,7 @@ def environment_popup(environment):
         style={"width": "240px", "padding": "0px", "height": "75px"}
     )
 
-def note_tooltip(note: Note):
+def note_popup(note: Note):
     if note.description is not None:
         description = (note.description[:75] + '...') if len(note.description) > 75 else note.description
     else:

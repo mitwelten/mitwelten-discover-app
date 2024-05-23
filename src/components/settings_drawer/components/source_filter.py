@@ -33,7 +33,7 @@ def get_checkbox_by_type(node_type: str):
 @spaced_section
 def source_filter(args):
 
-    active = args.get("devices", ["all"])
+    active = args.get("devices")
     if active[0] != "all":
         active = active.split(",")
         active = [x.replace("_", " ") for x in active]

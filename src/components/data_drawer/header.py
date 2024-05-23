@@ -6,8 +6,6 @@ from src.config.app_config import PRIMARY_COLOR
 from dash_iconify import DashIconify
 
 def bottom_drawer_content(title, desc, tags, icon, theme, title_icons=None):
-
-
     info_text = dmc.HoverCard(
             position="top",
             withArrow=True,

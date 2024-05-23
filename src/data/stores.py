@@ -1,12 +1,12 @@
 import flask
 from dash.exceptions import PreventUpdate
 
-
 from src.components.data_drawer.types.pollinator import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
 from src.data.init import init_notes, init_tags
 from src.main import app
 from src.util.util import update_query_data
+
 
 def stores(args, deployments, notes, env_data): 
     all_sources = [
@@ -71,4 +71,26 @@ def refresh_notes_from_backend(data, _):
     prevent_initial_call=True,
     )
 def update_url(marker, data):
-    return update_query_data(data, {"id": marker["data"]["id"]})
+    if marker is None:
+        raise PreventUpdate
+
+    if marker["type"] == "Note":
+        name = "note_id"
+        id = marker["data"]["id"]
+    elif marker["type"] == "Environment":
+        name = "env_id"
+        id = marker["data"]["id"]
+    else:
+        name = "node_label"
+        id = marker["data"]["node"]["node_label"]
+
+    update_query_data(
+            data, 
+            {
+                "node_label": None,
+                "note_id": None,
+                "env_id": None,
+             }
+            )
+    return update_query_data(data, {name: id})
+

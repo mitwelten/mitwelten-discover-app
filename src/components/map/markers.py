@@ -12,7 +12,7 @@ from dash import (
 from dash.exceptions import PreventUpdate
 from dash_extensions.javascript import assign
 
-from src.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_tooltip
+from src.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_popup
 from src.config.id_config import *
 from src.config.map_config import get_source_props
 from src.main import app
@@ -20,6 +20,7 @@ from src.model.deployment import Deployment
 from src.model.environment import Environment
 from src.model.note import Note
 from src.util.helper_functions import was_deployed
+from pprint import pprint
 
 popup_events=dict(
     mouseover = assign("", "mouseover"), 
@@ -28,18 +29,18 @@ popup_events=dict(
 ) 
 
 
+
+
+
 @app.callback(
     Output(ID_MAP_LAYER_GROUP, "children"),
-    Output(ID_MAP, "viewport", allow_duplicate=True),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_TAG_CHIPS_GROUP, "value"),
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
-    State(ID_MAP, "bounds"),
-    prevent_initial_call=True
 )
-def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, bounds):
+def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
     """
     Changes the visible markers of the "physical" devices on the map.
     This callback is mainly triggered by adjusting the filter settings.
@@ -84,35 +85,15 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, bounds):
         depl_to_show[key] = set(fs_tags + tags)
 
     # time filter
+    print(time_range)
     for key in depl_to_show.keys():
         depl_to_show[key] = list(filter(lambda x: was_deployed(x, time_range["start"], time_range["end"]), depl_to_show[key]))
 
-    move_map = ctx.triggered_id == ID_FS_TAG_CHIPS_GROUP
-    new_bounds = bounds if bounds is not None else [[None, None],[None, None]]
-    top     = None
-    bottom  = None
-    left    = None
-    right   = None
-
     markers = []
-
 
     for key in depl_to_show.keys():
         for d in depl_to_show[key]:
-            if move_map:
-                if left is None or left > d.lon: 
-                    left = d.lon
-
-                if right is None or right < d.lon :
-                    right = d.lon
-
-                if bottom is None or bottom > d.lat: 
-                    bottom = d.lat
-
-                if top is None or top < d.lat: 
-                    top = d.lat
-
-            markers.append(
+                       markers.append(
                 dl.Marker(
                     position=[d.lat, d.lon],
                     children=[
@@ -130,13 +111,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, bounds):
                 )
             )
 
-    if move_map:
-        new_bounds[1][0] = top
-        new_bounds[0][0] = bottom 
-        new_bounds[0][1] = left   
-        new_bounds[1][1] = right 
-
-    return markers, dict(bounds=bounds, transition="flyTo") if move_map else no_update
+    return markers
 
 
 @app.callback(
@@ -209,7 +184,7 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
                 position=[current_note.lat, current_note.lon],
                 children=[
                     dl.Popup(
-                        children=note_tooltip(current_note),
+                        children=note_popup(current_note),
                         closeButton=False,
                         autoPan=False,
                         autoClose=False,

@@ -145,7 +145,7 @@ def note_detail_view(note: Note, file_height, theme):
     Input(ID_MAP, "clickData"),
     prevent_initial_call=True
 )
-def map_click(_, data):
+def map_click(_):
     return ""
 
 @app.callback(
@@ -231,7 +231,6 @@ def click_on_attachment(click, data):
     documents = data["documents"]
     all_files = [*files, *documents]
 
-    print(click)
     for (idx, file) in enumerate(all_files):
         if ctx.triggered_id["file_id"] == file["id"]:
             data["focus"] = idx

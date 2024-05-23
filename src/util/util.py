@@ -5,7 +5,6 @@ from datetime import datetime
 from dash import html
 from urllib import parse 
 
-
 def local_formatted_date(date: str, date_format="%d %b %Y • %H:%M"):
     tz = pytz.timezone(time.tzname[0])
     dt = datetime.fromisoformat(date)
@@ -71,7 +70,7 @@ def text_to_dash_elements(text):
 
     return elements
 
-def get_param_if_present(param, data):
+def get_value_or_none(param, data):
 
     if data.get(param) is not None and data[param]:
         if isinstance(data[param], list):
@@ -82,11 +81,37 @@ def get_param_if_present(param, data):
 
 
 def query_data_to_string(data):
+
+    # special case: if timerange is set, remove start and end (happens on startup)
+    if data.get("timerange") is not None:
+        if data.get("start") is not None:
+            del data["start"]
+        if data.get("end") is not None:
+            del data["end"]
+
+    # TODO: move to config
+    query_params = [
+            "start", 
+            "end", 
+            "timerange", 
+            "fs", 
+            "lat", 
+            "lon", 
+            "zoom", 
+            "tags", 
+            "devices", 
+            "node_label", 
+            "note_id", 
+            "env_id"
+            ]
+
     params : list[str] = []
-    for key in ["start", "end", "timerange", "fs", "lat", "lon", "zoom", "tags", "devices", "id"]:
-        param = get_param_if_present(key, data)
+
+    for key in query_params:
+        param = get_value_or_none(key, data)
         if param is not None and param != "":
             params.append(param)
+
     return "?" + "&".join(params)
 
 

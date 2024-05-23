@@ -17,18 +17,14 @@ from src.util.util import local_formatted_date, update_query_data
 
 @spaced_section
 def date_time_section(args):
-    timerange = args.get("timerange", "custom")
+    timerange = args.get("timerange")
+    start = args.get("start")
+    end   = args.get("end")
 
-    if args.get("start") is None or args.get("end") is None:
-        start = datetime.now() - timedelta(weeks=FIRST_DEPLOYMENT_WEEKS_AGO)
-        end = datetime.now()
-    else:
-        start = datetime.fromisoformat(args.get("start"))
-        end   = datetime.fromisoformat(args.get("end"))
-
-    if timerange == "custom":
-        label_start = local_formatted_date(start.isoformat(), '%d %b %Y')
-        label_end   = local_formatted_date(end.isoformat(), '%d %b %Y')
+    if timerange is None:
+        label_start = ""
+        label_end   = ""
+        timerange = "custom"
     else:
         label_start = local_formatted_date(datetime.isoformat(datetime.now() - timedelta(weeks=int(timerange))), "%d %b %Y")
         label_end   = local_formatted_date(datetime.isoformat(datetime.now()), "%d %b %Y")
@@ -36,7 +32,7 @@ def date_time_section(args):
     return html.Div([
         dcc.Store(
             id=ID_DATE_RANGE_STORE,
-            data=dict(start=start.isoformat(timespec="seconds"), end=end.isoformat(timespec="seconds"))
+            data=dict(start=start, end=end)
         ),
         dmc.SegmentedControl(
             id=ID_DATE_RANGE_SEGMENT,
@@ -90,27 +86,33 @@ def change_visibility_of_date_range_picker(value):
     Input(ID_DATE_RANGE_PICKER, "value"),
     prevent_initial_call=True
 )
-def update_picker_from_segment(segment_data, picker_value):
-    if segment_data == "":
+def update_picker_from_segment(weeks, picker_value):
+    if weeks == "":
         raise PreventUpdate
-    if segment_data == "custom":
+
+    if weeks == "custom":
         start = datetime.fromisoformat(picker_value[0]).isoformat(timespec="seconds")
         end   = datetime.fromisoformat(picker_value[1]).isoformat(timespec="seconds")
         store_data=dict(start=start, end=end)
         return store_data, {"display": "block"}, {"display": "none"}, dash.no_update
 
-    if not segment_data:
-        seg_time_range = 7
-    else:
-        seg_time_range = int(segment_data)
-
-    start = (datetime.now() - timedelta(weeks=seg_time_range)).isoformat(timespec="seconds")
+    start = (datetime.now() - timedelta(weeks=int(weeks))).isoformat(timespec="seconds")
     end   = datetime.now().isoformat(timespec="seconds")
     store_data = dict(start=start, end=end)
 
-    label_data_start = local_formatted_date(datetime.isoformat(datetime.now() - timedelta(weeks=seg_time_range)), "%d %b %Y")
-    label_data_end   = local_formatted_date(datetime.isoformat(datetime.now()), "%d %b %Y")
+    label_data_start = local_formatted_date(start, "%d %b %Y")
+    label_data_end   = local_formatted_date(end, "%d %b %Y")
     return store_data, {"display": "none"}, {"display": "block"}, f"{label_data_start} - {label_data_end}"
+
+
+@app.callback(
+    Output(ID_DATE_RANGE_PICKER, "value"),
+    Input(ID_DATE_RANGE_STORE, "data"),
+    prevent_initial_call=True
+)
+def update_picker_from_store(data):
+    return [data["start"], data["end"]]
+
 
 @app.callback(
     Output(ID_QUERY_PARAM_STORE , "data", allow_duplicate=True),
@@ -121,6 +123,6 @@ def update_picker_from_segment(segment_data, picker_value):
 )
 def update_query_params(data, segment, params):
     if segment == "custom":
-        return update_query_data(params, {"start": data["start"], "end": data["end"], "timerange": "custom"})
+        return update_query_data(params, {"start": data["start"], "end": data["end"], "timerange": None})
     return update_query_data(params, {"start": None, "end": None, "timerange": segment})
     

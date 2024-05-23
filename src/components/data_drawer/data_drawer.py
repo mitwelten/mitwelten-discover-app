@@ -47,7 +47,7 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
 
 
 
-def chart_drawer(args, active_device, all_notes, env):
+def chart_drawer(args, device, all_notes, env):
     # initially show chart of deivce, if a node_label is set in the query params
     notes = {}
     notes["entries"] = all_notes
@@ -55,16 +55,25 @@ def chart_drawer(args, active_device, all_notes, env):
     drawer_size = 500
     chart = []
     drawer_state = False
-
-    if active_device is not None:
+    if device is not None:
         start = args.get("start", None)
         end   = args.get("end", None)
 
-        focues_deivce = {}
-        focues_deivce["type"] = active_device["node"]["type"]
-        focues_deivce["data"] = active_device
+        active_device = {}
+
+        if args.get("node_label") is not None:
+            active_device["type"] = device["node"]["type"]
+            active_device["data"] = device
+        elif args.get("env_id") is not None:
+            active_device["type"] = "Environment"
+            active_device["data"] = device
+        else:
+            active_device["type"] = "Note"
+            active_device["data"] = device
+
+
         chart, drawer_size = create_chart_from_source(
-                focues_deivce, 
+                active_device, 
                 {"start": start, "end": end}, 
                 {"colorScheme": "light"}, 
                 notes, 

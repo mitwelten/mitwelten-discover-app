@@ -13,7 +13,6 @@ def init_deployment_data():
     if all_deployments_json is None:
         all_deployments_json = []
 
-    print(all_deployments_json[0])
     all_deployments = [Deployment(d) for d in all_deployments_json]
 
     # filter out deployments with "Bats" in the tags
@@ -49,7 +48,6 @@ def init_environment_data():
     all_environments_json = get_environment_data()
     if all_environments_json is None:
         return []
-    print(all_environments_json[0])
     # standardize dictionary properties
     all_environments = [Environment(env).to_dict() for env in all_environments_json]
     environment_legend = get_environment_legend()
@@ -59,7 +57,6 @@ def init_environment_data():
 
 def init_notes(auth_cookie=None):
     all_notes = get_all_notes(auth_cookie)
-    print(all_notes[0])
     # standardize dictionary properties
     all_notes = [Note(n).to_dict() for n in all_notes]
     return all_notes

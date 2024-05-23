@@ -2,7 +2,7 @@ import re
 
 import dash
 import dash_mantine_components as dmc
-from dash import html, Input, Output, State, no_update, ctx
+from dash import html, Input, Output, State, no_update, ctx, ALL
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 from urllib import parse 
@@ -13,6 +13,7 @@ from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
 from src.util.util import update_query_data
+from src.model.deployment import Deployment
 
 fs_desc = dmc.Stack([
     dmc.Text("Field Study 1: Merian Gärten",   size="sm"),
@@ -34,7 +35,7 @@ def tag_filter(args):
             fs_tags.append(tag)
     fs_tags = list(sorted(fs_tags))
     fs_tags.insert(0, "ANY")
-    fs_value = args.get("fs", "ANY")
+    fs_value = args.get("fs")
 
     tags = sorted([t for t in all_tags if t not in fs_tags])
     tags_value = args.get("tags", [])
@@ -137,33 +138,6 @@ def tag_filter(args):
             ])])
 
 
-
-
-#@app.callback(
-#    Output(ID_FS_TAG_CHIPS_GROUP, "data"),
-#    Output(ID_FS_TAG_CHIPS_GROUP, "value"),
-#    Output(ID_MODAL_CHIPS_GROUP, "children"),
-#    Output(ID_TAG_DATA_STORE, "data"),
-#    Input(ID_TAG_DATA_STORE, "data"),
-#)
-#def init_fs_tags_from_store(tags):
-#    all_tags  = tags["all"]
-#    active_fs = tags["active_fs"]
-#    if all_tags is None:
-#        all_tags= init_tags()
-#
-#    if all_tags is None:
-#        raise PreventUpdate
-#
-#    predicate = re.compile("FS\d")
-#    fs_tags = list(sorted(([tag["name"] for tag in all_tags if predicate.match(tag["name"])])))
-#    fs_tags.insert(0, "ANY")
-#
-#    tags    = [t["name"] for t in all_tags if t["name"] not in fs_tags]
-#    chips   = [dmc.Chip(tag, value=tag, size="xs", styles={"iconWrapper": {"className": ""}}) for tag in sorted(tags)],
-#    return fs_tags, active_fs, *chips, dict(all=all_tags, active_fs=active_fs)
-#
-#
 @app.callback(
     Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),
     Output(ID_TAG_CHIPS_GROUP, "value", allow_duplicate=True),
@@ -218,3 +192,45 @@ def update_fs_tag_in_url_params(value, data):
 )
 def update_tag_in_url_params(value, data):
     return update_query_data(data, {"tags": value})
+
+
+@app.callback(
+    Output(ID_MAP, "viewport", allow_duplicate=True),
+    Input(ID_FS_TAG_CHIPS_GROUP, "value"),
+    Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
+    State(ID_MAP, "bounds"),
+    prevent_initial_call=True
+)
+def move_map_to_fs_area(fs_tag, sources, bounds):
+    new_bounds = bounds if bounds is not None else [[None, None],[None, None]]
+    deployment_data = {}
+    for source in sources:
+        deployment_data[source["type"]] = source["entries"]
+
+    top     = None
+    bottom  = None
+    left    = None
+    right   = None
+
+    for key in deployment_data.keys():
+        for d in deployment_data[key]:
+            d = Deployment(d)
+            if fs_tag in d.tags or fs_tag == "ANY":
+                if left is None or left > d.lon: 
+                    left = d.lon
+
+                if right is None or right < d.lon :
+                    right = d.lon
+
+                if bottom is None or bottom > d.lat: 
+                    bottom = d.lat
+
+                if top is None or top < d.lat: 
+                    top = d.lat
+
+    new_bounds[1][0] = top
+    new_bounds[0][0] = bottom 
+    new_bounds[0][1] = left   
+    new_bounds[1][1] = right 
+
+    return dict(bounds=bounds, transition="flyTo")
