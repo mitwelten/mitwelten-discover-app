@@ -134,7 +134,12 @@ def create_pollinator_chart2(marker_data, date_range, theme):
      )
 
     return [
-        bottom_drawer_content(get_source_props("Pollinator Cam")["name"], POLLINATOR_DESCRIPTION, d.tags, "polliCam.svg", theme), 
+        bottom_drawer_content(
+            get_source_props("Pollinator Cam")["name"], 
+            d.tags, 
+            "polliCam.svg", 
+            theme
+            ), 
         dmc.Paper(
             children=graph,
             shadow="md",

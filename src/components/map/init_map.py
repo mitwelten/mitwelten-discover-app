@@ -66,7 +66,7 @@ def map_figure(args, active_depl):
     dl.LayerGroup(id=ID_ENV_LAYER_GROUP),
     dl.LayerGroup(id=ID_HIGHLIGHT_LAYER_GROUP),
     dl.LayerGroup(id=ID_NOTES_LAYER_GROUP),
-    dl.LayerGroup(id="init-popup-layer", children=init_popup) if init_popup is not None else {},
+    dl.LayerGroup(id="init-popup-layer", children=init_popup),
     ],
     id=ID_MAP,
     #viewport=dict(center=[47.5339807306196, 7.6169566067567], zoom=10, transition="flyTo"),

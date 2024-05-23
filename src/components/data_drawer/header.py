@@ -5,27 +5,7 @@ from src.config.id_config import *
 from src.config.app_config import PRIMARY_COLOR
 from dash_iconify import DashIconify
 
-def bottom_drawer_content(title, desc, tags, icon, theme, title_icons=None):
-    info_text = dmc.HoverCard(
-            position="top",
-            withArrow=True,
-            width="200px",
-            shadow="md",
-            style={"display": "flex", "alignItems":"center"},
-            children=[
-                dmc.HoverCardTarget(
-                    children=dmc.ThemeIcon(
-                        size="sm",
-                        color=PRIMARY_COLOR,
-                        variant="filled",
-                        children=DashIconify(icon="material-symbols:info-i-rounded", width=16, color="white"),
-                        style={"cursor": "pointer"}
-                        ),
-                    ),
-                dmc.HoverCardDropdown(children=dmc.Text(desc, size="sm"))
-                ],
-            )
-
+def bottom_drawer_content(title, tags, icon, theme, title_icons=None):
     return dmc.Container([
         dmc.Grid([
             dmc.Col(
@@ -39,7 +19,6 @@ def bottom_drawer_content(title, desc, tags, icon, theme, title_icons=None):
                             align="center",
                             children=[
                                 dmc.Title(title),
-                                info_text if desc != "" else None,
                                 title_icons
                             ], 
                         ),

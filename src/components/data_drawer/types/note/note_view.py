@@ -130,7 +130,6 @@ def note_detail_view(note: Note, file_height, theme):
     return [
             bottom_drawer_content(
                 note.title,
-                EXPERIMENT_AND_FINDING_DESCRIPTION,
                 note.tags,
                 "docu.svg",
                 theme,

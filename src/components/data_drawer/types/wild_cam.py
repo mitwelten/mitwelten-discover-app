@@ -15,7 +15,12 @@ def create_wild_cam_view(deployment_data, theme):
 
     return [
         dcc.Store("id-wild-cam-image-store", data=deployment_data["id"]),
-        bottom_drawer_content(get_source_props("Wild Cam")["name"], "tbd", d.tags, "wildCam.svg", theme), 
+        bottom_drawer_content(
+            get_source_props("Wild Cam")["name"], 
+            d.tags, 
+            "wildCam.svg", 
+            theme
+            ), 
         dmc.Paper(
             children=view,
             shadow="md",
