@@ -163,8 +163,6 @@ def set_default_args(args):
     if args.get("fs") is None:
         args["fs"] = "ANY"
 
-    if args.get("devices") is None:
-        args["devices"] = ["all"]
     return args
 
 

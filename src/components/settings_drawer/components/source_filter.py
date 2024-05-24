@@ -1,7 +1,8 @@
 from functools import reduce
 
 import dash_mantine_components as dmc
-from dash import dash, html, dcc, Output, Input, State
+from dash import dash, html, dcc, Output, Input, State, ctx
+from dash.exceptions import PreventUpdate
 
 from src.config.id_config import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
@@ -33,19 +34,25 @@ def get_checkbox_by_type(node_type: str):
 @spaced_section
 def source_filter(args):
 
+    #active = list(SOURCE_PROPS.keys())
     active = args.get("devices")
-    if active[0] != "all":
+    if active is not None:
         active = active.split(",")
         active = [x.replace("_", " ") for x in active]
+    else:
+        active = list(SOURCE_PROPS.keys())
 
-    source_types = reduce(
-        list.__add__,
-        [list(map(lambda x: get_checkbox_by_type(x),  SOURCE_PROPS.keys()))],
-        [dmc.Checkbox(label=dmc.Group(["All"]), value="all", size="xs")] # dmc.Space(w=4) before "All"
-    )
+    source_types = [get_checkbox_by_type(x) for x in  SOURCE_PROPS.keys()]
 
     return html.Div([
-        dcc.Store(id=ID_ALL_ACTIVE_STORE, data={"active": False}),
+        dmc.Checkbox(
+            id="id-all-checkbox",
+            label=dmc.Group(["All"]), 
+            checked=True,
+            value="all", 
+            size="sm"
+            ),
+        dmc.Space(h=10),
         dmc.CheckboxGroup(
             id=ID_TYPE_CHECKBOX_GROUP,
             orientation="vertical",
@@ -56,27 +63,16 @@ def source_filter(args):
         ),
     ])
 
-
 @app.callback(
-    Output(ID_TYPE_CHECKBOX_GROUP, "value"),
-    Output(ID_ALL_ACTIVE_STORE, "data"),
-    Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-    Input(ID_TYPE_CHECKBOX_GROUP, "children"),
-    Input(ID_ALL_ACTIVE_STORE, "data"),
+        Output(ID_TYPE_CHECKBOX_GROUP, "value"),
+        Input("id-all-checkbox", "checked"),
+        prevent_initial_call=True,
 )
-def activate_all(value, data, all_enabled):
-    values = list(map(lambda x: x["props"]["value"], data))
+def activate_all(value):
+    if value:
+        return list(SOURCE_PROPS.keys())
+    return []
 
-    if "all" in value and not all_enabled["active"]:
-        return values, {"active": True}
-
-    if "all" not in value and all_enabled["active"] and len(value) == len(values) - 1:
-        return [], {"active": False}
-
-    if all_enabled["active"]:
-        return list(filter(lambda x: x != "all", value)), {"active": False}
-
-    return dash.no_update
 
 
 @app.callback(
@@ -86,8 +82,8 @@ def activate_all(value, data, all_enabled):
     prevent_initial_call=True,
 )
 def update_tag_in_url_params(value, data):
-    if "all" in value:
-        value = "all"
+    if len(value) == len(SOURCE_PROPS.keys()):
+        value = None
     else:
         value = [x.replace(" ", "_") for x in value if x != "all"]
 

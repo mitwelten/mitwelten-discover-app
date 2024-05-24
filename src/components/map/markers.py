@@ -28,10 +28,6 @@ popup_events=dict(
     click     = assign("", "click"),
 ) 
 
-
-
-
-
 @app.callback(
     Output(ID_MAP_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
@@ -85,7 +81,6 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
         depl_to_show[key] = set(fs_tags + tags)
 
     # time filter
-    print(time_range)
     for key in depl_to_show.keys():
         depl_to_show[key] = list(filter(lambda x: was_deployed(x, time_range["start"], time_range["end"]), depl_to_show[key]))
 
@@ -149,11 +144,10 @@ def add_environment_markers(active_checkboxes, all_environments):
 
 
 @app.callback(
-    Output(ID_NOTES_LAYER_GROUP, "children", allow_duplicate=True),
+    Output(ID_NOTES_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_EDIT_NOTE_STORE, "data"),
     Input({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    prevent_initial_call=True
 )
 def add_note_markers(active_checkboxes, selected_note, all_notes):
     if "Note" not in active_checkboxes:
