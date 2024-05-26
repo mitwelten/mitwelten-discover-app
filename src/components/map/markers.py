@@ -20,7 +20,8 @@ from src.model.deployment import Deployment
 from src.model.environment import Environment
 from src.model.note import Note
 from src.util.helper_functions import was_deployed
-from pprint import pprint
+
+from src.util.util import update_query_data
 
 popup_events=dict(
     mouseover = assign("", "mouseover"), 
@@ -204,6 +205,7 @@ clientside_callback(
 
 @app.callback(
     Output(ID_MAP, "viewport", allow_duplicate=True),
+    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     Input(ID_CHART_DRAWER, "size"),
     State(ID_BROWSER_PROPERTIES_STORE, "data"),
@@ -213,6 +215,7 @@ clientside_callback(
     State(ID_MAP, "bounds"),
     State(ID_MAP, "zoom"),
     State(ID_MAP, "center"),
+    State(ID_QUERY_PARAM_STORE, "data"),
     prevent_initial_call=True,
 )
 def ensure_marker_visibility_in_viewport(
@@ -225,6 +228,7 @@ def ensure_marker_visibility_in_viewport(
     bounds,
     zoom,
     center,
+    query_data,
 ):
     if marker is None:
         raise PreventUpdate
@@ -284,7 +288,15 @@ def ensure_marker_visibility_in_viewport(
 
     new_center = [center["lat"] + (move_required[0] * -1), center["lng"] + (move_required[1] * -1)]
 
-    return dict(center=new_center, zoom=zoom, transition="flyTo")
+    updated_query_params = update_query_data(
+            query_data,
+            { "zoom": zoom,
+             "lat": new_center[0],
+             "lon": new_center[1],
+             }
+            )
+
+    return dict(center=new_center, zoom=zoom, transition="flyTo"), updated_query_params
 
 
 

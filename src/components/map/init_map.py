@@ -23,7 +23,6 @@ def map_figure(args, active_depl):
 
         if args.get("node_label") is not None:
             active_depl = Deployment(active_depl)
-            init_center = [active_depl.lat, active_depl.lon]
             popup_fn = device_popup
         elif args.get("env_id") is not None:
             popup_fn = environment_popup
