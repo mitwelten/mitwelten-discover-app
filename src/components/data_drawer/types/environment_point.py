@@ -23,6 +23,7 @@ def create_environment_point_chart(legend, id, theme):
         figure=figure,
         responsive=True,
         className="chart-graph",
+        config={"displayModeBar": False},
     )
 
     return [
