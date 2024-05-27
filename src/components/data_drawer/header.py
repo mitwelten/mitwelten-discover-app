@@ -5,7 +5,7 @@ from src.config.id_config import *
 from src.config.app_config import PRIMARY_COLOR
 from dash_iconify import DashIconify
 
-def bottom_drawer_content(title, tags, icon, theme, title_icons=None):
+def bottom_drawer_content(title, tags, icon, theme, title_icons=None, info=None):
     return dmc.Container([
         dmc.Grid([
             dmc.Col(
@@ -20,30 +20,22 @@ def bottom_drawer_content(title, tags, icon, theme, title_icons=None):
                             children=[
                                 dmc.Title(title),
                                 title_icons
-                            ], 
-                        ),
-                        dmc.Grid(
+                                ], 
+                            ),
+                        dmc.ScrollArea(
                             children=[
-                                dmc.Col(children=[
-                                    dmc.ScrollArea(
-                                        children=[
-                                            dmc.ChipGroup(
-                                                [dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in tags],
-                                                noWrap=True
-                                            )
-                                        ],
-                                        type="hover",
-                                        offsetScrollbars=True
-                                    ),
-
-                                ],span=12),
-
-                                #dmc.Col(children=[
-                                #    dmc.Text(f" {date_from} - {date_to}", align="end", color="dimmed", size="sm"), 
-                                #],span=12, sm=5),
-                            ]
-                        ),
-                    ])
+                                dmc.Group([
+                                dmc.Text(info, size="sm", color="dimmed") if info else None,
+                                dmc.ChipGroup(
+                                    [dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in tags],
+                                    noWrap=True
+                                    )
+                                ]),
+                                ],
+                            type="hover",
+                            offsetScrollbars=True
+                            ),
+                        ])
             ],
                 span=9,
                 sm=10

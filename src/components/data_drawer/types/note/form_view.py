@@ -20,7 +20,7 @@ from src.model.note import Note
 from src.util.util import local_formatted_date
 from src.error.notifications import notification, response_notification
 
-def get_form_controls(public:bool = False):
+def get_form_controls(public:bool = True):
     return [
         dmc.Switch(
             id=ID_NOTE_EDIT_PUBLIC_FLAG,

@@ -11,7 +11,7 @@ from configuration import DOMAIN_NAME
 from src.components.button.components.action_button import action_button
 from src.components.map.layer_selection.drawer import map_menu_drawer
 from src.components.map.layer_selection.popup import map_menu_popup
-from src.config.app_config import PRIMARY_COLOR
+from src.config.app_config import CHART_DRAWER_HEIGHT, PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note, empty_note
@@ -155,6 +155,7 @@ def login(_):
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Input(ID_ADD_NOTE_BUTTON, "n_clicks"),
     State(ID_BROWSER_PROPERTIES_STORE, "data"),
     State(ID_SETTINGS_DRAWER, "opened"),
@@ -183,7 +184,7 @@ def create_note_on_map(
             dmc.Title("Operation not permitted", order=6),
             dmc.Text("Log in to create notes!")
         ]
-        return no_update, True, notification, no_update, no_update, no_update
+        return no_update, True, notification, no_update, no_update, no_update, no_update
     
     new_note = Note(empty_note)
 
@@ -208,6 +209,7 @@ def create_note_on_map(
     new_note.lon = left + settings_drawer_width + ((map_delta_lon - settings_drawer_width) / 2)
     new_note.lat = bottom + data_drawer_height + ((map_delta_lat - data_drawer_height) / 2)
     new_note.date = datetime.now(timezone.utc).isoformat()
+    new_note.public = True
 
     auth_cookie = flask.request.cookies.get("auth")
     res = create_note(new_note, auth_cookie)
@@ -216,5 +218,5 @@ def create_note_on_map(
     new_note["author"] = user.full_name
     notes = dict(entires=[])
 
-    return notes, no_update, no_update, dict(data=new_note), note_form_view(Note(new_note), all_tags["all"]), True
+    return notes, no_update, no_update, dict(data=new_note, new=True), note_form_view(Note(new_note), all_tags["all"]), True, CHART_DRAWER_HEIGHT
 

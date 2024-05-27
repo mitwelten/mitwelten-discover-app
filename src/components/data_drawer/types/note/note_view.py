@@ -21,6 +21,7 @@ from src.config.app_config import CHART_DRAWER_HEIGHT, EXPERIMENT_AND_FINDING_DE
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
+from src.model.user import User
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
 from src.util.util import local_formatted_date, text_to_dash_elements
@@ -113,7 +114,7 @@ def note_detail_view(note: Note, file_height, theme):
                                 icon="material-symbols:edit", 
                                 disabled=True if user is None else False)
 
-    content = dmc.ScrollArea(
+    content = dmc.Container(dmc.ScrollArea(
             children=[
                 dmc.Grid([
                 dmc.Col(text_to_html_list(note.description), span=8),
@@ -126,7 +127,7 @@ def note_detail_view(note: Note, file_height, theme):
                     ], justify="space-between", grow=True),
                 dmc.Space(h=10),
                 *attachment_area(note.files, False),
-            ], type="hover", h=360, offsetScrollbars=True)
+            ], type="hover", h=360, offsetScrollbars=True))
     return [
             bottom_drawer_content(
                 note.title,
@@ -134,6 +135,7 @@ def note_detail_view(note: Note, file_height, theme):
                 "docu.svg",
                 theme,
                 dmc.Group([private, edit_button]),
+                note.author
                 ),
             content
             ]
@@ -190,19 +192,38 @@ def deactivate_edit_mode(delete_click, note):
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
+    Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
+    Output(ID_ALERT_INFO, "children", allow_duplicate=True),
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_TAG_DATA_STORE, "data"),
     prevent_initial_call=True
 )
 def activate_edit_mode(click, notes, all_tags):
+
     click_sum = safe_reduce(lambda x, y: x + y, click, 0)
     if ctx.triggered_id is None or click_sum == 0:
         raise PreventUpdate
 
+    user = get_user_from_cookies()
+    if user is None:
+        notification = [
+                dmc.Title("Operation not permitted", order=6),
+                dmc.Text("Log in to edit notes!")
+                ]
+        return no_update, no_update, no_update, no_update, True, notification
+
     for note in notes["entries"]:
-       if note["id"] == ctx.triggered_id["note_id"]:
-            return dict(data=note), note_form_view(Note(note), all_tags["all"]), False, CHART_DRAWER_HEIGHT
+        if note["id"] == ctx.triggered_id["note_id"]:
+            n = Note(note)
+            if n.author != user.full_name:
+                notification = [
+                        dmc.Title("Operation not permitted", order=6),
+                        dmc.Text("Only the author can edit this note!")
+                        ]
+                return no_update, no_update, no_update, no_update, True, notification
+
+            return dict(data=note), note_form_view(n, all_tags["all"]), False, CHART_DRAWER_HEIGHT, no_update, no_update
 
 
 app.clientside_callback(

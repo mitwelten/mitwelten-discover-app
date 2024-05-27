@@ -18,4 +18,3 @@ class User:
                 f"Roles: {self.roles}")
 
 
-
