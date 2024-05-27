@@ -5,7 +5,7 @@ from src.components.data_drawer.types.pollinator import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
 from src.data.init import init_notes, init_tags
 from src.main import app
-from src.util.util import update_query_data
+from src.url.parse import update_query_data
 
 
 def stores(args, deployments, notes, env_data): 

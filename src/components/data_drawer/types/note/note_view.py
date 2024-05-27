@@ -26,7 +26,6 @@ from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
 from src.util.util import local_formatted_date, text_to_dash_elements
 from src.config.app_config import supported_mime_types
-from src.util.util import update_query_data
 
 SCROLL_AREA_HEIGHT = 350
 

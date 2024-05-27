@@ -12,7 +12,8 @@ from src.config.settings_config import DEFAULT_DATE_RANGES
 from src.config.settings_config import FIRST_DEPLOYMENT_WEEKS_AGO
 from src.main import app
 from src.util.decorators import spaced_section
-from src.util.util import local_formatted_date, update_query_data
+from src.util.util import local_formatted_date
+from src.url.parse import update_query_data
 
 
 @spaced_section

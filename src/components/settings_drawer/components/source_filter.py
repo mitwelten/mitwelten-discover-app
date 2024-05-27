@@ -8,7 +8,7 @@ from src.config.id_config import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
 from src.main import app
 from src.util.decorators import spaced_section
-from src.util.util import update_query_data
+from src.url.parse import update_query_data
 
 
 def get_checkbox_by_type(node_type: str):

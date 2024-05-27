@@ -12,7 +12,7 @@ from src.util.decorators import spaced_section
 from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
-from src.util.util import update_query_data
+from src.url.parse import update_query_data
 from src.model.deployment import Deployment
 
 fs_desc = dmc.Stack([

@@ -21,7 +21,7 @@ from src.model.environment import Environment
 from src.model.note import Note
 from src.util.helper_functions import was_deployed
 
-from src.util.util import update_query_data
+from src.url.parse import update_query_data
 
 popup_events=dict(
     mouseover = assign("", "mouseover"), 

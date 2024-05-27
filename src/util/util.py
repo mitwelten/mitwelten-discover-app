@@ -3,7 +3,6 @@ import re
 import pytz
 from datetime import datetime
 from dash import html
-from urllib import parse 
 
 def local_formatted_date(date: str, date_format="%d %b %Y • %H:%M"):
     tz = pytz.timezone(time.tzname[0])
@@ -70,66 +69,4 @@ def text_to_dash_elements(text):
 
     return elements
 
-def get_value_or_none(param, data):
-
-    if data.get(param) is not None and data[param]:
-        if isinstance(data[param], list):
-            return f"{param}={','.join(data[param])}"
-        else:
-            return f"{param}={data[param]}"
-    return None
-
-
-def query_data_to_string(data):
-
-    # special case: if timerange is set, remove start and end (happens on startup)
-    if data.get("timerange") is not None:
-        if data.get("start") is not None:
-            del data["start"]
-        if data.get("end") is not None:
-            del data["end"]
-
-    # TODO: move to config
-    query_params = [
-            "start", 
-            "end", 
-            "timerange", 
-            "fs", 
-            "lat", 
-            "lon", 
-            "zoom", 
-            "tags", 
-            "devices", 
-            "node_label", 
-            "note_id", 
-            "env_id"
-            ]
-
-    params : list[str] = []
-
-    for key in query_params:
-        param = get_value_or_none(key, data)
-        if param is not None and param != "":
-            params.append(param)
-
-    return "?" + "&".join(params)
-
-
-def query_string_to_dict(query:str):
-    if len(query) > 0 and query[0] == "?":
-        query = query[1:] # remove the question mark
-    params = parse.parse_qs(query)
-    return {k: v[0] for k,v in params.items()}
-
-
-def update_query_data(data, params: dict):
-    # update data dict with params
-    for param in params.keys():
-        if params[param] is not None:
-            data[param] = params[param]
-        else:
-            if data.get(param) is not None:
-                del data[param]
-
-    return dict(sorted(data.items()))
 
