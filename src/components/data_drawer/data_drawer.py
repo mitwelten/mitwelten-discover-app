@@ -183,3 +183,13 @@ def activate_preventing_marker_clicks(selected_note):
         return dict(state=False)
     return dict(state=True)
 
+
+@app.callback(
+        Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
+        Input(ID_CHART_DRAWER, "opened"),
+        prevent_initial_call=True
+        )
+def close_drawer(opened):
+    if opened:
+        return no_update
+    return []
