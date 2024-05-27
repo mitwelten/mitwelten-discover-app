@@ -294,7 +294,6 @@ def map_click(_, selected_note, notes):
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
     State(ID_EDIT_NOTE_STORE, "data"),
-    State(ID_EDIT_NOTE_STORE, "new"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_CHART_DRAWER, "size"),
     State(ID_APP_THEME, "theme"),
@@ -303,10 +302,6 @@ def map_click(_, selected_note, notes):
 def deactivate_edit_mode(cancel_click, selected_note, new, notes, drawer_size, theme):
     if cancel_click is None or cancel_click == 0:
         return no_update, no_update, True, no_update, no_update, no_update
-
-    if new is not None:
-        return no_update, drawer_size, True, no_update, no_update
-        
     
     for note in notes["entries"]:
         if note["id"] == selected_note["data"]["id"]:

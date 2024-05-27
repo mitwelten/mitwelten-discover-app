@@ -68,7 +68,6 @@ def map_figure(args, active_depl):
     dl.LayerGroup(id="init-popup-layer", children=init_popup),
     ],
     id=ID_MAP,
-    #viewport=dict(center=[47.5339807306196, 7.6169566067567], zoom=10, transition="flyTo"),
     center=init_center,
     zoom=args.get("zoom"),
     maxZoom=DEFAULT_MAX_ZOOM,
@@ -80,3 +79,5 @@ def map_figure(args, active_depl):
         "zIndex": 0,
     },
 )
+
+

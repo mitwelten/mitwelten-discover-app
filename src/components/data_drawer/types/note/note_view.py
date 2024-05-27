@@ -337,12 +337,11 @@ def mark_active_card(data, theme, cards):
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_EDIT_NOTE_STORE, "data"),
-    State(ID_EDIT_NOTE_STORE, "new"),
     State(ID_CHART_DRAWER, "size"),
     State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
-def cancel_click(cancel_click, notes, selected_note, new, drawer_size, theme):
+def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
     print("cancel click")
 
     if ctx.triggered_id == ID_NOTE_FORM_CANCEL_BUTTON:
@@ -352,17 +351,12 @@ def cancel_click(cancel_click, notes, selected_note, new, drawer_size, theme):
     if selected_note["data"] is None:
         raise PreventUpdate
 
-    if new is not None:
-        print("new note")
-        return False, no_update, no_update, no_update, True 
-
-
     file_height = 116
     for note in notes["entries"]:
         if note["id"] == selected_note["data"]["id"]:
             n = Note(note)
             if n != Note(selected_note["data"]):
-                return True, no_update, no_update, no_update, drawer_size
+                return True, no_update, no_update, no_update, drawer_size, False
 
             file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
             drawer_size -= 116 - file_height                    
