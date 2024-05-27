@@ -97,7 +97,7 @@ def note_form_view(note: Note, all_tags):
                     children=attachment_area(note.files, True),
                 )
             ],
-            h=425,
+            h=435,
             type="hover",
             offsetScrollbars=True
         )
@@ -337,11 +337,13 @@ def mark_active_card(data, theme, cards):
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_EDIT_NOTE_STORE, "data"),
+    State(ID_EDIT_NOTE_STORE, "new"),
     State(ID_CHART_DRAWER, "size"),
     State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
-def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
+def cancel_click(cancel_click, notes, selected_note, new, drawer_size, theme):
+    print("cancel click")
 
     if ctx.triggered_id == ID_NOTE_FORM_CANCEL_BUTTON:
         if cancel_click is None or cancel_click == 0:
@@ -349,6 +351,11 @@ def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
 
     if selected_note["data"] is None:
         raise PreventUpdate
+
+    if new is not None:
+        print("new note")
+        return False, no_update, no_update, no_update, True 
+
 
     file_height = 116
     for note in notes["entries"]:

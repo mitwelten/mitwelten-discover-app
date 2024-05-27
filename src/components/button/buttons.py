@@ -156,6 +156,7 @@ def login(_):
     Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Input(ID_ADD_NOTE_BUTTON, "n_clicks"),
     State(ID_BROWSER_PROPERTIES_STORE, "data"),
     State(ID_SETTINGS_DRAWER, "opened"),
@@ -184,7 +185,7 @@ def create_note_on_map(
             dmc.Title("Operation not permitted", order=6),
             dmc.Text("Log in to create notes!")
         ]
-        return no_update, True, notification, no_update, no_update, no_update, no_update
+        return no_update, True, notification, no_update, no_update, no_update, no_update, no_update
     
     new_note = Note(empty_note)
 
@@ -218,5 +219,5 @@ def create_note_on_map(
     new_note["author"] = user.full_name
     notes = dict(entires=[])
 
-    return notes, no_update, no_update, dict(data=new_note, new=True), note_form_view(Note(new_note), all_tags["all"]), True, CHART_DRAWER_HEIGHT
+    return notes, no_update, no_update, dict(data=new_note, new=True), note_form_view(Note(new_note), all_tags["all"]), True, CHART_DRAWER_HEIGHT, False 
 
