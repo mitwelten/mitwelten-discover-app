@@ -40,7 +40,8 @@ def tag_filter(args):
     tags = sorted([t for t in all_tags if t not in fs_tags])
     tags_value = args.get("tags", [])
     if tags_value:
-        tags_value = tags_value.split(",")
+        tags_value = tags_value.split(" ")
+        tags_value = [x.replace("_", " ") for x in tags_value]
 
     return html.Div([
         dmc.Text("Field Study", size="sm"),
@@ -191,6 +192,8 @@ def update_fs_tag_in_url_params(value, data):
     prevent_initial_call=True,
 )
 def update_tag_in_url_params(value, data):
+    value = "+".join(value)
+    value = value.replace(" ", "_")
     return update_query_data(data, {"tags": value})
 
 

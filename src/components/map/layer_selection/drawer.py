@@ -5,8 +5,6 @@ from src.main import app
 from src.config.id_config import *
 from src.config.map_config import MAPS, OVERLAYS, MAP_TYPES
 
-# unused import is used to initialize callbacks !
-
 
 def minimap_button(id_prefix, map_config, role):
     return html.Div(dmc.Stack(

@@ -37,7 +37,7 @@ def source_filter(args):
     #active = list(SOURCE_PROPS.keys())
     active = args.get("devices")
     if active is not None:
-        active = active.split(",")
+        active = active.split(" ")
         active = [x.replace("_", " ") for x in active]
     else:
         active = list(SOURCE_PROPS.keys())
@@ -85,6 +85,7 @@ def update_tag_in_url_params(value, data):
     if len(value) == len(SOURCE_PROPS.keys()):
         value = None
     else:
-        value = [x.replace(" ", "_") for x in value if x != "all"]
+        value = "+".join(value)
+        value = value.replace(" ", "_")
 
     return update_query_data(data, {"devices": value})
