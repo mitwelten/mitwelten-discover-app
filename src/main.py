@@ -12,7 +12,6 @@ external_stylesheets = [
     dbc.themes.BOOTSTRAP,
 ]
 
-print(f"[INIT APPLICATION] @ {datetime.datetime.now()}")
 app = Dash(
     __name__,
     title="Mitwelten Discover",

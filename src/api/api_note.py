@@ -67,7 +67,6 @@ def add_tag_by_note_id(note_id, tag:str, auth_cookie):
         json=dict(name=tag),
         headers={"Authorization": f"Bearer {auth_cookie}"}
     )
-    print("added tag with: ", response.status_code)
     return response.status_code
 
 

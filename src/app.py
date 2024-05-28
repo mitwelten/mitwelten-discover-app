@@ -64,8 +64,8 @@ def app_content(args):
 
 
 def discover_app(**kwargs): 
+    print("app kwargs: ", kwargs)
     args = set_default_args(kwargs)
-    print("app args: ", args)
     return dmc.MantineProvider(
             id=ID_APP_THEME,
             theme=app_theme,
@@ -132,6 +132,7 @@ def update_query_data_location(click_data, zoom, data):
     )
 def update_url_of_login_logout_button(data):
     query_params = query_data_to_string(data)
+    print("update_url_of_login_logout_button: ", query_params)
     login_url = f"{DOMAIN_NAME}/login{query_params}" 
     return query_params, login_url
 

@@ -1,6 +1,5 @@
 import requests
 import base64
-from pprint import pprint
 
 from src.api.api_client import construct_url
 
@@ -15,8 +14,6 @@ def get_file(object_name, media_type):
 
     encoded_file = base64.b64encode(res.content).decode()
     encoded_file = f"data:{media_type};base64,{encoded_file}"
-
-    print(f"Get File from Note: object_name={object_name}, status={res.status_code}")
     return encoded_file
 
 
