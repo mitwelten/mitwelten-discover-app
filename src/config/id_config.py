@@ -81,6 +81,7 @@ ID_MINIMAP_LABEL = "id-minimap-label"
 ID_MINIMAP_LAYER_BUTTON = "id-minimap-layer-button"
 ID_FOCUS_ON_MAP_LOCATION = "id-focus-on-map-position"
 ID_MAP_IN_PROGRES = "id-map-in-progres"
+ID_INIT_POPUP_LAYER = "id-init-popup-layer"
 
 # notes
 ID_NOTE_OPEN_MODAL_BUTTON = "id-note-open-modal-button"

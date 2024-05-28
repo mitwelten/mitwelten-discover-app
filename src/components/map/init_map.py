@@ -35,7 +35,6 @@ def map_figure(args, active_depl):
         init_popup = dl.Popup(
             children=popup_fn(active_depl),
             closeButton=False,
-            id="init-popup",
             autoPan=False,
             autoClose=False,
             position=[active_depl.lat, active_depl.lon],
@@ -65,7 +64,7 @@ def map_figure(args, active_depl):
     dl.LayerGroup(id=ID_ENV_LAYER_GROUP),
     dl.LayerGroup(id=ID_HIGHLIGHT_LAYER_GROUP),
     dl.LayerGroup(id=ID_NOTES_LAYER_GROUP),
-    dl.LayerGroup(id="init-popup-layer", children=init_popup),
+    dl.LayerGroup(id=ID_INIT_POPUP_LAYER, children=init_popup),
     ],
     id=ID_MAP,
     center=init_center,
