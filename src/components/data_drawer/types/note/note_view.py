@@ -1,8 +1,4 @@
-from http.client import responses
-
-import dash
 import dash_mantine_components as dmc
-import flask
 from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_update
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
@@ -11,25 +7,23 @@ from pprint import pprint
 
 from configuration import API_URL
 from src.components.data_drawer.header import bottom_drawer_content
-from src.api.api_note import delete_note
 from src.components.media.slideshow import slideshow
 from src.api.api_files import get_file_url
 from src.components.button.components.action_button import action_button
 from src.components.data_drawer.types.note.attachment import attachment_area
 from src.components.data_drawer.types.note.form_view import form_content, get_form_controls
-from src.config.app_config import CHART_DRAWER_HEIGHT, EXPERIMENT_AND_FINDING_DESCRIPTION
+from src.config.app_config import CHART_DRAWER_HEIGHT
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
-from src.model.user import User
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
-from src.util.util import local_formatted_date, text_to_dash_elements
+from src.util.util import local_formatted_date, text_to_dash_elements, get_drawer_size_by_number_of_files
 from src.config.app_config import supported_mime_types
+from src.components.data_drawer.types.note.confirm import confirm_dialogs
 
-SCROLL_AREA_HEIGHT = 350
 
-def note_view(note: Note, file_height, theme):
+def note_view(note: Note, theme, edit=False, all_tags=None):
     media_files = []
     documents   = []
 
@@ -40,19 +34,28 @@ def note_view(note: Note, file_height, theme):
             documents.append(file)
 
     media_files = list(sorted(media_files, key=lambda file: file.name.lower()))
-    documents   = list(sorted(documents, key=lambda file: file.name.lower()))
+    documents   = list(sorted(documents,   key=lambda file: file.name.lower()))
 
     media_files = [f.to_dict() for f in media_files]
     documents   = [f.to_dict() for f in documents]
+
+
+    if edit:
+        children = note_form_view(note, all_tags)
+    else:
+        children = note_detail_view(note, theme)
 
     return [
             dcc.Store(
                 id=ID_NOTE_FILE_STORE, 
                 data=dict(media_files=media_files, documents=documents, focus=0, API_URL=API_URL)
                 ),
-            dmc.Container(
+            html.Div(
                 id=ID_NOTE_CONTAINER,
-                children=[*note_detail_view(note, file_height, theme)])
+                children=children,
+                style={"maxWidth": "1200px"}
+                ),
+            *confirm_dialogs
             ]
 
 
@@ -103,7 +106,7 @@ def note_form_view(note: Note, all_tags):
         ], fluid=True, style={"marginTop": "20px"})
 
 
-def note_detail_view(note: Note, file_height, theme):
+def note_detail_view(note: Note, theme):
     user            = get_user_from_cookies()
     files           = list(sorted(note.files, key=lambda file: file.name.lower()))
     media_files     = list(filter(lambda f: f.type.startswith("image/") or f.type.startswith("audio/"), files))
@@ -113,20 +116,23 @@ def note_detail_view(note: Note, file_height, theme):
                                 icon="material-symbols:edit", 
                                 disabled=True if user is None else False)
 
-    content = dmc.Container(dmc.ScrollArea(
+    content = dmc.Container(
+            dmc.ScrollArea(
             children=[
                 dmc.Grid([
-                dmc.Col(text_to_html_list(note.description), span=8),
-                dmc.Col(
-                    html.Div(
-                        id="id-slideshow-container", 
-                        className="image-container", 
-                        children=slideshow(theme, files) if has_media_files else {}
-                        ), className="image-col", span=4),
-                    ], justify="space-between", grow=True),
+                    dmc.Col(text_to_html_list(note.description), span=8),
+                    dmc.Col(
+                        html.Div(
+                            id="id-slideshow-container", 
+                            className="image-container", 
+                            children=slideshow(theme, files) if has_media_files else {}
+                            ), className="image-col", span=4),
+                        ], justify="space-between", grow=True),
                 dmc.Space(h=10),
                 *attachment_area(note.files, False),
-            ], type="hover", h=360, offsetScrollbars=True))
+                ], type="hover", h=360, offsetScrollbars=True),
+            fluid=True,
+            )
     return [
             bottom_drawer_content(
                 note.title,
@@ -157,34 +163,6 @@ def delete_click(click):
     if click == 0 or click is None:
         raise PreventUpdate
     return True
-
-
-@app.callback(
-    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_ALERT_DANGER, "is_open", allow_duplicate=True),
-    Output(ID_ALERT_DANGER, "children", allow_duplicate=True),
-    Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
-    Input(ID_CONFIRM_DELETE_DIALOG, "submit_n_clicks"),
-    State(ID_EDIT_NOTE_STORE, "data"),
-    prevent_initial_call=True
-)
-def deactivate_edit_mode(delete_click, note):
-    if delete_click is None or delete_click == 0:
-        raise PreventUpdate
-
-    auth_cookie = flask.request.cookies.get("auth")
-    response = delete_note(note["data"]["id"], auth_cookie)
-    if response == 200:
-        return dict(data=None), False, dash.no_update, dash.no_update, dict(entries=[], type="Note")
-    else:
-        notification = [
-            dmc.Title("Something went wrong!", order=6),
-            dmc.Text("Could not delete Note."),
-            dmc.Text(f"Exited with Status Code: {response} | {responses[response]}", color="dimmed")
-        ]
-        return dash.no_update, dash.no_update, True, notification, dash.no_update
-
 
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
@@ -327,6 +305,7 @@ def mark_active_card(data, theme, cards):
     return styles 
 
 
+
 @app.callback(
     Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
@@ -341,26 +320,21 @@ def mark_active_card(data, theme, cards):
     prevent_initial_call=True
 )
 def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
-    print("cancel click")
-
-    if ctx.triggered_id == ID_NOTE_FORM_CANCEL_BUTTON:
-        if cancel_click is None or cancel_click == 0:
-            raise PreventUpdate
+    if cancel_click is None or cancel_click == 0:
+        raise PreventUpdate
 
     if selected_note["data"] is None:
         raise PreventUpdate
 
-    file_height = 116
     for note in notes["entries"]:
         if note["id"] == selected_note["data"]["id"]:
             n = Note(note)
             if n != Note(selected_note["data"]):
-                return True, no_update, no_update, no_update, drawer_size, False
+                return True, no_update, no_update, no_update, False
 
-            file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
-            drawer_size -= 116 - file_height                    
-
-            return no_update, dict(data=None), note_view(Note(note), file_height, theme), drawer_size, True
+            drawer_size = get_drawer_size_by_number_of_files(len(n.files))
+            return no_update, dict(data=None), note_view(Note(note), 0, theme), drawer_size, True
+    raise PreventUpdate
 
 
 @app.callback(
@@ -372,3 +346,28 @@ def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
 def update_player_colors(theme, src):
     return slideshow(theme, src)
 
+
+@app.callback(
+    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
+    Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
+    Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
+    State(ID_EDIT_NOTE_STORE, "data"),
+    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    State(ID_CHART_DRAWER, "size"),
+    State(ID_APP_THEME, "theme"),
+    prevent_initial_call=True,
+)
+def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, theme):
+    if cancel_click is None or cancel_click == 0:
+        raise PreventUpdate
+    
+    for note in notes["entries"]:
+        if note["id"] == selected_note["data"]["id"]:
+            n = Note(note)
+            drawer_size = get_drawer_size_by_number_of_files(len(n.files))
+            return dict(data=None), drawer_size, True, note_view(n, 0, theme), True
+
+    raise PreventUpdate
