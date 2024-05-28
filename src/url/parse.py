@@ -2,6 +2,7 @@ from src.model.deployment import Deployment
 from urllib import parse 
 from src.util.helper_functions import was_deployed
 from src.config.app_config import QUERY_PARAMS
+from pprint import pprint
 
 def get_device_from_args(args, deployments, notes, env_data):
     types = {
@@ -83,25 +84,20 @@ def query_data_to_string(data):
     for key in QUERY_PARAMS:
         param = get_value_or_none(key, data)
         if param is not None and param != "":
+            print(param)
             params.append(param)
 
     return "?" + "&".join(params)
 
 
-def query_string_to_dict(query:str):
-    if len(query) > 0 and query[0] == "?":
-        query = query[1:] # remove the question mark
-    params = parse.parse_qs(query)
-    return {k: v[0] for k,v in params.items()}
-
-
 def update_query_data(data, params: dict):
     # update data dict with params
     for param in params.keys():
-        if params[param] is not None:
+        if params.get(param) is not None:
             data[param] = params[param]
         else:
             if data.get(param) is not None:
                 del data[param]
 
     return dict(sorted(data.items()))
+
