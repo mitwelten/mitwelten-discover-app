@@ -3,6 +3,7 @@ import dash_mantine_components as dmc
 from dash import Output, Input, html, State, no_update, ctx
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
+from src.error.notifications import notification_not_permitted, notification_response
 from src.api.api_note import create_note
 
 import json
@@ -147,6 +148,8 @@ def login(_):
         return no_update, hidden, visible 
     return create_avatar(user), visible, hidden
 
+def notify(notification):
+    return [no_update, True, notification, no_update, no_update, no_update, no_update, no_update]
 
 @app.callback(
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
@@ -185,15 +188,12 @@ def create_note_on_map(
     user = get_user_from_cookies()
 
     if user is None:
-        notification = [
-            dmc.Title("Operation not permitted", order=6),
-            dmc.Text("Log in to create notes!")
-        ]
-        return no_update, True, notification, no_update, no_update, no_update, no_update, no_update
+        return notify(notification_not_permitted("Log in to create notes!"))
     
     new_note = Note(empty_note)
 
     # initially the bounds of the map are None
+    print("Bounds: ", bounds)
     if bounds is not None:
         top    = bounds[1][0]
         bottom = bounds[0][0]
@@ -224,13 +224,16 @@ def create_note_on_map(
 
     auth_cookie = flask.request.cookies.get("auth")
     res = create_note(new_note, auth_cookie)
-    # TODO: handle error
+
+    if res.status_code != 200:
+        return notify(notification_response(res.status_code, "Could not create Note."))
+
     new_note = json.loads(res.content)
     new_note["id"] = new_note["note_id"]
     new_note["author"] = user.full_name
 
     notes = dict(entires=[])
-    view = note_view(Note(new_note), 50, theme, True, all_tags["all"])
+    view = note_view(Note(new_note), theme, True, all_tags["all"])
 
     return notes, no_update, no_update, dict(data=new_note, new=True), view, True, CHART_DRAWER_HEIGHT, False 
 

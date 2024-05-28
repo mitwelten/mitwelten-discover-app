@@ -10,7 +10,17 @@ def notification(text: str):
     ]
     return notification
 
-def response_notification(code: int, text: str):
+
+def notification_not_permitted(text: str):
+
+    notification = [
+        dmc.Title("Operation not permitted.", order=6),
+        dmc.Text(text),
+    ]
+    return notification
+
+
+def notification_response(code: int, text: str):
 
     code_desc = responses[code]
 

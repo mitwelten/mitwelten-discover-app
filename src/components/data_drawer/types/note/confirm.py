@@ -3,6 +3,7 @@ import flask
 import dash_mantine_components as dmc
 from http.client import responses
 
+from src.error.notifications import notification_not_permitted, notification_response
 from src.api.api_note import delete_note
 from src.main import app
 from dash.exceptions import PreventUpdate
@@ -39,15 +40,11 @@ def deactivate_edit_mode_from_delete(delete_click, note):
         raise PreventUpdate
 
     auth_cookie = flask.request.cookies.get("auth")
-    response = delete_note(note["data"]["id"], auth_cookie)
-    if response == 200:
+    res = delete_note(note["data"]["id"], auth_cookie)
+    if res.status_code == 200:
         return dict(data=None), False, no_update, no_update, dict(entries=[], type="Note")
     else:
-        notification = [
-            dmc.Title("Something went wrong!", order=6),
-            dmc.Text("Could not delete Note."),
-            dmc.Text(f"Exited with Status Code: {response} | {responses[response]}", color="dimmed")
-        ]
+        notification = notification_response(res.status_code, "Could not delete Note.")
         return no_update, no_update, True, notification, no_update
 
 

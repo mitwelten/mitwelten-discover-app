@@ -57,7 +57,7 @@ def delete_note(note_id, auth_cookie):
     url = construct_url(f"note/{note_id}")
     res = requests.delete(url=url, headers={"Authorization": f"Bearer {auth_cookie}"})
     print(f"Delete Note: id={note_id}, status={res.status_code}")
-    return res.status_code
+    return res
 
 
 def add_tag_by_note_id(note_id, tag:str, auth_cookie):

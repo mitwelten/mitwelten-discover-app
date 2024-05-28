@@ -18,7 +18,7 @@ from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
 from src.util.util import local_formatted_date
-from src.error.notifications import notification, response_notification
+from src.error.notifications import notification, notification_response
 
 def get_form_controls(public:bool = True):
     return [
@@ -51,7 +51,7 @@ def form_content(note: Note, all_tags):
             dmc.Col(dmc.MultiSelect(
                 id=ID_NOTE_TAG_SELECT,
                 label="Select Tags",
-                data=sorted([t["name"] for t in all_tags]),
+                data=sorted([t["name"] for t in all_tags]) if all_tags else [],
                 value=note.tags,
                 searchable=True,
                 nothingFound="No Tags found",
@@ -366,7 +366,7 @@ def persist_note(click, notes, selected_note):
  
     res = update_note(note, auth_cookie)
     if res.status_code != 200:
-        return error_return_values(response_notification(res.status_code, f"Could not save note with id {note.id}"))
+        return error_return_values(notification_response(res.status_code, f"Could not save note with id {note.id}"))
 
     tags_to_delete = find_deleted_tags(note, original_note)
     tags_to_add    = find_added_tags(note, original_note)
@@ -376,14 +376,14 @@ def persist_note(click, notes, selected_note):
         for t in tags_to_delete:
             del_tag_res = delete_tag_by_note_id(note.id, t, auth_cookie)
             if del_tag_res != 200:
-                return error_return_values(response_notification(del_tag_res, f"Could not delete tag {t} of note with id {note.id}!"))
+                return error_return_values(notification_response(del_tag_res, f"Could not delete tag {t} of note with id {note.id}!"))
 
     # Persists added tags to a note
     if tags_to_add:
         for t in tags_to_add:
             add_tag_res = add_tag_by_note_id(note.id, t, auth_cookie)
             if add_tag_res != 200:
-                return error_return_values(response_notification(add_tag_res, f"Could not delete tag {t} of note with id {note.id}!"))
+                return error_return_values(notification_response(add_tag_res, f"Could not delete tag {t} of note with id {note.id}!"))
 
 
     notes["entries"] = [] # refresh note store

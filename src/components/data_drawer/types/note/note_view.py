@@ -368,6 +368,6 @@ def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, theme)
         if note["id"] == selected_note["data"]["id"]:
             n = Note(note)
             drawer_size = get_drawer_size_by_number_of_files(len(n.files))
-            return dict(data=None), drawer_size, True, note_view(n, 0, theme), True
+            return dict(data=None), drawer_size, True, note_view(n, theme), True
 
     raise PreventUpdate
