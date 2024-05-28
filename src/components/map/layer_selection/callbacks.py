@@ -61,7 +61,7 @@ def handle_map_update_1(clicks):
     if clicks is None or clicks == 0:
         return no_update
 
-    return {"index": triggered_id["index"]}
+    return {"index": ctx.triggered_id["index"]}
 
 
 def update_map_icon(data, children, icons):
