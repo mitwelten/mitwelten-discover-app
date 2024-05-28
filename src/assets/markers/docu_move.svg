@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="-18.5022 -18.244 81.52 81.6193" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style type="text/css">
+	.st0{fill:#FFFF99;stroke:#000000;stroke-width:1.1339;stroke-miterlimit:10;}
+	.st1{fill:#FFFFFF;stroke:#000000;stroke-width:0.8504;stroke-miterlimit:10;}
+	.st2{fill:#CCCCCC;stroke:#000000;stroke-width:0.8504;stroke-miterlimit:10;}
+</style>
+  </defs>
+  <path class="st0" d="M22.5,0.6c12.1,0,21.9,9.8,21.9,21.9s-9.8,21.9-21.9,21.9S0.6,34.6,0.6,22.5l0,0C0.5,10.4,10.3,0.6,22.5,0.6"/>
+  <g>
+    <g>
+      <circle cx="22.257" cy="22.514" r="32.957" style="fill: none; stroke: rgb(0, 0, 0); stroke-opacity: 0.67;"/>
+      <line style="stroke: black; transform-box: fill-box; transform-origin: 50% 50%; stroke-opacity: 0.67;" x1="17.316" y1="-15.988" x2="28.209" y2="-5.095" transform="matrix(-0.707107, -0.707107, 0.707107, -0.707107, -0.000007, -0.000003)"/>
+      <line style="stroke: black; transform-origin: 22.703px 55.672px; stroke-opacity: 0.67;" x1="17.256" y1="50.225" x2="28.149" y2="61.118" transform="matrix(-0.707107, -0.707107, 0.707107, -0.707107, -0.000001, 0.000008)"/>
+      <line style="stroke: black; transform-origin: 55.316px 22.413px; stroke-opacity: 0.67;" x1="49.869" y1="16.966" x2="60.762" y2="27.859" transform="matrix(0.707107, -0.707107, 0.707107, 0.707107, -0.000002, 0.000002)"/>
+      <line style="stroke: black; transform-origin: -10.799px 22.608px; stroke-opacity: 0.67;" x1="-16.246" y1="17.161" x2="-5.353" y2="28.054" transform="matrix(0.707107, -0.707107, 0.707107, 0.707107, 0.000002, 0)"/>
+    </g>
+    <g>
+      <path class="st1" d="M8.5,11.4c-0.6,0-1,0.5-1,1.1v20c0,0.6,0.5,1.1,1,1.1h18h10c0.6,0,1-0.5,1-1.1v-20c0-0.6-0.5-1.1-1-1.1H8.5 L8.5,11.4z"/>
+      <path class="st2" d="M12.2,14.8h20.5c0.3,0,0.5,0.2,0.5,0.5v1.1c0,0.3-0.2,0.5-0.5,0.5H12.2c-0.3,0-0.5-0.2-0.5-0.5v-1.1 C11.8,15,12,14.8,12.2,14.8z"/>
+      <path class="st2" d="M12.2,18.4h20.5c0.3,0,0.5,0.2,0.5,0.5V20c0,0.3-0.2,0.5-0.5,0.5H12.2c-0.3,0-0.5-0.2-0.5-0.5v-1.1 C11.8,18.6,12,18.4,12.2,18.4z"/>
+      <path class="st2" d="M12.2,22.1h20.5c0.3,0,0.5,0.2,0.5,0.5v1.1c0,0.3-0.2,0.5-0.5,0.5H12.2c-0.3,0-0.5-0.2-0.5-0.5v-1.1 C11.8,22.3,12,22.1,12.2,22.1z"/>
+      <path class="st2" d="M12,25.6h8.5c0.1,0,0.2,0.2,0.2,0.5v1.1c0,0.3-0.1,0.5-0.2,0.5H12c-0.1,0-0.2-0.2-0.2-0.5V26 C11.8,25.8,11.8,25.6,12,25.6z"/>
+    </g>
+  </g>
+</svg>

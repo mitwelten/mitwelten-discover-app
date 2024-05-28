@@ -155,7 +155,7 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
         return []
 
     marker_icon           = dict(iconUrl=get_source_props("Note")["marker"], iconAnchor=[15, 6],  iconSize=[30, 30])
-    marker_icon_draggable = dict(iconUrl="assets/markers/note_move.svg",     iconAnchor=[61, 50], iconSize=[120, 120])
+    marker_icon_draggable = dict(iconUrl="assets/markers/docu_move.svg",     iconAnchor=[31, 14], iconSize=[60, 60])
 
     all_notes = all_notes.get("entries", [])
     selected_note_id = None
