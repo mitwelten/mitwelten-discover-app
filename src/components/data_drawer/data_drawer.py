@@ -13,7 +13,8 @@ from src.config.app_config import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CH
 from src.config.id_config import *
 from src.config.app_config import CHART_DRAWER_HEIGHT
 from src.main import app
-from pprint import pprint
+from src.util.util import get_drawer_size_by_number_of_files
+
 
 def create_chart_from_source(selected_marker, date_range, theme, notes, environment_data):
     marker_data    = selected_marker.get("data")
@@ -40,9 +41,8 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
             for note in notes["entries"]:
                 if note["id"] == marker_id:
                     n = Note(note)
-                    file_height = 116 if len(n.files) > 3 else 50 if len(n.files) > 0 else 0
-                    drawer_size -= 116 - file_height                    
-                    drawer_content = note_view(n, file_height, theme)
+                    drawer_size = get_drawer_size_by_number_of_files(len(n.files))
+                    drawer_content = note_view(n, theme)
     return drawer_content, drawer_size
 
 
@@ -182,7 +182,6 @@ def activate_preventing_marker_clicks(selected_note):
     if selected_note["data"] is None:
         return dict(state=False)
     return dict(state=True)
-
 
 @app.callback(
         Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
