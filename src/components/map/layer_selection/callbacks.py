@@ -1,5 +1,4 @@
-import dash
-from dash import Output, Input, ALL, State
+from dash import Output, Input, ALL, State, ctx, no_update
 
 from src.config.id_config import *
 from src.config.map_config import MAPS, OVERLAYS, MAP_TYPES
@@ -11,7 +10,7 @@ def update_store(store, collection):
     index_map = store["index"]
     new_map = next(x for x in collection if x.index == index_map)
     if new_map is None:
-        return dash.no_update
+        return no_update
     return new_map.source, new_map.source_attribution
 
 
@@ -34,9 +33,9 @@ def handle_overlay_store_update(store):
 
 
 def handle_map_update(_):
-    if dash.ctx.triggered_id is None:
-        return dash.no_update
-    return {"index": dash.ctx.triggered_id["index"]}
+    if ctx.triggered_id is None:
+        return no_update
+    return {"index": ctx.triggered_id["index"]}
 
 
 @app.callback(
@@ -47,9 +46,9 @@ def handle_map_update(_):
 def handle_map_update_0(clicks):
     clicks = safe_reduce(lambda x, y: x + y, clicks, 0)
     if clicks is None or clicks == 0:
-        return dash.no_update
+        return no_update
 
-    return {"index": dash.ctx.triggered_id["index"]}
+    return {"index": triggered_id["index"]}
 
 
 @app.callback(
@@ -60,9 +59,9 @@ def handle_map_update_0(clicks):
 def handle_map_update_1(clicks):
     clicks = safe_reduce(lambda x, y: x + y, clicks, 0)
     if clicks is None or clicks == 0:
-        return dash.no_update
+        return no_update
 
-    return {"index": dash.ctx.triggered_id["index"]}
+    return {"index": triggered_id["index"]}
 
 
 def update_map_icon(data, children, icons):
