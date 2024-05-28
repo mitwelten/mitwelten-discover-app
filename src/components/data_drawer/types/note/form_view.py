@@ -1,5 +1,7 @@
 import base64
 import json
+
+from src.components.notification.notification import notification, NotificationType
 import flask
 from datetime import datetime
 import dash_mantine_components as dmc
@@ -18,7 +20,6 @@ from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
 from src.util.util import local_formatted_date
-from src.error.notifications import notification, notification_response
 
 def get_form_controls(public:bool = True):
     return [
@@ -331,8 +332,7 @@ def find_added_tags(modified_note, original_note):
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_ALERT_DANGER, "is_open", allow_duplicate=True),
-    Output(ID_ALERT_DANGER, "children", allow_duplicate=True),
+    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
     Output(ID_TAG_DATA_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
@@ -352,7 +352,6 @@ def persist_note(click, notes, selected_note):
             no_update, 
             no_update, 
             no_update, 
-            True, 
             alert,
             no_update
         ]
@@ -362,11 +361,11 @@ def persist_note(click, notes, selected_note):
             original_note = Note(n)
 
     if original_note is None:
-        return error_return_values(notification(f"Note with id {note.id} not found, could not save note!"))
+        return error_return_values(notification(f"Note with id {note.id} not found, could not save note!", NotificationType.WENT_WRONG))
  
     res = update_note(note, auth_cookie)
     if res.status_code != 200:
-        return error_return_values(notification_response(res.status_code, f"Could not save note with id {note.id}"))
+        return error_return_values(notification(f"Could not save note with id {note.id}", NotificationType.WENT_WRONG))
 
     tags_to_delete = find_deleted_tags(note, original_note)
     tags_to_add    = find_added_tags(note, original_note)
@@ -376,17 +375,17 @@ def persist_note(click, notes, selected_note):
         for t in tags_to_delete:
             del_tag_res = delete_tag_by_note_id(note.id, t, auth_cookie)
             if del_tag_res != 200:
-                return error_return_values(notification_response(del_tag_res, f"Could not delete tag {t} of note with id {note.id}!"))
+                return error_return_values(notification(f"Could not delete tag {t} of note with id {note.id}!", NotificationType.WENT_WRONG))
 
     # Persists added tags to a note
     if tags_to_add:
         for t in tags_to_add:
             add_tag_res = add_tag_by_note_id(note.id, t, auth_cookie)
             if add_tag_res != 200:
-                return error_return_values(notification_response(add_tag_res, f"Could not delete tag {t} of note with id {note.id}!"))
+                return error_return_values(notification(f"Could not delete tag {t} of note with id {note.id}!", NotificationType.WENT_WRONG))
 
 
     notes["entries"] = [] # refresh note store
     update_tag_store = None if tags_to_add else no_update
-    return False, notes, dict(data=None), no_update, no_update, update_tag_store 
+    return False, notes, dict(data=None), no_update, update_tag_store 
 

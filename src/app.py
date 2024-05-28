@@ -16,7 +16,6 @@ from dash import (
 from dash.exceptions import PreventUpdate
 from configuration import DOMAIN_NAME
 
-from src.components.alert.alert import alert_danger, alert_warning, alert_info
 from src.components.button.buttons import control_buttons
 from src.config.id_config import *
 from src.components.map.init_map import map_figure
@@ -53,7 +52,7 @@ def app_content(args):
     # render app content
     return [
             dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
-            alert_danger, alert_warning, alert_info,
+            html.Div(id=ID_NOTIFICATION),
             mitwelten_bannner,
             *stores(args, deployments, notes, env_data),
             *control_buttons,
@@ -73,18 +72,36 @@ def discover_app(**kwargs):
             withGlobalStyles=True,
             withNormalizeCSS=True,
             children=[
-                html.Div(
-                    id=ID_APP_CONTAINER,
-                    children=[
-                        dcc.Location(id=ID_URL_LOCATION, refresh=False),
-                        *app_content(args)
-                        ], 
-                    ),
+                dmc.NotificationsProvider(
+                    zIndex=1000000,
+                    children=html.Div(
+                        id=ID_APP_CONTAINER,
+                        children=[
+                            *app_content(args),
+                            dcc.Location(id=ID_URL_LOCATION, refresh=False),
+                            ], 
+                        )
+                    )
                 ],
             )
 
 register_page("Discover", layout=discover_app, path="/")
 
+
+
+@app.callback(
+    Output("notifications-container", "children"),
+    Input("notify", "n_clicks"),
+    prevent_initial_call=True,
+)
+def show(n_clicks):
+    return dmc.Notification(
+        title="Hey there!",
+        id="simple-notify",
+        action="show",
+        message="Notifications in Dash, Awesome!",
+        icon=DashIconify(icon="ic:round-celebration"),
+    )
 
 @app.callback(
     Output(ID_STAY_LOGGED_IN_INTERVAL, "interval"),

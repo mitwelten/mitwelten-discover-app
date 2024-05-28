@@ -6,6 +6,7 @@ ID_ALERT_DANGER = "id-alert_danger"
 ID_ALERT_WARNING= "id-alert_warning"
 ID_ALERT_INFO = "id-alert_info"
 ID_LOGO_CONTAINER = "id-logo-container"
+ID_NOTIFICATION = "id-notification"
 
 # UI elements
 ID_APP_CONTAINER = "id-app-container"

@@ -3,7 +3,7 @@ import dash_mantine_components as dmc
 from dash import Output, Input, html, State, no_update, ctx
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
-from src.error.notifications import notification_not_permitted, notification_response
+from src.components.notification.notification import NotificationType, notification
 from src.api.api_note import create_note
 
 import json
@@ -148,13 +148,14 @@ def login(_):
         return no_update, hidden, visible 
     return create_avatar(user), visible, hidden
 
+
 def notify(notification):
-    return [no_update, True, notification, no_update, no_update, no_update, no_update, no_update]
+    return [no_update, notification, no_update, no_update, no_update, no_update, no_update]
+
 
 @app.callback(
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
-    Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
-    Output(ID_ALERT_INFO, "children", allow_duplicate=True),
+    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
@@ -188,7 +189,7 @@ def create_note_on_map(
     user = get_user_from_cookies()
 
     if user is None:
-        return notify(notification_not_permitted("Log in to create notes!"))
+        return notify(notification("Log in to create notes!", NotificationType.NOT_PERMITTED))
     
     new_note = Note(empty_note)
 
@@ -226,7 +227,7 @@ def create_note_on_map(
     res = create_note(new_note, auth_cookie)
 
     if res.status_code != 200:
-        return notify(notification_response(res.status_code, "Could not create Note."))
+        return notify(notification(f"Could not create Note - {res.status_code}", NotificationType.WENT_WRONG))
 
     new_note = json.loads(res.content)
     new_note["id"] = new_note["note_id"]
@@ -235,5 +236,5 @@ def create_note_on_map(
     notes = dict(entires=[])
     view = note_view(Note(new_note), theme, True, all_tags["all"])
 
-    return notes, no_update, no_update, dict(data=new_note, new=True), view, True, CHART_DRAWER_HEIGHT, False 
+    return notes, no_update, dict(data=new_note, new=True), view, True, CHART_DRAWER_HEIGHT, False 
 

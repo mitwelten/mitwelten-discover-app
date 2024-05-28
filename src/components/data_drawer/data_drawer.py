@@ -1,6 +1,7 @@
 import dash_mantine_components as dmc
 from dash import Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
+from src.components.notification.notification import NotificationType, notification
 from src.components.data_drawer.types.note.note_view import note_view
 from src.model.note import Note
 
@@ -141,8 +142,7 @@ def open_drawer(selected_marker):
     Output(ID_CHART_CONTAINER, "children"),
     Output(ID_CHART_DRAWER, "size"),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
-    Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
-    Output(ID_ALERT_INFO, "children", allow_duplicate=True),
+    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input(ID_APP_THEME, "theme"),
@@ -155,11 +155,8 @@ def update_drawer_content_from_marker_store(selected_marker, date_range, theme, 
         raise PreventUpdate
 
     if selected_marker["type"] in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
-        notification = [
-                dmc.Title(f"Deployment: {selected_marker['type']}", order=6),
-                dmc.Text("No further data available!"),
-            ]
-        return no_update, no_update, True, True, notification
+        n = notification("No chart available for this device type.", NotificationType.INFO)
+        return no_update, no_update, True, n 
 
     drawer_content, drawer_size = create_chart_from_source(
         selected_marker, 
@@ -169,7 +166,7 @@ def update_drawer_content_from_marker_store(selected_marker, date_range, theme, 
         environment_data
         )
 
-    return drawer_content, drawer_size, True, no_update, no_update
+    return drawer_content, drawer_size, True, no_update
 
 
 

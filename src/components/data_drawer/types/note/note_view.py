@@ -5,6 +5,7 @@ from dash_iconify import DashIconify
 import dash_core_components as dcc
 from pprint import pprint
 
+from src.components.notification.notification import NotificationType, notification
 from configuration import API_URL
 from src.components.data_drawer.header import bottom_drawer_content
 from src.components.media.slideshow import slideshow
@@ -169,8 +170,7 @@ def delete_click(click):
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
-    Output(ID_ALERT_INFO, "is_open", allow_duplicate=True),
-    Output(ID_ALERT_INFO, "children", allow_duplicate=True),
+    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_TAG_DATA_STORE, "data"),
@@ -184,23 +184,17 @@ def activate_edit_mode(click, notes, all_tags):
 
     user = get_user_from_cookies()
     if user is None:
-        notification = [
-                dmc.Title("Operation not permitted", order=6),
-                dmc.Text("Log in to edit notes!")
-                ]
-        return no_update, no_update, no_update, no_update, True, notification
+        n = notification("Log in to edit notes!", NotificationType.NOT_PERMITTED)
+        return no_update, no_update, no_update, no_update, n
 
     for note in notes["entries"]:
         if note["id"] == ctx.triggered_id["note_id"]:
             n = Note(note)
             if n.author != user.full_name:
-                notification = [
-                        dmc.Title("Operation not permitted", order=6),
-                        dmc.Text("Only the author can edit this note!")
-                        ]
-                return no_update, no_update, no_update, no_update, True, notification
+                n = notification("Only the author can edit this note!", NotificationType.NOT_PERMITTED)
+                return no_update, no_update, no_update, no_update, n 
 
-            return dict(data=note), note_form_view(n, all_tags["all"]), False, CHART_DRAWER_HEIGHT, no_update, no_update
+            return dict(data=note), note_form_view(n, all_tags["all"]), False, CHART_DRAWER_HEIGHT, no_update
 
 
 app.clientside_callback(
