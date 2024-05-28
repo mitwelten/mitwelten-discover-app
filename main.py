@@ -24,7 +24,7 @@ keycloak_openid = KeycloakOpenID(
     verify=True,
 )
 
-app = FastAPI()
+app = FastAPI(title="Mitwelten Discover")
 
 oauth2_scheme = OAuth2AuthorizationCodeBearer(
     authorizationUrl=f"{KC_SERVER_URL}realms/{KC_REALM_NAME}/protocol/openid-connect/auth",
