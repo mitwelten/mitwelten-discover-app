@@ -16,7 +16,7 @@ from src.config.id_config import *
 from src.main import app
 from src.model.note import Note, empty_note
 from src.util.user_validation import get_user_from_cookies
-from src.components.data_drawer.types.note.note_view import note_form_view
+from src.components.data_drawer.types.note.note_view import note_view
 from src.config.app_config import DISCOVER_DESCRIPTION
 from src.components.info.info import deployment_info
 
@@ -163,7 +163,9 @@ def login(_):
     State(ID_SETTINGS_DRAWER, "size"),
     State(ID_CHART_DRAWER, "size"),
     State(ID_MAP, "bounds"),
+    State(ID_MAP, "center"),
     State(ID_TAG_DATA_STORE, "data"),
+    State(ID_APP_THEME, "theme"),
     prevent_initial_call=True
 )
 def create_note_on_map(
@@ -173,7 +175,9 @@ def create_note_on_map(
         settings_drawer_size,
         data_drawer_size,
         bounds,
-        all_tags
+        center,
+        all_tags,
+        theme
 ):
     if click is None or click == 0:
         raise PreventUpdate
@@ -189,35 +193,44 @@ def create_note_on_map(
     
     new_note = Note(empty_note)
 
-    top    = bounds[1][0]
-    bottom = bounds[0][0]
-    left   = bounds[0][1]
-    right  = bounds[1][1]
+    # initially the bounds of the map are None
+    if bounds is not None:
+        top    = bounds[1][0]
+        bottom = bounds[0][0]
+        left   = bounds[0][1]
+        right  = bounds[1][1]
 
-    # visibile map distance in grad
-    map_delta_lat = top - bottom
-    map_delta_lon = right - left
+        # visibile map distance in grad
+        map_delta_lat = top - bottom
+        map_delta_lon = right - left
 
-    # set drawer size to 1 if the settings drawer is closed
-    settings_drawer_size = 0 if not drawer_state else settings_drawer_size
+        # set drawer size to 1 if the settings drawer is closed
+        settings_drawer_size = 0 if not drawer_state else settings_drawer_size
 
-    # the height of the data drawer in grad
-    data_drawer_height = map_delta_lat   / browser_props["height"] * data_drawer_size
+        # the height of the data drawer in grad
+        data_drawer_height = map_delta_lat   / browser_props["height"] * data_drawer_size
 
-    # the width of the settings drawer in grad
-    settings_drawer_width = map_delta_lon / browser_props["width"]  * settings_drawer_size
+        # the width of the settings drawer in grad
+        settings_drawer_width = map_delta_lon / browser_props["width"]  * settings_drawer_size
 
-    new_note.lon = left + settings_drawer_width + ((map_delta_lon - settings_drawer_width) / 2)
-    new_note.lat = bottom + data_drawer_height + ((map_delta_lat - data_drawer_height) / 2)
+        new_note.lon = left + settings_drawer_width + ((map_delta_lon - settings_drawer_width) / 2)
+        new_note.lat = bottom + data_drawer_height + ((map_delta_lat - data_drawer_height) / 2)
+    else:
+        new_note.lat = center[0]
+        new_note.lon = center[1]
+
     new_note.date = datetime.now(timezone.utc).isoformat()
     new_note.public = True
 
     auth_cookie = flask.request.cookies.get("auth")
     res = create_note(new_note, auth_cookie)
+    # TODO: handle error
     new_note = json.loads(res.content)
     new_note["id"] = new_note["note_id"]
     new_note["author"] = user.full_name
-    notes = dict(entires=[])
 
-    return notes, no_update, no_update, dict(data=new_note, new=True), note_form_view(Note(new_note), all_tags["all"]), True, CHART_DRAWER_HEIGHT, False 
+    notes = dict(entires=[])
+    view = note_view(Note(new_note), 50, theme, True, all_tags["all"])
+
+    return notes, no_update, no_update, dict(data=new_note, new=True), view, True, CHART_DRAWER_HEIGHT, False 
 
