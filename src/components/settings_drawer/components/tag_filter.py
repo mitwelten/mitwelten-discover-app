@@ -38,10 +38,13 @@ def tag_filter(args):
     fs_value = args.get("fs")
 
     tags = sorted([t for t in all_tags if t not in fs_tags])
-    tags_value = args.get("tags", [])
-    if tags_value:
-        tags_value = tags_value.split(" ")
+    tags_value = args.get("tags")
+
+    if tags_value is not None:
+        tags_value = tags_value.split("+")
         tags_value = [x.replace("_", " ") for x in tags_value]
+    else:
+        tags_value = []
 
     return html.Div([
         dmc.Text("Field Study", size="sm"),
@@ -60,7 +63,6 @@ def tag_filter(args):
                             dmc.SegmentedControl(
                                 color=PRIMARY_COLOR,
                                 id=ID_FS_TAG_CHIPS_GROUP,
-                                persistence=True,
                                 data=fs_tags,
                                 value=fs_value,
                                 size="xs"
@@ -143,15 +145,15 @@ def tag_filter(args):
     Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),
     Output(ID_TAG_CHIPS_GROUP, "value", allow_duplicate=True),
     Output(ID_MODAL_CHIPS_GROUP, "value"),
+    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
     Input(ID_TAG_RESET_BUTTON, "n_clicks"),
+    State(ID_QUERY_PARAM_STORE, "data"),
     prevent_initial_call=True
 )
-def reset_tags(_):
-    # TODO: fix bug marker still be visible after clearing additional tags
-    return [], [], []
-#
-#
-## TODO: refactor
+def reset_tags(_, data):
+    return [], [], [], update_query_data(data, {"tags": None})
+
+
 @app.callback(
     Output(ID_CHIPS_MODAL, "opened"),
     Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),

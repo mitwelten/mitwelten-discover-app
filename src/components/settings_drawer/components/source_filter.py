@@ -26,7 +26,6 @@ def get_checkbox_by_type(node_type: str):
         ]),
         value=node_type,
         size="xs",
-        persistence=True,
         color="#003399"
     )
 
@@ -37,7 +36,7 @@ def source_filter(args):
     #active = list(SOURCE_PROPS.keys())
     active = args.get("devices")
     if active is not None:
-        active = active.split(" ")
+        active = active.split("+")
         active = [x.replace("_", " ") for x in active]
     else:
         active = list(SOURCE_PROPS.keys())

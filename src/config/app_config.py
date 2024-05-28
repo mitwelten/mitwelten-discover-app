@@ -8,20 +8,20 @@ ALERT_DURATION = 4000
 
 REFRESH_KEY_TIME_LEFT_S = 10 * 60
 
-QUERY_PARAMS = [
-            "start", 
-            "end", 
-            "timerange", 
-            "fs", 
-            "lat", 
-            "lon", 
-            "zoom", 
-            "tags", 
-            "devices", 
-            "node_label", 
-            "note_id", 
-            "env_id"
-            ]
+QUERY_PARAMS = {
+        "start": None, 
+        "end": None, 
+        "timerange": None, 
+        "fs": "ANY", 
+        "lat": 47.5339807306196, 
+        "lon": 7.6169566067567, 
+        "zoom": 12, 
+        "tags": None, 
+        "devices": None, 
+        "node_label": None, 
+        "note_id": None, 
+        "env_id": None
+        }
 
 PRIMARY_COLOR = "mitwelten_green"
 SECONDARY_COLOR = "mitwelten_pink"

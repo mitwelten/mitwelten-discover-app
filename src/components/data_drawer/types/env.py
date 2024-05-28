@@ -111,7 +111,6 @@ def create_env_chart(deployment_data, theme):
 
     tabs = dmc.Tabs([dmc.TabsList(tab_list, position="center"), *panel_list],
                     value="0",
-                    persistence=True,
                     variant="outline",
                     style={"height": "90%"})
 

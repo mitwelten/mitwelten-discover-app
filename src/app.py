@@ -132,7 +132,6 @@ def update_query_data_location(click_data, zoom, data):
     )
 def update_url_of_login_logout_button(data):
     query_params = query_data_to_string(data)
-    print("update_url_of_login_logout_button: ", query_params)
     login_url = f"{DOMAIN_NAME}/login{query_params}" 
     return query_params, login_url
 

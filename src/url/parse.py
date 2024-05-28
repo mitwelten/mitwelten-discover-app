@@ -78,13 +78,11 @@ def query_data_to_string(data):
         if data.get("end") is not None:
             del data["end"]
 
-
     params : list[str] = []
 
-    for key in QUERY_PARAMS:
+    for key in QUERY_PARAMS.keys():
         param = get_value_or_none(key, data)
         if param is not None and param != "":
-            print(param)
             params.append(param)
 
     return "?" + "&".join(params)

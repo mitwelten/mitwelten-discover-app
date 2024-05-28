@@ -120,12 +120,9 @@ def add_environment_markers(active_checkboxes, all_environments):
         return []
 
     markers = []
-
-
     for env in all_environments["entries"]:
         env = Environment(env)
-        markers.append(
-            dl.Marker(
+        marker = dl.Marker(
                 position=[env.lat, env.lon],
                 children=[
                     dl.Popup(
@@ -133,14 +130,15 @@ def add_environment_markers(active_checkboxes, all_environments):
                         closeButton=False,
                         autoPan=False,
                         autoClose=False,
-                    ),
-                ],
+                        ),
+                    ],
                 eventHandlers=popup_events,
                 icon=dict(iconUrl=get_source_props("Environment")["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
                 id={"role": "Environment", "id": env.id, "label": "Node"},
-            
-            )
-        )
+
+                )
+        markers.append(marker)
+
     return markers
 
 
@@ -255,7 +253,7 @@ def ensure_marker_visibility_in_viewport(
     settings_drawer_width = map_delta_lon / browser_props["width"]  * settings_drawer_size
 
     # the range, in which markers are moved to the center in %
-    moving_zone_bounds = [[10, 20],[30, 20]] 
+    moving_zone_bounds = [[10, 20],[40, 20]] 
 
     zone_factor_h = (top - (bottom + data_drawer_height)) / 100
     zone_factor_w = (right - (left + settings_drawer_width)) / 100
