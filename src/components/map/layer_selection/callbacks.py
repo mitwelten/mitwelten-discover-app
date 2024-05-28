@@ -48,7 +48,7 @@ def handle_map_update_0(clicks):
     if clicks is None or clicks == 0:
         return no_update
 
-    return {"index": triggered_id["index"]}
+    return {"index": ctx.triggered_id["index"]}
 
 
 @app.callback(
