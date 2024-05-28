@@ -8,7 +8,21 @@ ALERT_DURATION = 4000
 
 REFRESH_KEY_TIME_LEFT_S = 10 * 60
 
-c = "#669999"
+QUERY_PARAMS = [
+            "start", 
+            "end", 
+            "timerange", 
+            "fs", 
+            "lat", 
+            "lon", 
+            "zoom", 
+            "tags", 
+            "devices", 
+            "node_label", 
+            "note_id", 
+            "env_id"
+            ]
+
 PRIMARY_COLOR = "mitwelten_green"
 SECONDARY_COLOR = "mitwelten_pink"
 BACKGROUND_COLOR = "#E8F7FC"
@@ -82,6 +96,6 @@ ENVIRONMENT_SENSOR_DESCRIPTION = "Sensors were used to measure temperature, humi
 HABITAT_DESCRIPTION = "The quality of the habitat type is determined on the basis of 10 criteria."
 EXPERIMENT_AND_FINDING_DESCRIPTION = "Short documentations of the conducted experiments and summaries of the findings."
 WILD_CAM_DESCRIPTION = "Wildlife cameras were used to record images of the animal world."
-
-
 DISCOVER_DESCRIPTION = 'The research project uses the lens of co-worlding to develop environmental media approaches that aim to support and foster biodiversity in urban areas by extending design research to natural, cultural and media sciences. In the project’s three case studies, media infrastructures were installed in three sites of human-environment entanglements: in the Merian Gardens near Basel, in a former port area of the city of Basel, and in a nature reserve in Reinach (Basel agglomeration). "Discover" is a map-based publication of the research results prepared for the public.'
+
+

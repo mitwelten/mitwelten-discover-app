@@ -1,6 +1,7 @@
 from src.model.deployment import Deployment
 from urllib import parse 
 from src.util.helper_functions import was_deployed
+from src.config.app_config import QUERY_PARAMS
 
 def get_device_from_args(args, deployments, notes, env_data):
     types = {
@@ -76,25 +77,10 @@ def query_data_to_string(data):
         if data.get("end") is not None:
             del data["end"]
 
-    # TODO: move to config
-    query_params = [
-            "start", 
-            "end", 
-            "timerange", 
-            "fs", 
-            "lat", 
-            "lon", 
-            "zoom", 
-            "tags", 
-            "devices", 
-            "node_label", 
-            "note_id", 
-            "env_id"
-            ]
 
     params : list[str] = []
 
-    for key in query_params:
+    for key in QUERY_PARAMS:
         param = get_value_or_none(key, data)
         if param is not None and param != "":
             params.append(param)
