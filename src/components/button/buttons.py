@@ -34,6 +34,7 @@ info_dialog = dmc.Modal(
                 dmc.Space(h=40),
                 dmc.ScrollArea([
                     deployment_info,
+                    #dmc.Button(id="tour")
                     ]),
                 dmc.Group([
                     dmc.Button(
@@ -43,6 +44,28 @@ info_dialog = dmc.Modal(
                     ], position="right"
                 )],
         )
+
+
+#@app.callback(
+#    Output(ID_MAP, "viewport", allow_duplicate=True),
+#    Output(ID_SELECTED_MARKER_STORE, "data", allow_duplicate=True),
+#    Output(ID_INFO_DIALOG_MODAL, "size", allow_duplicate=True),
+#    Output(ID_INFO_DIALOG_MODAL, "children", allow_duplicate=True),
+#    Output(ID_INFO_DIALOG_MODAL, "overlayOpacity", allow_duplicate=True),
+#    Output(ID_INFO_DIALOG_MODAL, "centered", allow_duplicate=True),
+#    Input("tour", "n_clicks"),
+#    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+#    prevent_initial_call=True
+#)
+#def make_tour(_, data):
+#    note = data["entries"][0]
+#    n = Note(note)
+#    selected_marker = dict(data=note, type="Note")
+#    viewport = dict(center=[n.lat, n.lon], transition="flyTo")
+#    return viewport, selected_marker, "sm", dmc.Button("Next"), 0.1, False
+    
+
+
 
 login_button = dmc.Anchor(
     action_button(button_id="", icon="material-symbols:login"),
@@ -116,7 +139,7 @@ control_buttons = [
                 smallerThan="sm",
                 styles={"display": "none"}
             ),
-            action_button(button_id=ID_INFO_DIALOG_BUTTON, icon="material-symbols:info-outline"),
+            action_button(button_id=ID_INFO_DIALOG_BUTTON, icon="material-symbols:info-i"),
             info_dialog
         ],
             id=ID_FAB_CONTAINER
