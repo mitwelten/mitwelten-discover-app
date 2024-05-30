@@ -1,10 +1,9 @@
 import unittest
-from pprint import pprint
 
 from parameterized import parameterized
 
 from src.model.deployment import Deployment
-from src.util.helper_functions import safe_reduce, ensure_marker_visibility, was_deployed
+from src.util.helper_functions import safe_reduce, was_deployed
 
 deployment_data: dict = {
     'deployment_id': 2099,
