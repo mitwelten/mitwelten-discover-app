@@ -13,13 +13,14 @@ from src.model.file import File
 from src.components.button.components.action_button import action_button
 from src.components.data_drawer.types.note.attachment import attachment_area
 from src.util.helper_functions import safe_reduce
-from src.api.api_files import add_file,  delete_file
+from src.api.api_files import upload_file,  delete_file
 from src.api.api_note import update_note, delete_tag_by_note_id, add_tag_by_note_id, add_file_to_note
 from src.config.app_config import supported_mime_types, PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
 from src.util.util import local_formatted_date
+from src.components.notification.notification import notification
 
 def get_form_controls(public:bool = True):
     return [
@@ -48,7 +49,7 @@ def form_content(note: Note, all_tags):
     return [
         dmc.Grid([
             # title and description section
-            # TODO: replace with dmc.TagsInput
+            # TODO: replace with dmc.TagsInput if dash mantine 14 is working properly
             dmc.Col(dmc.MultiSelect(
                 id=ID_NOTE_TAG_SELECT,
                 label="Select Tags",
@@ -227,6 +228,7 @@ def marker_click(coordinates):
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_ATTACHMENTS, "children", allow_duplicate=True),
+    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
     Input(ID_IMAGE_UPLOAD, "contents"),
     State(ID_IMAGE_UPLOAD, "filename"),
     State(ID_EDIT_NOTE_STORE, "data"),
@@ -253,18 +255,28 @@ def add_attachment(list_of_contents, list_of_names, note):
         # string to split: `data:image/png;base64`
         content_type = content_type.split(':')[1].split(';')[0]
 
-        res = add_file(decoded, name, content_type, auth_cookie)
+        upload_file_response = upload_file(decoded, name, content_type, auth_cookie)
 
-        # TODO: handle error case
-        if res.status_code == 200:
-            response_content = json.loads(res.content.decode("utf-8"))
-            obj_name = response_content["object_name"]
-            response = add_file_to_note(note_id, obj_name, name, content_type, auth_cookie)
+        if upload_file_response.status_code != 200:
+            notify = notification(
+                    f"Could not add attachment - {upload_file_response.status_code}", 
+                    NotificationType.WENT_WRONG
+                    )
+            return no_update, no_update, notify
 
-            if response.status_code == 200:
+        response_content = json.loads(upload_file_response.content.decode("utf-8"))
+        obj_name = response_content["object_name"]
+        add_file_to_note_res = add_file_to_note(note_id, obj_name, name, content_type, auth_cookie)
 
-                new_file_id = json.loads(response.content)["file_id"]
-                new_files.append(dict(id=new_file_id, object_name=obj_name, name=name, type=content_type))
+        if add_file_to_note_res.status_code != 200:
+            notify = notification(
+                    f"Could not add attachment to note- {add_file_to_note_res.status_code}", 
+                    NotificationType.WENT_WRONG
+                    )
+            return no_update, no_update, notify
+
+        new_file_id = json.loads(add_file_to_note_res.content)["file_id"]
+        new_files.append(dict(id=new_file_id, object_name=obj_name, name=name, type=content_type))
 
     note["data"]["file"] = new_files
     new_files = [File(f) for f in new_files]

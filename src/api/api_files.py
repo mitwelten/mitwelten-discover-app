@@ -17,7 +17,7 @@ def get_file(object_name, media_type):
     return encoded_file
 
 
-def add_file(file, name: str, content_type, auth_cookie):
+def upload_file(file, name: str, content_type, auth_cookie):
     url = construct_url(f"files/discover")
     payload = {"file" : (name, file, content_type)}
     res = requests.post(
