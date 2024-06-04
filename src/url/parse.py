@@ -1,8 +1,6 @@
 from src.model.deployment import Deployment
-from urllib import parse 
 from src.util.helper_functions import was_deployed
 from src.config.app_config import QUERY_PARAMS
-from pprint import pprint
 
 def get_device_from_args(args, deployments, notes, env_data):
     types = {
@@ -55,8 +53,7 @@ def get_device_from_args(args, deployments, notes, env_data):
                 found = True
 
         index += 1
-
-    return elems[index - 1] if index < len(elems) else None
+    return elems[index - 1] if index < len(elems) + 1 else None
 
 
 def get_value_or_none(param, data):
