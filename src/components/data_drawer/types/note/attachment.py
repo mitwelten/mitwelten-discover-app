@@ -89,7 +89,7 @@ def _attachment_card(file: File, auth_cookie, editable = False):
                                     width=48,
                                     height=48,
                                 ),
-                                dmc.Text(short_filename, style={"margin": "0 10px"}),
+                                dmc.Text(short_filename, style={"margin": "0 10px"}, size="sm"),
 
                                 dmc.Group([
                                     action_button(

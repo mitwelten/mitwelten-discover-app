@@ -1,6 +1,6 @@
 import dash_html_components as html
 import dash_mantine_components as dmc
-from dash import Output, Input, State
+from dash import Output, Input, State, ALL
 from dash_extensions import EventListener
 from src.main import app
 
@@ -119,6 +119,7 @@ app.clientside_callback(
     Output(ID_AUDIO, "id", allow_duplicate=True),
     Input(ID_SLIDESHOW_BTN_LEFT, "n_clicks"),
     Input(ID_SLIDESHOW_BTN_RIGHT, "n_clicks"),
+    Input({"element": "media", "file_id": ALL}, "n_clicks"),
     State(ID_AUDIO, "id"),
     prevent_initial_call=True
 )
@@ -129,10 +130,11 @@ app.clientside_callback(
     Input(ID_SLIDESHOW_BTN_LEFT, "n_clicks"),
     Input(ID_SLIDESHOW_BTN_RIGHT, "n_clicks"),
     Input(ID_AUDIO_STOP_BTN, "n_clicks"),
+    Input({"element": "media", "file_id": ALL}, "n_clicks"),
     State(ID_AUDIO_PLAY_PAUSE_ICON, "icon"),
     prevent_initial_call=True
 )
-def pause_play(_start, _left, _right, _stop, icon):
+def pause_play(_start, _left, _right, _stop, _attachment_click, icon):
     if ctx.triggered_id == ID_AUDIO_PLAY_PAUSE_BTN and "play" in icon:
             return pause_icon
     return play_icon

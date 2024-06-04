@@ -119,19 +119,24 @@ def note_detail_view(note: Note, theme):
 
     content = dmc.Container(
             dmc.ScrollArea(
-            children=[
-                dmc.Grid([
-                    dmc.Col(text_to_html_list(note.description), span=8),
-                    dmc.Col(
-                        html.Div(
-                            id="id-slideshow-container", 
-                            className="image-container", 
-                            children=slideshow(theme, files) if has_media_files else {}
-                            ), className="image-col", span=4),
-                        ], justify="space-between", grow=True),
-                dmc.Space(h=10),
-                *attachment_area(note.files, False),
-                ], type="hover", h=360, offsetScrollbars=True),
+                children=[
+                    dmc.Grid([
+                        dmc.Col(text_to_html_list(note.description), span=8),
+                        dmc.Col(
+                            html.Div(
+                                id="id-slideshow-container", 
+                                className="image-container", 
+                                children=slideshow(theme, files) if has_media_files else {}
+                                ), className="image-col", span=4),
+                            ], justify="space-between", grow=True),
+                    dmc.Space(h=10),
+                    *attachment_area(note.files, False),
+                    ], 
+                type="hover", 
+                h=360, 
+                offsetScrollbars=True,
+                style={"marginTop": "10px"}
+                ),
             fluid=True,
             )
     return [
