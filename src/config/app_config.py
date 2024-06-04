@@ -57,6 +57,19 @@ app_theme = {
                 "#AD1457",
                 "#880E4F",
             ],
+            "gray": [
+                "#F8F9FA", 
+                  # default : #F1F3F5
+                "#F8F9FA", 
+                "#E9ECEF", 
+                "#DEE2E6", 
+                "#CED4DA", 
+                "#ADB5BD",
+                "#868E96", 
+                "#495057", 
+                "#343A40", 
+                "#212529"
+                ]
     },
     "white": BACKGROUND_COLOR, # background color of light theme
     "primaryColor": PRIMARY_COLOR,
@@ -71,6 +84,9 @@ app_theme = {
             "h1": {"fontSize": 20},
         },
     },
+    "components": {
+        #"SegmentedControl": {"styles": {"root": {"background": "red"}}},
+        }
 }
 
 
