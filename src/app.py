@@ -120,7 +120,7 @@ def create_backend_request_to_stay_logged_in(_, avatar_clicks):
 @app.callback(
     Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
     Input(ID_MAP, "clickData"),
-    State(ID_MAP, "zoom"),
+    Input(ID_MAP, "zoom"),
     State(ID_QUERY_PARAM_STORE, "data"),
     prevent_initial_call=True,
 )
