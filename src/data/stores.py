@@ -1,5 +1,7 @@
 import flask
 from dash.exceptions import PreventUpdate
+from dash import clientside_callback, ClientsideFunction
+
 
 from src.components.data_drawer.types.pollinator import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
@@ -46,6 +48,7 @@ def stores(args, deployments, notes, env_data):
            dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
            dcc.Store(id=ID_NOTE_REFRESH_STORE,       data=dict(state=False)),
            dcc.Store(id=ID_QUERY_PARAM_STORE,        data=args),
+           dcc.Store(id=ID_TIMEZONE_STORE,           data=""),
            ]
 
 @app.callback(
@@ -93,4 +96,13 @@ def update_url(marker, data):
              }
             )
     return update_query_data(data, {name: id})
+
+
+clientside_callback(
+    ClientsideFunction(
+        namespace="timezone", function_name="getTimezone"
+    ),
+    Output(ID_TIMEZONE_STORE, "data"),
+    Input(ID_TIMEZONE_STORE, "data"),
+)
 

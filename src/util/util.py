@@ -5,15 +5,11 @@ from datetime import datetime
 from dash import html
 from src.config.app_config import CHART_DRAWER_HEIGHT
 
-def local_formatted_date(date: str, date_format="%d %b %Y • %H:%M"):
-    print(date)
+def local_formatted_date(date: str, timezone="Europe/Zurich", date_format="%d %b %Y • %H:%M"):
     tz = pytz.timezone(time.tzname[0])
     dt = datetime.fromisoformat(date)
     local_dt = dt.astimezone(tz)
-    print("local_dt", local_dt)
     r = datetime.strftime(local_dt, date_format)
-    print("local_dt", local_dt)
-    print("result", r)
     return r
 
 

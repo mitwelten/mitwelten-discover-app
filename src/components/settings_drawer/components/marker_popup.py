@@ -50,9 +50,9 @@ def details(fst_label, fst_time, snd_label=None, snd_time=None):
     ]
 
 
-def device_popup(deployment):
-    start = local_formatted_date(deployment.period_start)
-    end   = local_formatted_date(deployment.period_end) if deployment.period_end else "-"
+def device_popup(deployment, timezone):
+    start = local_formatted_date(deployment.period_start, timezone)
+    end   = local_formatted_date(deployment.period_end, timezone) if deployment.period_end else "-"
     return dmc.Container([
         *header(deployment.node_type),
         *details("Start", start, "End", end),
@@ -62,9 +62,9 @@ def device_popup(deployment):
     )
 
 
-def environment_popup(environment):
-    created_at = local_formatted_date(environment.created_at)
-    updated_at = local_formatted_date(environment.updated_at) if environment.updated_at else "-"
+def environment_popup(environment, timezone):
+    created_at = local_formatted_date(environment.created_at, timezone)
+    updated_at = local_formatted_date(environment.updated_at, timezone) if environment.updated_at else "-"
     return dmc.Container([
         *header("Environment"),
         *details("Created", created_at, "Updated", updated_at),
@@ -73,20 +73,21 @@ def environment_popup(environment):
         style={"width": "240px", "padding": "0px", "height": "75px"}
     )
 
-def note_popup(note: Note):
+def note_popup(note: Note, timezone):
+    created_at = local_formatted_date(note.date, timezone)
     if note.description is not None:
         description = (note.description[:75] + '...') if len(note.description) > 75 else note.description
     else:
         description = "-"
 
     return dmc.Container([
-
-    html.Div(header("Note", note.title)),
+        html.Div(header("Note", note.title)),
         html.Div(
             dmc.Text(apply_newlines(description), lineClamp=3, size="xs"),
             style={"maxHeight":"70px", "overflow": "hidden"}
-        )
-    ],
+            ),
+        dmc.Text(created_at, color="dimmed", size="xs"),
+        ],
         fluid=True,
         style={"width": "220px", "maxHeight": "144px", "overflow": "hidden", "padding": "0px"},
     )

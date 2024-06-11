@@ -11,6 +11,12 @@ window.dash_clientside.browser_properties = {
   })
 };
 
+window.dash_clientside.timezone = {
+  getTimezone: () => {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+};
+
 window.dash_clientside.attachment = {
   singleImage: async (url) => {
   },

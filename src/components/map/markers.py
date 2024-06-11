@@ -4,10 +4,8 @@ from dash import (
     Input,
     State,
     ALL,
-    ctx,
     clientside_callback,
     ClientsideFunction,
-    no_update,
 )
 from dash.exceptions import PreventUpdate
 from dash_extensions.javascript import assign
@@ -36,8 +34,9 @@ popup_events=dict(
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
+    State(ID_TIMEZONE_STORE, "data")
 )
-def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
+def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, timezone):
     """
     Changes the visible markers of the "physical" devices on the map.
     This callback is mainly triggered by adjusting the filter settings.
@@ -94,7 +93,7 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
                     position=[d.lat, d.lon],
                     children=[
                         dl.Popup(
-                            children=device_popup(d),
+                            children=device_popup(d, timezone),
                             closeButton=False,
                             id=f"{d.id}",
                             autoPan=False,
@@ -114,8 +113,9 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources):
     Output(ID_ENV_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input({"role": "Environment", "label": "Store", "type": "virtual"}, "data"),
+    State(ID_TIMEZONE_STORE, "data")
 )
-def add_environment_markers(active_checkboxes, all_environments):
+def add_environment_markers(active_checkboxes, all_environments, timezone):
     if "Environment" not in active_checkboxes:
         return []
 
@@ -126,7 +126,7 @@ def add_environment_markers(active_checkboxes, all_environments):
                 position=[env.lat, env.lon],
                 children=[
                     dl.Popup(
-                        children=[environment_popup(env)],
+                        children=[environment_popup(env, timezone)],
                         closeButton=False,
                         autoPan=False,
                         autoClose=False,
@@ -147,8 +147,9 @@ def add_environment_markers(active_checkboxes, all_environments):
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_EDIT_NOTE_STORE, "data"),
     Input({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    State(ID_TIMEZONE_STORE, "data")
 )
-def add_note_markers(active_checkboxes, selected_note, all_notes):
+def add_note_markers(active_checkboxes, selected_note, all_notes, timezone):
     if "Note" not in active_checkboxes:
         return []
 
@@ -177,7 +178,7 @@ def add_note_markers(active_checkboxes, selected_note, all_notes):
                 position=[current_note.lat, current_note.lon],
                 children=[
                     dl.Popup(
-                        children=note_popup(current_note),
+                        children=note_popup(current_note, timezone),
                         closeButton=False,
                         autoPan=False,
                         autoClose=False,
@@ -199,6 +200,7 @@ clientside_callback(
     Output(ID_BROWSER_PROPERTIES_STORE, "data"),
     Input(ID_SELECTED_MARKER_STORE, "data"),
 )
+
 
 
 @app.callback(
