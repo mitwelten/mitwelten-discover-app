@@ -79,8 +79,8 @@ def form_content(note: Note, all_tags):
                 style=min_width_style,
             ),
             dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", debounce=500, style=min_width_style), span=6),
-            dmc.Col(dmc.DatePicker(id=ID_NOTE_DATE_INPUT, value=local_formatted_date(note.date, "%Y-%m-%dT%H:%M:%S"), label="Date", style={"minWidth": "200px"}), span=4),
-            dmc.Col(dmc.TimeInput(id=ID_NOTE_TIME_INPUT, value=local_formatted_date(note.date, "%Y-%m-%dT%H:%M:%S"), label="Time", style={"minWidth": "50"}), span=2),
+            dmc.Col(dmc.DatePicker(id=ID_NOTE_DATE_INPUT, value=local_formatted_date(note.date, date_format="%Y-%m-%dT%H:%M:%S"), label="Date", style={"minWidth": "200px"}), span=4),
+            dmc.Col(dmc.TimeInput(id=ID_NOTE_TIME_INPUT, value=local_formatted_date(note.date, date_format="%Y-%m-%dT%H:%M:%S"), label="Time", style={"minWidth": "50"}), span=2),
             dmc.Col(dmc.Textarea(
                 id=ID_NOTE_EDIT_DESCRIPTION,
                 value=note.description,

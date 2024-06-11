@@ -3,6 +3,13 @@ if (!window.dash_clientside) {
   window.activePopup = "";
 }
 
+window.dash_clientside.util= {
+  getTimezone: function(c) {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+    return {"tz": tz};
+  }
+}
+
 window.dash_clientside.browser_properties = {
   fetchWindowProps: () => ({
     pixelRatio: window.devicePixelRatio,
@@ -11,11 +18,6 @@ window.dash_clientside.browser_properties = {
   })
 };
 
-window.dash_clientside.timezone = {
-  getTimezone: () => {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone;
-  }
-};
 
 window.dash_clientside.attachment = {
   singleImage: async (url) => {

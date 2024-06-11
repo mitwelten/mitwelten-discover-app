@@ -91,7 +91,7 @@ def init_popup_time(timezone, data):
 
 
         init_popup = dl.Popup(
-            children=popup_fn(active_depl, timezone),
+            children=popup_fn(active_depl, timezone.get("tz")),
             closeButton=False,
             autoPan=False,
             autoClose=False,

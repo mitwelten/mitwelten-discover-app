@@ -12,6 +12,8 @@ from dash import (
     State, 
     ctx,
     no_update,
+    clientside_callback,
+    ClientsideFunction
 )
 from dash.exceptions import PreventUpdate
 from configuration import DOMAIN_NAME
@@ -89,19 +91,6 @@ register_page("Discover", layout=discover_app, path="/")
 
 
 
-@app.callback(
-    Output("notifications-container", "children"),
-    Input("notify", "n_clicks"),
-    prevent_initial_call=True,
-)
-def show(n_clicks):
-    return dmc.Notification(
-        title="Hey there!",
-        id="simple-notify",
-        action="show",
-        message="Notifications in Dash, Awesome!",
-        icon=DashIconify(icon="ic:round-celebration"),
-    )
 
 @app.callback(
     Output(ID_STAY_LOGGED_IN_INTERVAL, "interval"),
@@ -194,4 +183,10 @@ def map_click(_, selected_note):
     return False, dict(data=None)
 
 
-
+clientside_callback(
+    ClientsideFunction(
+        namespace="util", function_name="getTimezone"
+    ),
+    Output(ID_TIMEZONE_STORE, "data"),
+    Input(ID_TIMEZONE_STORE, "data"),
+)

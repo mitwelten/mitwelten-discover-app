@@ -6,6 +6,7 @@ const getFileBasedOnTrigger = (isInitCall, triggered_id, file_store, active_id) 
   const getIndex = id => file_store.files.findIndex(it => it.id === id);
 
   // left or right button of slideshow clicked
+  // TODO: replace hard coded strings
   if(triggered_id === "id-slideshow-btn-left" || triggered_id === "id-slideshow-btn-right") {
     const reversed = triggered_id === "id-slideshow-btn-left" ;
     const step     = reversed ? -1 : 1;
@@ -54,10 +55,11 @@ const extractFromCookie = (name, cookie) => {
   return cookieValue;
 };
 
-const getBlobUrl = async (api_url, file) => {
+const getBlobUrl = async (api_url,  file) => {
     const requestOptions = {
       method: 'GET',
       mode: "cors",
+      headers: {Authorization: `Bearer ${auth_token}`},
       redirect: 'follow'
     };
 

@@ -27,8 +27,8 @@ def date_time_section(args):
         label_end   = ""
         timerange = "custom"
     else:
-        label_start = local_formatted_date(datetime.isoformat(datetime.now() - timedelta(weeks=int(timerange))), "%d %b %Y")
-        label_end   = local_formatted_date(datetime.isoformat(datetime.now()), "%d %b %Y")
+        label_start = local_formatted_date(datetime.isoformat(datetime.now() - timedelta(weeks=int(timerange))), date_format="%d %b %Y")
+        label_end   = local_formatted_date(datetime.isoformat(datetime.now()), date_format="%d %b %Y")
 
     return html.Div([
         dcc.Store(
@@ -102,8 +102,8 @@ def update_picker_from_segment(weeks, picker_value):
     end   = datetime.now().isoformat(timespec="seconds")
     store_data = dict(start=start, end=end)
 
-    label_data_start = local_formatted_date(start, "%d %b %Y")
-    label_data_end   = local_formatted_date(end, "%d %b %Y")
+    label_data_start = local_formatted_date(start, date_format="%d %b %Y")
+    label_data_end   = local_formatted_date(end, date_format="%d %b %Y")
     return store_data, {"display": "none"}, {"display": "block"}, f"{label_data_start} - {label_data_end}"
 
 

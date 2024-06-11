@@ -51,8 +51,8 @@ def details(fst_label, fst_time, snd_label=None, snd_time=None):
 
 
 def device_popup(deployment, timezone):
-    start = local_formatted_date(deployment.period_start, timezone)
-    end   = local_formatted_date(deployment.period_end, timezone) if deployment.period_end else "-"
+    start = local_formatted_date(deployment.period_start, timezone=timezone)
+    end   = local_formatted_date(deployment.period_end, timezone=timezone) if deployment.period_end else "-"
     return dmc.Container([
         *header(deployment.node_type),
         *details("Start", start, "End", end),
@@ -63,8 +63,8 @@ def device_popup(deployment, timezone):
 
 
 def environment_popup(environment, timezone):
-    created_at = local_formatted_date(environment.created_at, timezone)
-    updated_at = local_formatted_date(environment.updated_at, timezone) if environment.updated_at else "-"
+    created_at = local_formatted_date(environment.created_at, timezone=timezone)
+    updated_at = local_formatted_date(environment.updated_at, timezone=timezone) if environment.updated_at else "-"
     return dmc.Container([
         *header("Environment"),
         *details("Created", created_at, "Updated", updated_at),
@@ -74,7 +74,7 @@ def environment_popup(environment, timezone):
     )
 
 def note_popup(note: Note, timezone):
-    created_at = local_formatted_date(note.date, timezone)
+    created_at = local_formatted_date(note.date, timezone=timezone)
     if note.description is not None:
         description = (note.description[:75] + '...') if len(note.description) > 75 else note.description
     else:
