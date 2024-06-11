@@ -3,7 +3,7 @@ class Deployment:
     def __init__(self, json_deployment: dict):
         self.id = json_deployment.get("deployment_id", json_deployment.get("id"))
         description = json_deployment.get("description")
-        self.description = description if description else "-"
+        self.description = description if description else ""
         self.node_label = json_deployment.get("node").get("node_label")
         self.node_type = json_deployment.get("node").get("type").replace(".","")
         self.node_type = self.node_type.replace(".","")  # replace the dot (.) in Env. Sensor, based on callback issues
