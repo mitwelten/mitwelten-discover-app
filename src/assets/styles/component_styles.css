@@ -247,3 +247,7 @@ input:invalid {
     transform: translate(0%,-50%);
     -ms-transform: translate(-0%,-50%);
 }
+
+.mantine-DateRangePicker-dropdown {
+  left: -5px !important;
+}

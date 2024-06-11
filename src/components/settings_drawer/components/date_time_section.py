@@ -52,11 +52,12 @@ def date_time_section(args):
                 description="",
                 minDate=date(2020, 1, 1),
                 value=[start, end],
-                styles={"root": {"width": 220}},
+                # styles dropdown doesnt work as expected, class in css file used
+                styles={"root": {"width": 220}, "dropdown": {"left": -5}},
                 style={"display": "block"} if timerange == "custom" else {"display": "none"},
             ),
             dmc.Text(
-                f"{label_start }- {label_end}",
+                f"{label_start} - {label_end}",
                 id=ID_DATE_RANGE_LABEL,
                 color="dimmed",
                 size="sm",
