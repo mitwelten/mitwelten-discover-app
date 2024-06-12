@@ -2,6 +2,7 @@ import dash_leaflet as dl
 from dash import (
     Output,
     Input,
+    ctx,
     State,
     ALL,
     clientside_callback,
@@ -38,7 +39,6 @@ popup_events=dict(
     prevent_initial_call=True
 )
 def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, timezone):
-    print("timezone marker: ", timezone)
     """
     Changes the visible markers of the "physical" devices on the map.
     This callback is mainly triggered by adjusting the filter settings.

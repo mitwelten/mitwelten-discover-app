@@ -5,7 +5,7 @@ from datetime import datetime
 from dash import html
 from src.config.app_config import CHART_DRAWER_HEIGHT
 
-def local_formatted_date(date: str, timezone, date_format="%d %b %Y • %H:%M"):
+def local_formatted_date(date: str, timezone=None, date_format="%d %b %Y • %H:%M"):
     if timezone == "" or timezone is None:
         timezone = "Europe/Zurich"
     tz = pytz.timezone(timezone)
