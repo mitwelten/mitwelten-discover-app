@@ -125,7 +125,7 @@ def tag_filter(args):
                 dmc.Modal(
                     title="Select Tags",
                     id=ID_CHIPS_MODAL,
-                    zIndex=10000,
+                    zIndex=1000000,
                     children=[
                         dmc.ChipGroup(
                             children=[dmc.Chip(x, value=x, size="xs") for x in tags],

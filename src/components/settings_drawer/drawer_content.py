@@ -1,14 +1,12 @@
 import dash_mantine_components as dmc
-from dash import html
 
-from src.config.app_config import DISCOVER_DESCRIPTION, PRIMARY_COLOR
+from src.config.app_config import DISCOVER_DESCRIPTION
 from src.components.settings_drawer.components.date_time_section import date_time_section
 from src.components.settings_drawer.components.general_controls import general_controls
 from src.components.settings_drawer.components.source_filter import source_filter
 from src.components.settings_drawer.components.tag_filter import tag_filter
 from src.config.id_config import *
 
-from dash_iconify import DashIconify
 
 def divider(title: str):
     return dmc.Divider(label=title, labelPosition="center", size="md")
@@ -17,33 +15,26 @@ def divider(title: str):
 def drawer_content(args): 
     return dmc.Container(
             children=[
-                    dmc.Title("Mitwelten Discover", align="center", order=1),
-                dmc.Group([
-                    #dmc.Title("Mitwelten Discover", align="center", order=1),
-                    #dmc.HoverCard(
-                    #    position="top",
-                    #    withArrow=True,
-                    #    width="500px",
-                    #    shadow="lg",
-                    #    style={"display": "flex", "alignItems":"center"},
-                    #    children=[
-                    #        dmc.HoverCardTarget(
-                    #            children=dmc.ThemeIcon(
-                    #                size="sm",
-                    #                variant="filled",
-                    #                radius="sm",
-                    #                color=PRIMARY_COLOR,
-                    #                children=DashIconify(icon="material-symbols:info-i-rounded", width=16),
-                    #                style={"cursor": "pointer"}
-                    #                ),
-                    #            ),
-                    #        dmc.HoverCardDropdown(
-                    #            children=DISCOVER_DESCRIPTION,
-                    #            style={"padding": "30px"}
-                    #            )
-                    #        ],
-                    #    ),
-                    ]),
+                dmc.Center(
+                    dmc.HoverCard(
+                        position="top",
+                        withArrow=True,
+                        width="500px",
+                        shadow="lg",
+                        style={"display": "flex", "alignItems":"center"},
+                        children=[
+                            dmc.HoverCardTarget(
+                                children=[
+                                    dmc.Title("Mitwelten Discover", align="center", order=1)
+                                    ],
+                                ),
+                            dmc.HoverCardDropdown(
+                                children=DISCOVER_DESCRIPTION,
+                                style={"padding": "30px"}
+                                )
+                            ],
+                        ),
+                    ),
                 dmc.Space(h=30),
                 dmc.ScrollArea([
                     divider("Time Frame"),

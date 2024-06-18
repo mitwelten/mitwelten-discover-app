@@ -29,7 +29,7 @@ SOURCE_PROPS = {
     "Pax Counter":    dict(name="Pax Counter",            color="#FF9999", marker="assets/markers/paxCounter.svg",    type="physical"),
     "Pollinator Cam": dict(name="Pollinator Camera",      color="#FFCCFF", marker="assets/markers/polliCam.svg",      type="physical"),
     "Wild Cam":       dict(name="Wild Camera",            color="#FFCC99", marker="assets/markers/wildCam.svg",       type="physical"),
-    "Environment":    dict(name="Habitat",                color="#CCFF99", marker="assets/markers/habitat.svg",       type="virtual"),
+    "Environment":    dict(name="Habitat Type",           color="#CCFF99", marker="assets/markers/habitat.svg",       type="virtual"),
     "Note":           dict(name="Experiments & Findings", color="#FFFF99", marker="assets/markers/docu.svg",          type="virtual"),
 }
 
