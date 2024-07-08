@@ -188,6 +188,7 @@ def activate_edit_mode(click, notes, all_tags):
         raise PreventUpdate
 
     user = get_user_from_cookies()
+
     if user is None:
         n = notification("Log in to edit notes!", NotificationType.NOT_PERMITTED)
         return no_update, no_update, no_update, no_update, n
@@ -195,11 +196,11 @@ def activate_edit_mode(click, notes, all_tags):
     for note in notes["entries"]:
         if note["id"] == ctx.triggered_id["note_id"]:
             n = Note(note)
-            if n.author != user.full_name:
+            if n.author == user.full_name or "internal" in user.roles:
+                return dict(data=note), note_form_view(n, all_tags["all"]), False, CHART_DRAWER_HEIGHT, no_update
+            else:
                 n = notification("Only the author can edit this note!", NotificationType.NOT_PERMITTED)
                 return no_update, no_update, no_update, no_update, n 
-
-            return dict(data=note), note_form_view(n, all_tags["all"]), False, CHART_DRAWER_HEIGHT, no_update
 
 
 app.clientside_callback(
@@ -332,7 +333,7 @@ def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
                 return True, no_update, no_update, no_update, False
 
             drawer_size = get_drawer_size_by_number_of_files(len(n.files))
-            return no_update, dict(data=None), note_view(Note(note), 0, theme), drawer_size, True
+            return no_update, dict(data=None), note_view(Note(note), theme, False), drawer_size, True
     raise PreventUpdate
 
 

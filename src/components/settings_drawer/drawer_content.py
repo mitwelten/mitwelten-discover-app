@@ -25,11 +25,23 @@ def drawer_content(args):
                         children=[
                             dmc.HoverCardTarget(
                                 children=[
-                                    dmc.Title("Mitwelten Discover", align="center", order=1)
+                                    dmc.Title(
+                                        "Mitwelten Discover", 
+                                        align="center", 
+                                        order=1, 
+                                        style={"cursor": "pointer"}
+                                        ),
                                     ],
                                 ),
                             dmc.HoverCardDropdown(
-                                children=DISCOVER_DESCRIPTION,
+                                children=[
+                                    dmc.Text( DISCOVER_DESCRIPTION, size="sm"),
+                                    dmc.Space(h=10),
+                                    dmc.Group([
+                                        dmc.Text("For more information visit:", size="sm"),
+                                        dmc.Anchor("mitwelten.org", href="https://mitwelten.org", target="_blank", size="sm"),
+                                        ], spacing="xs"),
+                                    ],
                                 style={"padding": "30px"}
                                 )
                             ],
