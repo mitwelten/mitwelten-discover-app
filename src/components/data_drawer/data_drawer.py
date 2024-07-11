@@ -122,10 +122,8 @@ wr = {
     Output(ID_LOGO_CONTAINER, "style"),
     Output(ID_CHART_DRAWER, "styles"),
     Input(ID_SETTINGS_DRAWER, "opened"),
-    State(ID_SETTINGS_DRAWER, "size")
 )
-def settings_drawer_state(state, size):
-    print("size: ", size)
+def settings_drawer_state(state):
     width_reduced = {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
     full_width = {"width": "100vw"}
     if state:
