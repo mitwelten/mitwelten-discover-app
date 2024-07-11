@@ -25,8 +25,8 @@ def get_checkbox_by_type(node_type: str):
             get_source_props(node_type)["name"],
         ]),
         value=node_type,
-        size="xs",
-        color="#003399"
+        #size="xs",
+        #color="#003399"
     )
 
 
@@ -51,16 +51,15 @@ def source_filter(args):
             value="all", 
             size="sm"
             ),
-        dmc.Space(h=10),
-        dmc.CheckboxGroup(
-            id=ID_TYPE_CHECKBOX_GROUP,
-            orientation="vertical",
-            withAsterisk=False,
-            offset="xs",
-            children=source_types,
-            value=active,
-        ),
-    ])
+        dmc.Space(h=20),
+            dmc.CheckboxGroup(
+                id=ID_TYPE_CHECKBOX_GROUP,
+                withAsterisk=False,
+                children=dmc.Stack(source_types),
+                value=active,
+                ),
+            ],
+    )
 
 @app.callback(
         Output(ID_TYPE_CHECKBOX_GROUP, "value"),

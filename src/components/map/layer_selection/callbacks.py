@@ -44,6 +44,7 @@ def handle_map_update(_):
     prevent_initial_call=True
 )
 def handle_map_update_0(clicks):
+    # TODO: remove safe_reduce
     clicks = safe_reduce(lambda x, y: x + y, clicks, 0)
     if clicks is None or clicks == 0:
         return no_update
@@ -57,6 +58,7 @@ def handle_map_update_0(clicks):
     prevent_initial_call=True
 )
 def handle_map_update_1(clicks):
+    # TODO: remove safe_reduce
     clicks = safe_reduce(lambda x, y: x + y, clicks, 0)
     if clicks is None or clicks == 0:
         return no_update
@@ -67,11 +69,12 @@ def handle_map_update_1(clicks):
 def update_map_icon(data, children, icons):
     map_id = data["index"]
     for child in children:
-        # nestet: Div - Stack - Div
+        # nested: Div - Stack - Div
         child["props"]["children"][0]["props"]["className"] = ""
 
     children[map_id]["props"]["children"][0]["props"]["className"] = "map-image-selected"
 
+    print("map_id", map_id)
     for icon in icons:
         icon["props"]["className"] = ""
 
@@ -81,9 +84,9 @@ def update_map_icon(data, children, icons):
 
 for map_type in MAP_TYPES:
     app.callback(
-            Output({'role': map_type, 'index': ALL, 'place': "menu"}, 'icon'),
+            Output({'role': map_type, 'index': ALL, 'place': "menu"}, 'leftSection'),
             Output({'role': map_type, 'index': ALL, 'place': "drawer"}, 'children'),
             Input({'role': "map_store", 'type': map_type}, "data"),
             State({'role':  map_type, 'index': ALL, 'place': "drawer"}, 'children'),
-            State({'role':  map_type, 'index': ALL, 'place': "menu"}, 'icon'),
+            State({'role':  map_type, 'index': ALL, 'place': "menu"}, 'leftSection'),
     )(update_map_icon)

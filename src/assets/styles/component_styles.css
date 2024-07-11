@@ -62,6 +62,11 @@
     scroll-behavior: smooth;
 }
 
+.chart-drawer {
+  flex: none;
+  position: absolute;
+}
+
 @media screen and (max-width: 380px) {
     .chart-drawer {
         left: 0;

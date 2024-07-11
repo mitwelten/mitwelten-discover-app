@@ -35,7 +35,7 @@ info_dialog = dmc.Modal(
                 dmc.Group([
                     dmc.Text("For more information visit:", size="sm"),
                     dmc.Anchor("mitwelten.org", href="https://mitwelten.org", target="_blank", size="sm"),
-                    ], spacing="xs"),
+                    ], gap="xs"),
                 dmc.Space(h=40),
                 dmc.ScrollArea([
                     deployment_info,
@@ -46,7 +46,7 @@ info_dialog = dmc.Modal(
                         id="id-info-modal-close-button", 
                         children=dmc.Text("Close")
                         ),
-                    ], position="right"
+                    ], justify="flex-end"
                 )],
         )
 
@@ -64,7 +64,7 @@ def create_avatar(user):
             dmc.Stack([
                 dmc.Avatar(user.initials, size="60px", radius="xl", color=PRIMARY_COLOR, variant="filled"),
                 dmc.Text(user.full_name),
-                dmc.Text(user.username, color="dimmed"),
+                dmc.Text(user.username, c="dimmed"),
                 dmc.Divider(size="md", color="black"),
                 dmc.Anchor(
                     dmc.Button(
@@ -96,39 +96,44 @@ control_buttons = [
         action_button(
             button_id=ID_OPEN_SETTINGS_DRAWER_BUTTON,
             icon="material-symbols:menu"
-        ),
+            ),
         dmc.Group([
             html.Div(
                 id=ID_LOGIN_AVATAR_CONTAINER
-            ),
+                ),
             login_button,
-            action_button(button_id=ID_ADD_NOTE_BUTTON, icon="material-symbols:add-comment-outline"),
-            dmc.MediaQuery([
-                action_button(button_id=ID_BOTTOM_DRAWER_BUTTON, icon="material-symbols:layers-outline"),
-                dmc.Drawer(
-                    map_menu_drawer("drawer"),
-                    id=ID_MAP_LAYER_BOTTOM_DRAWER,
-                    size="lg",
-                    zIndex=90000,
-                    position="bottom",
-                    withOverlay=True,
-                    closeOnClickOutside=True
-                )
-            ],
-                largerThan="sm",
-                styles={"display": "none"}
-            ),
-            dmc.MediaQuery(
-                map_menu_popup("menu"),
-                smallerThan="sm",
-                styles={"display": "none"}
-            ),
+            action_button(
+                button_id=ID_ADD_NOTE_BUTTON, 
+                icon="material-symbols:add-comment-outline"
+                ),
+            dmc.ActionIcon(
+                DashIconify(
+                    icon="material-symbols:layers-outline",
+                    width=20,
+                    color=PRIMARY_COLOR,
+                    ),
+                size=20,
+                id=ID_BOTTOM_DRAWER_BUTTON,
+                n_clicks=0,
+                radius="xl",
+                style={"zIndex":100},
+                hiddenFrom="sm"
+                ),
+            dmc.Drawer(
+                map_menu_drawer("drawer"),
+                id=ID_MAP_LAYER_BOTTOM_DRAWER,
+                size="lg",
+                zIndex=90000,
+                position="bottom",
+                withOverlay=True,
+                closeOnClickOutside=True,
+                hiddenFrom="sm",
+                ),
+            map_menu_popup("menu"),
             action_button(button_id=ID_INFO_DIALOG_BUTTON, icon="material-symbols:info-i"),
             info_dialog
-        ],
-            id=ID_FAB_CONTAINER
-        )
-    ]
+            ], id=ID_FAB_CONTAINER)
+        ]
 
 @app.callback(
         Output(ID_INFO_DIALOG_MODAL, "opened"),

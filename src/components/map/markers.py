@@ -23,22 +23,23 @@ from src.util.helper_functions import was_deployed
 from src.url.parse import update_query_data
 
 popup_events=dict(
-    mouseover = assign("", "mouseover"), 
     mouseout  = assign("", "mouseout"),
     click     = assign("", "click"),
+    mouseover = assign("", "mouseover"), 
 ) 
 
 @app.callback(
     Output(ID_MAP_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-    Input(ID_TAG_CHIPS_GROUP, "value"),
+    #Input(ID_TAG_CHIPS_GROUP, "value"),
     Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
     Input(ID_TIMEZONE_STORE, "data"),
     prevent_initial_call=True
 )
-def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, timezone):
+# def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, timezone):
+def add_device_markers(checkboxes, fs_tag, time_range, sources, timezone):
     """
     Changes the visible markers of the "physical" devices on the map.
     This callback is mainly triggered by adjusting the filter settings.
@@ -73,7 +74,8 @@ def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, timezone):
             depl_fs_filtered[key] = list(filter(lambda depl: fs_tag in depl.tags or fs_tag == "ANY", depl_to_show[key]))
 
     depl_tags_filtered = {}
-    if tags:
+    # if tags:
+    if False:
         for key in depl_to_show.keys():
             depl_tags_filtered[key] = list(filter(lambda depl: any(tag in depl.tags for tag in tags), depl_to_show[key]))
 

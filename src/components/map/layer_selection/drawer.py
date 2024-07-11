@@ -13,8 +13,8 @@ def minimap_button(id_prefix, map_config, role):
                 dmc.Image(
                     src=map_config.image,
                     alt="map",
-                    width=48,
-                    height=48,
+                    w=48,
+                    h=48,
                     radius=5,
                 ),
                 className="map-image-selected" if map_config.index == 0 else ""
@@ -25,7 +25,7 @@ def minimap_button(id_prefix, map_config, role):
             )
         ],
         align="center",
-        spacing="xs",
+        gap="xs",
     ),
         id={'role': role, 'index': map_config.index, 'place': id_prefix},
     )
@@ -38,7 +38,7 @@ def map_menu_drawer(id_prefix):
             dmc.Space(h=20),
             dmc.Grid(
                 list(map(
-                    lambda x: dmc.Col(minimap_button(id_prefix, x, MAP_TYPES[0]), style={"textAlign": "center"}, span=3),
+                    lambda x: dmc.GridCol(minimap_button(id_prefix, x, MAP_TYPES[0]), style={"textAlign": "center"}, span=3),
                     MAPS)
                 ),
                 gutter="sm",
@@ -49,7 +49,7 @@ def map_menu_drawer(id_prefix):
             dmc.Space(h=20),
             dmc.Grid(
                 list(map(
-                    lambda x: dmc.Col(minimap_button(id_prefix, x, MAP_TYPES[1]), style={"textAlign": "center"}, span=3),
+                    lambda x: dmc.GridCol(minimap_button(id_prefix, x, MAP_TYPES[1]), style={"textAlign": "center"}, span=3),
                     OVERLAYS)
                 ),
                 gutter="sm",

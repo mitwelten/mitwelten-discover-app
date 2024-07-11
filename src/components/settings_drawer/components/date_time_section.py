@@ -46,20 +46,22 @@ def date_time_section(args):
         ),
         dmc.Space(h=20),
         dmc.Center([
-            dmc.DateRangePicker(
+            dmc.DatePicker(
                 id=ID_DATE_RANGE_PICKER,
-                inputFormat="DD MMM, YY",
+                #inputFormat="DD MMM, YY",
                 description="",
                 minDate=date(2020, 1, 1),
                 value=[start, end],
+                type="range",
                 # styles dropdown doesnt work as expected, class in css file used
+                modalProps={"zIndex": 99000},
                 styles={"root": {"width": 220}, "dropdown": {"left": -5}},
                 style={"display": "block"} if timerange == "custom" else {"display": "none"},
             ),
             dmc.Text(
                 f"{label_start} - {label_end}",
                 id=ID_DATE_RANGE_LABEL,
-                color="dimmed",
+                c="dimmed",
                 size="sm",
                 style={"display": "none"} if timerange == "custom" else {"display": "block"},
             )

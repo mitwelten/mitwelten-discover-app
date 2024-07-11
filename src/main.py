@@ -1,6 +1,7 @@
 from dash import Dash
 import dash_bootstrap_components as dbc
 import datetime
+import dash
 
 import diskcache
 from dash.long_callback import DiskcacheLongCallbackManager
@@ -8,10 +9,20 @@ from dash.long_callback import DiskcacheLongCallbackManager
 cache = diskcache.Cache("./cache")
 long_callback_manager = DiskcacheLongCallbackManager(cache)
 
-external_stylesheets = [
-    dbc.themes.BOOTSTRAP,
+stylesheets = [
 ]
 
+external_stylesheets = [
+    dbc.themes.BOOTSTRAP,
+    "https://unpkg.com/@mantine/dates@7/styles.css",
+    "https://unpkg.com/@mantine/code-highlight@7/styles.css",
+    "https://unpkg.com/@mantine/charts@7/styles.css",
+    "https://unpkg.com/@mantine/carousel@7/styles.css",
+    "https://unpkg.com/@mantine/notifications@7/styles.css",
+    "https://unpkg.com/@mantine/nprogress@7/styles.css",
+]
+
+dash._dash_renderer._set_react_version('18.2.0')
 app = Dash(
     __name__,
     title="Mitwelten Discover",

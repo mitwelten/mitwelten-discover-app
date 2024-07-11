@@ -19,7 +19,7 @@ fs_desc = dmc.Stack([
     dmc.Text("Field Study 1: Merian Gärten",   size="sm"),
     dmc.Text("Field Study 2: Dreispitz",       size="sm"),
     dmc.Text("Field Study 3: Reinacher Heide", size="sm"),
-], spacing="sm")
+], gap="sm")
 
 
 @spaced_section
@@ -55,7 +55,7 @@ def tag_filter(args):
                 withArrow=True,
                 width="240px",
                 shadow="lg",
-                style={"display": "flex", "alignItems":"center"},
+                styles={"display": "flex", "alignItems":"center"},
                 children=[
                     dmc.HoverCardTarget(
                         children=
@@ -104,35 +104,32 @@ def tag_filter(args):
                     "Clear",
                     variant="light",
                     color=PRIMARY_COLOR,
-                    compact=True,
                     size="xs",
                     radius="xl",
                     id=ID_TAG_RESET_BUTTON,
                     ),
                 ]),
             ],
-                  position="apart"
+                  justify="space-between",
                   ),
         dmc.Space(h=10),
         dmc.Center([
-            dmc.ChipGroup(
-                [dmc.Chip(x, value=x, size="xs") for x in tags_value],
-                id=ID_TAG_CHIPS_GROUP,
-                value=tags_value,
-                multiple=True
-                ),
+            #dmc.ChipGroup(
+            #    [dmc.Chip(x, value=x, size="xs") for x in tags_value],
+            #    id=ID_TAG_CHIPS_GROUP,
+            #    value=tags_value,
+            #    ),
             html.Div(
                 dmc.Modal(
                     title="Select Tags",
                     id=ID_CHIPS_MODAL,
                     zIndex=1000000,
                     children=[
-                        dmc.ChipGroup(
-                            children=[dmc.Chip(x, value=x, size="xs") for x in tags],
-                            id=ID_MODAL_CHIPS_GROUP,
-                            value=tags_value,
-                            multiple=True
-                            ),
+                       # dmc.ChipGroup(
+                       #     children=[dmc.Chip(x, value=x, size="xs") for x in tags],
+                       #     id=ID_MODAL_CHIPS_GROUP,
+                       #     value=tags_value,
+                       #     ),
                         dmc.Space(h=20),
                         dmc.Center(dmc.Button("Ok", id=ID_CLOSE_CHIP_MODAL_BUTTON)),
                         ],
@@ -141,41 +138,41 @@ def tag_filter(args):
             ])])
 
 
-@app.callback(
-    Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),
-    Output(ID_TAG_CHIPS_GROUP, "value", allow_duplicate=True),
-    Output(ID_MODAL_CHIPS_GROUP, "value"),
-    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
-    Input(ID_TAG_RESET_BUTTON, "n_clicks"),
-    State(ID_QUERY_PARAM_STORE, "data"),
-    prevent_initial_call=True
-)
-def reset_tags(_, data):
-    return [], [], [], update_query_data(data, {"tags": None})
-
-
-@app.callback(
-    Output(ID_CHIPS_MODAL, "opened"),
-    Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),
-    Output(ID_TAG_CHIPS_GROUP, "value", allow_duplicate=True),
-    Input(ID_OPEN_CHIP_MODAL_BUTTON, "n_clicks"),
-    Input(ID_CLOSE_CHIP_MODAL_BUTTON, "n_clicks"),
-    Input(ID_MODAL_CHIPS_GROUP, "value"),
-    Input(ID_TAG_CHIPS_GROUP, "value"),
-    Input(ID_TAG_CHIPS_GROUP, "children"),
-    State(ID_CHIPS_MODAL, "opened"),
-    prevent_initial_call=True,
-)
-def select_tags(_1, _2, modal_value, active_chips, children, opened):
-    current_chips = list(map(lambda x: x["props"]["value"], children))
-    filtered = list(filter(lambda d: d not in active_chips, current_chips))
-    new_active_chips = list(filter(lambda x: x not in filtered, modal_value))
-
-    new_children = [dmc.Chip(x, value=x, size="xs") for x in modal_value]
-    trigger_id = dash.ctx.triggered_id
-    if trigger_id == ID_CLOSE_CHIP_MODAL_BUTTON or trigger_id == ID_OPEN_CHIP_MODAL_BUTTON:
-        return not opened, new_children, new_active_chips
-    return opened, children, active_chips
+#@app.callback(
+#    Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),
+#    Output(ID_TAG_CHIPS_GROUP, "value", allow_duplicate=True),
+#    Output(ID_MODAL_CHIPS_GROUP, "value"),
+#    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
+#    Input(ID_TAG_RESET_BUTTON, "n_clicks"),
+#    State(ID_QUERY_PARAM_STORE, "data"),
+#    prevent_initial_call=True
+#)
+#def reset_tags(_, data):
+#    return [], [], [], update_query_data(data, {"tags": None})
+#
+#
+#@app.callback(
+#    Output(ID_CHIPS_MODAL, "opened"),
+#    Output(ID_TAG_CHIPS_GROUP, "children", allow_duplicate=True),
+#    Output(ID_TAG_CHIPS_GROUP, "value", allow_duplicate=True),
+#    Input(ID_OPEN_CHIP_MODAL_BUTTON, "n_clicks"),
+#    Input(ID_CLOSE_CHIP_MODAL_BUTTON, "n_clicks"),
+#    Input(ID_MODAL_CHIPS_GROUP, "value"),
+#    Input(ID_TAG_CHIPS_GROUP, "value"),
+#    Input(ID_TAG_CHIPS_GROUP, "children"),
+#    State(ID_CHIPS_MODAL, "opened"),
+#    prevent_initial_call=True,
+#)
+#def select_tags(_1, _2, modal_value, active_chips, children, opened):
+#    current_chips = list(map(lambda x: x["props"]["value"], children))
+#    filtered = list(filter(lambda d: d not in active_chips, current_chips))
+#    new_active_chips = list(filter(lambda x: x not in filtered, modal_value))
+#
+#    new_children = [dmc.Chip(x, value=x, size="xs") for x in modal_value]
+#    trigger_id = dash.ctx.triggered_id
+#    if trigger_id == ID_CLOSE_CHIP_MODAL_BUTTON or trigger_id == ID_OPEN_CHIP_MODAL_BUTTON:
+#        return not opened, new_children, new_active_chips
+#    return opened, children, active_chips
 
 
 @app.callback(
@@ -187,16 +184,16 @@ def select_tags(_1, _2, modal_value, active_chips, children, opened):
 def update_fs_tag_in_url_params(value, data):
     return update_query_data(data, {"fs": value})
 
-@app.callback(
-    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
-    Input(ID_TAG_CHIPS_GROUP, "value"),
-    State(ID_QUERY_PARAM_STORE, "data"),
-    prevent_initial_call=True,
-)
-def update_tag_in_url_params(value, data):
-    value = "+".join(value)
-    value = value.replace(" ", "_")
-    return update_query_data(data, {"tags": value})
+#@app.callback(
+#    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
+#    Input(ID_TAG_CHIPS_GROUP, "value"),
+#    State(ID_QUERY_PARAM_STORE, "data"),
+#    prevent_initial_call=True,
+#)
+#def update_tag_in_url_params(value, data):
+#    value = "+".join(value)
+#    value = value.replace(" ", "_")
+#    return update_query_data(data, {"tags": value})
 
 
 @app.callback(

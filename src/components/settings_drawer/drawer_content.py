@@ -6,6 +6,7 @@ from src.components.settings_drawer.components.general_controls import general_c
 from src.components.settings_drawer.components.source_filter import source_filter
 from src.components.settings_drawer.components.tag_filter import tag_filter
 from src.config.id_config import *
+from src.config.app_config import SETTINGS_DRAWER_WIDTH
 
 
 def divider(title: str):
@@ -21,16 +22,18 @@ def drawer_content(args):
                         withArrow=True,
                         width="500px",
                         shadow="lg",
-                        style={"display": "flex", "alignItems":"center"},
+                        zIndex=999999,
+                        styles={"display": "flex", "alignItems":"center"},
                         children=[
                             dmc.HoverCardTarget(
                                 children=[
+                                    dmc.Center(
                                     dmc.Title(
                                         "Mitwelten Discover", 
-                                        align="center", 
                                         order=1, 
                                         style={"cursor": "pointer"}
-                                        ),
+                                        )
+                                    ),
                                     ],
                                 ),
                             dmc.HoverCardDropdown(
@@ -40,7 +43,7 @@ def drawer_content(args):
                                     dmc.Group([
                                         dmc.Text("For more information visit:", size="sm"),
                                         dmc.Anchor("mitwelten.org", href="https://mitwelten.org", target="_blank", size="sm"),
-                                        ], spacing="xs"),
+                                        ], gap="xs"),
                                     ],
                                 style={"padding": "30px"}
                                 )
@@ -68,9 +71,14 @@ def drawer_content(args):
                         ])
                     ],
                                offsetScrollbars=True,
-                               type="scroll",
-                               style={"height": "100%"}
-                               )],
+                               #type="scroll",
+                               h="900",
+                               #w=SETTINGS_DRAWER_WIDTH,
+                               w=300,
+
+                               #style={"height": "100%"}
+                               )
+                ],
                 #fluid=True,
                 style={"height": "calc(100vh - 100px)", "paddingRight": "0px", "paddingLeft": "0px"}
                 )

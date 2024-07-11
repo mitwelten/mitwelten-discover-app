@@ -19,10 +19,10 @@ def general_controls(args):
                 size="xs",
                 id=ID_THEME_SWITCH
             )],
-            position="apart",
+            justify="space-between",
         ),
     ],
-        spacing="xl",
+        gap="xl",
         justify="space-between",
         style={"height": "100%"}
     )

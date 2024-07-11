@@ -89,9 +89,9 @@ def note_form_view(note: Note, all_tags):
     return dmc.Container([
         dmc.Group([
             dmc.Title("Edit Note"),
-            dmc.Group(get_form_controls(is_public),spacing="sm", style={"justifyContent":"flex-end"})
+            dmc.Group(get_form_controls(is_public),gap="sm", style={"justifyContent":"flex-end"})
             ], position="apart"),
-        dmc.Text(note.author + " • " + local_formatted_date(note.date), color="dimmed", size="sm"),
+        dmc.Text(note.author + " • " + local_formatted_date(note.date), c="dimmed", size="sm"),
         dmc.ScrollArea(
             children=[
                 *form_content(note, all_tags),
@@ -121,8 +121,8 @@ def note_detail_view(note: Note, theme):
             dmc.ScrollArea(
                 children=[
                     dmc.Grid([
-                        dmc.Col(text_to_html_list(note.description), span=8),
-                        dmc.Col(
+                        dmc.GridCol(text_to_html_list(note.description), span=8),
+                        dmc.GridCol(
                             html.Div(
                                 id="id-slideshow-container", 
                                 className="image-container", 

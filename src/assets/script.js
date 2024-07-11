@@ -181,11 +181,13 @@ window.dashExtensions = Object.assign({}, window.dashExtensions, {
     },
 
     mouseover: function(e, _ctx) {
+      console.log("mouseover", e.target);
       e.target.openPopup();
     },
 
     mouseout: function(e, ctx) {  
       if (window.activePopup != ctx.id) {
+        console.log("closePopup on mouseout", e.target);
         e.target.closePopup();
       }
     },  
@@ -193,9 +195,12 @@ window.dashExtensions = Object.assign({}, window.dashExtensions, {
     click: function(e, ctx) {  
       for (const [_, value] of Object.entries(ctx.map._targets)) {
         if (value.options.id != ctx.id) {
+          console.log("closePopup", value);
           value.closePopup();
         }
       }
+
+      console.log("openPopup", e.target);
       e.target.openPopup();
       window.activePopup = ctx.id;
     },  

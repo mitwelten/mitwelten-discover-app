@@ -39,11 +39,12 @@ def attachment_area(files: list[File], editable = False):
         dmc.SimpleGrid(
             cols=3,
             spacing="sm",
-            breakpoints=[
-                {"maxWidth": 980 + 400, "cols": 3, "spacing": "lg"},
-                {"maxWidth": 800 + 400, "cols": 2, "spacing": "md"},
-                {"maxWidth": 500 + 400, "cols": 1, "spacing": "md"},
-            ],
+            # TODO breakpoints
+            #breakpoints=[
+            #    {"maxWidth": 980 + 400, "cols": 3, "spacing": "lg"},
+            #    {"maxWidth": 800 + 400, "cols": 2, "spacing": "md"},
+            #    {"maxWidth": 500 + 400, "cols": 1, "spacing": "md"},
+            #],
             children = image_cards,
         )
     ]
@@ -66,7 +67,7 @@ def _attachment_card(file: File, auth_cookie, editable = False):
     return dmc.HoverCard(
         withArrow=True,
         shadow="md",
-        style={"cursor":"pointer", "margin": 0, "height": "50px"} if not editable else {"margin": 0, "height": "50px"},
+        styles={"cursor":"pointer", "margin": 0, "height": "50px"} if not editable else {"margin": 0, "height": "50px"},
         children=[
             dmc.HoverCardTarget(
                 children=html.Span(
@@ -85,9 +86,9 @@ def _attachment_card(file: File, auth_cookie, editable = False):
                                     src=get_file(
                                         thumbnail, 
                                         file.type) if is_image else f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
-                                    withPlaceholder=True, 
-                                    width=48,
-                                    height=48,
+                                    fallbackSrc="https://placehold.co/600x400?text=Placeholder",
+                                    w=48,
+                                    h=48,
                                 ),
                                 dmc.Text(short_filename, style={"margin": "0 10px"}, size="sm"),
 

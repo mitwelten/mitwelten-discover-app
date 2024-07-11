@@ -15,7 +15,7 @@ def settings_drawer(args):
             size=SETTINGS_DRAWER_WIDTH,
             padding="md",
             withOverlay=False,
-            zIndex=90000,
+            zIndex=1000,
 )
 
 

@@ -50,7 +50,7 @@ def form_content(note: Note, all_tags):
         dmc.Grid([
             # title and description section
             # TODO: replace with dmc.TagsInput if dash mantine 14 is working properly
-            dmc.Col(dmc.MultiSelect(
+            dmc.GridCol(dmc.MultiSelect(
                 id=ID_NOTE_TAG_SELECT,
                 label="Select Tags",
                 data=sorted([t["name"] for t in all_tags]) if all_tags else [],
@@ -62,7 +62,7 @@ def form_content(note: Note, all_tags):
                 span=6,
                 style=min_width_style
             ),
-            dmc.Col(dmc.TextInput(
+            dmc.GridCol(dmc.TextInput(
                 id=ID_NEW_TAG_INPUT,
                 label="Create new Tag",
                 size="sm",
@@ -78,10 +78,10 @@ def form_content(note: Note, all_tags):
                 span=6,
                 style=min_width_style,
             ),
-            dmc.Col(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", debounce=500, style=min_width_style), span=6),
-            dmc.Col(dmc.DatePicker(id=ID_NOTE_DATE_INPUT, value=local_formatted_date(note.date, date_format="%Y-%m-%dT%H:%M:%S"), label="Date", style={"minWidth": "200px"}), span=4),
-            dmc.Col(dmc.TimeInput(id=ID_NOTE_TIME_INPUT, value=local_formatted_date(note.date, date_format="%Y-%m-%dT%H:%M:%S"), label="Time", style={"minWidth": "50"}), span=2),
-            dmc.Col(dmc.Textarea(
+            dmc.GridCol(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", debounce=500, style=min_width_style), span=6),
+            dmc.GridCol(dmc.DatePicker(id=ID_NOTE_DATE_INPUT, value=local_formatted_date(note.date, date_format="%Y-%m-%dT%H:%M:%S"), label="Date", style={"minWidth": "200px"}), span=4),
+            dmc.GridCol(dmc.TimeInput(id=ID_NOTE_TIME_INPUT, value=local_formatted_date(note.date, date_format="%Y-%m-%dT%H:%M:%S"), label="Time", style={"minWidth": "50"}), span=2),
+            dmc.GridCol(dmc.Textarea(
                 id=ID_NOTE_EDIT_DESCRIPTION,
                 value=note.description,
                 label="Description",
@@ -94,8 +94,8 @@ def form_content(note: Note, all_tags):
                     span=12),
         ],grow=True),
         dmc.Grid([
-            dmc.Col([dmc.Button("Cancel", id=ID_NOTE_FORM_CANCEL_BUTTON, type="reset",   color="gray")], span="content"),
-            dmc.Col(dmc.Button("Save",    id=ID_NOTE_FORM_SAVE_BUTTON,   type="submit"), span="content"),
+            dmc.GridCol([dmc.Button("Cancel", id=ID_NOTE_FORM_CANCEL_BUTTON, type="reset",   color="gray")], span="content"),
+            dmc.GridCol(dmc.Button("Save",    id=ID_NOTE_FORM_SAVE_BUTTON,   type="submit"), span="content"),
         ],
             justify="flex-end"
         ),
@@ -128,9 +128,9 @@ def form_content(note: Note, all_tags):
             zIndex=10000,
             children=[
                 dmc.Grid([
-                    dmc.Col(dmc.NumberInput(id=ID_NOTE_EDIT_LAT, label="Latitude",  value=note.lat, size="sm", precision=12), span=6),
-                    dmc.Col(dmc.NumberInput(id=ID_NOTE_EDIT_LON, label="Longitude", value=note.lon, size="sm", precision=12), span=6),
-                    dmc.Col(dmc.Button("Save", id=ID_SAVE_LOCATION_BUTTON, type="submit"), span=12)
+                    dmc.GridCol(dmc.NumberInput(id=ID_NOTE_EDIT_LAT, label="Latitude",  value=note.lat, size="sm", precision=12), span=6),
+                    dmc.GridCol(dmc.NumberInput(id=ID_NOTE_EDIT_LON, label="Longitude", value=note.lon, size="sm", precision=12), span=6),
+                    dmc.GridCol(dmc.Button("Save", id=ID_SAVE_LOCATION_BUTTON, type="submit"), span=12)
                 ]),
             ],
         )

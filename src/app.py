@@ -53,6 +53,7 @@ def app_content(args):
 
     # render app content
     return [
+            dmc.NotificationProvider(),
             dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
             html.Div(id=ID_NOTIFICATION),
             mitwelten_bannner,
@@ -70,21 +71,16 @@ def discover_app(**kwargs):
     return dmc.MantineProvider(
             id=ID_APP_THEME,
             theme=app_theme,
-            inherit=True,
-            withGlobalStyles=True,
-            withNormalizeCSS=True,
-            children=[
-                dmc.NotificationsProvider(
-                    zIndex=1000000,
-                    children=html.Div(
-                        id=ID_APP_CONTAINER,
-                        children=[
-                            *app_content(args),
-                            dcc.Location(id=ID_URL_LOCATION, refresh=False),
-                            ], 
-                        )
-                    )
-                ],
+            #inherit=True,
+            #withGlobalStyles=True,
+            #withNormalizeCSS=True,
+            children=html.Div(
+                id=ID_APP_CONTAINER,
+                children=[
+                    *app_content(args),
+                    dcc.Location(id=ID_URL_LOCATION, refresh=False),
+                    ], 
+                )
             )
 
 register_page("Discover", layout=discover_app, path="/")

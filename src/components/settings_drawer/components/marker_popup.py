@@ -12,11 +12,12 @@ def header(source_type, title=None):
             html.Div([
                 dmc.Text(
                     get_source_props(source_type)["name"] if title is None else title, 
-                    weight=700,
+                    fw=700,
                     size="xs", 
-                    className="note-marker-title"
+                    className="note-marker-title",
+                    my="0"
                     ),
-                dmc.Image(src=get_source_props(source_type)["marker"], width="16px"),
+                dmc.Image(src=get_source_props(source_type)["marker"], w="16px"),
                 ], style={
                     'display': 'flex',
                     'justifyContent': 'space-between',
@@ -32,22 +33,25 @@ def details(fst_label, fst_time, snd_label=None, snd_time=None):
     snd_date_section = None
     if snd_label is not None:
         snd_date_section = dmc.Group([
-            dmc.Text(snd_label, size="xs"),
-            dmc.Text(snd_time, size="xs", color="dimmed"),
+            dmc.Text(snd_label, size="xs", my="0"),
+            dmc.Text(snd_time, size="xs", c="dimmed", my="0"),
         ],
-            position="apart"
+            justify="space-between",
         )
 
-    return [
+    return dmc.Stack([
         dmc.Group([
-            dmc.Text(fst_label, size="xs"),
-            dmc.Text(fst_time, size="xs", color="dimmed"),
+            dmc.Text(fst_label, size="xs", my="0"),
+            dmc.Text(fst_time, size="xs", c="dimmed", my="0"),
         ],
-            position="apart"
+            gap="xs",
+            justify="space-between",
+            styles={"margin": "0px"}
         ),
         snd_date_section if snd_date_section is not None else {},
         dmc.Space(h=10)
-    ]
+    ],
+                     gap="xs",)
 
 
 def device_popup(deployment, timezone):
@@ -55,7 +59,7 @@ def device_popup(deployment, timezone):
     end   = local_formatted_date(deployment.period_end, timezone=timezone) if deployment.period_end else "-"
     return dmc.Container([
         *header(deployment.node_type),
-        *details("Start", start, "End", end),
+        details("Start", start, "End", end),
     ],
         fluid=True,
         style={"width": "240px", "padding": "0px", "height": "75px"}
@@ -67,7 +71,7 @@ def environment_popup(environment, timezone):
     updated_at = local_formatted_date(environment.updated_at, timezone=timezone) if environment.updated_at else "-"
     return dmc.Container([
         *header("Environment"),
-        *details("Created", created_at, "Updated", updated_at),
+        details("Created", created_at, "Updated", updated_at),
     ],
         fluid=True,
         style={"width": "240px", "padding": "0px", "height": "75px"}
@@ -86,7 +90,7 @@ def note_popup(note: Note, timezone):
             dmc.Text(apply_newlines(description), lineClamp=3, size="xs"),
             style={"maxHeight":"70px", "overflow": "hidden"}
             ),
-        dmc.Text(created_at, color="dimmed", size="xs"),
+        dmc.Text(created_at, c="dimmed", size="xs"),
         ],
         fluid=True,
         style={"width": "220px", "maxHeight": "144px", "overflow": "hidden", "padding": "0px"},

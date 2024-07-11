@@ -85,29 +85,38 @@ def chart_drawer(args, device, all_notes, env):
     return dmc.Drawer(
         opened=drawer_state,
         id=ID_CHART_DRAWER,
-        zIndex=90000,
+        zIndex=500,
         size=drawer_size,
         closeOnClickOutside=True,
         closeOnEscape=True,
         withOverlay=False,
-        overlayOpacity=0,
         className="chart-drawer",
         position="bottom",
+
         children=[
-                dmc.LoadingOverlay(
-                    html.Div(
-                        id=ID_CHART_CONTAINER, 
-                        className="",
-                        children=chart
-                        ),
-                    overlayBlur="0px",
-                    overlayColor=None,
-                    overlayOpacity=0.5,
-                    zIndex=99999999
+            html.Div(
+                id=ID_CHART_CONTAINER, 
+                className="",
+                children=chart
                 ),
-        ],
+            dmc.LoadingOverlay(
+                id=ID_LOADING_OVERLAY,
+                loaderProps={"type": "bars", "color": "red", "size": "lg"},
+                overlayProps={"radius": "sm", "blur": 2},
+                visible=False
+                )
+            ],
     )
 
+wr = {
+        "content": {
+            "flex": "none", 
+            "position": "absolute",
+            "left": f"{SETTINGS_DRAWER_WIDTH}px", 
+            "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px",
+                            "background": "red"
+                            },
+            }
 
 @app.callback(
     Output(ID_LOGO_CONTAINER, "style"),
@@ -116,16 +125,18 @@ def chart_drawer(args, device, all_notes, env):
     State(ID_SETTINGS_DRAWER, "size")
 )
 def settings_drawer_state(state, size):
+    print("size: ", size)
     width_reduced = {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
     full_width = {"width": "100vw"}
     if state:
-        return width_reduced, {"drawer": {"left": size, "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}} # width_reduced,
-    return full_width, {"drawer": {"left": "0", "width": "100vw"}}#, full_width,
+        return width_reduced, wr # width_reduced,
+    return full_width, {"content": {"left": "0", "width": "100vw", "flex": "none" , "position": "absolute", "background": "blue"}} #, full_width,
 
 
 @app.callback(
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_NOTIFICATION, "children", allow_duplicate=True),
+    Output(ID_LOADING_OVERLAY, "visbile", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     prevent_initial_call=True
 )
@@ -135,15 +146,16 @@ def open_drawer(selected_marker):
 
     if selected_marker["type"] in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
         n = notification("No chart available for this device type.", NotificationType.INFO)
-        return False, n 
+        return False, n, False
 
-    return True, no_update
+    return True, no_update, True
 
 
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
     Output(ID_CHART_DRAWER, "size"),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
+    Output(ID_LOADING_OVERLAY, "visbile", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input(ID_APP_THEME, "theme"),
@@ -163,7 +175,7 @@ def update_drawer_content_from_marker_store(selected_marker, date_range, theme, 
         environment_data
         )
 
-    return drawer_content, drawer_size, True
+    return drawer_content, drawer_size, True, False
 
 
 
