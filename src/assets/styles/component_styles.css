@@ -113,6 +113,7 @@
     font-size: 1.5rem;
     font-weight: bold;
     text-decoration: none;
+    position: relative;
     /*background: radial-gradient( rgba(255,255,255,0.3) 10%, rgba(0,0,0,0) 50%);*/
 }
 
@@ -148,8 +149,8 @@ input:invalid {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* Verhindert das Überlaufen des Bildes */
-    position: relative; /* Für die korrekte Positionierung des Bildes */
+    overflow: hidden;
+    position: relative;
 }
 
 .marker-tooltip {

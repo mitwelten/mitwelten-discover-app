@@ -48,14 +48,12 @@ def date_time_section(args):
         dmc.Center([
             dmc.DatePicker(
                 id=ID_DATE_RANGE_PICKER,
-                #inputFormat="DD MMM, YY",
                 description="",
                 minDate=date(2020, 1, 1),
                 value=[start, end],
+                valueFormat="DD MMM, YY",
                 type="range",
-                # styles dropdown doesnt work as expected, class in css file used
-                modalProps={"zIndex": 99000},
-                styles={"root": {"width": 220}, "dropdown": {"left": -5}},
+                styles={"root": {"width": 220}, "dropdown": {"left": -5, "zIndex": 999999}},
                 style={"display": "block"} if timerange == "custom" else {"display": "none"},
             ),
             dmc.Text(

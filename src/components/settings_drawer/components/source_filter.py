@@ -46,10 +46,10 @@ def source_filter(args):
     return html.Div([
         dmc.Checkbox(
             id="id-all-checkbox",
-            label=dmc.Group(["All"]), 
+            label="All", 
             checked=True,
             value="all", 
-            size="sm"
+            size="sm",
             ),
         dmc.Space(h=20),
             dmc.CheckboxGroup(

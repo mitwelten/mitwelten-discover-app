@@ -71,9 +71,6 @@ def discover_app(**kwargs):
     return dmc.MantineProvider(
             id=ID_APP_THEME,
             theme=app_theme,
-            #inherit=True,
-            #withGlobalStyles=True,
-            #withNormalizeCSS=True,
             children=html.Div(
                 id=ID_APP_CONTAINER,
                 children=[

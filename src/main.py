@@ -7,10 +7,6 @@ import diskcache
 from dash.long_callback import DiskcacheLongCallbackManager
 
 cache = diskcache.Cache("./cache")
-long_callback_manager = DiskcacheLongCallbackManager(cache)
-
-stylesheets = [
-]
 
 external_stylesheets = [
     dbc.themes.BOOTSTRAP,
@@ -23,12 +19,12 @@ external_stylesheets = [
 ]
 
 dash._dash_renderer._set_react_version('18.2.0')
+
 app = Dash(
     __name__,
     title="Mitwelten Discover",
-    external_stylesheets=external_stylesheets,
+    #external_stylesheets=external_stylesheets,
     external_scripts=[{'src':'assets/util.js','type':'module'}],
-    long_callback_manager=long_callback_manager,
     suppress_callback_exceptions=True,
     requests_pathname_prefix="/app/",
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
@@ -37,8 +33,8 @@ app = Dash(
 )
 
 
-#app.enable_dev_tools(
-#    dev_tools_ui=True,
-#    dev_tools_serve_dev_bundles=True,
-#    dev_tools_hot_reload=True
-#)
+app.enable_dev_tools(
+    dev_tools_ui=True,
+    dev_tools_serve_dev_bundles=True,
+    dev_tools_hot_reload=True
+)

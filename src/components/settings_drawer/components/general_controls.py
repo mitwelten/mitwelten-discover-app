@@ -29,16 +29,10 @@ def general_controls(args):
 
 
 @app.callback(
-    Output(ID_APP_THEME, 'theme'),
+    Output(ID_APP_THEME, 'forceColorScheme'),
     Input(ID_THEME_SWITCH, "checked"),
-    State(ID_APP_THEME, 'theme'),
+    State(ID_APP_THEME, 'forceColorScheme'),
     prevent_intial_call=True
 )
 def switch_theme(checked, theme):
-    if checked is None:
-        return dash.no_update
-    if not checked:
-        theme.update({'colorScheme': 'light'})
-    else:
-        theme.update({'colorScheme': 'dark'})
-    return theme
+    return "dark" if theme == "light" else "light"

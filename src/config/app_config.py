@@ -28,8 +28,6 @@ SECONDARY_COLOR = "mitwelten_pink"
 BACKGROUND_COLOR = "#E8F7FC"
 
 app_theme = {
-    "colorScheme": "light",
-
     "colors": {
         PRIMARY_COLOR:
             [
@@ -69,15 +67,27 @@ app_theme = {
                 "#495057", 
                 "#343A40", 
                 "#212529"
-                ]
+                ],
+            "dark": [
+                "#C9C9C9",
+                "#b8b8b8",
+                "#828282",
+                "#696969",
+                "#424242",
+                "#3b3b3b",
+                "#2e2e2e",
+                "#242424",
+                "#1f1f1f",
+                "#141414"
+                ],
     },
     "white": BACKGROUND_COLOR, # background color of light theme
     "primaryColor": PRIMARY_COLOR,
-    "shadows": {
-        # other shadows (xs, sm, lg) will be merged from default theme
-        "md": "1px 1px 3px rgba(0,0,0,.25)",
-        "xl": "5px 5px 3px rgba(0,0,0,.25)",
-    },
+     "shadows": {
+         # other shadows (xs, sm, lg) will be merged from default theme
+         "md": "1px 1px 3px rgba(0,0,0,.25)",
+         "xl": "5px 5px 3px rgba(0,0,0,.25)",
+     },
     "headings": {
         "fontFamily": "Roboto, sans-serif",
         "sizes": {

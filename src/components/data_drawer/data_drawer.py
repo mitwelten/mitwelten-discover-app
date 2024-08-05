@@ -85,14 +85,14 @@ def chart_drawer(args, device, all_notes, env):
     return dmc.Drawer(
         opened=drawer_state,
         id=ID_CHART_DRAWER,
-        zIndex=500,
+        zIndex=100,
         size=drawer_size,
         closeOnClickOutside=True,
         closeOnEscape=True,
         withOverlay=False,
         className="chart-drawer",
         position="bottom",
-
+        lockScroll=False,
         children=[
             html.Div(
                 id=ID_CHART_CONTAINER, 
@@ -108,15 +108,6 @@ def chart_drawer(args, device, all_notes, env):
             ],
     )
 
-wr = {
-        "content": {
-            "flex": "none", 
-            "position": "absolute",
-            "left": f"{SETTINGS_DRAWER_WIDTH}px", 
-            "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px",
-                            "background": "red"
-                            },
-            }
 
 @app.callback(
     Output(ID_LOGO_CONTAINER, "style"),
@@ -126,9 +117,29 @@ wr = {
 def settings_drawer_state(state):
     width_reduced = {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
     full_width = {"width": "100vw"}
+
+    drawer_shrinked = { "content": {
+        "flex": "none", 
+        "position": "absolute",
+        "left": f"{SETTINGS_DRAWER_WIDTH}px", 
+        "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px",
+        "overflow-y": "hidden",
+                        "zIndex": "100"
+                        }
+    }
+    drawer_expanded = {"content": {
+        "left": "0", 
+        "width": "100vw", 
+        "flex": "none" , 
+        "position": "absolute",
+        "overflow-y": "hidden",
+                        "zIndex": "100"
+        }
+    }
+
     if state:
-        return width_reduced, wr # width_reduced,
-    return full_width, {"content": {"left": "0", "width": "100vw", "flex": "none" , "position": "absolute", "background": "blue"}} #, full_width,
+        return width_reduced, drawer_shrinked
+    return full_width, drawer_expanded
 
 
 @app.callback(
