@@ -32,14 +32,15 @@ popup_events=dict(
     Output(ID_MAP_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     #Input(ID_TAG_CHIPS_GROUP, "value"),
-    Input(ID_FS_TAG_CHIPS_GROUP, "value"),
+    #Input(ID_FS_TAG_CHIPS_GROUP, "value"),
+    Input(ID_TAGS, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
     Input(ID_TIMEZONE_STORE, "data"),
     prevent_initial_call=True
 )
 # def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, timezone):
-def add_device_markers(checkboxes, fs_tag, time_range, sources, timezone):
+def add_device_markers(checkboxes, tags, time_range, sources, timezone):
     """
     Changes the visible markers of the "physical" devices on the map.
     This callback is mainly triggered by adjusting the filter settings.
@@ -51,48 +52,58 @@ def add_device_markers(checkboxes, fs_tag, time_range, sources, timezone):
     :param sources: The store containing "physical" sources, which are represented by deployments.
     :return: The map layer containing all current visible markers with the selected settings.
     """
+
+    print("tags", tags)
     deployment_data = {}
     for source in sources:
         deployment_data[source["type"]] = source["entries"]
 
     checkboxes = list(filter(lambda c: c in deployment_data.keys(), checkboxes))
 
-    # parse to json objects
-    for key in deployment_data:
-        deployment_data[key] = list(map(lambda depl: Deployment(depl), deployment_data[key]))
+    visible_deployments = []
+    if tags is None:
+        tags = []
 
-    depl_to_show = {}
     # type filter
     for active in checkboxes:
-        # depl_to_show:  {"key": [Deployments]
-        depl_to_show[active] = deployment_data[active]
+        for d in deployment_data[active]:
+            d = Deployment(d)
 
-    depl_fs_filtered = {}
-    # field study tag filter
-    if fs_tag:
-        for key in depl_to_show.keys():
-            depl_fs_filtered[key] = list(filter(lambda depl: fs_tag in depl.tags or fs_tag == "ANY", depl_to_show[key]))
+            tag_filter = True
+            for t in tags:
+                if t not in d.tags:
+                    tag_filter = False
+                    break
 
-    depl_tags_filtered = {}
-    # if tags:
-    if False:
-        for key in depl_to_show.keys():
-            depl_tags_filtered[key] = list(filter(lambda depl: any(tag in depl.tags for tag in tags), depl_to_show[key]))
+            if tag_filter: 
+                visible_deployments.append(d)
 
-    for key in depl_to_show.keys():
-        fs_tags = depl_fs_filtered.get(key, [])
-        tags = depl_tags_filtered.get(key, []) 
-        depl_to_show[key] = set(fs_tags + tags)
+    #depl_fs_filtered = {}
+    ## field study tag filter
+    #if fs_tag:
+    #    for key in depl_to_show.keys():
+    #        depl_fs_filtered[key] = list(filter(lambda depl: fs_tag in depl.tags or fs_tag == "ANY", depl_to_show[key]))
+
+    #depl_tags_filtered = {}
+    ## if tags:
+    #if False:
+    #    for key in depl_to_show.keys():
+    #        depl_tags_filtered[key] = list(filter(lambda depl: any(tag in depl.tags for tag in tags), depl_to_show[key]))
+
+    
+
+    #for key in depl_to_show.keys():
+    #    fs_tags = depl_fs_filtered.get(key, [])
+    #    tags = depl_tags_filtered.get(key, []) 
+    #    depl_to_show[key] = set(fs_tags + tags)
 
     # time filter
-    for key in depl_to_show.keys():
-        depl_to_show[key] = list(filter(lambda x: was_deployed(x, time_range["start"], time_range["end"]), depl_to_show[key]))
+        visible_deployments = list(filter(lambda x: was_deployed(x, time_range["start"], time_range["end"]), visible_deployments))
 
     markers = []
 
-    for key in depl_to_show.keys():
-        for d in depl_to_show[key]:
-                       markers.append(
+    for d in visible_deployments:
+        markers.append(
                 dl.Marker(
                     position=[d.lat, d.lon],
                     children=[
@@ -102,12 +113,12 @@ def add_device_markers(checkboxes, fs_tag, time_range, sources, timezone):
                             id=f"{d.id}",
                             autoPan=False,
                             autoClose=False,
-                        ),
-                    ],
+                            ),
+                        ],
                     eventHandlers=popup_events,
                     icon=dict(iconUrl=get_source_props(d.node_type)["marker"], iconAnchor=[15, 6], iconSize=[30, 30]),
                     id={"role": f"{d.node_type}", "id": d.id, "label": "Node"},
-                )
+                    )
             )
 
     return markers

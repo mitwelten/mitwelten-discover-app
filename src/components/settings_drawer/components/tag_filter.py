@@ -45,97 +45,107 @@ def tag_filter(args):
         tags_value = [x.replace("_", " ") for x in tags_value]
     else:
         tags_value = []
+    return dmc.TagsInput(
+            data=[
+                {"group": "Field Study", "items": fs_tags},
+                {"group": "Additional", "items": tags},
+                ],
+            id=ID_TAGS,
+            clearable=True,
+            #value=fs_value + tags_value,
+            placeholder="Pick tag from list",
+            )
 
-    return html.Div([
-        dmc.Text("Field Study", size="sm"),
-        dmc.Space(h=10),
-        dmc.Center(
-            dmc.HoverCard(
-                position="top",
-                withArrow=True,
-                width="240px",
-                shadow="lg",
-                styles={"display": "flex", "alignItems":"center"},
-                children=[
-                    dmc.HoverCardTarget(
-                        children=
-                        dmc.Center([
-                            dmc.SegmentedControl(
-                                color=PRIMARY_COLOR,
-                                id=ID_FS_TAG_CHIPS_GROUP,
-                                data=fs_tags,
-                                value=fs_value,
-                                size="xs"
-                                ),
-                            ]),
-                        #dmc.ThemeIcon(
-                            #    size="sm",
-                            #    variant="filled",
-                            #    radius="sm",
-                            #    color=PRIMARY_COLOR, 
-                            #    children=DashIconify(icon="material-symbols:info-i-rounded", width=16),
-                            #    style={"cursor": "pointer"}
-                            #),
-                        ),
-                    dmc.HoverCardDropdown(children=fs_desc)
-                    ],
-                ),
-            ),
+    #return html.Div([
+    #    dmc.Text("Field Study", size="sm"),
+    #    dmc.Space(h=10),
+    #    dmc.Center(
+    #        dmc.HoverCard(
+    #            position="top",
+    #            withArrow=True,
+    #            width="240px",
+    #            shadow="lg",
+    #            styles={"display": "flex", "alignItems":"center"},
+    #            children=[
+    #                dmc.HoverCardTarget(
+    #                    children=
+    #                    dmc.Center([
+    #                        dmc.SegmentedControl(
+    #                            color=PRIMARY_COLOR,
+    #                            id=ID_FS_TAG_CHIPS_GROUP,
+    #                            data=fs_tags,
+    #                            value=fs_value,
+    #                            size="xs"
+    #                            ),
+    #                        ]),
+    #                    #dmc.ThemeIcon(
+    #                        #    size="sm",
+    #                        #    variant="filled",
+    #                        #    radius="sm",
+    #                        #    color=PRIMARY_COLOR, 
+    #                        #    children=DashIconify(icon="material-symbols:info-i-rounded", width=16),
+    #                        #    style={"cursor": "pointer"}
+    #                        #),
+    #                    ),
+    #                dmc.HoverCardDropdown(children=fs_desc)
+    #                ],
+    #            ),
+    #        ),
 
-        dmc.Space(h=20),
-        dmc.Group([
-            dmc.Text("Additional Tags",
-                     size="sm",
-                     style={"display": "inline-block"}
-                     ),
-            dmc.Group([
-                dmc.ActionIcon(
-                    DashIconify(
-                        icon="material-symbols:add",
-                        ),
-                    variant="filled",
-                    id=ID_OPEN_CHIP_MODAL_BUTTON,
-                    size="sm",
-                    color=PRIMARY_COLOR,
-                    n_clicks=0,
-                    radius="sm",
-                    ),
-                dmc.Button(
-                    "Clear",
-                    variant="light",
-                    color=PRIMARY_COLOR,
-                    size="xs",
-                    radius="xl",
-                    id=ID_TAG_RESET_BUTTON,
-                    ),
-                ]),
-            ],
-                  justify="space-between",
-                  ),
-        dmc.Space(h=10),
-        dmc.Center([
-            #dmc.ChipGroup(
-            #    [dmc.Chip(x, value=x, size="xs") for x in tags_value],
-            #    id=ID_TAG_CHIPS_GROUP,
-            #    value=tags_value,
-            #    ),
-            html.Div(
-                dmc.Modal(
-                    title="Select Tags",
-                    id=ID_CHIPS_MODAL,
-                    zIndex=1000000,
-                    children=[
-                       # dmc.ChipGroup(
-                       #     children=[dmc.Chip(x, value=x, size="xs") for x in tags],
-                       #     id=ID_MODAL_CHIPS_GROUP,
-                       #     value=tags_value,
-                       #     ),
-                        dmc.Space(h=20),
-                        dmc.Center(dmc.Button("Ok", id=ID_CLOSE_CHIP_MODAL_BUTTON)),
-                        ],
-                    ),
-                ),
-            ])])
+    #    dmc.Space(h=20),
+    #    dmc.Group([
+    #        dmc.Text("Additional Tags",
+    #                 size="sm",
+    #                 style={"display": "inline-block"}
+    #                 ),
+    #        dmc.Group([
+    #            dmc.ActionIcon(
+    #                DashIconify(
+    #                    icon="material-symbols:add",
+    #                    ),
+    #                variant="filled",
+    #                id=ID_OPEN_CHIP_MODAL_BUTTON,
+    #                size="sm",
+    #                color=PRIMARY_COLOR,
+    #                n_clicks=0,
+    #                radius="sm",
+    #                ),
+    #            dmc.Button(
+    #                "Clear",
+    #                variant="light",
+    #                color=PRIMARY_COLOR,
+    #                size="xs",
+    #                radius="xl",
+    #                id=ID_TAG_RESET_BUTTON,
+    #                ),
+    #            ]),
+    #        ],
+    #              justify="space-between",
+    #              ),
+    #    dmc.Space(h=10),
+    #    dmc.Center([
+    #        #dmc.ChipGroup(
+    #        #    [dmc.Chip(x, value=x, size="xs") for x in tags_value],
+    #        #    id=ID_TAG_CHIPS_GROUP,
+    #        #    value=tags_value,
+    #        #    ),
+    #        html.Div(
+    #            dmc.Modal(
+    #                title="Select Tags",
+    #                id=ID_CHIPS_MODAL,
+    #                zIndex=1000000,
+    #                children=[
+    #                   # dmc.ChipGroup(
+    #                   #     children=[dmc.Chip(x, value=x, size="xs") for x in tags],
+    #                   #     id=ID_MODAL_CHIPS_GROUP,
+    #                   #     value=tags_value,
+    #                   #     ),
+    #                    dmc.Space(h=20),
+    #                    dmc.Center(dmc.Button("Ok", id=ID_CLOSE_CHIP_MODAL_BUTTON)),
+    #                    ],
+    #                ),
+    #            ),
+    #        ])])
 
 
 #@app.callback(
@@ -175,14 +185,14 @@ def tag_filter(args):
 #    return opened, children, active_chips
 
 
-@app.callback(
-    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
-    Input(ID_FS_TAG_CHIPS_GROUP, "value"),
-    State(ID_QUERY_PARAM_STORE, "data"),
-    prevent_initial_call=True,
-)
-def update_fs_tag_in_url_params(value, data):
-    return update_query_data(data, {"fs": value})
+#@app.callback(
+#    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
+#    Input(ID_FS_TAG_CHIPS_GROUP, "value"),
+#    State(ID_QUERY_PARAM_STORE, "data"),
+#    prevent_initial_call=True,
+#)
+#def update_fs_tag_in_url_params(value, data):
+#    return update_query_data(data, {"fs": value})
 
 #@app.callback(
 #    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
@@ -196,43 +206,43 @@ def update_fs_tag_in_url_params(value, data):
 #    return update_query_data(data, {"tags": value})
 
 
-@app.callback(
-    Output(ID_MAP, "viewport", allow_duplicate=True),
-    Input(ID_FS_TAG_CHIPS_GROUP, "value"),
-    Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
-    State(ID_MAP, "bounds"),
-    prevent_initial_call=True
-)
-def move_map_to_fs_area(fs_tag, sources, bounds):
-    new_bounds = bounds if bounds is not None else [[None, None],[None, None]]
-    deployment_data = {}
-    for source in sources:
-        deployment_data[source["type"]] = source["entries"]
-
-    top     = None
-    bottom  = None
-    left    = None
-    right   = None
-
-    for key in deployment_data.keys():
-        for d in deployment_data[key]:
-            d = Deployment(d)
-            if fs_tag in d.tags or fs_tag == "ANY":
-                if left is None or left > d.lon: 
-                    left = d.lon
-
-                if right is None or right < d.lon :
-                    right = d.lon
-
-                if bottom is None or bottom > d.lat: 
-                    bottom = d.lat
-
-                if top is None or top < d.lat: 
-                    top = d.lat
-
-    new_bounds[1][0] = top
-    new_bounds[0][0] = bottom 
-    new_bounds[0][1] = left   
-    new_bounds[1][1] = right 
-
-    return dict(bounds=bounds, transition="flyTo")
+#@app.callback(
+#    Output(ID_MAP, "viewport", allow_duplicate=True),
+#    Input(ID_FS_TAG_CHIPS_GROUP, "value"),
+#    Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
+#    State(ID_MAP, "bounds"),
+#    prevent_initial_call=True
+#)
+#def move_map_to_fs_area(fs_tag, sources, bounds):
+#    new_bounds = bounds if bounds is not None else [[None, None],[None, None]]
+#    deployment_data = {}
+#    for source in sources:
+#        deployment_data[source["type"]] = source["entries"]
+#
+#    top     = None
+#    bottom  = None
+#    left    = None
+#    right   = None
+#
+#    for key in deployment_data.keys():
+#        for d in deployment_data[key]:
+#            d = Deployment(d)
+#            if fs_tag in d.tags or fs_tag == "ANY":
+#                if left is None or left > d.lon: 
+#                    left = d.lon
+#
+#                if right is None or right < d.lon :
+#                    right = d.lon
+#
+#                if bottom is None or bottom > d.lat: 
+#                    bottom = d.lat
+#
+#                if top is None or top < d.lat: 
+#                    top = d.lat
+#
+#    new_bounds[1][0] = top
+#    new_bounds[0][0] = bottom 
+#    new_bounds[0][1] = left   
+#    new_bounds[1][1] = right 
+#
+#    return dict(bounds=bounds, transition="flyTo")

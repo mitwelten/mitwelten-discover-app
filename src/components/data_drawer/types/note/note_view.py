@@ -296,7 +296,7 @@ def mark_active_card(data, theme, cards):
     green_light   = theme["colors"]["mitwelten_green"][6]
     green_dark    = theme["colors"]["mitwelten_green"][8]
 
-    primary_color =  green_light if theme["colorScheme"] == "light" else green_dark
+    primary_color =  green_light if theme == "light" else green_dark
     active_style  = {"borderColor": primary_color}
 
     styles = [default_style] * len(ctx.outputs_list)
@@ -316,7 +316,7 @@ def mark_active_card(data, theme, cards):
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_EDIT_NOTE_STORE, "data"),
     State(ID_CHART_DRAWER, "size"),
-    State(ID_APP_THEME, "theme"),
+    State(ID_APP_THEME, "forceColorScheme"),
     prevent_initial_call=True
 )
 def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
@@ -339,7 +339,7 @@ def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
 
 @app.callback(
     Output("id-slideshow-container", "children"),
-    Input(ID_APP_THEME, "theme"),
+    Input(ID_APP_THEME, "forceColorScheme"),
     State(ID_SLIDESHOW_IMAGE, "src"),
     prevent_initial_call=True
 )
@@ -357,7 +357,7 @@ def update_player_colors(theme, src):
     State(ID_EDIT_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_CHART_DRAWER, "size"),
-    State(ID_APP_THEME, "theme"),
+    State(ID_APP_THEME, "forceColorScheme"),
     prevent_initial_call=True,
 )
 def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, theme):

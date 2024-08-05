@@ -76,7 +76,7 @@ def chart_drawer(args, device, all_notes, env):
         chart, drawer_size = create_chart_from_source(
                 active_device, 
                 {"start": start, "end": end}, 
-                {"colorScheme": "light"}, 
+                "light", 
                 notes, 
                 env
                 )
@@ -167,7 +167,7 @@ def open_drawer(selected_marker):
     Output(ID_LOADING_OVERLAY, "visbile", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     Input(ID_DATE_RANGE_STORE, "data"),
-    Input(ID_APP_THEME, "theme"),
+    Input(ID_APP_THEME, "forceColorScheme"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State({"role": "Environment", "label": "Store", "type": "virtual"}, "data"),
     prevent_initial_call=True

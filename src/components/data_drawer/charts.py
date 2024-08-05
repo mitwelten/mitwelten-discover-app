@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 def create_themed_figure(theme):
     figure = go.Figure()
     figure.update_layout(
-        template="plotly_white" if theme["colorScheme"] == "light" else "plotly_dark",
+        template="plotly_white" if theme == "light" else "plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         margin=dict(l=30, r=30, t=5, b=30),
@@ -42,7 +42,7 @@ def spider_chart(labels, keys, theme):
     )
 
     fig.update_layout(
-        template="plotly_white" if theme["colorScheme"] == "light" else "plotly_dark",
+        template="plotly_white" if theme == "light" else "plotly_dark",
         polar=dict(
             radialaxis=dict(
                 # gridcolor="grey"

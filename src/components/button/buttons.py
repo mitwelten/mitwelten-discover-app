@@ -181,7 +181,7 @@ def notify(notification):
     State(ID_MAP, "bounds"),
     State(ID_MAP, "center"),
     State(ID_TAG_DATA_STORE, "data"),
-    State(ID_APP_THEME, "theme"),
+    State(ID_APP_THEME, "forceColorScheme"),
     prevent_initial_call=True
 )
 def create_note_on_map(

@@ -78,7 +78,7 @@ def create_pollinator_chart(_1, _2):
     Output("tabs-content", "children"),
     Input("tabs-example", "value"),
     Input(ID_SELECTED_MARKER_STORE, "data"),
-    State(ID_APP_THEME, "theme"),
+    State(ID_APP_THEME, "forceColorScheme"),
 )
 def render_content(active, data, theme):
     return create_graph(

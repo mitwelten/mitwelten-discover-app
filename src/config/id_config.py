@@ -48,6 +48,7 @@ ID_BLOB_URLS_STORE = "id-blob-urls-store"
 ID_NOTE_FILE_STORE = "id-note-file-store"
 ID_QUERY_PARAM_STORE = "id-query-param-store"
 ID_TIMEZONE_STORE = "id-timezone-store"
+ID_TAGS = "id-tags"
 
 # node types
 ID_ALL_ACTIVE_STORE = "id-active-all-checkbox"

@@ -6,7 +6,7 @@ from src.model.file import File
 from src.config.id_config import *
 
 def slideshow(theme, files: list[File]): 
-    light_mode = theme["colorScheme"] == "light"
+    light_mode = theme == "light"
     background = "#F2F2F2" if light_mode else "#373A40"
 
     file = files[0]
