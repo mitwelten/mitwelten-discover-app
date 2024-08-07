@@ -1,5 +1,6 @@
 import dash_mantine_components as dmc
 
+from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 
 def bottom_drawer_content(title, tags, icon, theme, title_icons=None, info=None):
@@ -22,11 +23,8 @@ def bottom_drawer_content(title, tags, icon, theme, title_icons=None, info=None)
                         dmc.ScrollArea(
                             children=[
                                 dmc.Group([
-                                dmc.Text(info, size="sm", c="dimmed") if info else None,
-                                #dmc.ChipGroup(
-                                #    [dmc.Chip(tag, size="xs", color=PRIMARY_COLOR) for tag in tags],
-                                #    noWrap=True
-                                #    )
+                                    dmc.Text(info, size="sm", c="dimmed") if info else None,
+                                    dmc.Group([dmc.Badge(tag, size="md", color=PRIMARY_COLOR) for tag in tags])
                                 ]),
                                 ],
                             type="hover",

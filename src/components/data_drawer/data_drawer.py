@@ -89,6 +89,7 @@ def chart_drawer(args, device, all_notes, env):
         zIndex=100,
         size=drawer_size,
         closeOnClickOutside=True,
+        withCloseButton=False,
         closeOnEscape=True,
         withOverlay=False,
         className="chart-drawer",
@@ -190,7 +191,7 @@ def update_drawer_content_from_marker_store(selected_marker, date_range, theme, 
         environment_data
         )
 
-    return drawer_content, drawer_size, True, False
+    return drawer_content, drawer_size, False, False
 
 
 
