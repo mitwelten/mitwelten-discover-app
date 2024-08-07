@@ -41,13 +41,21 @@ info_dialog = dmc.Modal(
                     deployment_info,
                     #dmc.Button(id="tour")
                     ]),
-                dmc.Group([
+                dmc.Flex([
+                    dmc.Group([
+                        dmc.Text("Found a bug?", size="sm"),
+                        dmc.Anchor(
+                            "Submit an issue",
+                            href="https://github.com/mitwelten/mitwelten-discover-app/issues",
+                            target="_blank",
+                            size="sm"),
+                        ]),
                     dmc.Button(
                         id="id-info-modal-close-button", 
                         children=dmc.Text("Close")
                         ),
-                    ], justify="flex-end"
-                )],
+                    ], justify="space-between")
+                ],
         )
 
 

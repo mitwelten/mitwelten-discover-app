@@ -37,11 +37,12 @@ def map_menu_popup(id_prefix):
 
     return dmc.Container(
             dmc.Menu([
-                    dmc.MenuTarget(action_button(icon="material-symbols:layers-outline")),
+                    dmc.MenuTarget(
+                        action_button(icon="material-symbols:layers-outline"),
+                        ),
                     dmc.MenuDropdown(menu_entries),
                     ],
                 trigger="hover",
-                classNames="map-menu",
                 transitionProps={"transition": "scale-y", "duration": 100},
                 position="bottom-end",
                 withArrow=True,
@@ -50,4 +51,5 @@ def map_menu_popup(id_prefix):
                 zIndex=500000,
                 ),
             visibleFrom="sm",
+            style={"padding": "0"}
             )

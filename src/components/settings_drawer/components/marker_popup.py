@@ -88,8 +88,8 @@ def note_popup(note: Note, timezone):
         html.Div(header("Note", note.title)),
         html.Div(
             dmc.Text(apply_newlines(description), lineClamp=3, size="xs"),
-            style={"maxHeight":"70px", "overflow": "hidden"}
-            ),
+            style={"maxHeight":"70px", "overflow": "hidden", "margin": 0}
+        ),
         dmc.Text(created_at, c="dimmed", size="xs"),
         ],
         fluid=True,

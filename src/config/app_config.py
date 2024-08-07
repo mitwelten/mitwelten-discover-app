@@ -12,7 +12,6 @@ QUERY_PARAMS = {
         "start": None, 
         "end": None, 
         "timerange": None, 
-        "fs": "ANY", 
         "lat": 47.5339807306196, 
         "lon": 7.6169566067567, 
         "zoom": 12, 
@@ -42,7 +41,7 @@ app_theme = {
                 "#4b7a7a",
                 "#366a6a"
                 ],
-        SECONDARY_COLOR:
+        "light":
             [
                 "#FCE4EC",
                 "#F8BBD0",
@@ -55,33 +54,8 @@ app_theme = {
                 "#AD1457",
                 "#880E4F",
             ],
-            "gray": [
-                "#F8F9FA", 
-                  # default : #F1F3F5
-                "#F8F9FA", 
-                "#E9ECEF", 
-                "#DEE2E6", 
-                "#CED4DA", 
-                "#ADB5BD",
-                "#868E96", 
-                "#495057", 
-                "#343A40", 
-                "#212529"
-                ],
-            "dark": [
-                "#C9C9C9",
-                "#b8b8b8",
-                "#828282",
-                "#696969",
-                "#424242",
-                "#3b3b3b",
-                "#2e2e2e",
-                "#242424",
-                "#1f1f1f",
-                "#141414"
-                ],
     },
-    "white": BACKGROUND_COLOR, # background color of light theme
+    #"white": BACKGROUND_COLOR, # background color
     "primaryColor": PRIMARY_COLOR,
      "shadows": {
          # other shadows (xs, sm, lg) will be merged from default theme
@@ -90,13 +64,15 @@ app_theme = {
      },
     "headings": {
         "fontFamily": "Roboto, sans-serif",
-        "sizes": {
-            "h1": {"fontSize": 20},
-        },
     },
-    "components": {
+    #"components": {
+            #"TagsInput": {"styles": {"dropdown": {"background": "white"}}},
+            #"Drawer": {"styles": {
+            #    "content": {"background": BACKGROUND_COLOR},
+            #    "header": {"background": BACKGROUND_COLOR},
+            #    }}
         #"SegmentedControl": {"styles": {"root": {"background": "red"}}},
-        }
+        #}
 }
 
 

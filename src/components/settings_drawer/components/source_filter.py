@@ -30,7 +30,6 @@ def get_checkbox_by_type(node_type: str):
     )
 
 
-@spaced_section
 def source_filter(args):
 
     #active = list(SOURCE_PROPS.keys())

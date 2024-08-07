@@ -16,7 +16,6 @@ from src.util.util import local_formatted_date
 from src.url.parse import update_query_data
 
 
-@spaced_section
 def date_time_section(args):
     timerange = args.get("timerange")
     start = args.get("start")
@@ -41,7 +40,6 @@ def date_time_section(args):
             value=timerange,
             fullWidth=True,
             data=DEFAULT_DATE_RANGES,
-            mt=10,
             size="xs"
         ),
         dmc.Space(h=20),

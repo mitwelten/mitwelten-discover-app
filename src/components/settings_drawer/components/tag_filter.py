@@ -22,7 +22,6 @@ fs_desc = dmc.Stack([
 ], gap="sm")
 
 
-@spaced_section
 def tag_filter(args):
     all_tags  = init_tags()
     all_tags = [tag["name"] for tag in all_tags]
@@ -34,8 +33,6 @@ def tag_filter(args):
         if predicate.match(tag):
             fs_tags.append(tag)
     fs_tags = list(sorted(fs_tags))
-    fs_tags.insert(0, "ANY")
-    fs_value = args.get("fs")
 
     tags = sorted([t for t in all_tags if t not in fs_tags])
     tags_value = args.get("tags")
@@ -52,8 +49,9 @@ def tag_filter(args):
                 ],
             id=ID_TAGS,
             clearable=True,
-            #value=fs_value + tags_value,
+            value=tags_value,
             placeholder="Pick tag from list",
+            #styles={"dropdown": {"background": "white"}}
             )
 
     #return html.Div([
@@ -185,14 +183,16 @@ def tag_filter(args):
 #    return opened, children, active_chips
 
 
-#@app.callback(
-#    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
-#    Input(ID_FS_TAG_CHIPS_GROUP, "value"),
-#    State(ID_QUERY_PARAM_STORE, "data"),
-#    prevent_initial_call=True,
-#)
-#def update_fs_tag_in_url_params(value, data):
-#    return update_query_data(data, {"fs": value})
+@app.callback(
+    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
+    Input(ID_TAGS, "value"),
+    State(ID_QUERY_PARAM_STORE, "data"),
+    prevent_initial_call=True,
+)
+def update_fs_tag_in_url_params(value, data):
+    value = "+".join(value)
+    value = value.replace(" ", "_")
+    return update_query_data(data, {"tags": value})
 
 #@app.callback(
 #    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),

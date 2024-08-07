@@ -1,4 +1,5 @@
 import dash_mantine_components as dmc
+from dash_mantine_components import DEFAULT_THEME
 from dash import Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
 from src.components.notification.notification import NotificationType, notification
@@ -10,7 +11,7 @@ from src.components.data_drawer.types.env import create_env_chart
 from src.components.data_drawer.types.environment_point import create_environment_point_chart
 from src.components.data_drawer.types.pax import create_pax_chart
 from src.components.data_drawer.types.pollinator import create_pollinator_chart2
-from src.config.app_config import SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
+from src.config.app_config import BACKGROUND_COLOR, SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from src.config.id_config import *
 from src.config.app_config import CHART_DRAWER_HEIGHT
 from src.main import app
@@ -113,8 +114,9 @@ def chart_drawer(args, device, all_notes, env):
     Output(ID_LOGO_CONTAINER, "style"),
     Output(ID_CHART_DRAWER, "styles"),
     Input(ID_SETTINGS_DRAWER, "opened"),
+    Input(ID_APP_THEME, "forceColorScheme"),
 )
-def settings_drawer_state(state):
+def settings_drawer_state(state, scheme):
     width_reduced = {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
     full_width = {"width": "100vw"}
 
@@ -124,8 +126,10 @@ def settings_drawer_state(state):
         "left": f"{SETTINGS_DRAWER_WIDTH}px", 
         "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px",
         "overflow-y": "hidden",
-                        "zIndex": "100"
-                        }
+        "zIndex": "100",
+        "background": DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR
+        },
+        "header": {"background":  DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR},
     }
     drawer_expanded = {"content": {
         "left": "0", 
@@ -133,8 +137,10 @@ def settings_drawer_state(state):
         "flex": "none" , 
         "position": "absolute",
         "overflow-y": "hidden",
-                        "zIndex": "100"
-        }
+        "zIndex": "100",
+        "background": DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR,
+        },
+        "header": {"background":  DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR},
     }
 
     if state:
@@ -207,3 +213,6 @@ def close_drawer(opened):
     if opened:
         return no_update
     return []
+
+
+

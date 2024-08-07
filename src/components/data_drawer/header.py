@@ -15,7 +15,7 @@ def bottom_drawer_content(title, tags, icon, theme, title_icons=None, info=None)
                             gap="xs",
                             align="center",
                             children=[
-                                dmc.Title(title),
+                                dmc.Title(title, order=4),
                                 title_icons
                                 ], 
                             ),

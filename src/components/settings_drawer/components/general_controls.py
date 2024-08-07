@@ -8,23 +8,28 @@ from src.main import app
 from src.util.decorators import spaced_section
 
 
-@spaced_section
 def general_controls(args):
     return dmc.Stack([
         dmc.Group([
-            dmc.Text("Theme (light / dark)", size="sm"),
+            dmc.Text("Light / Dark Theme", size="sm"),
             dmc.Switch(
                 offLabel=DashIconify(icon="radix-icons:moon", width=16),
                 onLabel=DashIconify(icon="radix-icons:sun", width=16),
                 size="xs",
                 id=ID_THEME_SWITCH
             )],
-            justify="space-between",
+                  justify="space-between",
         ),
+        #dmc.Group([
+        #    dmc.Text("Found a bug?", size="sm"),
+        #    dmc.Anchor(
+        #        "Submit an issue",
+        #        href="https://github.com/mitwelten/mitwelten-discover-app/issues",
+        #        target="_blank",
+        #        size="sm"),
+        #    ])
     ],
-        gap="xl",
-        justify="space-between",
-        style={"height": "100%"}
+        gap="xs",
     )
 
 
