@@ -37,10 +37,7 @@ info_dialog = dmc.Modal(
                     dmc.Anchor("mitwelten.org", href="https://mitwelten.org", target="_blank", size="sm"),
                     ], gap="xs"),
                 dmc.Space(h=40),
-                dmc.ScrollArea([
-                    deployment_info,
-                    #dmc.Button(id="tour")
-                    ]),
+                dmc.ScrollArea([deployment_info]),
                 dmc.Flex([
                     dmc.Group([
                         dmc.Text("Found a bug?", size="sm"),
@@ -67,7 +64,7 @@ login_button = dmc.Anchor(
 
 def create_avatar(user):
     return dmc.HoverCard([
-        dmc.HoverCardTarget(dmc.Avatar(user.initials, size="md", radius="xl")),
+        dmc.HoverCardTarget(dmc.Avatar(user.initials, radius="xl", color=PRIMARY_COLOR, variant="filled")),
         dmc.HoverCardDropdown([
             dmc.Stack([
                 dmc.Avatar(user.initials, size="60px", radius="xl", color=PRIMARY_COLOR, variant="filled"),
@@ -75,9 +72,10 @@ def create_avatar(user):
                 dmc.Text(user.username, c="dimmed"),
                 dmc.Divider(size="md", color="black"),
                 dmc.Anchor(
+
                     dmc.Button(
                         "Logout",
-                        rightIcon=DashIconify(icon="material-symbols:logout"),
+                        rightSection=DashIconify(icon="material-symbols:logout"),
                         variant="filled",
                         fullWidth=True,
                     ),
@@ -89,8 +87,8 @@ def create_avatar(user):
             )
         ])
     ],
-        transition="scale-y",
-        transitionDuration=100,
+
+        transitionProps={"transition": "scale-y", "duration": 100},
         position="bottom-end",
         withArrow=True,
         arrowSize=10,
@@ -120,7 +118,7 @@ control_buttons = [
                     width=20,
                     color=PRIMARY_COLOR,
                     ),
-                size=20,
+                size="lg",
                 id=ID_BOTTOM_DRAWER_BUTTON,
                 n_clicks=0,
                 radius="xl",

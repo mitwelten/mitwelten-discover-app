@@ -17,6 +17,7 @@ from src.config.app_config import CHART_DRAWER_HEIGHT
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
+from src.model.file import File
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
 from src.util.util import local_formatted_date, text_to_dash_elements, get_drawer_size_by_number_of_files
@@ -63,7 +64,7 @@ def note_view(note: Note, theme, edit=False, all_tags=None):
 def text_to_html_list(text: str):
     elems = text_to_dash_elements(text)
     return dmc.Spoiler(
-        children=elems,
+        children=dmc.Text(elems),
         showLabel="Show more",
         hideLabel="Hide",
         maxHeight=150
@@ -106,6 +107,33 @@ def note_form_view(note: Note, all_tags):
         )
         ], fluid=True, style={"marginTop": "20px"})
 
+def audio_card(file):
+    return dmc.Card(
+    children=[
+        dmc.CardSection(
+            dmc.Center(
+                DashIconify(icon="wpf:audio-wave", width=100),
+                style={"height": "160px"}
+                ),
+            h=160
+        ),
+        dmc.Center(dmc.Text(file.name, fw=500, m=20)),
+        html.Audio(src=get_file_url(file.object_name) , controls=True, style={"width": "100%"})
+
+    ],
+    withBorder=True,
+    shadow="sm",
+    radius="md",
+    h="100%"
+)
+
+
+def image_card(file: File):
+    if file.type.startswith("image/"):
+        return dmc.Image(src=get_file_url(file.object_name))
+    elif file.type.startswith("audio/"):
+        return audio_card(file)
+
 
 def note_detail_view(note: Note, theme):
     user            = get_user_from_cookies()
@@ -117,11 +145,34 @@ def note_detail_view(note: Note, theme):
                                 icon="material-symbols:edit", 
                                 disabled=True if user is None else False)
 
+    carousel = dmc.Carousel([dmc.CarouselSlide(image_card(img), className="background-image") for img in media_files],
+                            controlSize=33,
+                            orientation="horizontal",
+                            align="center",
+                            slideGap={ "base": 0, "sm": 'md' },
+                            slideSize="90%",
+                            height="300",
+                            loop=True,
+                            controlsOffset="md",
+                            withIndicators=True,
+                            id="carousel",
+className="background-image"
+                            )
+
+    content2 = dmc.Container([
+        dmc.SimpleGrid(
+            cols={"base": 1, "sm": 2},
+            spacing={"base": 10, "sm": "xl"},
+            verticalSpacing={"base": "md"},
+            children = [text_to_html_list(note.description), carousel],
+        )
+        ], fluid=True)
+
     content = dmc.Container(
             dmc.ScrollArea(
                 children=[
                     dmc.Grid([
-                        dmc.GridCol(text_to_html_list(note.description), span=8),
+                        dmc.GridCol(dmc.Text(text_to_html_list(note.description)), span=8),
                         dmc.GridCol(
                             html.Div(
                                 id="id-slideshow-container", 
@@ -148,7 +199,7 @@ def note_detail_view(note: Note, theme):
                 dmc.Group([private, edit_button]),
                 note.author
                 ),
-            content
+            content2
             ]
 
 

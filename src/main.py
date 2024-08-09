@@ -8,8 +8,8 @@ from dash.long_callback import DiskcacheLongCallbackManager
 
 cache = diskcache.Cache("./cache")
 
+    #dbc.themes.BOOTSTRAP,
 external_stylesheets = [
-    dbc.themes.BOOTSTRAP,
     "https://unpkg.com/@mantine/dates@7/styles.css",
     "https://unpkg.com/@mantine/code-highlight@7/styles.css",
     "https://unpkg.com/@mantine/charts@7/styles.css",
@@ -23,7 +23,7 @@ dash._dash_renderer._set_react_version('18.2.0')
 app = Dash(
     __name__,
     title="Mitwelten Discover",
-    #external_stylesheets=external_stylesheets,
+    external_stylesheets=external_stylesheets,
     external_scripts=[{'src':'assets/util.js','type':'module'}],
     suppress_callback_exceptions=True,
     requests_pathname_prefix="/app/",

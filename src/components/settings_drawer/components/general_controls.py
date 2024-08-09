@@ -1,7 +1,8 @@
 import dash
 import dash_mantine_components as dmc
-from dash import Output, Input, State
+from dash import Output, Input, State, ctx
 from dash_iconify import DashIconify
+from dash.exceptions import PreventUpdate
 
 from src.config.id_config import *
 from src.main import app
@@ -40,4 +41,6 @@ def general_controls(args):
     prevent_intial_call=True
 )
 def switch_theme(checked, theme):
+    if ctx.triggered_id == None:
+        raise PreventUpdate
     return "dark" if theme == "light" else "light"

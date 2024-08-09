@@ -69,6 +69,7 @@ def discover_app(**kwargs):
     print("app kwargs: ", kwargs)
     args = set_default_args(kwargs)
     return dmc.MantineProvider(
+            forceColorScheme="light",
             id=ID_APP_THEME,
             theme=app_theme,
             children=html.Div(

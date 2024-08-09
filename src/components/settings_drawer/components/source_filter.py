@@ -22,7 +22,7 @@ def get_checkbox_by_type(node_type: str):
             #    src=get_source_props(node_type)["marker"],
             #    width="24px",
             #    ),
-            get_source_props(node_type)["name"],
+            dmc.Text(get_source_props(node_type)["name"]),
         ]),
         value=node_type,
         #size="xs",

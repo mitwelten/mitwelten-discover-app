@@ -257,3 +257,16 @@ input:invalid {
 .mantine-DateRangePicker-dropdown {
   left: -5px !important;
 }
+
+.hide {
+  transition: opacity 200ms, display 200ms;
+  opacity: 0;
+}
+
+.background-image:hover .hide {
+  display: block;
+  opacity: 1;
+  background: rgba(255,255,255,0.7);
+}
+
+

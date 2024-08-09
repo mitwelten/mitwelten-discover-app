@@ -1,6 +1,7 @@
 import dash_mantine_components as dmc
 import flask
 
+from src.api.api_client import construct_url
 from dash import  html, dcc, Output, Input, State, ctx, ALL
 from dash.exceptions import PreventUpdate
 from src.api.api_files import get_file, get_file_url
@@ -37,14 +38,9 @@ def attachment_area(files: list[File], editable = False):
         dcc.Download(id=ID_DOWNLOAD),
         dmc.Space(h=20),
         dmc.SimpleGrid(
-            cols=3,
-            spacing="sm",
-            # TODO breakpoints
-            #breakpoints=[
-            #    {"maxWidth": 980 + 400, "cols": 3, "spacing": "lg"},
-            #    {"maxWidth": 800 + 400, "cols": 2, "spacing": "md"},
-            #    {"maxWidth": 500 + 400, "cols": 1, "spacing": "md"},
-            #],
+            cols={"base": 1, "sm": 2, "lg": 3},
+            spacing={"base": 10, "sm": "xl"},
+            verticalSpacing={"base": "md", "sm": "xl"},
             children = image_cards,
         )
     ]
@@ -63,6 +59,7 @@ def _attachment_card(file: File, auth_cookie, editable = False):
     is_long_filename  = len(file.name) > name_length
     short_filename    = (file.name[:name_length] + '...') if is_long_filename else file.name
 
+    thumbnail_image = construct_url(f"files/{thumbnail}") if is_image else f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg"
 
     return dmc.HoverCard(
         withArrow=True,
@@ -83,9 +80,7 @@ def _attachment_card(file: File, auth_cookie, editable = False):
                             },
                             children=[
                                 dmc.Image(
-                                    src=get_file(
-                                        thumbnail, 
-                                        file.type) if is_image else f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
+                                    src=thumbnail_image,
                                     fallbackSrc="https://placehold.co/600x400?text=Placeholder",
                                     w=48,
                                     h=48,
@@ -135,12 +130,11 @@ def download_attachment(click, files):
     file = list(filter(lambda f: f["id"] == file_id, files["files"]))[0]
     if file is None:
         raise PreventUpdate
-    auth_cookie = flask.request.cookies.get("auth")
 
     object_name = file["object_name"]
     file_type   = file["type"]
 
-    file = get_file(object_name, file_type, auth_cookie)
+    file = get_file(object_name, file_type)
 
     _, content_string = file.split(',')
 
