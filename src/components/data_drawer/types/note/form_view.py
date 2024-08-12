@@ -1,5 +1,6 @@
 import base64
 import json
+import pytz
 
 from src.components.notification.notification import notification, NotificationType
 import flask
@@ -22,144 +23,166 @@ from src.model.note import Note
 from src.util.util import local_formatted_date
 from src.components.notification.notification import notification
 
-def get_form_controls(public:bool = True):
-    return [
-        dmc.Switch(
-            id=ID_NOTE_EDIT_PUBLIC_FLAG,
-            offLabel=DashIconify(icon="material-symbols:lock", width=15),
-            onLabel=DashIconify(icon="material-symbols:lock-open-right-outline", width=15),
-            size="sm",
-            checked=public
-        ),
-        action_button(
-            button_id=ID_NOTE_DELETE_BUTTON,   
-            icon="material-symbols:delete", 
-        ),
-        action_button(
-            button_id=ID_LOCATION_MODAL_BUTTON, 
-            icon="material-symbols:edit-location-alt-outline-sharp"
-        ),
-    ]
 
 min_width_style = {"minWidth": "200px"}
 
-def form_content(note: Note, all_tags):
+def header(note: Note): 
+    is_public = True if note.public == True else False
 
-    accepted_types =",".join( list(chain.from_iterable(supported_mime_types.values())))
-    return [
-        dmc.Grid([
-            # title and description section
-            # TODO: replace with dmc.TagsInput if dash mantine 14 is working properly
-            dmc.GridCol(dmc.MultiSelect(
-                id=ID_NOTE_TAG_SELECT,
-                label="Select Tags",
-                data=sorted([t["name"] for t in all_tags]) if all_tags else [],
-                value=note.tags,
-                searchable=True,
-                nothingFound="No Tags found",
-                size="sm",
-            ),
-                span=6,
-                style=min_width_style
-            ),
-            dmc.GridCol(dmc.TextInput(
-                id=ID_NEW_TAG_INPUT,
-                label="Create new Tag",
-                size="sm",
-                rightSection=dmc.ActionIcon(
-                    DashIconify(icon="material-symbols:add-circle", width=20),
-                    size="lg",
-                    variant="subtle",
-                    id=ID_CREATE_NEW_TAG_BUTTON,
-                    n_clicks=0,
-                    color=PRIMARY_COLOR,
-                )
-            ),
-                span=6,
-                style=min_width_style,
-            ),
-            dmc.GridCol(dmc.TextInput(id=ID_NOTE_EDIT_TITLE, value=note.title, label="Title", debounce=500, style=min_width_style), span=6),
-            dmc.GridCol(dmc.DatePicker(id=ID_NOTE_DATE_INPUT, value=local_formatted_date(note.date, date_format="%Y-%m-%dT%H:%M:%S"), label="Date", style={"minWidth": "200px"}), span=4),
-            dmc.GridCol(dmc.TimeInput(id=ID_NOTE_TIME_INPUT, value=local_formatted_date(note.date, date_format="%Y-%m-%dT%H:%M:%S"), label="Time", style={"minWidth": "50"}), span=2),
-            dmc.GridCol(dmc.Textarea(
-                id=ID_NOTE_EDIT_DESCRIPTION,
-                value=note.description,
-                label="Description",
-                autosize=True,
-                minRows=4,
-                maxRows=4,
-                debounce=500,
-                style=min_width_style
-            ),
-                    span=12),
-        ],grow=True),
-        dmc.Grid([
-            dmc.GridCol([dmc.Button("Cancel", id=ID_NOTE_FORM_CANCEL_BUTTON, type="reset",   color="gray")], span="content"),
-            dmc.GridCol(dmc.Button("Save",    id=ID_NOTE_FORM_SAVE_BUTTON,   type="submit"), span="content"),
-        ],
-            justify="flex-end"
-        ),
-
-        dmc.Space(h=10),
-
-        dcc.Upload(
-            id=ID_IMAGE_UPLOAD,
+    return dmc.Flex(
+            justify="space-between",
             children=[
-                "Drag and Drop or ", 
-                html.A("Select files", style={"fontWeight": "bold"})
-            ] ,
-            accept=accepted_types,
-            style={
-                'width': '100%',
-                'height': '60px',
-                'lineHeight': '60px',
-                'borderWidth': '1px',
-                'borderStyle': 'dashed',
-                'borderRadius': '5px',
-                'textAlign': 'center',
-                'cursor': 'pointer',
-            },
-            multiple=True
-        ),
+                dmc.Group(
+                    children=[
+                        dmc.Title("Edit Note", order=4), 
+                        dmc.Title(dmc.Text(note.author, c="dimmed", size="sm"), order=4)
+                        ]
+                    ), 
+                dmc.Group(
+                    gap="sm", 
+                    style={"justifyContent":"flex-end"},
+                    children=[
+                        dmc.Switch(
+                            id=ID_NOTE_EDIT_PUBLIC_FLAG,
+                            onLabel=DashIconify(icon="material-symbols:lock", width=15),
+                            offLabel=DashIconify(icon="material-symbols:lock-open-right-outline", width=15),
+                            size="sm",
+                            checked=not is_public
+                            ),
+                        dmc.ActionIcon(
+                            DashIconify(icon="material-symbols:delete", width=20),
+                            size="md",
+                            variant="transparent",
+                            id=ID_NOTE_DELETE_BUTTON,
+                            ),
+                        ]
+                    )
+                ], 
+            )
 
-        dmc.Modal(
-            title="Edit Location",
-            id=ID_EDIT_LOCATION_MODAL,
-            zIndex=10000,
+
+
+def content(note: Note, all_tags, tz):
+    accepted_types =",".join(list(chain.from_iterable(supported_mime_types.values())))
+    return dmc.Stack(
+            gap="sm",
             children=[
-                dmc.Grid([
-                    dmc.GridCol(dmc.NumberInput(id=ID_NOTE_EDIT_LAT, label="Latitude",  value=note.lat, size="sm", precision=12), span=6),
-                    dmc.GridCol(dmc.NumberInput(id=ID_NOTE_EDIT_LON, label="Longitude", value=note.lon, size="sm", precision=12), span=6),
-                    dmc.GridCol(dmc.Button("Save", id=ID_SAVE_LOCATION_BUTTON, type="submit"), span=12)
-                ]),
-            ],
-        )
-    ]
+                dmc.TagsInput(
+                    id=ID_NOTE_TAG_SELECT,
+                    label="Tags",
+                    data=sorted([t["name"] for t in all_tags]) if all_tags else [],
+                    value=note.tags,
+                    size="xs",
+                    placeholder="Pick tag from list"),
+
+                dmc.Group(
+                    grow=True,
+                    children=[
+                        dmc.DateInput(
+                            id=ID_NOTE_DATE_INPUT, 
+                            value=local_formatted_date(note.date, timezone=tz, date_format="%Y-%m-%dT%H:%M:%S"), 
+                            valueFormat="DD-MM-YYYY", 
+                            size="xs",
+                            label="Date"
+                            ),
+                        dmc.TimeInput(
+                            id=ID_NOTE_TIME_INPUT, 
+                            value=local_formatted_date(note.date, timezone=tz,date_format="%H:%M:%S"), 
+                            withSeconds=True,
+                            size="xs",
+                            label="Time"
+                            ),
+                        ]),
+
+                dmc.Group(
+                    grow=True,
+                    children=[
+                        dmc.NumberInput(
+                            id=ID_NOTE_EDIT_LAT, 
+                            label="Latitude", 
+                            value=note.lat, 
+                            size="xs", 
+                            decimalScale=12),
+
+                        dmc.NumberInput(
+                            id=ID_NOTE_EDIT_LON, 
+                            label="Longitude", 
+                            value=note.lon, 
+                            size="xs", 
+                            decimalScale=12),
+                        ]),
+
+                    dmc.TextInput(
+                        id=ID_NOTE_EDIT_TITLE, 
+                        value=note.title, 
+                        label="Title", 
+                        debounce=500, 
+                        size="xs",
+                        style=min_width_style),
 
 
-@app.callback(
-    Output(ID_NOTE_TAG_SELECT, "data"),
-    Output(ID_NOTE_TAG_SELECT, "value"),
-    Input(ID_CREATE_NEW_TAG_BUTTON, "n_clicks"),
-    State(ID_NEW_TAG_INPUT, "value"),
-    State(ID_NOTE_TAG_SELECT, "data"),
-    State(ID_NOTE_TAG_SELECT, "value"),
-)
-def update_selected_tags(_, text_input, existing_tags, actual_selected):
-    if text_input is None or text_input == "":
-        raise PreventUpdate
-    return [*existing_tags, text_input], [*actual_selected, text_input]
+                    dmc.Textarea(
+                        id=ID_NOTE_EDIT_DESCRIPTION,
+                        value=note.description,
+                        label="Description",
+                        autosize=True,
+                        minRows=4,
+                        maxRows=4,
+                        debounce=500,
+                        size="xs",
+                        style=min_width_style),
 
+                    dmc.Group(
+                            grow=True,
+                            children=[
+                                dmc.Button(
+                                    "Cancel", 
+                                    id=ID_NOTE_FORM_CANCEL_BUTTON, 
+                                    color="gray"),
 
-@app.callback(
-    Output(ID_EDIT_LOCATION_MODAL, "opened"),
-    Input(ID_LOCATION_MODAL_BUTTON, "n_clicks"),
-    prevent_initial_call=True
-)
-def update_location_modal_state(click):
-    if click == 0 or click is None:
-        raise PreventUpdate
-    return True
+                                dmc.Button(
+                                    "Save", 
+                                    id=ID_NOTE_FORM_SAVE_BUTTON),
+                                ]),
+                        dcc.Upload(
+                                id=ID_IMAGE_UPLOAD,
+                                children=[
+                                    "Drag and Drop or ", 
+                                    html.A("Select files", style={"fontWeight": "bold"})
+                                    ] ,
+                                accept=accepted_types,
+                                style={
+                                    'width': '100%',
+                                    'height': '60px',
+                                    'lineHeight': '60px',
+                                    'borderWidth': '1px',
+                                    'borderStyle': 'dashed',
+                                    'borderRadius': '5px',
+                                    'textAlign': 'center',
+                                    'cursor': 'pointer',
+                                    },
+                                multiple=True
+                                ),
+                        html.Div(
+                                id=ID_ATTACHMENTS,
+                                children=attachment_area(note.files, True),
+                                )
+                        ])
+
+def note_form_view(note: Note, all_tags, tz):
+
+    return dmc.Container(
+            fluid=True, 
+            children=[
+                header(note),
+                dmc.ScrollArea(
+                    h=435,
+                    type="hover",
+                    offsetScrollbars=True,
+                    children=[content(note, all_tags, tz)],
+                    )
+                ], 
+            )
 
 
 @app.callback(
@@ -172,28 +195,34 @@ def update_location_modal_state(click):
 def update_date_time(input_date, input_time, selected_note):
     if selected_note["data"] is None:
         raise PreventUpdate
-    time = datetime.fromisoformat(input_time)
     date = datetime.fromisoformat(input_date)
-    date = date.replace(hour=time.hour, minute=time.minute, second=time.second, tzinfo=time.tzinfo)
+    time = datetime.strptime(input_time, "%H:%M:%S")
 
-    selected_note["data"]["date"] = date.isoformat()
+    date = date.replace(
+            hour=time.hour, 
+            minute=time.minute, 
+            second=time.second,
+            )
+
+    tz = pytz.timezone("UTC")
+    utc_date= date.astimezone(tz)
+
+    selected_note["data"]["date"] = utc_date.isoformat()
     return selected_note
 
 
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_EDIT_LOCATION_MODAL, "opened", allow_duplicate=True),
     Input(ID_NOTE_EDIT_TITLE, "value"),
     Input(ID_NOTE_EDIT_DESCRIPTION, "value"),
     Input(ID_NOTE_EDIT_PUBLIC_FLAG, "checked"),
-    Input(ID_SAVE_LOCATION_BUTTON, "n_clicks"),
     Input(ID_NOTE_TAG_SELECT, "value"),
     Input(ID_NOTE_EDIT_LAT, "value"),
     Input(ID_NOTE_EDIT_LON, "value"),
     State(ID_EDIT_NOTE_STORE, "data"),
     prevent_initial_call=True
 )
-def update_note_store_by_form(title, description, is_public, location_click, tags, lat, lon, selected_note):
+def update_note_store_by_form(title, description, is_public, tags, lat, lon, selected_note):
     if selected_note is None or selected_note["data"] is None:
         raise PreventUpdate
 
@@ -201,11 +230,10 @@ def update_note_store_by_form(title, description, is_public, location_click, tag
     selected_note["data"]["description"]     = description
     selected_note["data"]["location"]["lat"] = float(lat)
     selected_note["data"]["location"]["lon"] = float(lon)
-    selected_note["data"]["public"]          = is_public
+    selected_note["data"]["public"]          = not is_public
     selected_note["data"]["tags"]            = [{"name": t} for t in tags]
 
-    return selected_note, False # TODO: False here used to close location modal dialog, solve in another way
-
+    return selected_note
 
 @app.callback(
     Output(ID_NOTE_EDIT_LAT, "value", allow_duplicate=True),
@@ -281,7 +309,7 @@ def add_attachment(list_of_contents, list_of_names, note):
     note["data"]["file"] = new_files
     new_files = [File(f) for f in new_files]
                 
-    return dict(data=note["data"]), attachment_area(new_files, True)
+    return dict(data=note["data"]), attachment_area(new_files, True), no_update
 
 
 @app.callback(

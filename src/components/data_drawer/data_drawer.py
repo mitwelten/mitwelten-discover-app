@@ -18,7 +18,7 @@ from src.main import app
 from src.util.util import get_drawer_size_by_number_of_files
 
 
-def create_chart_from_source(selected_marker, date_range, theme, notes, environment_data):
+def create_chart_from_source(selected_marker, date_range, theme, notes, environment_data, tz):
     marker_data    = selected_marker.get("data")
     marker_id      = marker_data.get("id")
     drawer_content = html.Div("Somthing went wrong, not device found!")
@@ -44,7 +44,7 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
                 if note["id"] == marker_id:
                     n = Note(note)
                     drawer_size = get_drawer_size_by_number_of_files(len(n.files))
-                    drawer_content = note_view(n, theme)
+                    drawer_content = note_view(n, theme, tz)
     return drawer_content, drawer_size
 
 
@@ -79,7 +79,8 @@ def chart_drawer(args, device, all_notes, env):
                 {"start": start, "end": end}, 
                 "light", 
                 notes, 
-                env
+                env,
+                None,
                 )
         drawer_state = True
 
@@ -90,7 +91,7 @@ def chart_drawer(args, device, all_notes, env):
         size=drawer_size,
         closeOnClickOutside=True,
         withCloseButton=False,
-        closeOnEscape=True,
+        closeOnEscape=False,
         withOverlay=False,
         className="chart-drawer",
         position="bottom",
@@ -177,9 +178,10 @@ def open_drawer(selected_marker):
     Input(ID_APP_THEME, "forceColorScheme"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State({"role": "Environment", "label": "Store", "type": "virtual"}, "data"),
+    State(ID_TIMEZONE_STORE, "data"),
     prevent_initial_call=True
 )
-def update_drawer_content_from_marker_store(selected_marker, date_range, theme, notes, environment_data):
+def update_drawer_content_from_marker_store(selected_marker, date_range, theme, notes, environment_data, tz):
     if selected_marker is None:
         raise PreventUpdate
 
@@ -188,7 +190,8 @@ def update_drawer_content_from_marker_store(selected_marker, date_range, theme, 
         date_range,
         theme,
         notes,
-        environment_data
+        environment_data,
+        tz["tz"],
         )
 
     return drawer_content, drawer_size, False, False

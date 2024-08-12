@@ -187,6 +187,7 @@ def notify(notification):
     State(ID_MAP, "bounds"),
     State(ID_MAP, "center"),
     State(ID_TAG_DATA_STORE, "data"),
+    State(ID_TIMEZONE_STORE, "data"),
     State(ID_APP_THEME, "forceColorScheme"),
     prevent_initial_call=True
 )
@@ -199,6 +200,7 @@ def create_note_on_map(
         bounds,
         center,
         all_tags,
+        tz,
         theme
 ):
     if click is None or click == 0:
@@ -212,7 +214,6 @@ def create_note_on_map(
     new_note = Note(empty_note)
 
     # initially the bounds of the map are None
-    print("Bounds: ", bounds)
     if bounds is not None:
         top    = bounds[1][0]
         bottom = bounds[0][0]
@@ -252,7 +253,7 @@ def create_note_on_map(
     new_note["author"] = user.full_name
 
     notes = dict(entires=[])
-    view = note_view(Note(new_note), theme, True, all_tags["all"])
+    view = note_view(Note(new_note), theme, tz["tz"], True, all_tags["all"])
 
     return notes, no_update, dict(data=new_note, new=True), view, True, CHART_DRAWER_HEIGHT, False 
 

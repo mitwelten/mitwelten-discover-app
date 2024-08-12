@@ -59,7 +59,7 @@ const getBlobUrl = async (api_url,  file) => {
     const requestOptions = {
       method: 'GET',
       mode: "cors",
-      headers: {Authorization: `Bearer ${auth_token}`},
+      //headers: {Authorization: `Bearer ${auth_token}`},
       redirect: 'follow'
     };
 

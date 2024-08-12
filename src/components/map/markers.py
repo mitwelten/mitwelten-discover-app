@@ -78,25 +78,6 @@ def add_device_markers(checkboxes, tags, time_range, sources, timezone):
             if tag_filter: 
                 visible_deployments.append(d)
 
-    #depl_fs_filtered = {}
-    ## field study tag filter
-    #if fs_tag:
-    #    for key in depl_to_show.keys():
-    #        depl_fs_filtered[key] = list(filter(lambda depl: fs_tag in depl.tags or fs_tag == "ANY", depl_to_show[key]))
-
-    #depl_tags_filtered = {}
-    ## if tags:
-    #if False:
-    #    for key in depl_to_show.keys():
-    #        depl_tags_filtered[key] = list(filter(lambda depl: any(tag in depl.tags for tag in tags), depl_to_show[key]))
-
-    
-
-    #for key in depl_to_show.keys():
-    #    fs_tags = depl_fs_filtered.get(key, [])
-    #    tags = depl_tags_filtered.get(key, []) 
-    #    depl_to_show[key] = set(fs_tags + tags)
-
     # time filter
         visible_deployments = list(filter(lambda x: was_deployed(x, time_range["start"], time_range["end"]), visible_deployments))
 

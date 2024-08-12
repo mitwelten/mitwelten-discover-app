@@ -12,8 +12,8 @@ from src.components.media.slideshow import slideshow
 from src.api.api_files import get_file_url
 from src.components.button.components.action_button import action_button
 from src.components.data_drawer.types.note.attachment import attachment_area
-from src.components.data_drawer.types.note.form_view import form_content, get_form_controls
-from src.config.app_config import CHART_DRAWER_HEIGHT
+from src.components.data_drawer.types.note.form_view import content, note_form_view
+from src.config.app_config import CHART_DRAWER_HEIGHT, PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
@@ -23,9 +23,9 @@ from src.util.user_validation import get_user_from_cookies
 from src.util.util import local_formatted_date, text_to_dash_elements, get_drawer_size_by_number_of_files
 from src.config.app_config import supported_mime_types
 from src.components.data_drawer.types.note.confirm import confirm_dialogs
+from src.api.api_files import get_file, get_file_url
 
-
-def note_view(note: Note, theme, edit=False, all_tags=None):
+def note_view(note: Note, theme, tz, edit=False, all_tags=None):
     media_files = []
     documents   = []
 
@@ -43,9 +43,10 @@ def note_view(note: Note, theme, edit=False, all_tags=None):
 
 
     if edit:
-        children = note_form_view(note, all_tags)
+        children = note_form_view(note, all_tags, tz)
     else:
         children = note_detail_view(note, theme)
+
 
     return [
             dcc.Store(
@@ -61,6 +62,7 @@ def note_view(note: Note, theme, edit=False, all_tags=None):
             ]
 
 
+# TODO: move to util
 def text_to_html_list(text: str):
     elems = text_to_dash_elements(text)
     return dmc.Spoiler(
@@ -77,119 +79,107 @@ icon_private = DashIconify(
     style={"display":"block", "marginLeft":"3px", "color": "#868e96"}
 )
 
-icon_public= DashIconify(
-    icon="material-symbols:lock-open-right-outline", 
-    width=14, 
-    style={"display":"block", "marginLeft":"3px", "color": "#868e96"}
-)
-
-
-def note_form_view(note: Note, all_tags):
-    is_public = True if note.public == True else False
-
-    return dmc.Container([
-        dmc.Group([
-            dmc.Title("Edit Note"),
-            dmc.Group(get_form_controls(is_public),gap="sm", style={"justifyContent":"flex-end"})
-            ], position="apart"),
-        dmc.Text(note.author + " • " + local_formatted_date(note.date), c="dimmed", size="sm"),
-        dmc.ScrollArea(
-            children=[
-                *form_content(note, all_tags),
-                html.Div(
-                    id=ID_ATTACHMENTS,
-                    children=attachment_area(note.files, True),
-                )
-            ],
-            h=435,
-            type="hover",
-            offsetScrollbars=True
-        )
-        ], fluid=True, style={"marginTop": "20px"})
-
 def audio_card(file):
     return dmc.Card(
     children=[
         dmc.CardSection(
             dmc.Center(
-                DashIconify(icon="wpf:audio-wave", width=100),
-                style={"height": "160px"}
+                h=120,
+                style={"height": "80px"},
+                children=DashIconify(icon="wpf:audio-wave", width=100),
                 ),
-            h=160
         ),
-        dmc.Center(dmc.Text(file.name, fw=500, m=20)),
+        dmc.Center(dmc.Text(file.name + "sdkljsdfkljsdlkjflskdjflkjs", fw=500, m=20, style={"textOverflow": "ellipsis"}), style={"textOverflow": "ellipsis"}),
         html.Audio(src=get_file_url(file.object_name) , controls=True, style={"width": "100%"})
 
     ],
     withBorder=True,
     shadow="sm",
     radius="md",
-    h="100%"
+    h="80%",
+    w="80%",
 )
 
 
-def image_card(file: File):
+def doc_card(file):
+    return dmc.Card(
+            children=[
+                html.Div(
+                    id={"element": "text", "file_id": file.id},
+                    className="docu-card",
+                    style={
+                        "cursor": "pointer", 
+                        "display": "flex",
+                        "alignItems": "center",
+                        "justifyContent": "center"
+                        },
+                    children=[
+                        dmc.Stack(
+                            children=[
+                                dmc.Image(
+                                    style={"height": "80px"},
+                                    p=20,
+                                    src=f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
+                                    ),
+                                dmc.Text(file.name, fw=500, m=20),
+                                ]),
+                            ]),
+                    ],
+            withBorder=True,
+            shadow="sm",
+            radius="md",
+            h="80%",
+            w="80%",
+            )
+
+
+def carousel_card(file: File):
     if file.type.startswith("image/"):
         return dmc.Image(src=get_file_url(file.object_name))
     elif file.type.startswith("audio/"):
         return audio_card(file)
+    else :
+        return doc_card(file)
 
 
 def note_detail_view(note: Note, theme):
     user            = get_user_from_cookies()
     files           = list(sorted(note.files, key=lambda file: file.name.lower()))
-    media_files     = list(filter(lambda f: f.type.startswith("image/") or f.type.startswith("audio/"), files))
-    has_media_files = len(media_files) != 0
+    has_media_files = len(files) != 0
     private         = icon_private if not note.public else None
-    edit_button     = action_button(button_id={"button":"edit_note", "note_id": note.id},
-                                icon="material-symbols:edit", 
-                                disabled=True if user is None else False)
+    edit_button     = dmc.ActionIcon(
+            DashIconify(icon="material-symbols:edit", width=20),
+            size="md",
+            radius="xl",
+            variant="light",
+            id={"button":"edit_note", "note_id": note.id},
+            )
 
-    carousel = dmc.Carousel([dmc.CarouselSlide(image_card(img), className="background-image") for img in media_files],
-                            controlSize=33,
-                            orientation="horizontal",
-                            align="center",
-                            slideGap={ "base": 0, "sm": 'md' },
-                            slideSize="90%",
-                            height="300",
-                            loop=True,
-                            controlsOffset="md",
-                            withIndicators=True,
-                            id="carousel",
-className="background-image"
-                            )
+    carousel = dmc.Carousel(
+            orientation="horizontal",
+            align="center",
+            slideGap={ "base": "sm" },
+            height="300",
+            loop=True,
+            controlsOffset="md",
+            withIndicators=True,
+            bg=PRIMARY_COLOR,
+            children=[
+                dmc.CarouselSlide(
+                    display="flex",
+                    style={"justifyContent": "center", "alignItems": "center"},
+                    children=carousel_card(img)) for img in files],
+            )
 
-    content2 = dmc.Container([
-        dmc.SimpleGrid(
+    side_by_side = dmc.SimpleGrid(
             cols={"base": 1, "sm": 2},
             spacing={"base": 10, "sm": "xl"},
             verticalSpacing={"base": "md"},
             children = [text_to_html_list(note.description), carousel],
         )
-        ], fluid=True)
 
-    content = dmc.Container(
-            dmc.ScrollArea(
-                children=[
-                    dmc.Grid([
-                        dmc.GridCol(dmc.Text(text_to_html_list(note.description)), span=8),
-                        dmc.GridCol(
-                            html.Div(
-                                id="id-slideshow-container", 
-                                className="image-container", 
-                                children=slideshow(theme, files) if has_media_files else {}
-                                ), className="image-col", span=4),
-                            ], justify="space-between", grow=True),
-                    dmc.Space(h=10),
-                    *attachment_area(note.files, False),
-                    ], 
-                type="hover", 
-                h=360, 
-                offsetScrollbars=True,
-                style={"marginTop": "10px"}
-                ),
-            fluid=True,
-            )
+    content = side_by_side if has_media_files else text_to_html_list(note.description)
+
     return [
             bottom_drawer_content(
                 note.title,
@@ -199,17 +189,9 @@ className="background-image"
                 dmc.Group([private, edit_button]),
                 note.author
                 ),
-            content2
+            dmc.Container(content, fluid=True, pt=20),
             ]
 
-
-@app.callback(
-    Output(ID_SLIDESHOW_IMAGE, "src", allow_duplicate=True),
-    Input(ID_MAP, "clickData"),
-    prevent_initial_call=True
-)
-def map_click(_):
-    return ""
 
 @app.callback(
     Output(ID_CONFIRM_DELETE_DIALOG, "displayed", allow_duplicate=True),
@@ -230,9 +212,10 @@ def delete_click(click):
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_TAG_DATA_STORE, "data"),
+    State(ID_TIMEZONE_STORE, "data"),
     prevent_initial_call=True
 )
-def activate_edit_mode(click, notes, all_tags):
+def activate_edit_mode(click, notes, all_tags, tz):
 
     click_sum = safe_reduce(lambda x, y: x + y, click, 0)
     if ctx.triggered_id is None or click_sum == 0:
@@ -248,7 +231,7 @@ def activate_edit_mode(click, notes, all_tags):
         if note["id"] == ctx.triggered_id["note_id"]:
             n = Note(note)
             if n.author == user.full_name or "internal" in user.roles:
-                return dict(data=note), note_form_view(n, all_tags["all"]), False, CHART_DRAWER_HEIGHT, no_update
+                return dict(data=note), note_form_view(n, all_tags["all"], tz["tz"]), False, CHART_DRAWER_HEIGHT, no_update
             else:
                 n = notification("Only the author can edit this note!", NotificationType.NOT_PERMITTED)
                 return no_update, no_update, no_update, no_update, n 
@@ -285,77 +268,6 @@ def click_on_attachment(click, data):
 
     return data
 
-@app.callback(
-    Output(ID_NOTE_FILE_STORE, "data", allow_duplicate=True),
-    Input(ID_SLIDESHOW_BTN_RIGHT, "n_clicks"),
-    Input(ID_SLIDESHOW_BTN_LEFT, "n_clicks"),
-    State(ID_NOTE_FILE_STORE, "data"),
-    prevent_initial_call = True
-    )
-def next_media(_click_r, click_l, data):
-    files = data["media_files"]
-    idx   = data["focus"]
-    if ctx.triggered_id == ID_SLIDESHOW_BTN_RIGHT:
-        idx += 1
-    else:
-        idx -= 1
-
-    idx = idx % len(files)
-    data["focus"] = idx
-    return data
-
-
-@app.callback(
-    Output(ID_SLIDESHOW_IMAGE, "src"),
-    Output(ID_SLIDESHOW_IMAGE, "style"),
-    Output(ID_AUDIO, "src"),
-    Output(ID_AUDIO_PLAYER, "style"),
-    Input(ID_NOTE_FILE_STORE, "data"),
-)
-
-def update_focused_image(data):
-    if data == None or data == "":
-        raise PreventUpdate
-
-    idx = data["focus"]
-    if idx < len(data["media_files"]):
-        file = data["media_files"][idx]
-    else:
-        raise PreventUpdate
-
-    visible   = {"display": "flex"}
-    invisible = {"display": "none"}
-
-    url = get_file_url(file["object_name"])
-
-    if file["type"].startswith("image"):
-        return url, visible, no_update, invisible
-    elif file["type"].startswith("audio"):
-        return no_update, invisible, url, visible
-
-    raise PreventUpdate
-
-
-@app.callback(
-    Output({"element": "card", "file_id": ALL}, "style"),
-    Input(ID_NOTE_FILE_STORE, "data"),
-    Input(ID_APP_THEME, 'theme'),
-    State({"element": "card", "file_id": ALL}, "style"),
-)
-def mark_active_card(data, theme, cards):
-    default_style = {}
-    green_light   = theme["colors"]["mitwelten_green"][6]
-    green_dark    = theme["colors"]["mitwelten_green"][8]
-
-    primary_color =  green_light if theme == "light" else green_dark
-    active_style  = {"borderColor": primary_color}
-
-    styles = [default_style] * len(ctx.outputs_list)
-    styles[data["focus"]] = active_style
-
-    return styles 
-
-
 
 @app.callback(
     Output(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "displayed", allow_duplicate=True),
@@ -384,18 +296,8 @@ def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
                 return True, no_update, no_update, no_update, False
 
             drawer_size = get_drawer_size_by_number_of_files(len(n.files))
-            return no_update, dict(data=None), note_view(Note(note), theme, False), drawer_size, True
+            return no_update, dict(data=None), note_view(Note(note), theme, False), drawer_size, False
     raise PreventUpdate
-
-
-@app.callback(
-    Output("id-slideshow-container", "children"),
-    Input(ID_APP_THEME, "forceColorScheme"),
-    State(ID_SLIDESHOW_IMAGE, "src"),
-    prevent_initial_call=True
-)
-def update_player_colors(theme, src):
-    return slideshow(theme, src)
 
 
 @app.callback(
@@ -409,9 +311,10 @@ def update_player_colors(theme, src):
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_CHART_DRAWER, "size"),
     State(ID_APP_THEME, "forceColorScheme"),
+    State(ID_TIMEZONE_STORE, "data"),
     prevent_initial_call=True,
 )
-def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, theme):
+def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, theme, tz):
     if cancel_click is None or cancel_click == 0:
         raise PreventUpdate
     
@@ -419,6 +322,8 @@ def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, theme)
         if note["id"] == selected_note["data"]["id"]:
             n = Note(note)
             drawer_size = get_drawer_size_by_number_of_files(len(n.files))
-            return dict(data=None), drawer_size, True, note_view(n, theme), True
+            return dict(data=None), drawer_size, True, note_view(n, theme, tz["tz"]), True
 
     raise PreventUpdate
+
+

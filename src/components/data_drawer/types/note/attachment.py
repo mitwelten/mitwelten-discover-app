@@ -11,6 +11,7 @@ from src.config.app_config import thumbnail_size, supported_mime_types
 from src.main import app
 from src.model.file import File
 from src.util.helper_functions import safe_reduce
+from src.api.api_files import get_file, get_file_url
 
 
 def attachment_area(files: list[File], editable = False):
@@ -36,13 +37,8 @@ def attachment_area(files: list[File], editable = False):
 
     return [
         dcc.Download(id=ID_DOWNLOAD),
-        dmc.Space(h=20),
-        dmc.SimpleGrid(
-            cols={"base": 1, "sm": 2, "lg": 3},
-            spacing={"base": 10, "sm": "xl"},
-            verticalSpacing={"base": "md", "sm": "xl"},
-            children = image_cards,
-        )
+        dmc.Space(h=10),
+        dmc.Stack(image_cards)
     ]
 
 
@@ -61,58 +57,54 @@ def _attachment_card(file: File, auth_cookie, editable = False):
 
     thumbnail_image = construct_url(f"files/{thumbnail}") if is_image else f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg"
 
-    return dmc.HoverCard(
-        withArrow=True,
-        shadow="md",
-        styles={"cursor":"pointer", "margin": 0, "height": "50px"} if not editable else {"margin": 0, "height": "50px"},
-        children=[
-            dmc.HoverCardTarget(
-                children=html.Span(
-                    children=dmc.Card(
-                    id={"element": "card", "file_id": file.id} if not editable and element == "media" else "",
+    return dmc.Card(
+            id={"element": "card", "file_id": file.id} if not editable and element == "media" else "",
+            children=[
+                dmc.CardSection(
+                    style={
+                        "display": "flex",
+                        "overflow": "hidden",
+                        "alignItems": "center",
+                        "justifyContent": "space-between",
+                        },
                     children=[
-                        dmc.CardSection(
-                            style={
-                                "display": "flex",
-                                "overflow": "hidden",
-                                "alignItems": "center",
-                                "justifyContent": "space-between",
-                            },
+                        dmc.Group(
+                            grow=True,
                             children=[
                                 dmc.Image(
                                     src=thumbnail_image,
                                     fallbackSrc="https://placehold.co/600x400?text=Placeholder",
                                     w=48,
                                     h=48,
-                                ),
-                                dmc.Text(short_filename, style={"margin": "0 10px"}, size="sm"),
-
-                                dmc.Group([
-                                    action_button(
-                                        button_id={"element": "delete_button", "file_id": file.id},
-                                        icon="material-symbols:delete",
-                                        size="sm",
-                                        variant="transparent"
-                                    ) if editable else {},
-
-                                    action_button(
-                                        button_id={"element": "download_button", "file_id": file.id}, 
-                                        icon="material-symbols:download", 
-                                        size="sm",
-                                        variant="transparent"
                                     ),
-                                    ], style={"marginRight": "5px"}),
-                            ]),
-                    ],
-                    withBorder=True,
-                    shadow="sm",
-                    radius="sm",
-                ), id={"element": element, "file_id": file.id} if not editable else ""),
-            ),
-            dmc.HoverCardDropdown(dmc.Text(file.name)) if is_long_filename else {}
-        ]
-    )
+                                dmc.Text(
+                                    #style={"margin": "0 10px", "text-overflow": "ellipsis"}, 
+                                    size="xs",
+                                    children=file.name,
+                                    )
+                                ]),
 
+                        dmc.Group([
+                            action_button(
+                                button_id={"element": "delete_button", "file_id": file.id},
+                                icon="material-symbols:delete",
+                                size="sm",
+                                variant="transparent"
+                                ) if editable else {},
+
+                            action_button(
+                                button_id={"element": "download_button", "file_id": file.id}, 
+                                icon="material-symbols:download", 
+                                size="sm",
+                                variant="transparent"
+                                ),
+                            ], style={"marginRight": "5px"}),
+                        ]),
+                    ],
+            withBorder=True,
+            shadow="sm",
+            radius="sm",
+            )
 
 
 @app.callback(
@@ -127,7 +119,7 @@ def download_attachment(click, files):
         raise PreventUpdate
 
     file_id = ctx.triggered_id["file_id"]
-    file = list(filter(lambda f: f["id"] == file_id, files["files"]))[0]
+    file = list(filter(lambda f: f["id"] == file_id, files["documents"]))[0]
     if file is None:
         raise PreventUpdate
 
