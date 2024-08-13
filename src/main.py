@@ -1,29 +1,18 @@
 from dash import Dash
-import dash_bootstrap_components as dbc
-import datetime
 import dash
+import dash_mantine_components as dmc
 
 import diskcache
-from dash.long_callback import DiskcacheLongCallbackManager
 
 cache = diskcache.Cache("./cache")
 
-    #dbc.themes.BOOTSTRAP,
-external_stylesheets = [
-    "https://unpkg.com/@mantine/dates@7/styles.css",
-    "https://unpkg.com/@mantine/code-highlight@7/styles.css",
-    "https://unpkg.com/@mantine/charts@7/styles.css",
-    "https://unpkg.com/@mantine/carousel@7/styles.css",
-    "https://unpkg.com/@mantine/notifications@7/styles.css",
-    "https://unpkg.com/@mantine/nprogress@7/styles.css",
-]
 
 dash._dash_renderer._set_react_version('18.2.0')
 
 app = Dash(
     __name__,
     title="Mitwelten Discover",
-    external_stylesheets=external_stylesheets,
+    external_stylesheets=dmc.styles.ALL,
     external_scripts=[{'src':'assets/util.js','type':'module'}],
     suppress_callback_exceptions=True,
     requests_pathname_prefix="/app/",

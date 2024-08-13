@@ -162,6 +162,7 @@ def open_drawer(selected_marker):
         raise PreventUpdate
 
     if selected_marker["type"] in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
+        print("------_")
         n = notification("No chart available for this device type.", NotificationType.INFO)
         return False, n, False
 

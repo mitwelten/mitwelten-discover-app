@@ -1,5 +1,6 @@
 import time
 from functools import partial
+from dash_iconify import DashIconify
 
 import dash_mantine_components as dmc
 import dash_core_components as dcc
@@ -51,39 +52,37 @@ def app_content(args):
 
     active_depl  = get_device_from_args(args, deployments, notes, environments)
 
-    # render app content
     return [
-            dmc.NotificationProvider(),
             dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
-            html.Div(id=ID_NOTIFICATION),
             mitwelten_bannner,
             *stores(args, deployments, notes, env_data),
             *control_buttons,
             map_figure(args, active_depl),
             chart_drawer(args, active_depl, notes, env_data),
             settings_drawer(args),
+            html.Div(id=ID_NOTIFICATION),
             ]
 
 
 def discover_app(**kwargs): 
-    print("app kwargs: ", kwargs)
     args = set_default_args(kwargs)
     return dmc.MantineProvider(
             forceColorScheme="light",
             id=ID_APP_THEME,
             theme=app_theme,
-            children=html.Div(
-                id=ID_APP_CONTAINER,
-                children=[
-                    *app_content(args),
-                    dcc.Location(id=ID_URL_LOCATION, refresh=False),
-                    ], 
-                )
+            children=[
+                dmc.NotificationProvider(position="bottom-right"),
+                html.Div(
+                    id=ID_APP_CONTAINER,
+                    children=[
+                        *app_content(args),
+                        dcc.Location(id=ID_URL_LOCATION, refresh=False),
+                        ], 
+                    ),
+                ]
             )
 
 register_page("Discover", layout=discover_app, path="/")
-
-
 
 
 @app.callback(

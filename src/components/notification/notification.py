@@ -12,6 +12,7 @@ class NotificationType(Enum):
 
 
 def notification(message: str, type: NotificationType):
+    print("create notification")
     title = type.value[0]["title"]
     icon  = type.value[0]["icon"]
     color = type.value[0]["color"]
