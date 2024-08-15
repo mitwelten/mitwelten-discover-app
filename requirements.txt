@@ -14,7 +14,7 @@ dash-extensions==1.0.12
 dash-html-components==2.0.0
 dash-iconify==0.1.2
 dash-leaflet==1.0.15
-dash-mantine-components==0.12.1
+dash-mantine-components==0.14.4
 dash-table==5.0.0
 dataclass-wizard==0.22.2
 deprecation==2.1.0
