@@ -6,11 +6,11 @@ from src.components.notification.notification import NotificationType, notificat
 from src.components.data_drawer.types.note.note_view import note_view
 from src.model.note import Note
 
-from src.components.data_drawer.types.audio import create_audio_chart3
+from src.components.data_drawer.types.audio import create_audio_chart
 from src.components.data_drawer.types.env import create_env_chart
 from src.components.data_drawer.types.environment_point import create_environment_point_chart
 from src.components.data_drawer.types.pax import create_pax_chart
-from src.components.data_drawer.types.pollinator import create_pollinator_chart2
+from src.components.data_drawer.types.pollinator import create_pollinator_chart
 from src.config.app_config import BACKGROUND_COLOR, SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from src.config.id_config import *
 from src.config.app_config import CHART_DRAWER_HEIGHT
@@ -27,7 +27,7 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
     
     match selected_marker["type"]:
         case "Audio Logger":
-            drawer_content = create_audio_chart3(marker_data, date_range, theme)
+            drawer_content = create_audio_chart(marker_data, date_range, theme)
         #case "Wild Cam":
         #    drawer_content = create_wild_cam_view(marker_data, theme)
         case "Env Sensor":
@@ -36,7 +36,7 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
 
             drawer_content = create_pax_chart(marker_data, date_range, theme)
         case "Pollinator Cam":
-            drawer_content = create_pollinator_chart2(marker_data, date_range, theme)
+            drawer_content = create_pollinator_chart(marker_data, date_range, theme)
         case "Environment":
             drawer_content = create_environment_point_chart(environment_data["legend"], marker_id, theme)
         case "Note":
@@ -218,6 +218,4 @@ def close_drawer(opened):
     if opened:
         return no_update
     return []
-
-
 

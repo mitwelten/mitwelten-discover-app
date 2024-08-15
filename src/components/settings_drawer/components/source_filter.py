@@ -1,13 +1,9 @@
-from functools import reduce
-
 import dash_mantine_components as dmc
-from dash import dash, html, dcc, Output, Input, State, ctx
-from dash.exceptions import PreventUpdate
+from dash import html, Output, Input, State
 
 from src.config.id_config import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
 from src.main import app
-from src.util.decorators import spaced_section
 from src.url.parse import update_query_data
 
 
@@ -18,15 +14,9 @@ def get_checkbox_by_type(node_type: str):
                 className="color-point",
                 style={"background": get_source_props(node_type)["color"]}
             ),
-            #dmc.Image(
-            #    src=get_source_props(node_type)["marker"],
-            #    width="24px",
-            #    ),
             dmc.Text(get_source_props(node_type)["name"]),
         ]),
         value=node_type,
-        #size="xs",
-        #color="#003399"
     )
 
 

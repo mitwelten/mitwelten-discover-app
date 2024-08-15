@@ -1,8 +1,8 @@
-import time
 import re
 import pytz
 from datetime import datetime
 from dash import html
+import dash_mantine_components as dmc
 from src.config.app_config import CHART_DRAWER_HEIGHT
 
 def local_formatted_date(date: str, timezone=None, date_format="%d %b %Y • %H:%M"):
@@ -37,6 +37,16 @@ def apply_newlines(text: str):
             children.append(para)
             children.append(html.Br())
     return children
+
+
+def text_to_html_list(text: str):
+    elems = text_to_dash_elements(text)
+    return dmc.Spoiler(
+        children=dmc.Text(elems),
+        showLabel="Show more",
+        hideLabel="Hide",
+        maxHeight=150
+    )
 
 
 def text_to_dash_elements(text):

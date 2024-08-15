@@ -3,16 +3,12 @@ from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_up
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
 import dash_core_components as dcc
-from pprint import pprint
 
 from src.components.notification.notification import NotificationType, notification
 from configuration import API_URL
 from src.components.data_drawer.header import bottom_drawer_content
-from src.components.media.slideshow import slideshow
 from src.api.api_files import get_file_url
-from src.components.button.components.action_button import action_button
-from src.components.data_drawer.types.note.attachment import attachment_area
-from src.components.data_drawer.types.note.form_view import content, note_form_view
+from src.components.data_drawer.types.note.form_view import note_form_view
 from src.config.app_config import CHART_DRAWER_HEIGHT, PRIMARY_COLOR
 from src.config.id_config import *
 from src.main import app
@@ -20,10 +16,10 @@ from src.model.note import Note
 from src.model.file import File
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
-from src.util.util import local_formatted_date, text_to_dash_elements, get_drawer_size_by_number_of_files
+from src.util.util import get_drawer_size_by_number_of_files, text_to_html_list
 from src.config.app_config import supported_mime_types
 from src.components.data_drawer.types.note.confirm import confirm_dialogs
-from src.api.api_files import get_file, get_file_url
+from src.api.api_files import get_file_url
 
 def note_view(note: Note, theme, tz, edit=False, all_tags=None):
     media_files = []
@@ -62,17 +58,6 @@ def note_view(note: Note, theme, tz, edit=False, all_tags=None):
             ]
 
 
-# TODO: move to util
-def text_to_html_list(text: str):
-    elems = text_to_dash_elements(text)
-    return dmc.Spoiler(
-        children=dmc.Text(elems),
-        showLabel="Show more",
-        hideLabel="Hide",
-        maxHeight=150
-    )
-
-
 icon_private = DashIconify(
     icon="material-symbols:lock",                    
     width=14, 
@@ -81,28 +66,43 @@ icon_private = DashIconify(
 
 def audio_card(file):
     return dmc.Card(
-    children=[
-        dmc.CardSection(
-            dmc.Center(
-                h=120,
-                style={"height": "80px"},
-                children=DashIconify(icon="wpf:audio-wave", width=100),
-                ),
-        ),
-        dmc.Center(dmc.Text(file.name + "sdkljsdfkljsdlkjflskdjflkjs", fw=500, m=20, style={"textOverflow": "ellipsis"}), style={"textOverflow": "ellipsis"}),
-        html.Audio(src=get_file_url(file.object_name) , controls=True, style={"width": "100%"})
-
-    ],
-    withBorder=True,
-    shadow="sm",
-    radius="md",
-    h="80%",
-    w="80%",
-)
+            withBorder=True,
+            shadow="sm",
+            radius="md",
+            h="80%",
+            w="80%",
+            children=[
+                dmc.CardSection(
+                    dmc.Center(
+                        h=120,
+                        style={"height": "80px"},
+                        children=DashIconify(icon="wpf:audio-wave", width=100),
+                        ),
+                    ),
+                dmc.Center(
+                    children=dmc.Text(
+                        file.name, 
+                        fw=500, 
+                        m=20, 
+                        style={"textOverflow": "ellipsis", "overflow": "hidden"}
+                        ), 
+                    style={"textOverflow": "ellipsis"}),
+                html.Audio(
+                    src=get_file_url(file.object_name), 
+                    controls=True, 
+                    style={"width": "100%"}
+                    )
+                ],
+            )
 
 
 def doc_card(file):
     return dmc.Card(
+            withBorder=True,
+            shadow="sm",
+            radius="md",
+            h="80%",
+            w="80%",
             children=[
                 html.Div(
                     id={"element": "text", "file_id": file.id},
@@ -125,11 +125,6 @@ def doc_card(file):
                                 ]),
                             ]),
                     ],
-            withBorder=True,
-            shadow="sm",
-            radius="md",
-            h="80%",
-            w="80%",
             )
 
 

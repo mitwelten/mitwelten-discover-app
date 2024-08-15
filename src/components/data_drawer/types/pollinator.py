@@ -55,38 +55,7 @@ def create_graph(pollinator_class, trigger_id, light_mode):
     )
 
 
-def create_pollinator_chart(_1, _2):
-    enumerated_tabs = list(enumerate(tabs, 0))
-
-    tab_list = [
-        dmc.Tab(f"{tab['title']}", value=f"{idx}") for (idx, tab) in enumerated_tabs
-    ]
-
-    return dmc.Tabs(
-        [
-            dmc.TabsList(tab_list, position="center"),
-            html.Div(id="tabs-content", className="chart-container"),
-        ],
-        id="tabs-example",
-        value="0",
-        variant="outline",
-        style={"height": "90%"},
-    )
-
-
-@callback(
-    Output("tabs-content", "children"),
-    Input("tabs-example", "value"),
-    Input(ID_SELECTED_MARKER_STORE, "data"),
-    State(ID_APP_THEME, "forceColorScheme"),
-)
-def render_content(active, data, theme):
-    return create_graph(
-        tabs[int(active)]["pollinator_class"], data["data"]["id"], theme
-    )
-
-
-def create_pollinator_chart2(marker_data, date_range, theme):
+def create_pollinator_chart(marker_data, date_range, theme):
     d = Deployment(marker_data)
     resp = get_pollinator_heatmap(d.id, confidence=0.75, time_from=date_range["start"], time_to=date_range["end"])
     figure = create_themed_figure(theme)

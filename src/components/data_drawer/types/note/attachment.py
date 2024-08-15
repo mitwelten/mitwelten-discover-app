@@ -78,7 +78,6 @@ def _attachment_card(file: File, auth_cookie, editable = False):
                                     h=48,
                                     ),
                                 dmc.Text(
-                                    #style={"margin": "0 10px", "text-overflow": "ellipsis"}, 
                                     size="xs",
                                     children=file.name,
                                     )

@@ -28,7 +28,6 @@ def bottom_drawer_content(title, tags, icon, theme, title_icons=None, info=None)
                             children=[
                                 dmc.Group(
                                     gap="xs",
-                                    grow=True,
                                     wrap=False,
                                     children=[
                                         dmc.Text(info, size="xs", c="dimmed") if info else None,

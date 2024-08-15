@@ -1,4 +1,3 @@
-import dash
 import dash_mantine_components as dmc
 from dash import Output, Input, State, ctx
 from dash_iconify import DashIconify
@@ -6,7 +5,6 @@ from dash.exceptions import PreventUpdate
 
 from src.config.id_config import *
 from src.main import app
-from src.util.decorators import spaced_section
 
 
 def general_controls(args):

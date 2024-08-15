@@ -9,19 +9,6 @@ DEFAULT_MAP_INDEX = 1
 
 MAP_TYPES = ["base", "overlay"]
 
-DEFAULT_MARKER_COLORS = [
-    "#FF5733",  # (Pastell Orange)
-    "#9B59B6",  # (Lavendelviolett)
-    "#F1C40F",  # (Sonnenblumengelb)
-    "#3498DB",  # (Hellblau)
-    "#E67E22",  # (Terra Cotta)
-    "#2ECC71",  # (Smaragdgrün)
-    "#946000",  # (brown)
-    "#FFd800",  # (Yellow)
-    "#E74C3C",  # (Tomatenrot)
-    "#1ABC9C",  # (Türkis)
-]
-
 SOURCE_PROPS = {
 #    "Access Point":  dict(color="#FF5733", marker="location-0.svg", type="physical"),
     "Audio Logger":   dict(name="Audio Logger",           color="#99FFFF", marker="assets/markers/audioLogger.svg",   type="physical"),
