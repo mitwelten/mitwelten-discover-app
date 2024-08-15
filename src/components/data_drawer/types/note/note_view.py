@@ -120,6 +120,7 @@ def doc_card(file):
                             dmc.Image(
                                 h="100%",
                                 p=20,
+                                mt=60,
                                 src=f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
                                 ),
                             ],

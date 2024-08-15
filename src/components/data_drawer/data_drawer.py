@@ -99,6 +99,7 @@ def chart_drawer(args, device, all_notes, env):
         lockScroll=False,
         children=[
             dcc.Loading(
+                id=ID_LOADER,
                 type="default",
                 color="#6c9d9d",
                 children=html.Div(
