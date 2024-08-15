@@ -44,7 +44,7 @@ def create_audio_chart(deployment_data, date_range, theme):
         timeseries = pd.bdate_range(date_range["start"], date_range["end"], tz="UTC", freq="D")
 
         figure.add_traces(bars)
-        figure.add_traces(go.Bar(x=timeseries, y=[0] * len(timeseries)))
+        figure.add_traces(go.Bar(x=timeseries, y=[0] * len(timeseries), showlegend=False))
         figure.update_layout(barmode='stack', margin_pad=20, font_size=12)
                 
     graph = dcc.Graph(
