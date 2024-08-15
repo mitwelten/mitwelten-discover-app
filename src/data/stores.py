@@ -1,6 +1,6 @@
 import flask
 from dash.exceptions import PreventUpdate
-from dash import clientside_callback, ClientsideFunction
+from dash import Output, Input, State
 
 
 from src.components.data_drawer.types.pollinator import *

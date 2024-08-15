@@ -23,7 +23,19 @@ QUERY_PARAMS = {
         }
 
 PRIMARY_COLOR = "mitwelten_green"
-SECONDARY_COLOR = "mitwelten_pink"
+SECONDARY_COLOR = [
+                '#FCE4EC',
+                '#F8BBD0',
+                '#F48FB1',
+                '#F06292',
+                '#EC407A',
+                '#E91E63',
+                '#D81B60',
+                '#C2185B',
+                '#AD1457',
+                '#880E4F',
+            ],
+
 BACKGROUND_COLOR = "#E8F7FC"
 
 app_theme = {
@@ -41,19 +53,6 @@ app_theme = {
                 "#4b7a7a",
                 "#366a6a"
                 ],
-        "light":
-            [
-                "#FCE4EC",
-                "#F8BBD0",
-                "#F48FB1",
-                "#F06292",
-                "#EC407A",
-                "#E91E63",
-                "#D81B60",
-                "#C2185B",
-                "#AD1457",
-                "#880E4F",
-            ],
     },
     #"white": BACKGROUND_COLOR, # background color
     "primaryColor": PRIMARY_COLOR,

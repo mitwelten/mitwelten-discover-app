@@ -3,10 +3,10 @@ from datetime import datetime, timedelta
 import calendar as cal
 import plotly.graph_objects as go
 from plotly.colors import hex_to_rgb
-from dash import Output, Input, State, html, callback, dcc
+from dash import dcc
 import dash_mantine_components as dmc
 from src.model.deployment import Deployment
-from src.config.app_config import POLLINATOR_DESCRIPTION, SECONDARY_COLOR, app_theme
+from src.config.app_config import SECONDARY_COLOR
 from src.components.data_drawer.header import bottom_drawer_content
 
 from src.config.map_config import get_source_props
@@ -79,8 +79,8 @@ def create_pollinator_chart(marker_data, date_range, theme):
                     heat_data[t][int(entry["month"]) - min(months)] = int(entry["count"])
 
         colorscale=[
-            [0, f"rgb{hex_to_rgb(app_theme['colors'][SECONDARY_COLOR][0])}"],
-            [1, f"rgb{hex_to_rgb(app_theme['colors'][SECONDARY_COLOR][-1])}"]
+            [0, f"rgb{hex_to_rgb('#FCE4EC')}"],
+            [1, f"rgb{hex_to_rgb('#880E4F')}"]
         ]
         figure.add_trace(go.Heatmap(
             z=list(heat_data.values()),

@@ -100,19 +100,30 @@ def create_env_chart(deployment_data, theme):
             className="chart-graph",
         )
 
-    panel_list = [dmc.TabsPanel(
-            create_graph(tab["fn"]),
-            value=f"{idx}",
-            className="chart-container"
-    )
+    panel_list = [
+            dmc.TabsPanel(
+                children=create_graph(tab["fn"]),
+                value=f"{idx}",
+                className="chart-container"
+                )
         for (idx, tab) in enumerated_tabs]
 
-    tab_list = [dmc.Tab(f"{tab['title']}", value=f"{idx}") for (idx, tab) in enumerated_tabs]
 
-    tabs = dmc.Tabs([dmc.TabsList(tab_list, position="center"), *panel_list],
-                    value="0",
-                    variant="outline",
-                    style={"height": "90%"})
+    tabs = dmc.Tabs(
+            value="0",
+            variant="outline",
+            style={"height": "90%"},
+            children=[
+                dmc.TabsList(
+                    children=[
+                        dmc.TabsTab(
+                            children=f"{tab['title']}", 
+                            value=f"{idx}") 
+                        for (idx, tab) in enumerated_tabs] 
+                    ), 
+                *panel_list
+                ],
+            )
 
 
     return [
