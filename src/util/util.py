@@ -41,12 +41,21 @@ def apply_newlines(text: str):
 
 def text_to_html_list(text: str):
     elems = text_to_dash_elements(text)
-    return dmc.Spoiler(
-        children=dmc.Text(elems),
-        showLabel="Show more",
-        hideLabel="Hide",
-        maxHeight=150
-    )
+    return html.Div(
+            children=[
+                dmc.Spoiler(
+                    children=dmc.Text(elems),
+                    showLabel="Show more",
+                    hideLabel="Hide",
+                    maxHeight=200,
+                    hiddenFrom="sm"
+                    ),
+                dmc.Text(
+                    children=elems,
+                    visibleFrom="sm"
+                    )
+                ]
+                )
 
 
 def text_to_dash_elements(text):

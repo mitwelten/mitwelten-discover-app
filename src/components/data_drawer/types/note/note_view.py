@@ -106,25 +106,34 @@ def doc_card(file):
             children=[
                 html.Div(
                     id={"element": "text", "file_id": file.id},
-                    className="docu-card",
-                    style={
-                        "cursor": "pointer", 
-                        "display": "flex",
-                        "alignItems": "center",
-                        "justifyContent": "center"
-                        },
                     children=[
-                        dmc.Stack(
-                            children=[
-                                dmc.Image(
-                                    style={"height": "80px"},
-                                    p=20,
-                                    src=f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
-                                    ),
-                                dmc.Text(file.name, fw=500, m=20),
-                                ]),
-                            ]),
-                    ],
+                        dmc.CardSection(
+                        className="docu-card",
+                        h=120,
+                        style={
+                            "cursor": "pointer", 
+                            "display": "flex",
+                            "alignItems": "center",
+                            "justifyContent": "center"
+                            },
+                        children=[
+                            dmc.Image(
+                                h="100%",
+                                p=20,
+                                src=f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",
+                                ),
+                            ],
+                        ),
+                dmc.Center(
+                    dmc.Text(
+                        file.name, 
+                        fw=500, 
+                        m=20, 
+                        style={"textOverflow": "ellipsis", "overflow": "hidden"}
+                      ), 
+                    )
+                    ])
+                    ]
             )
 
 
@@ -184,7 +193,17 @@ def note_detail_view(note: Note, theme):
                 dmc.Group([private, edit_button]),
                 note.author
                 ),
-            dmc.Container(content, fluid=True, pt=20),
+            dmc.Container(
+                fluid=True, 
+                pt=20,
+                children=
+                    dmc.ScrollArea(
+                        h=335,
+                        type="hover",
+                        offsetScrollbars=True,
+                        children=content, 
+                        )
+                ),
             ]
 
 
