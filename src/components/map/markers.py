@@ -21,6 +21,7 @@ from src.model.note import Note
 from src.util.helper_functions import was_deployed
 
 from src.url.parse import update_query_data
+from pprint import pprint
 
 popup_events=dict(
     mouseout  = assign("", "mouseout"),
@@ -31,15 +32,12 @@ popup_events=dict(
 @app.callback(
     Output(ID_MAP_LAYER_GROUP, "children"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
-    #Input(ID_TAG_CHIPS_GROUP, "value"),
-    #Input(ID_FS_TAG_CHIPS_GROUP, "value"),
     Input(ID_TAGS, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
     Input(ID_TIMEZONE_STORE, "data"),
     prevent_initial_call=True
 )
-# def add_device_markers(checkboxes, tags, fs_tag, time_range, sources, timezone):
 def add_device_markers(checkboxes, tags, time_range, sources, timezone):
     """
     Changes the visible markers of the "physical" devices on the map.
@@ -54,6 +52,8 @@ def add_device_markers(checkboxes, tags, time_range, sources, timezone):
     """
 
     print("tags", tags)
+    print("trigger: ",ctx.triggered_id)
+    pprint(time_range)
     deployment_data = {}
     for source in sources:
         deployment_data[source["type"]] = source["entries"]

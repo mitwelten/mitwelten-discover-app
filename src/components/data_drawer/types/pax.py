@@ -57,7 +57,7 @@ def create_pax_chart(marker_data, date_range, theme):
             d.tags, 
             "paxCounter.svg", 
             theme,
-            d.description
+            dmc.Text(d.description, size="xs", c="dimmed"),
             ), 
         dmc.Paper(
             children=graph,

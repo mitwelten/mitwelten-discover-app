@@ -21,14 +21,20 @@ def bottom_drawer_content(title, tags, icon, theme, title_icons=None, info=None)
                                 ], 
                             ),
                         dmc.ScrollArea(
-                            children=[
-                                dmc.Group([
-                                    dmc.Text(info, size="sm", c="dimmed") if info else None,
-                                    dmc.Group([dmc.Badge(tag, size="md", color=PRIMARY_COLOR) for tag in tags])
-                                ]),
-                                ],
+                            w="100%",
+                            h=35,
                             type="hover",
-                            offsetScrollbars=True
+                            offsetScrollbars=True,
+                            children=[
+                                dmc.Group(
+                                    gap="xs",
+                                    grow=True,
+                                    wrap=False,
+                                    children=[
+                                        dmc.Text(info, size="xs", c="dimmed") if info else None,
+                                        dmc.Group([dmc.Badge(tag, size="md", color=PRIMARY_COLOR) for tag in tags])
+                                        ]),
+                                ],
                             ),
                         ])
             ],

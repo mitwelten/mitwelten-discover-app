@@ -11,8 +11,7 @@ def local_formatted_date(date: str, timezone=None, date_format="%d %b %Y • %H:
     tz = pytz.timezone(timezone)
     dt = datetime.fromisoformat(date)
     local_dt = dt.astimezone(tz)
-    r = datetime.strftime(local_dt, date_format)
-    return r
+    return datetime.strftime(local_dt, date_format)
 
 
 def get_identification_label(source) -> str:

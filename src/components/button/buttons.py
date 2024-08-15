@@ -128,7 +128,7 @@ control_buttons = [
             dmc.Drawer(
                 map_menu_drawer("drawer"),
                 id=ID_MAP_LAYER_BOTTOM_DRAWER,
-                size="lg",
+                size=400,
                 zIndex=90000,
                 position="bottom",
                 withOverlay=True,

@@ -3,17 +3,18 @@ from datetime import datetime, timedelta
 
 import dash
 import dash_mantine_components as dmc
-from dash import html, Output, Input, dcc, State
+from dash import html, Output, Input, dcc, State, ctx
 from dash.exceptions import PreventUpdate
 
 from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 from src.config.settings_config import DEFAULT_DATE_RANGES
-from src.config.settings_config import FIRST_DEPLOYMENT_WEEKS_AGO
 from src.main import app
-from src.util.decorators import spaced_section
 from src.util.util import local_formatted_date
 from src.url.parse import update_query_data
+
+visible = {"display": "block"}
+not_visible = {"display": "none"}
 
 
 def date_time_section(args):
@@ -74,6 +75,8 @@ def date_time_section(args):
     prevent_initial_call=True
 )
 def change_visibility_of_date_range_picker(value):
+    if None in value:
+        raise PreventUpdate
     return dict(start=value[0], end=value[1])
 
 
@@ -87,6 +90,9 @@ def change_visibility_of_date_range_picker(value):
     prevent_initial_call=True
 )
 def update_picker_from_segment(weeks, picker_value):
+    if ctx.triggered_id == ID_DATE_RANGE_PICKER and None in picker_value:
+        raise PreventUpdate
+
     if weeks == "":
         raise PreventUpdate
 
@@ -94,7 +100,7 @@ def update_picker_from_segment(weeks, picker_value):
         start = datetime.fromisoformat(picker_value[0]).isoformat(timespec="seconds")
         end   = datetime.fromisoformat(picker_value[1]).isoformat(timespec="seconds")
         store_data=dict(start=start, end=end)
-        return store_data, {"display": "block"}, {"display": "none"}, dash.no_update
+        return store_data, visible, not_visible, dash.no_update
 
     start = (datetime.now() - timedelta(weeks=int(weeks))).isoformat(timespec="seconds")
     end   = datetime.now().isoformat(timespec="seconds")
@@ -102,16 +108,10 @@ def update_picker_from_segment(weeks, picker_value):
 
     label_data_start = local_formatted_date(start, date_format="%d %b %Y")
     label_data_end   = local_formatted_date(end, date_format="%d %b %Y")
-    return store_data, {"display": "none"}, {"display": "block"}, f"{label_data_start} - {label_data_end}"
+    return store_data, not_visible, visible, f"{label_data_start} - {label_data_end}"
 
 
-@app.callback(
-    Output(ID_DATE_RANGE_PICKER, "value"),
-    Input(ID_DATE_RANGE_STORE, "data"),
-    prevent_initial_call=True
-)
-def update_picker_from_store(data):
-    return [data["start"], data["end"]]
+
 
 
 @app.callback(
