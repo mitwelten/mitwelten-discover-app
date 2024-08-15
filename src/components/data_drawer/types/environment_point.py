@@ -38,6 +38,6 @@ def create_environment_point_chart(legend, id, theme):
             shadow="md",
             p="md",
             radius="md",
-            style={"margin":"20px", "height":"360px"}
+            style={"margin":"20px", "height":"360px", "display":"flex", "alignItems":"center"}
         )
     ]
