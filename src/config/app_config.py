@@ -54,24 +54,7 @@ app_theme = {
                 "#366a6a"
                 ],
     },
-    #"white": BACKGROUND_COLOR, # background color
     "primaryColor": PRIMARY_COLOR,
-    #  "shadows": {
-    #      # other shadows (xs, sm, lg) will be merged from default theme
-    #      "md": "1px 1px 3px rgba(0,0,0,.25)",
-    #      "xl": "5px 5px 3px rgba(0,0,0,.25)",
-    #  },
-    # "headings": {
-    #     "fontFamily": "Roboto, sans-serif",
-    # },
-    #"components": {
-            #"TagsInput": {"styles": {"dropdown": {"background": "white"}}},
-            #"Drawer": {"styles": {
-            #    "content": {"background": BACKGROUND_COLOR},
-            #    "header": {"background": BACKGROUND_COLOR},
-            #    }}
-        #"SegmentedControl": {"styles": {"root": {"background": "red"}}},
-        #}
 }
 
 
