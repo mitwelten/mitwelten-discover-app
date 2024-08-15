@@ -2,6 +2,7 @@ import dash_mantine_components as dmc
 from dash_mantine_components import DEFAULT_THEME
 from dash import Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
+import dash_core_components as dcc
 from src.components.notification.notification import NotificationType, notification
 from src.components.data_drawer.types.note.note_view import note_view
 from src.model.note import Note
@@ -11,7 +12,7 @@ from src.components.data_drawer.types.env import create_env_chart
 from src.components.data_drawer.types.environment_point import create_environment_point_chart
 from src.components.data_drawer.types.pax import create_pax_chart
 from src.components.data_drawer.types.pollinator import create_pollinator_chart
-from src.config.app_config import BACKGROUND_COLOR, SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
+from src.config.app_config import BACKGROUND_COLOR, SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT, PRIMARY_COLOR
 from src.config.id_config import *
 from src.config.app_config import CHART_DRAWER_HEIGHT
 from src.main import app
@@ -97,17 +98,14 @@ def chart_drawer(args, device, all_notes, env):
         position="bottom",
         lockScroll=False,
         children=[
-            html.Div(
+            dcc.Loading(
+                type="default",
+                color="#6c9d9d",
+                children=html.Div(
                 id=ID_CHART_CONTAINER, 
                 className="",
                 children=chart
-                ),
-            dmc.LoadingOverlay(
-                id=ID_LOADING_OVERLAY,
-                loaderProps={"type": "bars", "color": "red", "size": "lg"},
-                overlayProps={"radius": "sm", "blur": 2},
-                visible=False
-                )
+                )),
             ],
     )
 
@@ -127,7 +125,7 @@ def settings_drawer_state(state, scheme):
         "position": "absolute",
         "left": f"{SETTINGS_DRAWER_WIDTH}px", 
         "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px",
-        "overflow-y": "hidden",
+        "overflowY": "hidden",
         "zIndex": "100",
         "background": DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR
         },
@@ -138,7 +136,7 @@ def settings_drawer_state(state, scheme):
         "width": "100vw", 
         "flex": "none" , 
         "position": "absolute",
-        "overflow-y": "hidden",
+        "overflowY": "hidden",
         "zIndex": "100",
         "background": DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR,
         },
@@ -153,7 +151,7 @@ def settings_drawer_state(state, scheme):
 @app.callback(
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_NOTIFICATION, "children", allow_duplicate=True),
-    Output(ID_LOADING_OVERLAY, "visbile", allow_duplicate=True),
+    Output(ID_LOADER, "visible", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     prevent_initial_call=True
 )
@@ -162,18 +160,18 @@ def open_drawer(selected_marker):
         raise PreventUpdate
 
     if selected_marker["type"] in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
-        print("------_")
         n = notification("No chart available for this device type.", NotificationType.INFO)
         return False, n, False
 
-    return True, no_update, True
+    return True, no_update, False
+
 
 
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
     Output(ID_CHART_DRAWER, "size"),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
-    Output(ID_LOADING_OVERLAY, "visbile", allow_duplicate=True),
+    Output(ID_LOADER, "visible", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input(ID_APP_THEME, "forceColorScheme"),
