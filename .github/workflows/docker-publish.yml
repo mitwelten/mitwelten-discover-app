@@ -17,7 +17,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: cr.gitlab.fhnw.ch
   # github.repository as <account>/<repo>
-  IMAGE_NAME: /mitwelten/docker-infrastructure/mitwelten-discover_app
+  IMAGE_NAME: mitwelten/docker-infrastructure/mitwelten-discover_app
 
 
 jobs:
