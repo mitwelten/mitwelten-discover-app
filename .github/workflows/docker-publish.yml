@@ -1,10 +1,9 @@
 name: Docker Build and Publish
 
 on:
-  [workflow_dispatch]
-  # push:
+  push:
+    tags: [ '*.*' ]
   #   branches: [ "main" ]
-  #   tags: [ '*.*' ]
 
 env:
   REGISTRY: cr.gitlab.fhnw.ch
