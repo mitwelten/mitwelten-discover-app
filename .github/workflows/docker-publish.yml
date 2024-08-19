@@ -1,11 +1,10 @@
 name: Docker Build and Publish
 
 on:
-  push:
-    branches: [ "main" ]
-    # tags: [ '*.*' ]
-  pull_request:
-    branches: [ "main" ]
+  [workflow_dispatch]
+  # push:
+  #   branches: [ "main" ]
+  #   tags: [ '*.*' ]
 
 env:
   REGISTRY: cr.gitlab.fhnw.ch
@@ -20,28 +19,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Log into registry ${{ env.REGISTRY }}
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.ACTOR }}
-          password: ${{ secrets.GITLAB_TOKEN }}
-
-      - name: Build 
+      - name: Print Variables
         run: |
-          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-      # - name: Extract Docker metadata
-      #   id: meta
-      #   uses: docker/metadata-action@v5
-      #   with:
-      #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          echo "ref_name: ${{ github.ref_name }}"
+          echo "ref_name: $GITHUB_REF_NAME"
+          echo "ref: ${{ github.ref }}"
 
-      # - name: Build and push Docker image
-      #   id: build-and-push
-      #   uses: docker/build-push-action@v5
+      # - name: Log into registry ${{ env.REGISTRY }}
+      #   if: github.event_name != 'pull_request'
+      #   uses: docker/login-action@v3
       #   with:
-      #     context: .
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
+      #     registry: ${{ env.REGISTRY }}
+      #     username: ${{ secrets.ACTOR }}
+      #     password: ${{ secrets.GITLAB_TOKEN }}
+
+      # - name: Docker Build 
+      #   run: |
+      #     docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
+      # - name: Docker Push
+      #   run: |
+      #     docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
