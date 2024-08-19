@@ -91,21 +91,3 @@ def text_to_dash_elements(text):
 
     return elements
 
-
-
-def get_drawer_size_by_number_of_files(n_files: int):
-    """
-    Calculate the height of the drawer based on the number of files.
-    Makes the drawer smaller if there are less than 3 files.
-    """
-    drawer_size = CHART_DRAWER_HEIGHT
-    max_height = 116
-    file_height = 0
-
-    if n_files > 3:
-        file_height = max_height
-    elif n_files  > 0:
-        file_height = 50
-
-    delta = max_height - file_height
-    return drawer_size - delta

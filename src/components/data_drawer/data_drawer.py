@@ -12,19 +12,15 @@ from src.components.data_drawer.types.env import create_env_chart
 from src.components.data_drawer.types.environment_point import create_environment_point_chart
 from src.components.data_drawer.types.pax import create_pax_chart
 from src.components.data_drawer.types.pollinator import create_pollinator_chart
-from src.config.app_config import BACKGROUND_COLOR, SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT, PRIMARY_COLOR
+from src.config.app_config import BACKGROUND_COLOR, CHART_DRAWER_HEIGHT, SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from src.config.id_config import *
-from src.config.app_config import CHART_DRAWER_HEIGHT
 from src.main import app
-from src.util.util import get_drawer_size_by_number_of_files
 
 
 def create_chart_from_source(selected_marker, date_range, theme, notes, environment_data, tz):
     marker_data    = selected_marker.get("data")
     marker_id      = marker_data.get("id")
     drawer_content = html.Div("Somthing went wrong, not device found!")
-    drawer_size    = CHART_DRAWER_HEIGHT
-
     
     match selected_marker["type"]:
         case "Audio Logger":
@@ -44,9 +40,8 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
             for note in notes["entries"]:
                 if note["id"] == marker_id:
                     n = Note(note)
-                    drawer_size = get_drawer_size_by_number_of_files(len(n.files))
                     drawer_content = note_view(n, theme, tz)
-    return drawer_content, drawer_size
+    return drawer_content
 
 
 
@@ -75,11 +70,11 @@ def chart_drawer(args, device, all_notes, env):
             active_device["data"] = device
 
 
-        chart, drawer_size = create_chart_from_source(
-                active_device, 
-                {"start": start, "end": end}, 
-                "light", 
-                notes, 
+        chart = create_chart_from_source(
+                active_device,
+                {"start": start, "end": end},
+                "light",
+                notes,
                 env,
                 None,
                 )
@@ -185,7 +180,7 @@ def update_drawer_content_from_marker_store(selected_marker, date_range, theme, 
     if selected_marker is None:
         raise PreventUpdate
 
-    drawer_content, drawer_size = create_chart_from_source(
+    drawer_content = create_chart_from_source(
         selected_marker,
         date_range,
         theme,
@@ -194,7 +189,7 @@ def update_drawer_content_from_marker_store(selected_marker, date_range, theme, 
         tz["tz"],
         )
 
-    return drawer_content, drawer_size, False, False
+    return drawer_content, CHART_DRAWER_HEIGHT, False, False
 
 
 

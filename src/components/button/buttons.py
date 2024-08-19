@@ -255,5 +255,5 @@ def create_note_on_map(
     notes = dict(entires=[])
     view = note_view(Note(new_note), theme, tz["tz"], True, all_tags["all"])
 
-    return notes, no_update, dict(data=new_note, new=True), view, True, CHART_DRAWER_HEIGHT, False 
+    return notes, no_update, dict(data=new_note), view, True, CHART_DRAWER_HEIGHT, False 
 

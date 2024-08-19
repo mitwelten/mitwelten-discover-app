@@ -1,6 +1,5 @@
 import time
 from functools import partial
-from dash_iconify import DashIconify
 
 import dash_mantine_components as dmc
 import dash_core_components as dcc

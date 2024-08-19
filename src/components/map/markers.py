@@ -144,10 +144,11 @@ def add_environment_markers(active_checkboxes, all_environments, timezone):
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_EDIT_NOTE_STORE, "data"),
     Input({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    Input(ID_TAGS, "value"),
     Input(ID_TIMEZONE_STORE, "data"),
     prevent_initial_call=True
 )
-def add_note_markers(active_checkboxes, selected_note, all_notes, timezone):
+def add_note_markers(active_checkboxes, selected_note, all_notes, tags, timezone):
     if "Note" not in active_checkboxes:
         return []
 
@@ -155,28 +156,41 @@ def add_note_markers(active_checkboxes, selected_note, all_notes, timezone):
     marker_icon_draggable = dict(iconUrl="assets/markers/docu_move.svg",     iconAnchor=[31, 14], iconSize=[60, 60])
 
     all_notes = all_notes.get("entries", [])
+    visible_notes = set()
+
     selected_note_id = None
 
     if selected_note["data"] is not None:
-        for note in all_notes:
-            if note["id"] == selected_note["data"]["id"]:
-                selected_note_id = note["id"]
-                note["location"]["lat"] = selected_note["data"]["location"]["lat"]
-                note["location"]["lon"] = selected_note["data"]["location"]["lon"]
+        visible_notes.add(Note(selected_note["data"]))
+        selected_note_id = selected_note["data"]["id"]
+
+    for note in all_notes:
+        n = Note(note)
+        tag_filter = True
+        for t in tags:
+            if t not in n.tags:
+                tag_filter = False
+                break
+        if tag_filter:
+            visible_notes.add(n)
+
+        if n.id == selected_note_id:
+            n.lat = selected_note["data"]["location"]["lat"]
+            n.lat = selected_note["data"]["location"]["lon"]
+
 
     markers = []
 
-    for note in all_notes:
-        current_note = Note(note)
-        in_edit_mode = current_note.id == selected_note_id
+    for note in visible_notes:
+        in_edit_mode = note.id == selected_note_id
         if in_edit_mode:
             popup_events["dragend"] = assign("", "setLatLng")
         markers.append(
             dl.Marker(
-                position=[current_note.lat, current_note.lon],
+                position=[note.lat, note.lon],
                 children=[
                     dl.Popup(
-                        children=note_popup(current_note, timezone.get("tz")),
+                        children=note_popup(note, timezone.get("tz")),
                         closeButton=False,
                         autoPan=False,
                         autoClose=False,
@@ -185,7 +199,7 @@ def add_note_markers(active_checkboxes, selected_note, all_notes, timezone):
                 icon=marker_icon_draggable if in_edit_mode else marker_icon,
                 eventHandlers=popup_events,
                 draggable=True if in_edit_mode else False,
-                id={"role": "Note", "id": current_note.id, "label": "Node"},
+                id={"role": "Note", "id": note.id, "label": "Node"},
             )
         )
     return markers

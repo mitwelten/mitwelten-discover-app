@@ -59,6 +59,8 @@ class Note:
                 self.files == other.files and
                 self.tags == other.tags
                 )
+    def __hash__(self):
+        return hash(self.id)
 
 
     def to_dict(self):

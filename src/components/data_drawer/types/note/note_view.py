@@ -16,7 +16,7 @@ from src.model.note import Note
 from src.model.file import File
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_user_from_cookies
-from src.util.util import get_drawer_size_by_number_of_files, text_to_html_list
+from src.util.util import text_to_html_list
 from src.config.app_config import supported_mime_types
 from src.components.data_drawer.types.note.confirm import confirm_dialogs
 from src.api.api_files import get_file_url
@@ -293,11 +293,10 @@ def click_on_attachment(click, data):
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_EDIT_NOTE_STORE, "data"),
-    State(ID_CHART_DRAWER, "size"),
     State(ID_APP_THEME, "forceColorScheme"),
     prevent_initial_call=True
 )
-def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
+def cancel_click(cancel_click, notes, selected_note, theme):
     if cancel_click is None or cancel_click == 0:
         raise PreventUpdate
 
@@ -310,8 +309,7 @@ def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
             if n != Note(selected_note["data"]):
                 return True, no_update, no_update, no_update, False
 
-            drawer_size = get_drawer_size_by_number_of_files(len(n.files))
-            return no_update, dict(data=None), note_view(Note(note), theme, False), drawer_size, False
+            return no_update, dict(data=None), note_view(Note(note), theme, False), CHART_DRAWER_HEIGHT, False
     raise PreventUpdate
 
 
@@ -319,25 +317,23 @@ def cancel_click(cancel_click, notes, selected_note, drawer_size, theme):
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
+    Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
     State(ID_EDIT_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    State(ID_CHART_DRAWER, "size"),
     State(ID_APP_THEME, "forceColorScheme"),
     State(ID_TIMEZONE_STORE, "data"),
     prevent_initial_call=True,
 )
-def deactivate_edit_mode(cancel_click, selected_note, notes, drawer_size, theme, tz):
+def deactivate_edit_mode(cancel_click, selected_note, notes, theme, tz):
     if cancel_click is None or cancel_click == 0:
         raise PreventUpdate
     
     for note in notes["entries"]:
         if note["id"] == selected_note["data"]["id"]:
             n = Note(note)
-            drawer_size = get_drawer_size_by_number_of_files(len(n.files))
-            return dict(data=None), drawer_size, True, note_view(n, theme, tz["tz"]), True
+            return dict(data=None), CHART_DRAWER_HEIGHT, True, note_view(n, theme, tz["tz"]), True
 
     raise PreventUpdate
 
