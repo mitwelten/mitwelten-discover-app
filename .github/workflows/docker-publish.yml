@@ -18,12 +18,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Print Variables
         run: |
           echo "ref_name: ${{ github.ref_name }}"
           echo "ref_name: $GITHUB_REF_NAME"
-          echo "ref: ${{ github.ref }}"
+          echo "ref: ${{ github.ref }}"$
+          echo "meta: ${{ steps.meta.outputs }}"
 
       # - name: Log into registry ${{ env.REGISTRY }}
       #   if: github.event_name != 'pull_request'
