@@ -30,7 +30,6 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
         case "Env Sensor":
             drawer_content = create_env_chart(marker_data, theme)
         case "Pax Counter":
-
             drawer_content = create_pax_chart(marker_data, date_range, theme)
         case "Pollinator Cam":
             drawer_content = create_pollinator_chart(marker_data, date_range, theme)
@@ -50,7 +49,6 @@ def chart_drawer(args, device, all_notes, env):
     notes = {}
     notes["entries"] = all_notes
     
-    drawer_size = 500
     chart = []
     drawer_state = False
     if device is not None:
@@ -84,14 +82,13 @@ def chart_drawer(args, device, all_notes, env):
         opened=drawer_state,
         id=ID_CHART_DRAWER,
         zIndex=100,
-        size=drawer_size,
+        size=CHART_DRAWER_HEIGHT,
         closeOnClickOutside=True,
         withCloseButton=False,
         closeOnEscape=False,
         withOverlay=False,
-        className="chart-drawer",
         position="bottom",
-        lockScroll=False,
+        styles={"content": {"background": BACKGROUND_COLOR}},
         children=[
             dcc.Loading(
                 id=ID_LOADER,
@@ -105,43 +102,39 @@ def chart_drawer(args, device, all_notes, env):
             ],
     )
 
-
 @app.callback(
     Output(ID_LOGO_CONTAINER, "style"),
-    Output(ID_CHART_DRAWER, "styles"),
+    Output(ID_CHART_DRAWER, "styles", allow_duplicate=True),
     Input(ID_SETTINGS_DRAWER, "opened"),
-    Input(ID_APP_THEME, "forceColorScheme"),
+    State(ID_CHART_DRAWER, "styles"),
+    prevent_initial_call=True
 )
-def settings_drawer_state(state, scheme):
+def settings_drawer_state(opened, styles):
     width_reduced = {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
     full_width = {"width": "100vw"}
 
-    drawer_shrinked = { "content": {
-        "flex": "none", 
-        "position": "absolute",
-        "left": f"{SETTINGS_DRAWER_WIDTH}px", 
-        "width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px",
-        "overflowY": "hidden",
-        "zIndex": "100",
-        "background": DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR
-        },
-        "header": {"background":  DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR},
-    }
-    drawer_expanded = {"content": {
-        "left": "0", 
-        "width": "100vw", 
-        "flex": "none" , 
-        "position": "absolute",
-        "overflowY": "hidden",
-        "zIndex": "100",
-        "background": DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR,
-        },
-        "header": {"background":  DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR},
-    }
+    srinked = { "inner": {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px", "left": f"{SETTINGS_DRAWER_WIDTH}px"}}
+    expanded = {"inner": {"width": "100vw", "left": 0}}
 
-    if state:
-        return width_reduced, drawer_shrinked
-    return full_width, drawer_expanded
+    if opened:
+        styles.update(srinked)
+        return width_reduced, styles
+    styles.update(expanded)
+    return full_width, styles 
+
+
+
+@app.callback(
+    Output(ID_CHART_DRAWER, "styles", allow_duplicate=True),
+    Input(ID_APP_THEME, "forceColorScheme"),
+    State(ID_CHART_DRAWER, "styles"),
+    prevent_initial_call=True
+)
+def update_color_scheme(scheme, styles):
+    styles.update({"content": {
+        "background": DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR,
+        }})
+    return styles
 
 
 @app.callback(

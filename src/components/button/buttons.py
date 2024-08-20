@@ -99,10 +99,17 @@ def create_avatar(user):
 
 
 control_buttons = [
-        action_button(
-            button_id=ID_OPEN_SETTINGS_DRAWER_BUTTON,
-            icon="material-symbols:menu"
-            ),
+            dmc.ActionIcon(
+                DashIconify(
+                    icon="material-symbols:menu",
+                    width=20,
+                    color=PRIMARY_COLOR,
+                    ),
+                size="lg",
+                id=ID_OPEN_SETTINGS_DRAWER_BUTTON,
+                radius="xl",
+                style={"position": "absolute", "top": 20, "left": 20, "zIndex":100},
+                ),
         dmc.Group([
             html.Div(
                 id=ID_LOGIN_AVATAR_CONTAINER

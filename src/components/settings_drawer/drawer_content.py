@@ -11,80 +11,47 @@ from dash_iconify import DashIconify
 
 
 def divider(title: str):
-    return dmc.Divider(label=title, labelPosition="center", size="md", mt=10)
+    return dmc.Divider(label=title, labelPosition="center", size="md", mt=5)
 
 
 title = dmc.Center(
-                    #dmc.HoverCard(
-                    #    position="top",
-                    #    withArrow=True,
-                    #    width="500px",
-                    #    shadow="lg",
-                    #    zIndex=999999,
-                    #    styles={"display": "flex", "alignItems":"center"},
-                    #    children=[
-                    #        dmc.HoverCardTarget(
-                    #            children=[
-                    #                dmc.Center(
-                    #                dmc.Title(
-                    #                    "Mitwelten Discover", 
-                    #                    order=3, 
-                    #                    style={"cursor": "pointer"}
-                    #                    )
-                    #                ),
-                    #                ],
-                    #            ),
-                    #        dmc.HoverCardDropdown(
-                    #            children=[
-                    #                dmc.Text( DISCOVER_DESCRIPTION, size="sm"),
-                    #                dmc.Space(h=10),
-                    #                dmc.Group([
-                    #                    dmc.Text("For more information visit:", size="sm"),
-                    #                    dmc.Anchor("mitwelten.org", href="https://mitwelten.org", target="_blank", size="sm"),
-                    #                    ], gap="xs"),
-                    #                ],
-                    #            style={"padding": "30px"}
-                    #            )
-                    #        ],
-                    #    ),
-
-                    dmc.Tooltip(
-                        multiline=True,
-                        label=DISCOVER_DESCRIPTION,
-                        position="right",
-                        openDelay=500,
-                        w=350,
-                        color=PRIMARY_COLOR,
-                        children= dmc.Title(
-                            "Mitwelten Discover", 
-                            order=3, 
-                            style={"cursor": "pointer"}
-                            )
-                        )
-                    )
-
-
+        dmc.Tooltip(
+            multiline=True,
+            label=DISCOVER_DESCRIPTION,
+            position="right",
+            openDelay=500,
+            w=350,
+            color=PRIMARY_COLOR,
+            children= dmc.Title(
+                "Mitwelten Discover", 
+                order=3, 
+                style={"cursor": "pointer"}
+                )
+            )
+        )
 
 def drawer_content(args): 
     return dmc.Container(
             children=[
+                dmc.ScrollArea(
                 dmc.Flex([
-                    dmc.Stack([
+                    dmc.Stack(
+                        gap="xs",
+                        children=[
                         title,
-                        dmc.Space(h=10),
                         divider("Time Frame"),
                         date_time_section(args),
                         divider("Data Sets"),
                         source_filter(args),
                         divider("Tags"),
                         tag_filter(args),
-                        ], gap="md"),
-                    general_controls(args),
+                        dmc.Space(h=10),
+                        general_controls(args),
+                        ]),
                 ], 
                          justify="space-between", 
                          direction="column",
                          style={"height":"100%"}
-                         ),
+                         )),
                 ], style={"height":"100%"},
-                    #style={"height": "calc(100vh - 100px)", "paddingRight": "0px", "paddingLeft": "0px"}
                 )

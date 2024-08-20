@@ -24,7 +24,7 @@ from src.components.map.init_map import map_figure
 from src.components.map.banner import mitwelten_bannner
 from src.components.settings_drawer.settings_drawer import settings_drawer
 from src.components.data_drawer.data_drawer import chart_drawer
-from src.config.app_config import app_theme
+from src.config.app_config import app_theme, CHART_DRAWER_HEIGHT
 from src.config.map_config import SOURCE_PROPS
 from src.data.stores import stores
 from src.util.helper_functions import safe_reduce
@@ -58,6 +58,18 @@ def app_content(args):
             *control_buttons,
             map_figure(args, active_depl),
             chart_drawer(args, active_depl, notes, env_data),
+        #dmc.Drawer(
+        #opened=False,
+        #id=ID_CHART_DRAWER,
+        #zIndex=100,
+        #size=100,
+        #closeOnClickOutside=True,
+        #withCloseButton=False,
+        #closeOnEscape=False,
+        #withOverlay=False,
+        ##className="chart-drawer",
+        #position="bottom",
+        #children=[]),
             settings_drawer(args),
             html.Div(id=ID_NOTIFICATION),
             ]
@@ -81,7 +93,7 @@ def discover_app(**kwargs):
                 ]
             )
 
-register_page("Discover", layout=discover_app, path="/")
+register_page("Mitwelten Discover", layout=discover_app, path="/")
 
 
 @app.callback(

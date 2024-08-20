@@ -68,7 +68,6 @@ ID_OPEN_CHIP_MODAL_BUTTON = "id-open-modal-btn"
 ID_TAG_RESET_BUTTON = "id-tag-reset-button"
 
 # left drawer
-ID_LEFT_DRAWER_CONTENT_SCROLL_AREA = "id-scroll-div-container"
 ID_CHART_CONTAINER = "id-chart-container"
 ID_CHART_DRAWER = "id-chart-drawer"
 ID_ENVIRONMENT_CHECKBOX = "id-environment-checkbox"

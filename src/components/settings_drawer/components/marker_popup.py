@@ -49,9 +49,7 @@ def details(fst_label, fst_time, snd_label=None, snd_time=None):
             styles={"margin": "0px"}
         ),
         snd_date_section if snd_date_section is not None else {},
-        dmc.Space(h=10)
-    ],
-                     gap="xs",)
+    ], gap="xs",)
 
 
 def device_popup(deployment, timezone):
