@@ -18,12 +18,13 @@ SOURCE_PROPS = {
     "Wild Cam":       dict(name="Wild Camera",            color="#FFCC99", marker="assets/markers/wildCam.svg",       type="physical"),
     "Environment":    dict(name="Habitat Type",           color="#CCFF99", marker="assets/markers/habitat.svg",       type="virtual"),
     "Note":           dict(name="Experiments & Findings", color="#FFFF99", marker="assets/markers/docu.svg",          type="virtual"),
+    "DEFAULT":        dict(name="Unknown",                color="#FFFFFF", marker="assets/markers/marker.svg",        type="virtual"),
+
 }
 
 
 def get_source_props(source):
-    data = SOURCE_PROPS.get(source)
-    return data
+    return SOURCE_PROPS.get(source, SOURCE_PROPS["DEFAULT"])
 
 
 MAPS = [

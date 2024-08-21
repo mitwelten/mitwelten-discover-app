@@ -82,4 +82,3 @@ EXPERIMENT_AND_FINDING_DESCRIPTION = "Short documentations of the conducted expe
 WILD_CAM_DESCRIPTION = "Wildlife cameras were used to record images of the animal world."
 DISCOVER_DESCRIPTION = 'The research project uses the lens of co-worlding to develop environmental media approaches that aim to support and foster biodiversity in urban areas by extending design research to natural, cultural and media sciences. In the project’s three case studies, media infrastructures were installed in three sites of human-environment entanglements: in the Merian Gardens near Basel, in a former port area of the city of Basel, and in a nature reserve in Reinach (Basel agglomeration). "Discover" is a map-based publication of the research results prepared for the public.'
 
-

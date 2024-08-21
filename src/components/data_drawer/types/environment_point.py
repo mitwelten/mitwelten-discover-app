@@ -1,10 +1,9 @@
 from dash import dcc
 
-from src.config.app_config import ENVIRONMENT_SENSOR_DESCRIPTION
 from src.config.map_config import get_source_props
 from src.api.api_environment import get_environment_data_by_id
 from src.components.data_drawer.charts import spider_chart
-from src.components.data_drawer.header import bottom_drawer_content
+from src.components.data_drawer.header import data_drawer_header
 import dash_mantine_components as dmc
 
 
@@ -27,7 +26,7 @@ def create_environment_point_chart(legend, id, theme):
     )
 
     return [
-        bottom_drawer_content(
+        data_drawer_header(
             get_source_props("Environment")["name"], 
             [], 
             "habitat.svg", 

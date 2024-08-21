@@ -3,10 +3,13 @@ from dash_mantine_components import DEFAULT_THEME
 from dash import Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
 import dash_core_components as dcc
+from src.model.environment import Environment
+from src.model.deployment import Deployment
 from src.components.notification.notification import NotificationType, notification
 from src.components.data_drawer.types.note.note_view import note_view
 from src.model.note import Note
 
+from src.config.map_config import get_source_props
 from src.components.data_drawer.types.audio import create_audio_chart
 from src.components.data_drawer.types.env import create_env_chart
 from src.components.data_drawer.types.environment_point import create_environment_point_chart
@@ -15,6 +18,26 @@ from src.components.data_drawer.types.pollinator import create_pollinator_chart
 from src.config.app_config import BACKGROUND_COLOR, CHART_DRAWER_HEIGHT, SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
 from src.config.id_config import *
 from src.main import app
+from src.components.data_drawer.header import data_drawer_header
+
+def create_chart_header_from_source(selected_marker, theme):
+    type = selected_marker["type"]
+    if type == "Note":
+        header = None
+
+    elif type == "Environment":
+        d = Environment(selected_marker["data"])
+        props = get_source_props("Environment")
+        header = data_drawer_header(
+            props["name"], 
+            [], 
+            props["marker"], 
+            theme) 
+    else:
+        d = Deployment(selected_marker["data"])
+        props = get_source_props(d.node_type)
+        header = data_drawer_header(props["name"], d.tags, props["marker"], theme)
+    return header
 
 
 def create_chart_from_source(selected_marker, date_range, theme, notes, environment_data, tz):
@@ -25,8 +48,6 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
     match selected_marker["type"]:
         case "Audio Logger":
             drawer_content = create_audio_chart(marker_data, date_range, theme)
-        #case "Wild Cam":
-        #    drawer_content = create_wild_cam_view(marker_data, theme)
         case "Env Sensor":
             drawer_content = create_env_chart(marker_data, theme)
         case "Pax Counter":
@@ -76,6 +97,7 @@ def chart_drawer(args, device, all_notes, env):
                 env,
                 None,
                 )
+        header = create_chart_header_from_source(active_device, "light")
         drawer_state = True
 
     return dmc.Drawer(
@@ -90,17 +112,104 @@ def chart_drawer(args, device, all_notes, env):
         position="bottom",
         styles={"content": {"background": BACKGROUND_COLOR}},
         children=[
+            html.Div(id=ID_CHART_DRAWER_HEADER, children=header),
             dcc.Loading(
                 id=ID_LOADER,
                 type="default",
                 color="#6c9d9d",
                 children=html.Div(
                 id=ID_CHART_CONTAINER, 
-                className="",
                 children=chart
-                )),
+                ))
             ],
     )
+
+
+@app.callback(
+    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
+    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
+    Output(ID_LOADER, "visible", allow_duplicate=True),
+    Output(ID_CHART_DRAWER_HEADER, "children"),
+    Input(ID_SELECTED_MARKER_STORE, "data"),
+    State(ID_APP_THEME, "forceColorScheme"),
+    prevent_initial_call=True
+)
+def open_drawer(selected_marker, theme):
+    if selected_marker is None:
+        raise PreventUpdate
+
+    if selected_marker["type"] in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
+        n = notification("No chart available for this device type.", NotificationType.INFO)
+        return False, n, False, no_update
+
+    type = selected_marker["type"]
+    if type == "Note":
+        header = None
+
+    elif type == "Environment":
+        d = Environment(selected_marker["data"])
+        props = get_source_props("Environment")
+        header = data_drawer_header(
+            props["name"], 
+            [], 
+            props["marker"], 
+            theme) 
+    else:
+        d = Deployment(selected_marker["data"])
+        props = get_source_props(d.node_type)
+        header = data_drawer_header(props["name"], d.tags, props["marker"], theme)
+
+    return True, no_update, True, header
+
+
+
+@app.callback(
+    Output(ID_CHART_CONTAINER, "children"),
+    Output(ID_LOADER, "visible", allow_duplicate=True),
+    Input(ID_SELECTED_MARKER_STORE, "data"),
+    Input(ID_DATE_RANGE_STORE, "data"),
+    Input(ID_APP_THEME, "forceColorScheme"),
+    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
+    State({"role": "Environment", "label": "Store", "type": "virtual"}, "data"),
+    State(ID_TIMEZONE_STORE, "data"),
+    prevent_initial_call=True
+)
+def update_drawer_content_from_marker_store(selected_marker, date_range, theme, notes, environment_data, tz):
+    if selected_marker is None:
+        raise PreventUpdate
+
+    drawer_content = create_chart_from_source(
+        selected_marker,
+        date_range,
+        theme,
+        notes,
+        environment_data,
+        tz["tz"],
+        )
+
+    return drawer_content, False
+
+
+@app.callback(
+    Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
+    Input(ID_EDIT_NOTE_STORE, "data"),
+    prevent_initial_call=True
+)
+def activate_preventing_marker_clicks(selected_note):
+    if selected_note["data"] is None:
+        return dict(state=False)
+    return dict(state=True)
+
+@app.callback(
+        Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
+        Input(ID_CHART_DRAWER, "opened"),
+        prevent_initial_call=True
+        )
+def close_drawer(opened):
+    if opened:
+        return no_update
+    return []
+
 
 @app.callback(
     Output(ID_LOGO_CONTAINER, "style"),
@@ -125,74 +234,3 @@ def settings_drawer_state(opened, scheme, styles):
         return width_reduced, styles
     styles.update(expanded)
     return full_width, styles 
-
-
-
-@app.callback(
-    Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
-    Output(ID_LOADER, "visible", allow_duplicate=True),
-    Input(ID_SELECTED_MARKER_STORE, "data"),
-    prevent_initial_call=True
-)
-def open_drawer(selected_marker):
-    if selected_marker is None:
-        raise PreventUpdate
-
-    if selected_marker["type"] in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
-        n = notification("No chart available for this device type.", NotificationType.INFO)
-        return False, n, False
-
-    return True, no_update, False
-
-
-
-@app.callback(
-    Output(ID_CHART_CONTAINER, "children"),
-    Output(ID_CHART_DRAWER, "size"),
-    Output(ID_LOADER, "visible", allow_duplicate=True),
-    Input(ID_SELECTED_MARKER_STORE, "data"),
-    Input(ID_DATE_RANGE_STORE, "data"),
-    Input(ID_APP_THEME, "forceColorScheme"),
-    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    State({"role": "Environment", "label": "Store", "type": "virtual"}, "data"),
-    State(ID_TIMEZONE_STORE, "data"),
-    prevent_initial_call=True
-)
-def update_drawer_content_from_marker_store(selected_marker, date_range, theme, notes, environment_data, tz):
-    if selected_marker is None:
-        raise PreventUpdate
-
-    drawer_content = create_chart_from_source(
-        selected_marker,
-        date_range,
-        theme,
-        notes,
-        environment_data,
-        tz["tz"],
-        )
-
-    return drawer_content, CHART_DRAWER_HEIGHT, False
-
-
-
-@app.callback(
-    Output(ID_PREVENT_MARKER_EVENT, "data", allow_duplicate=True),
-    Input(ID_EDIT_NOTE_STORE, "data"),
-    prevent_initial_call=True
-)
-def activate_preventing_marker_clicks(selected_note):
-    if selected_note["data"] is None:
-        return dict(state=False)
-    return dict(state=True)
-
-@app.callback(
-        Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
-        Input(ID_CHART_DRAWER, "opened"),
-        prevent_initial_call=True
-        )
-def close_drawer(opened):
-    if opened:
-        return no_update
-    return []
-

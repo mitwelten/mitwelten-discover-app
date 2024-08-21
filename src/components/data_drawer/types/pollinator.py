@@ -7,7 +7,7 @@ from dash import dcc
 import dash_mantine_components as dmc
 from src.model.deployment import Deployment
 from src.config.app_config import SECONDARY_COLOR
-from src.components.data_drawer.header import bottom_drawer_content
+from src.components.data_drawer.header import data_drawer_header
 
 from src.config.map_config import get_source_props
 from src.api.api_deployment import get_pollinator_heatmap, get_pollinator_timeseries
@@ -101,18 +101,10 @@ def create_pollinator_chart(marker_data, date_range, theme):
         style={"height":"100%", "width": "100%"}
      )
 
-    return [
-        bottom_drawer_content(
-            get_source_props("Pollinator Cam")["name"], 
-            d.tags, 
-            "polliCam.svg", 
-            theme
-            ), 
-        dmc.Paper(
+    return dmc.Paper(
             children=graph,
             shadow="md",
             p="md",
             radius="md",
             style={"margin":"20px", "height":"360px"}
         )
-    ]

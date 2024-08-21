@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 from dash import dcc
 from src.config.app_config import PAX_DESCRIPTION
 from src.model.deployment import Deployment
-from src.components.data_drawer.header import bottom_drawer_content
+from src.components.data_drawer.header import data_drawer_header
 import dash_mantine_components as dmc
 
 from src.api.api_deployment import get_pax_timeseries
@@ -51,20 +51,10 @@ def create_pax_chart(marker_data, date_range, theme):
         style={"width":"100%", "height":"100%"}
     )
 
-    return [
-        bottom_drawer_content(
-            get_source_props("Pax Counter")["name"], 
-            d.tags, 
-            "paxCounter.svg", 
-            theme,
-            dmc.Text(d.description, size="xs", c="dimmed"),
-            ), 
-        dmc.Paper(
+    return dmc.Paper(
             children=graph,
             shadow="md",
             p="md",
             radius="md",
             style={"margin":"20px", "height":"360px"}
-        ),
-    ]
-
+        )

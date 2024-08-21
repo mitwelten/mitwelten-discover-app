@@ -127,3 +127,12 @@ def get_bird_stacked_bar(deployment_id: int, time_from=None, time_to=None, bucke
         return response.json()
 
     return None
+
+def get_all_species():
+    url = construct_url(f"species")
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+
+    return None
+

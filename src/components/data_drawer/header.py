@@ -3,7 +3,7 @@ import dash_mantine_components as dmc
 from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 
-def bottom_drawer_content(title, tags, icon, theme, title_icons=None, info=None):
+def data_drawer_header(title, tags, icon, theme, title_icons=None, info=None):
     return dmc.Container([
         dmc.Grid([
             dmc.GridCol(
@@ -41,12 +41,10 @@ def bottom_drawer_content(title, tags, icon, theme, title_icons=None, info=None)
                 ),
             dmc.GridCol(
                 dmc.Image(
-                    src=f"assets/markers/{icon}",
-                    alt="note icon", 
+                    src=icon,
                     w=50,
                     h=50,
                     visibleFrom="xs",
-                    #style={"minWidth": "25px", "width": "25px"}
                     ),
                 span=2,
                 #sm=2,

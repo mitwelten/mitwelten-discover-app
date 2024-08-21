@@ -6,7 +6,7 @@ import dash_core_components as dcc
 
 from src.components.notification.notification import NotificationType, notification
 from configuration import API_URL
-from src.components.data_drawer.header import bottom_drawer_content
+from src.components.data_drawer.header import data_drawer_header
 from src.api.api_files import get_file_url
 from src.components.data_drawer.types.note.form_view import note_form_view
 from src.config.app_config import CHART_DRAWER_HEIGHT, PRIMARY_COLOR
@@ -42,7 +42,6 @@ def note_view(note: Note, theme, tz, edit=False, all_tags=None):
         children = note_form_view(note, all_tags, tz)
     else:
         children = note_detail_view(note, theme)
-
 
     return [
             dcc.Store(
@@ -190,10 +189,10 @@ def note_detail_view(note: Note, theme):
     content = side_by_side if has_media_files else text_to_html_list(note.description)
 
     return [
-            bottom_drawer_content(
+            data_drawer_header(
                 note.title,
                 note.tags,
-                "docu.svg",
+                "assets/markers/docu.svg",
                 theme,
                 dmc.Group([private, edit_button]),
                 note.author

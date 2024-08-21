@@ -69,3 +69,4 @@ def init_tags():
     # standardize dictionary properties
     all_tags = [Tag(t).to_dict() for t in all_tags]
     return all_tags
+

@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from dash import dcc
 
 from src.model.deployment import Deployment
-from src.components.data_drawer.header import bottom_drawer_content
+from src.components.data_drawer.header import data_drawer_header
 from src.api.api_deployment import get_env_timeseries
 from src.components.data_drawer.charts import create_themed_figure
 from src.config.api_config import *
@@ -126,18 +126,10 @@ def create_env_chart(deployment_data, theme):
             )
 
 
-    return [
-        bottom_drawer_content(
-            get_source_props("Environment")["name"], 
-            d.tags, 
-            "environSensor.svg", 
-            theme
-            ), 
-        dmc.Paper(
+    return dmc.Paper(
             children=tabs,
             shadow="md",
             p="md",
             radius="md",
             style={"margin":"20px", "height":"360px"}
-        ),
-    ]
+        )

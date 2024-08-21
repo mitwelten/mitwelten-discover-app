@@ -1,17 +1,26 @@
-from datetime import datetime, timedelta
-
-from plotly.colors import hex_to_rgb
 import plotly.graph_objects as go
 import pandas as pd
 from dash import dcc
 import dash_mantine_components as dmc
-from src.config.app_config import AUDIO_DESCRIPTION, SECONDARY_COLOR
 from src.model.deployment import Deployment
 from src.config.map_config import get_source_props
 
-from src.api.api_deployment import get_audio_timeseries, get_audio_top3, get_bird_stacked_bar
-from src.components.data_drawer.header import bottom_drawer_content
+from src.api.api_deployment import get_bird_stacked_bar
+from src.components.data_drawer.header import data_drawer_header
 from src.components.data_drawer.charts import create_themed_figure
+from src.api.api_deployment import get_all_species
+
+all_species = get_all_species()
+
+def get_german_label(item):
+    counter = 0
+    if all_species is not None:
+        species = all_species[counter].get("species")
+        while item != species and counter < len(all_species):
+            counter += 1
+            species = all_species[counter].get("species")
+        return all_species[counter].get("label_de")
+
 
 def create_audio_chart(deployment_data, date_range, theme):
 
@@ -37,9 +46,10 @@ def create_audio_chart(deployment_data, date_range, theme):
 
         bars = []
         for group, dfg in df.groupby(by='species'):
+            name = get_german_label(group)
             x=dfg['bucket']
             y=dfg['count']
-            bars.append(go.Bar(name=group,x=x, y=y))
+            bars.append(go.Bar(name=name,x=x, y=y))
 
         timeseries = pd.bdate_range(date_range["start"], date_range["end"], tz="UTC", freq="D")
 
@@ -53,17 +63,10 @@ def create_audio_chart(deployment_data, date_range, theme):
         className="chart-graph",
 
     )
-    return [
-        bottom_drawer_content(
-            get_source_props("Audio Logger")["name"], 
-            d.tags, 
-            "audioLogger.svg", 
-            theme), 
-        dmc.Paper(
+    return dmc.Paper(
             children=graph,
             shadow="md",
             p="md",
             radius="md",
             style={"margin":"20px", "height":"360px"}
-        ),
-    ]
+        )
