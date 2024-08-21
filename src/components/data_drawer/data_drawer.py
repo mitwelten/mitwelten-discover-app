@@ -104,17 +104,21 @@ def chart_drawer(args, device, all_notes, env):
 
 @app.callback(
     Output(ID_LOGO_CONTAINER, "style"),
-    Output(ID_CHART_DRAWER, "styles", allow_duplicate=True),
+    Output(ID_CHART_DRAWER, "styles"),
     Input(ID_SETTINGS_DRAWER, "opened"),
+    Input(ID_APP_THEME, "forceColorScheme"),
     State(ID_CHART_DRAWER, "styles"),
-    prevent_initial_call=True
 )
-def settings_drawer_state(opened, styles):
+def settings_drawer_state(opened, scheme, styles):
     width_reduced = {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px"}
     full_width = {"width": "100vw"}
 
     srinked = { "inner": {"width": f"calc(100vw - {SETTINGS_DRAWER_WIDTH}px", "left": f"{SETTINGS_DRAWER_WIDTH}px"}}
     expanded = {"inner": {"width": "100vw", "left": 0}}
+
+    styles.update({"content": {
+        "background": DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR,
+        }})
 
     if opened:
         styles.update(srinked)
@@ -122,19 +126,6 @@ def settings_drawer_state(opened, styles):
     styles.update(expanded)
     return full_width, styles 
 
-
-
-@app.callback(
-    Output(ID_CHART_DRAWER, "styles", allow_duplicate=True),
-    Input(ID_APP_THEME, "forceColorScheme"),
-    State(ID_CHART_DRAWER, "styles"),
-    prevent_initial_call=True
-)
-def update_color_scheme(scheme, styles):
-    styles.update({"content": {
-        "background": DEFAULT_THEME["colors"]["dark"][7] if scheme == "dark" else BACKGROUND_COLOR,
-        }})
-    return styles
 
 
 @app.callback(
@@ -159,7 +150,6 @@ def open_drawer(selected_marker):
 @app.callback(
     Output(ID_CHART_CONTAINER, "children"),
     Output(ID_CHART_DRAWER, "size"),
-    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Output(ID_LOADER, "visible", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     Input(ID_DATE_RANGE_STORE, "data"),
@@ -182,7 +172,7 @@ def update_drawer_content_from_marker_store(selected_marker, date_range, theme, 
         tz["tz"],
         )
 
-    return drawer_content, CHART_DRAWER_HEIGHT, False, False
+    return drawer_content, CHART_DRAWER_HEIGHT, False
 
 
 

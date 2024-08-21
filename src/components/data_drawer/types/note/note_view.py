@@ -47,7 +47,7 @@ def note_view(note: Note, theme, tz, edit=False, all_tags=None):
     return [
             dcc.Store(
                 id=ID_NOTE_FILE_STORE, 
-                data=dict(media_files=media_files, documents=documents, focus=0, API_URL=API_URL)
+                data=dict(files=media_files + documents, focus=0, API_URL=API_URL)
                 ),
             html.Div(
                 id=ID_NOTE_CONTAINER,
@@ -140,7 +140,11 @@ def doc_card(file):
 
 def carousel_card(file: File):
     if file.type.startswith("image/"):
-        return dmc.Image(src=get_file_url(file.object_name))
+        return html.Div(
+                id={"element": "image", "file_id": file.id},
+                style={"cursor": "pointer"},
+                children=dmc.Image(src=get_file_url(file.object_name))
+                )
     elif file.type.startswith("audio/"):
         return audio_card(file)
     else :
@@ -173,7 +177,7 @@ def note_detail_view(note: Note, theme):
                 dmc.CarouselSlide(
                     display="flex",
                     style={"justifyContent": "center", "alignItems": "center"},
-                    children=carousel_card(img)) for img in files],
+                    children=carousel_card(file)) for file in files],
             )
 
     side_by_side = dmc.SimpleGrid(
@@ -221,7 +225,6 @@ def delete_click(click):
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Output(ID_NOTIFICATION, "children", allow_duplicate=True),
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
@@ -240,24 +243,25 @@ def activate_edit_mode(click, notes, all_tags, tz):
 
     if user is None:
         n = notification("Log in to edit notes!", NotificationType.NOT_PERMITTED)
-        return no_update, no_update, no_update, no_update, n
+        return no_update, no_update, no_update, n
 
     for note in notes["entries"]:
         if note["id"] == ctx.triggered_id["note_id"]:
             n = Note(note)
             if n.author == user.full_name or "internal" in user.roles:
-                return dict(data=note), note_form_view(n, all_tags["all"], tz["tz"]), False, CHART_DRAWER_HEIGHT, no_update
+                return dict(data=note), note_form_view(n, all_tags["all"], tz["tz"]), CHART_DRAWER_HEIGHT, no_update
             else:
                 n = notification("Only the author can edit this note!", NotificationType.NOT_PERMITTED)
-                return no_update, no_update, no_update, no_update, n 
+                return no_update, no_update, no_update, n 
 
 
 app.clientside_callback(
     ClientsideFunction(
-        namespace="attachment", function_name="load_text_blob"
+        namespace="attachment", function_name="load_blob"
     ),
     Output(ID_NOTE_FILE_STORE, "data"),
     Input({"element": "text", "file_id": ALL}, "n_clicks"),
+    Input({"element": "image", "file_id": ALL}, "n_clicks"),
     State(ID_NOTE_FILE_STORE, "data"),
     prevent_initial_call=True
 )
@@ -273,9 +277,7 @@ def click_on_attachment(click, data):
     if ctx.triggered_id is None:
         raise PreventUpdate
 
-    files     = data["media_files"]
-    documents = data["documents"]
-    all_files = [*files, *documents]
+    all_files = data["files"]
 
     for (idx, file) in enumerate(all_files):
         if ctx.triggered_id["file_id"] == file["id"]:
@@ -289,7 +291,6 @@ def click_on_attachment(click, data):
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Input(ID_NOTE_FORM_CANCEL_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_EDIT_NOTE_STORE, "data"),
@@ -307,9 +308,9 @@ def cancel_click(cancel_click, notes, selected_note, theme):
         if note["id"] == selected_note["data"]["id"]:
             n = Note(note)
             if n != Note(selected_note["data"]):
-                return True, no_update, no_update, no_update, False
+                return True, no_update, no_update, no_update
 
-            return no_update, dict(data=None), note_view(Note(note), theme, False), CHART_DRAWER_HEIGHT, False
+            return no_update, dict(data=None), note_view(Note(note), theme, False), CHART_DRAWER_HEIGHT
     raise PreventUpdate
 
 
@@ -318,7 +319,6 @@ def cancel_click(cancel_click, notes, selected_note, theme):
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Input(ID_CONFIRM_UNSAVED_CHANGES_DIALOG, "submit_n_clicks"),
     State(ID_EDIT_NOTE_STORE, "data"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
@@ -333,7 +333,7 @@ def deactivate_edit_mode(cancel_click, selected_note, notes, theme, tz):
     for note in notes["entries"]:
         if note["id"] == selected_note["data"]["id"]:
             n = Note(note)
-            return dict(data=None), CHART_DRAWER_HEIGHT, True, note_view(n, theme, tz["tz"]), True
+            return dict(data=None), CHART_DRAWER_HEIGHT, True, note_view(n, theme, tz["tz"])
 
     raise PreventUpdate
 

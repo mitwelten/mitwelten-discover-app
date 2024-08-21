@@ -62,9 +62,10 @@ window.dash_clientside.attachment = {
   },
 
 
-  load_text_blob: async (_click, file_store) => {
-    docs = file_store.documents
-    api_url = file_store.API_URL
+  load_blob: async (_click_doc, _click_image, file_store) => {
+    console.log("load_blob", );
+    docs = file_store.files;
+    api_url = file_store.API_URL;
 
     // no files to load
     if (docs && docs.length === 0) {
@@ -73,6 +74,7 @@ window.dash_clientside.attachment = {
 
     // check if the callback was triggered on initialization
     const { triggered_id } = dash_clientside.callback_context;
+    console.log(triggered_id);
     const isInitCall       = dash_clientside.callback_context.triggered.every(({ value }) => value === null);
 
     if(isInitCall) {

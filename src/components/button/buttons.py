@@ -175,7 +175,7 @@ def login(_):
 
 
 def notify(notification):
-    return [no_update, notification, no_update, no_update, no_update, no_update, no_update]
+    return [no_update, notification, no_update, no_update, no_update, no_update]
 
 
 @app.callback(
@@ -185,7 +185,6 @@ def notify(notification):
     Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "withCloseButton", allow_duplicate=True),
     Input(ID_ADD_NOTE_BUTTON, "n_clicks"),
     State(ID_BROWSER_PROPERTIES_STORE, "data"),
     State(ID_SETTINGS_DRAWER, "opened"),
@@ -262,5 +261,5 @@ def create_note_on_map(
     notes = dict(entires=[])
     view = note_view(Note(new_note), theme, tz["tz"], True, all_tags["all"])
 
-    return notes, no_update, dict(data=new_note), view, True, CHART_DRAWER_HEIGHT, False 
+    return notes, no_update, dict(data=new_note), view, True, CHART_DRAWER_HEIGHT
 

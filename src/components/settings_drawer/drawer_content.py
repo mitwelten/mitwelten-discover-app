@@ -21,6 +21,8 @@ title = dmc.Center(
             position="right",
             openDelay=500,
             w=350,
+            m=10,
+            p=20,
             color=PRIMARY_COLOR,
             children= dmc.Title(
                 "Mitwelten Discover", 
