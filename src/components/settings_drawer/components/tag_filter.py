@@ -37,7 +37,7 @@ def tag_filter(args):
         tags_value = []
     return dmc.TagsInput(
             id=ID_TAGS,
-            clearable=True,
+            clearable=False,
             value=tags_value,
             placeholder="Pick tag from list",
             data=[

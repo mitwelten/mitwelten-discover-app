@@ -71,6 +71,7 @@ def chart_drawer(args, device, all_notes, env):
     notes["entries"] = all_notes
     
     chart = []
+    header = []
     drawer_state = False
     if device is not None:
         start = args.get("start", None)
@@ -110,7 +111,7 @@ def chart_drawer(args, device, all_notes, env):
         closeOnEscape=False,
         withOverlay=False,
         position="bottom",
-        styles={"content": {"background": BACKGROUND_COLOR}},
+        styles={"content": {"background": BACKGROUND_COLOR}, "body": {"paddingBottom": 0}},
         children=[
             html.Div(id=ID_CHART_DRAWER_HEADER, children=header),
             dcc.Loading(

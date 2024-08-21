@@ -74,7 +74,6 @@ def update_map_icon(data, children, icons):
 
     children[map_id]["props"]["children"][0]["props"]["className"] = "map-image-selected"
 
-    print("map_id", map_id)
     for icon in icons:
         icon["props"]["className"] = ""
 

@@ -9,11 +9,8 @@ def get_file_url(object_name: str):
 
 def get_file(object_name, media_type):
     url = construct_url(f"files/{object_name}")
-    print("== GET FILE URL ==", url)
 
     res = requests.get(url=url)
-    print("result: ", res)
-    print("result: ", res)
 
     encoded_file = base64.b64encode(res.content).decode()
     encoded_file = f"data:{media_type};base64,{encoded_file}"

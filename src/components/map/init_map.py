@@ -22,7 +22,11 @@ import dash_core_components as dcc
 initial_map = map_config.MAPS[1]
 
 def map_figure(args, active_depl): 
-    init_center = [args.get("lat"), args.get("lon")]
+
+    if active_depl is not None:
+        init_center = [active_depl["location"]["lat"], active_depl["location"]["lon"]]
+    else:
+        init_center = [args.get("lat"), args.get("lon")]
 
     return dl.Map([
 

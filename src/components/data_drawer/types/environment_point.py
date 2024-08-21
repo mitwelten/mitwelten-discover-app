@@ -25,18 +25,10 @@ def create_environment_point_chart(legend, id, theme):
         config={"displayModeBar": False, "staticPlot": True},
     )
 
-    return [
-        data_drawer_header(
-            get_source_props("Environment")["name"], 
-            [], 
-            "habitat.svg", 
-            theme
-        ), 
-        dmc.Paper(
+    return dmc.Paper(
             children=graph,
             shadow="md",
             p="md",
             radius="md",
             style={"margin":"20px", "height":"360px", "display":"flex", "alignItems":"center"}
         )
-    ]
