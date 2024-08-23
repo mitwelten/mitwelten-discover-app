@@ -2,6 +2,7 @@ import plotly.graph_objects as go
 import pandas as pd
 from dash import dcc
 import dash_mantine_components as dmc
+from plotly.graph_objs.layout import Modebar, coloraxis
 from src.model.deployment import Deployment
 from src.config.map_config import get_source_props
 
@@ -55,7 +56,14 @@ def create_audio_chart(deployment_data, date_range, theme):
 
         figure.add_traces(bars)
         figure.add_traces(go.Bar(x=timeseries, y=[0] * len(timeseries), showlegend=False))
-        figure.update_layout(barmode='stack', margin_pad=20, font_size=12)
+        figure.update_layout(
+                barmode='stack', 
+                margin_pad=20, 
+                font_size=12, 
+                legend=dict(y=0.9),
+                #modebar_orientation="v"
+                )
+
                 
     graph = dcc.Graph(
         figure=figure,

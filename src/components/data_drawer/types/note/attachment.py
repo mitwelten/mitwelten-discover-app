@@ -113,12 +113,11 @@ def _attachment_card(file: File, auth_cookie, editable = False):
     prevent_initial_call = True
 )
 def download_attachment(click, files):
-    click_sum = safe_reduce(lambda x, y: x + y, click, 0)
-    if ctx.triggered_id is None or click_sum == 0:
+    if ctx.triggered_id is None:
         raise PreventUpdate
 
     file_id = ctx.triggered_id["file_id"]
-    file = list(filter(lambda f: f["id"] == file_id, files["documents"]))[0]
+    file = list(filter(lambda f: f["id"] == file_id, files["files"]))[0]
     if file is None:
         raise PreventUpdate
 

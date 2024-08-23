@@ -51,9 +51,6 @@ def add_device_markers(checkboxes, tags, time_range, sources, timezone):
     :return: The map layer containing all current visible markers with the selected settings.
     """
 
-    print("tags", tags)
-    print("trigger: ",ctx.triggered_id)
-    pprint(time_range)
     deployment_data = {}
     for source in sources:
         deployment_data[source["type"]] = source["entries"]

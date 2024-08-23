@@ -233,7 +233,6 @@ def delete_click(click):
     prevent_initial_call=True
 )
 def activate_edit_mode(click, notes, all_tags, tz):
-
     click_sum = safe_reduce(lambda x, y: x + y, click, 0)
     if ctx.triggered_id is None or click_sum == 0:
         raise PreventUpdate
@@ -266,23 +265,23 @@ app.clientside_callback(
 )
 
 
-@app.callback(
-    Output(ID_NOTE_FILE_STORE, "data", allow_duplicate=True),
-    Input({"element": "media", "file_id": ALL}, "n_clicks"),
-    State(ID_NOTE_FILE_STORE, "data"),
-    prevent_initial_call=True
-)
-def click_on_attachment(click, data):
-    if ctx.triggered_id is None:
-        raise PreventUpdate
-
-    all_files = data["files"]
-
-    for (idx, file) in enumerate(all_files):
-        if ctx.triggered_id["file_id"] == file["id"]:
-            data["focus"] = idx
-
-    return data
+# @app.callback(
+#     Output(ID_NOTE_FILE_STORE, "data", allow_duplicate=True),
+#     Input({"element": "media", "file_id": ALL}, "n_clicks"),
+#     State(ID_NOTE_FILE_STORE, "data"),
+#     prevent_initial_call=True
+# )
+# def click_on_attachment(click, data):
+#     if ctx.triggered_id is None:
+#         raise PreventUpdate
+# 
+#     all_files = data["files"]
+# 
+#     for (idx, file) in enumerate(all_files):
+#         if ctx.triggered_id["file_id"] == file["id"]:
+#             data["focus"] = idx
+# 
+#     return data
 
 
 @app.callback(

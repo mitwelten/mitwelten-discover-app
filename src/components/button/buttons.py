@@ -29,6 +29,7 @@ info_dialog = dmc.Modal(
             size="xl",
             withCloseButton=False,
             opened=False,
+            styles={"content": {"padding": "15px"}},
             children=[
                 dmc.Text(DISCOVER_DESCRIPTION, size="sm"),
                 dmc.Space(h=10),
@@ -37,7 +38,7 @@ info_dialog = dmc.Modal(
                     dmc.Anchor("mitwelten.org", href="https://mitwelten.org", target="_blank", size="sm"),
                     ], gap="xs"),
                 dmc.Space(h=40),
-                dmc.ScrollArea([deployment_info]),
+                deployment_info,
                 dmc.Flex([
                     dmc.Group([
                         dmc.Text("Found a bug?", size="sm"),
@@ -184,7 +185,6 @@ def notify(notification):
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
     Input(ID_ADD_NOTE_BUTTON, "n_clicks"),
     State(ID_BROWSER_PROPERTIES_STORE, "data"),
     State(ID_SETTINGS_DRAWER, "opened"),
@@ -258,8 +258,7 @@ def create_note_on_map(
     new_note["id"] = new_note["note_id"]
     new_note["author"] = user.full_name
 
-    notes = dict(entires=[])
     view = note_view(Note(new_note), theme, tz["tz"], True, all_tags["all"])
 
-    return notes, no_update, dict(data=new_note), view, True, CHART_DRAWER_HEIGHT
+    return dict(entries=[], type="Note"), no_update, dict(data=new_note), view, True
 

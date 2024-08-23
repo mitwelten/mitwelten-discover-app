@@ -13,11 +13,17 @@ from dash_iconify import DashIconify
 def divider(title: str):
     return dmc.Divider(label=title, labelPosition="center", size="md", mt=5)
 
-
+label = dmc.Stack(
+        children=[dmc.Title(
+            "Mitwelten Discover is a map-based publication of the research project MITWELTEN.", 
+            order=3), 
+                  dmc.Text(DISCOVER_DESCRIPTION)
+                  ]
+        )
 title = dmc.Center(
         dmc.Tooltip(
             multiline=True,
-            label=DISCOVER_DESCRIPTION,
+            label=label,
             position="right",
             openDelay=500,
             w=350,

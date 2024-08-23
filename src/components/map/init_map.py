@@ -58,8 +58,9 @@ def map_figure(args, active_depl):
     ],
     id=ID_MAP,
     center=init_center,
-    zoom=args.get("zoom"),
+    zoom=int(float(args.get("zoom"))),
     maxZoom=DEFAULT_MAX_ZOOM,
+    zoomSnap=0,
     doubleClickZoom=False,
     className="id-map",
     style={

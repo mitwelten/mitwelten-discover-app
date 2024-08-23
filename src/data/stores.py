@@ -1,6 +1,6 @@
 import flask
 from dash.exceptions import PreventUpdate
-from dash import Output, Input, State
+from dash import Output, Input, State, ctx
 
 
 from src.components.data_drawer.types.pollinator import *
@@ -10,7 +10,7 @@ from src.main import app
 from src.url.parse import update_query_data
 
 
-def stores(args, deployments, notes, env_data): 
+def stores(args, deployments, notes, env_data, tags): 
     all_sources = [
             source for source in SOURCE_PROPS.keys() 
             if get_source_props(source)["type"] == "physical"
@@ -32,12 +32,7 @@ def stores(args, deployments, notes, env_data):
 
            dcc.Store(
                id=ID_TAG_DATA_STORE,           
-               data=dict(
-                   all=init_tags(),
-                   active_fs=args.get("FS", "ANY"),
-                   active_additional=args.get("TAG", [])
-                   ), 
-               storage_type="local"),
+               data=dict(all=tags)),
 
            dcc.Store(id=ID_DEPLOYMENT_DATA_STORE,    data=deployments),
            dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=None),
@@ -46,7 +41,6 @@ def stores(args, deployments, notes, env_data):
            dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),
            dcc.Store(id=ID_EDIT_NOTE_STORE,          data=dict(data=None)),
            dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),
-           dcc.Store(id=ID_NOTE_REFRESH_STORE,       data=dict(state=False)),
            dcc.Store(id=ID_QUERY_PARAM_STORE,        data=args),
            dcc.Store(id=ID_TIMEZONE_STORE),
            ]
@@ -54,14 +48,34 @@ def stores(args, deployments, notes, env_data):
 @app.callback(
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     Input ({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
-    Input(ID_NOTE_REFRESH_STORE, "data"),
     prevent_initial_call=True,
 )
-def refresh_notes_from_backend(data, _):
-    outdated = True # TODO: implement
-    if outdated or data is None:
+def refresh_notes_from_backend(data):
+    print("refresh_notes_from_backend", data)
+
+    if ctx.triggered_id == None:
+        raise PreventUpdate
+
+    if data is None or data["entries"] == []:
+        print("refreshing notes")
         cookies = flask.request.cookies
         data["entries"] = init_notes(cookies["auth"] if cookies else None)
+        return data
+    else:
+        raise PreventUpdate
+
+
+@app.callback(
+    Output(ID_TAG_DATA_STORE, "data"),
+    Input (ID_TAG_DATA_STORE, "data"),
+    prevent_initial_call=True,
+)
+def refresh_tags_from_backend(data):
+    if ctx.triggered_id == None:
+        raise PreventUpdate
+    if data is None:
+        data = {}
+        data["all"] = init_tags()
         return data
     else:
         raise PreventUpdate

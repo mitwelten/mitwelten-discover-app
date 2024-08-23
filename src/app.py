@@ -31,7 +31,7 @@ from src.data.stores import stores
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_expiration_date_from_cookies
 from src.main import app
-from src.data.init import init_deployment_data, init_environment_data, init_notes
+from src.data.init import init_deployment_data, init_environment_data, init_notes, init_tags
 from src.url.parse import update_query_data, query_data_to_string
 import flask
 from src.url.parse import get_device_from_args
@@ -52,11 +52,12 @@ def app_content(args):
     active_depl  = None
 
     active_depl  = get_device_from_args(args, deployments, notes, environments)
+    tags         =  init_tags()
 
     return [
             dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
             mitwelten_bannner,
-            *stores(args, deployments, notes, env_data),
+            *stores(args, deployments, notes, env_data, tags),
             *control_buttons,
             map_figure(args, active_depl),
             chart_drawer(args, active_depl, notes, env_data),

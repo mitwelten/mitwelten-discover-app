@@ -211,29 +211,7 @@ def update_date_time(input_date, input_time, selected_note):
     return selected_note
 
 
-@app.callback(
-    Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
-    Input(ID_NOTE_EDIT_TITLE, "value"),
-    Input(ID_NOTE_EDIT_DESCRIPTION, "value"),
-    Input(ID_NOTE_EDIT_PUBLIC_FLAG, "checked"),
-    Input(ID_NOTE_TAG_SELECT, "value"),
-    Input(ID_NOTE_EDIT_LAT, "value"),
-    Input(ID_NOTE_EDIT_LON, "value"),
-    State(ID_EDIT_NOTE_STORE, "data"),
-    prevent_initial_call=True
-)
-def update_note_store_by_form(title, description, is_public, tags, lat, lon, selected_note):
-    if selected_note is None or selected_note["data"] is None:
-        raise PreventUpdate
 
-    selected_note["data"]["title"]           = title
-    selected_note["data"]["description"]     = description
-    selected_note["data"]["location"]["lat"] = float(lat)
-    selected_note["data"]["location"]["lon"] = float(lon)
-    selected_note["data"]["public"]          = not is_public
-    selected_note["data"]["tags"]            = [{"name": t} for t in tags]
-
-    return selected_note
 
 @app.callback(
     Output(ID_NOTE_EDIT_LAT, "value", allow_duplicate=True),
@@ -312,6 +290,7 @@ def add_attachment(list_of_contents, list_of_names, note):
     return dict(data=note["data"]), attachment_area(new_files, True), no_update
 
 
+
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_ATTACHMENTS, "children", allow_duplicate=True),
@@ -377,14 +356,26 @@ def find_added_tags(modified_note, original_note):
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_EDIT_NOTE_STORE, "data"),
+    State(ID_NOTE_EDIT_TITLE, "value"),
+    State(ID_NOTE_EDIT_DESCRIPTION, "value"),
+    State(ID_NOTE_EDIT_PUBLIC_FLAG, "checked"),
+    State(ID_NOTE_TAG_SELECT, "value"),
+    State(ID_NOTE_EDIT_LAT, "value"),
+    State(ID_NOTE_EDIT_LON, "value"),
     prevent_initial_call=True
 )
-def persist_note(click, notes, selected_note):
+def persist_note(click, notes, selected_note, title, description, is_public, tags, lat, lon):
     if selected_note is None or click is None or click == 0:
         raise PreventUpdate
     auth_cookie = flask.request.cookies.get("auth")
 
+    selected_note["data"]["tags"] = [{"name": t} for t in tags]
     note = Note(selected_note["data"])
+    note.title = title
+    note.description = description
+    note.public = not is_public
+    note.lat = float(lat)
+    note.lon = float(lon)
 
     original_note = None
     def error_return_values(alert):
