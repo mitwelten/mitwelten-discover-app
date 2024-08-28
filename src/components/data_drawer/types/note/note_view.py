@@ -142,7 +142,20 @@ def carousel_card(file: File):
         return html.Div(
                 id={"element": "image", "file_id": file.id},
                 style={"cursor": "pointer"},
-                children=dmc.Image(src=get_file_url(file.object_name))
+                children=[
+                    dmc.Image(src=get_file_url(file.object_name)),
+                    dmc.Text(
+                        size="xs",
+                        style={
+                            "textOverflow": "ellipsis", 
+                            "overflow": "hidden", 
+                            "position": "absolute",
+                            "bottom": 0,
+                            "background": "#ffffff80",
+                            },
+                        children=file.name.split(".")[0], 
+                        )
+                ]
                 )
     elif file.type.startswith("audio/"):
         return audio_card(file)
@@ -172,6 +185,7 @@ def note_detail_view(note: Note, theme):
             controlsOffset="md",
             withIndicators=True,
             bg=PRIMARY_COLOR,
+            styles={"indicators": {"bottom": 25}},
             children=[
                 dmc.CarouselSlide(
                     display="flex",
