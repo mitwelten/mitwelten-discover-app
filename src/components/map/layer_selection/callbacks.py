@@ -1,4 +1,6 @@
 from dash import Output, Input, ALL, State, ctx, no_update
+from dash.exceptions import PreventUpdate
+from pprint import pprint
 
 from src.config.id_config import *
 from src.config.map_config import MAPS, OVERLAYS, MAP_TYPES
@@ -10,7 +12,7 @@ def update_store(store, collection):
     index_map = store["index"]
     new_map = next(x for x in collection if x.index == index_map)
     if new_map is None:
-        return no_update
+        return no_update, no_update
     return new_map.source, new_map.source_attribution
 
 
@@ -26,10 +28,15 @@ def handle_map_store_update(store):
 @app.callback(
     Output(ID_OVERLAY_MAP, "url"),
     Output(ID_OVERLAY_MAP, "attribution"),
+    Output(ID_AFFIX_LEBENSRAUM_LEGENDE, "display"),
     Input(ID_OVERLAY_MAP_STORE, "data"),
 )
 def handle_overlay_store_update(store):
-    return update_store(store, OVERLAYS)
+    display = "none"
+    if store["index"] == 1:
+        display = "block"
+    [src, attr] = update_store(store, OVERLAYS)
+    return src, attr, display
 
 
 def handle_map_update(_):
@@ -44,8 +51,8 @@ def handle_map_update(_):
     prevent_initial_call=True
 )
 def handle_map_update_0(clicks):
-    # TODO: remove safe_reduce
-    clicks = safe_reduce(lambda x, y: x + y, clicks, 0)
+    if ctx.triggered_id is None:
+        raise PreventUpdate
     if clicks is None or clicks == 0:
         return no_update
 
@@ -58,8 +65,8 @@ def handle_map_update_0(clicks):
     prevent_initial_call=True
 )
 def handle_map_update_1(clicks):
-    # TODO: remove safe_reduce
-    clicks = safe_reduce(lambda x, y: x + y, clicks, 0)
+    if ctx.triggered_id is None:
+        raise PreventUpdate
     if clicks is None or clicks == 0:
         return no_update
 

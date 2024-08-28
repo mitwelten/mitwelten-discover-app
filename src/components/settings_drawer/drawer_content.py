@@ -15,8 +15,7 @@ def divider(title: str):
 
 label = dmc.Stack(
         children=[dmc.Title(
-            "Mitwelten Discover is a map-based publication of the research project MITWELTEN.", 
-            order=3), 
+            "Mitwelten Discover is a map-based publication of the research project MITWELTEN.", order=3), 
                   dmc.Text(DISCOVER_DESCRIPTION)
                   ]
         )

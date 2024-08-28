@@ -32,6 +32,7 @@ ID_LOGIN_BUTTON_HREF = "id_login_button_href"
 ID_INFO_DIALOG_BUTTON = "id-info-dialog-button"
 ID_INFO_DIALOG_MODAL = "id-info-dialog-modal"
 ID_CHART_DRAWER_HEADER = "id-chart-drawer-header"
+ID_AFFIX_LEBENSRAUM_LEGENDE = "id-affix-lebensraum-legende"
 
 # stores
 ID_TAG_DATA_STORE = "id-tags-data-store"

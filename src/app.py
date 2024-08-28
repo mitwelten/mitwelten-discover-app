@@ -30,6 +30,7 @@ from src.config.map_config import SOURCE_PROPS
 from src.data.stores import stores
 from src.util.helper_functions import safe_reduce
 from src.util.user_validation import get_expiration_date_from_cookies
+from src.components.map.legende_lebensraumkarte import legende_lebensraumkarte
 from src.main import app
 from src.data.init import init_deployment_data, init_environment_data, init_notes, init_tags
 from src.url.parse import update_query_data, query_data_to_string
@@ -57,6 +58,7 @@ def app_content(args):
     return [
             dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
             mitwelten_bannner,
+            legende_lebensraumkarte,
             *stores(args, deployments, notes, env_data, tags),
             *control_buttons,
             map_figure(args, active_depl),

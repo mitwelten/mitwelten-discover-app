@@ -17,7 +17,7 @@ def map_menu_popup(id_prefix):
                         dmc.Image(src=map_config.image, alt="map", w=48, h=48, radius=5),
                         className="map-image-selected" if map_config.index == 0 else ""
                         ),
-                    id={'role': "base", 'index': map_config.index, 'place': id_prefix},
+                    id={"role": MAP_TYPES[0], "index": map_config.index, "place": id_prefix},
                     )
                 )
     menu_entries.append(dmc.MenuDivider())
@@ -31,7 +31,7 @@ def map_menu_popup(id_prefix):
                         dmc.Image(src=overlay_config.image, alt="map", w=48, h=48, radius=5),
                         className="map-image-selected" if overlay_config.index == 0 else ""
                         ),
-                    id={'role': MAP_TYPES[1], 'index': overlay_config.index, 'place': id_prefix},
+                    id={"role": MAP_TYPES[1], "index": overlay_config.index, "place": id_prefix},
                     )
                 )
 
