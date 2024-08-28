@@ -6,7 +6,7 @@ from src.config.id_config import *
 from src.config.map_config import MAPS, OVERLAYS, MAP_TYPES
 from src.main import app
 from src.util.helper_functions import safe_reduce
-
+from src.url.parse import update_query_data
 
 def update_store(store, collection):
     index_map = store["index"]
@@ -50,7 +50,7 @@ def handle_map_update(_):
     Input({'role': MAP_TYPES[0], 'index': ALL, 'place': ALL}, 'n_clicks'),
     prevent_initial_call=True
 )
-def handle_map_update_0(clicks):
+def handle_map_update_base(clicks):
     if ctx.triggered_id is None:
         raise PreventUpdate
     if clicks is None or clicks == 0:
@@ -64,7 +64,7 @@ def handle_map_update_0(clicks):
     Input({'role': MAP_TYPES[1], 'index': ALL, 'place': ALL}, 'n_clicks'),
     prevent_initial_call=True
 )
-def handle_map_update_1(clicks):
+def handle_map_update_overlay(clicks):
     if ctx.triggered_id is None:
         raise PreventUpdate
     if clicks is None or clicks == 0:
@@ -96,3 +96,18 @@ for map_type in MAP_TYPES:
             State({'role':  map_type, 'index': ALL, 'place': "drawer"}, 'children'),
             State({'role':  map_type, 'index': ALL, 'place': "menu"}, 'leftSection'),
     )(update_map_icon)
+
+
+
+@app.callback(
+    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
+    Input(ID_BASE_MAP_STORE, "data"),
+    Input(ID_OVERLAY_MAP_STORE, "data"),
+    State(ID_QUERY_PARAM_STORE, "data"),
+    prevent_initial_call=True,
+)
+def update_fs_tag_in_url_params(map, overlay, data):
+    map_index = map["index"] or 0
+    overlay_index = overlay["index"] or 0
+
+    return update_query_data(data, {"map": map_index, "overlay": overlay_index})

@@ -36,8 +36,8 @@ def stores(args, deployments, notes, env_data, tags):
 
            dcc.Store(id=ID_DEPLOYMENT_DATA_STORE,    data=deployments),
            dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=None),
-           dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=0), storage_type="local"),
-           dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=0), storage_type="local"),
+           dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=args["map"]), storage_type="local"),
+           dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=args["overlay"]), storage_type="local"),
            dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),
            dcc.Store(id=ID_EDIT_NOTE_STORE,          data=dict(data=None)),
            dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None, storage_type="local"),

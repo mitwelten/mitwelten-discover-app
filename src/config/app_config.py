@@ -19,7 +19,9 @@ QUERY_PARAMS = {
         "devices": None, 
         "node_label": None, 
         "note_id": None, 
-        "env_id": None
+        "env_id": None,
+        "map": 0,
+        "overlay": 0,
         }
 
 PRIMARY_COLOR = "mitwelten_green"
