@@ -59,7 +59,7 @@ def app_content(args):
             dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
             mitwelten_bannner,
             legende_lebensraumkarte,
-            *stores(args, deployments, notes, env_data, tags),
+            *stores(args, deployments, notes, env_data, tags, active_depl),
             *control_buttons,
             map_figure(args, active_depl),
             chart_drawer(args, active_depl, notes, env_data),

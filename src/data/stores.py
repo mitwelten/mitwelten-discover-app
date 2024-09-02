@@ -10,7 +10,7 @@ from src.main import app
 from src.url.parse import update_query_data
 
 
-def stores(args, deployments, notes, env_data, tags): 
+def stores(args, deployments, notes, env_data, tags, active_depl):
     all_sources = [
             source for source in SOURCE_PROPS.keys() 
             if get_source_props(source)["type"] == "physical"
@@ -19,7 +19,7 @@ def stores(args, deployments, notes, env_data, tags):
     return[*[
         dcc.Store(
             id={"role": source_type, "label": "Store", "type": "physical"},
-            data=dict(entries=deployments[source_type], type=source_type)) 
+            data=dict(entries=deployments[source_type], type=source_type))
         for source_type in all_sources
         ],
 
@@ -35,7 +35,7 @@ def stores(args, deployments, notes, env_data, tags):
                data=dict(all=tags)),
 
            dcc.Store(id=ID_DEPLOYMENT_DATA_STORE,    data=deployments),
-           dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=None),
+           dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=dict(data=active_depl, type=active_depl["node"]["type"] if active_depl else None)),
            dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=args["map"]), storage_type="local"),
            dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=args["overlay"]), storage_type="local"),
            dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),

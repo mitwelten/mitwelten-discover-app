@@ -2,6 +2,7 @@ import dash_mantine_components as dmc
 from dash_mantine_components import DEFAULT_THEME
 from dash import Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
+from pprint import pprint
 import dash_core_components as dcc
 from src.model.environment import Environment
 from src.model.deployment import Deployment

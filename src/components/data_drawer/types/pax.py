@@ -1,12 +1,7 @@
-from datetime import datetime, timedelta
-
 import pandas as pd
-from src.config.map_config import get_source_props
 import plotly.graph_objects as go
 from dash import dcc
-from src.config.app_config import PAX_DESCRIPTION
 from src.model.deployment import Deployment
-from src.components.data_drawer.header import data_drawer_header
 import dash_mantine_components as dmc
 
 from src.api.api_deployment import get_pax_timeseries
