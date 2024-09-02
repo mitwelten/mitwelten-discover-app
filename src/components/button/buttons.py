@@ -176,7 +176,7 @@ def login(_):
 
 
 def notify(notification):
-    return [no_update, notification, no_update, no_update, no_update, no_update]
+    return [no_update, notification, no_update, no_update, no_update]
 
 
 @app.callback(
