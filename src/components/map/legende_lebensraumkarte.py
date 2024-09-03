@@ -5,6 +5,7 @@ legende_lebensraumkarte = dmc.Affix(
                 id=ID_AFFIX_LEBENSRAUM_LEGENDE,
                 display="none",
                 h=100,
+                zIndex=90,
                 bottom=67,
                 right=45,
                 bg="#ffffff80",
