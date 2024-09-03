@@ -56,6 +56,7 @@ def app_content(args):
     tags         =  init_tags()
 
     return [
+            html.Div(id="test-div"),
             dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
             mitwelten_bannner,
             legende_lebensraumkarte,
@@ -105,23 +106,36 @@ def create_backend_request_to_stay_logged_in(_, avatar_clicks):
 
 @app.callback(
     Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
+    Input(ID_MAP, "center"),
+    State(ID_QUERY_PARAM_STORE, "data"),
+    prevent_initial_call=True,
+)
+def update_map_center_in_url(center, data):
+    if ctx.triggered_id is None:
+        raise PreventUpdate
+
+    return update_query_data(
+            data, { 
+             "lat": center["lat"],
+             "lon": center["lng"],
+             }
+            )
+
+@app.callback(
+    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
     Input(ID_MAP, "clickData"),
     Input(ID_MAP, "zoom"),
     State(ID_QUERY_PARAM_STORE, "data"),
     prevent_initial_call=True,
 )
-def update_query_data_location(click_data, zoom, data):
-    if click_data is None:
+def update_query_data_location(clickData, zoom, data):
+    if ctx.triggered_id is None:
         raise PreventUpdate
 
-    location = click_data["latlng"]
     return update_query_data(
             data,
             { "zoom": zoom,
-             "lat": location["lat"],
-             "lon": location["lng"],
              "node_label": None,
-             "note_id": None,
              "env_id": None,
              }
             )
@@ -187,3 +201,4 @@ clientside_callback(
     Output(ID_TIMEZONE_STORE, "data"),
     Input(ID_TIMEZONE_STORE, "data"),
 )
+

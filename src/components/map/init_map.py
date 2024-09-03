@@ -10,7 +10,7 @@ from src.model.environment import Environment
 from src.model.note import Note
 from src.config import map_config as map_config
 from src.config.id_config import *
-from src.config.map_config import DEFAULT_MAX_ZOOM
+from src.config.map_config import DEFAULT_LAT, DEFAULT_LON, DEFAULT_MAX_ZOOM
 
 # import marker callbacks
 import src.components.map.layer_selection.callbacks
@@ -23,10 +23,7 @@ initial_map = map_config.MAPS[1]
 
 def map_figure(args, active_depl): 
 
-    if active_depl is not None:
-        init_center = [active_depl["location"]["lat"], active_depl["location"]["lon"]]
-    else:
-        init_center = [args.get("lat"), args.get("lon")]
+    initial_center = [args.get("lat", DEFAULT_LAT), args.get("lon", DEFAULT_LON)]
 
     return dl.Map([
 
@@ -57,7 +54,7 @@ def map_figure(args, active_depl):
     dl.LayerGroup(id=ID_INIT_POPUP_LAYER),
     ],
     id=ID_MAP,
-    center=init_center,
+    center=initial_center,
     zoom=int(float(args.get("zoom"))),
     maxZoom=DEFAULT_MAX_ZOOM,
     zoomSnap=0,
