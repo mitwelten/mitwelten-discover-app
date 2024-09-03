@@ -3,7 +3,7 @@ import dash_mantine_components as dmc
 from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 
-def data_drawer_header(title, tags, icon, theme, title_icons=None, info=None):
+def data_drawer_header(title, tags, icon, theme, title_icons=None, info=None, desc=None):
     return dmc.Container([
         dmc.Grid([
             dmc.GridCol(
@@ -17,6 +17,7 @@ def data_drawer_header(title, tags, icon, theme, title_icons=None, info=None):
                             align="center",
                             children=[
                                 dmc.Title(title, order=4),
+                                dmc.Text(desc, c="dimmed", size="xs") if desc else None,
                                 title_icons
                                 ], 
                             ),

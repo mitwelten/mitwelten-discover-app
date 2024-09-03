@@ -22,7 +22,7 @@ from src.main import app
 from src.components.data_drawer.header import data_drawer_header
 
 def create_chart_header_from_source(selected_marker, theme):
-    type = selected_marker["type"]
+    type = selected_marker.get("type")
     if type == "Note":
         header = None
 
@@ -37,7 +37,12 @@ def create_chart_header_from_source(selected_marker, theme):
     else:
         d = Deployment(selected_marker["data"])
         props = get_source_props(d.node_type)
-        header = data_drawer_header(props["name"], d.tags, props["marker"], theme)
+        header = data_drawer_header(
+                title=props["name"], 
+                tags=d.tags, 
+                icon=props["marker"], 
+                theme=theme, 
+                desc=d.node_label)
     return header
 
 
@@ -46,7 +51,7 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
     marker_id      = marker_data.get("id")
     drawer_content = html.Div("Somthing went wrong, not device found!")
     
-    match selected_marker["type"]:
+    match selected_marker.get("type"):
         case "Audio Logger":
             drawer_content = create_audio_chart(marker_data, date_range, theme)
         case "Env Sensor":
@@ -159,7 +164,8 @@ def open_drawer(selected_marker, theme):
     else:
         d = Deployment(selected_marker["data"])
         props = get_source_props(d.node_type)
-        header = data_drawer_header(props["name"], d.tags, props["marker"], theme)
+        selected_marker = dict(data=d.to_dict(), type=d.node_type)    
+        header = create_chart_header_from_source(selected_marker, theme)
 
     return True, no_update, True, header
 

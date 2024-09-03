@@ -7,9 +7,12 @@ from src.model.note import Note
 from src.util.util import apply_newlines, local_formatted_date
 
 
-def header(source_type, title=None):
+def header(source_type, title=None, label=None):
     return [
             html.Div([
+                dmc.Group(
+                    gap="xs",
+                    children=[
                 dmc.Text(
                     get_source_props(source_type)["name"] if title is None else title, 
                     fw=700,
@@ -17,6 +20,8 @@ def header(source_type, title=None):
                     className="note-marker-title",
                     my="0"
                     ),
+                dmc.Text(label, size="xs", c="dimmed", m="0") if label is not None else None,
+                ]),
                 dmc.Image(src=get_source_props(source_type)["marker"], w="16px"),
                 ], style={
                     'display': 'flex',
@@ -56,7 +61,7 @@ def device_popup(deployment, timezone):
     start = local_formatted_date(deployment.period_start, timezone=timezone)
     end   = local_formatted_date(deployment.period_end, timezone=timezone) if deployment.period_end else "-"
     return dmc.Container([
-        *header(deployment.node_type),
+        *header(source_type=deployment.node_type, label=deployment.node_label),
         details("Start", start, "End", end),
     ],
         fluid=True,
