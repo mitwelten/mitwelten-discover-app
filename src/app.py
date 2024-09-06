@@ -44,7 +44,7 @@ def app_content(args):
     # initialize data from backend
     cookies      = flask.request.cookies
 
-    notes        = init_notes(cookies["auth"] if cookies else None)
+    notes        = init_notes(cookies.get("auth") if cookies else None)
 
     environments, legend = init_environment_data()
     env_data     = {"entries": environments, "legend": legend}
@@ -56,7 +56,6 @@ def app_content(args):
     tags         =  init_tags()
 
     return [
-            html.Div(id="test-div"),
             dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
             mitwelten_bannner,
             legende_lebensraumkarte,

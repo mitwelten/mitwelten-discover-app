@@ -4,24 +4,34 @@ from dash import html
 
 from src.config.map_config import get_source_props
 from src.model.note import Note
-from src.util.util import apply_newlines, local_formatted_date
+from src.util.util import apply_newlines, local_formatted_date, text_to_dash_elements
 
 
 def header(source_type, title=None, label=None):
-    return [
-            html.Div([
-                dmc.Group(
-                    gap="xs",
-                    children=[
-                dmc.Text(
+    title = dmc.Text(
                     get_source_props(source_type)["name"] if title is None else title, 
                     fw=700,
                     size="xs", 
                     className="note-marker-title",
-                    my="0"
-                    ),
-                dmc.Text(label, size="xs", c="dimmed", m="0") if label is not None else None,
-                ]),
+                    my="0",
+                    lineClamp=3
+                    )
+
+    if label is not None:
+        title_bar = dmc.Group(
+                grow=True,
+                gap="xs",
+                children=[
+                    title,
+                    dmc.Text(label, size="xs", c="dimmed", m="0") if label is not None else None,
+                    ])
+
+    else:
+        title_bar = title
+
+    return [
+            html.Div([
+                title_bar,
                 dmc.Image(src=get_source_props(source_type)["marker"], w="16px"),
                 ], style={
                     'display': 'flex',
@@ -82,19 +92,12 @@ def environment_popup(environment, timezone):
 
 def note_popup(note: Note, timezone):
     created_at = local_formatted_date(note.date, timezone=timezone)
-    if note.description is not None:
-        description = (note.description[:75] + '...') if len(note.description) > 75 else note.description
-    else:
-        description = "-"
 
     return dmc.Container([
         html.Div(header("Note", note.title)),
-        html.Div(
-            dmc.Text(apply_newlines(description), lineClamp=3, size="xs", m="0"),
-            style={"maxHeight":"70px", "overflow": "hidden", "margin": 0}
-        ),
+        dmc.Text(text_to_dash_elements(note.description), lineClamp=3, size="xs", m="0"),
         dmc.Text(created_at, c="dimmed", size="xs"),
         ],
         fluid=True,
-        style={"width": "220px", "maxHeight": "144px", "overflow": "hidden", "padding": "0px"},
+        style={"width": "220px", "maxHeight": "144px", "padding": "0px"},
     )

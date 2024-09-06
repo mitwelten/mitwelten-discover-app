@@ -35,7 +35,7 @@ def stores(args, deployments, notes, env_data, tags, active_depl):
                data=dict(all=tags)),
 
            dcc.Store(id=ID_DEPLOYMENT_DATA_STORE,    data=deployments),
-           dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=dict(data=active_depl, type=active_depl["node"]["type"] if active_depl else None)),
+           dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=dict(data=active_depl, type=active_depl.get("node", {}).get("type") if active_depl else None)),
            dcc.Store(id=ID_BASE_MAP_STORE,           data=dict(index=args["map"]), storage_type="local"),
            dcc.Store(id=ID_OVERLAY_MAP_STORE,        data=dict(index=args["overlay"]), storage_type="local"),
            dcc.Store(id=ID_PREVENT_MARKER_EVENT,     data=dict(state=False)),

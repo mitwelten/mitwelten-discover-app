@@ -185,7 +185,7 @@ def note_detail_view(note: Note, theme):
             controlsOffset="md",
             withIndicators=True,
             bg=PRIMARY_COLOR,
-            styles={"indicators": {"bottom": 25}},
+            styles={"indicators": {"bottom": 25}, "root": {"height": "300px"}},
             children=[
                 dmc.CarouselSlide(
                     display="flex",
