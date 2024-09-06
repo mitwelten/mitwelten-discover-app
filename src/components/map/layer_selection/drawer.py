@@ -1,5 +1,6 @@
 import dash_mantine_components as dmc
-from dash import html, Output, Input, ALL
+from dash import html, Output, Input, State, ALL
+from dash.exceptions import PreventUpdate
 
 from src.main import app
 from src.config.id_config import *
@@ -72,7 +73,10 @@ def open_bottom_drawer(_):
     Output(ID_MAP_LAYER_BOTTOM_DRAWER, "opened", allow_duplicate=True),
     Input(ID_MAP, "clickData"),
     Input({'role': ALL, 'index': ALL, 'place': "drawer"}, 'n_clicks'),
+    State(ID_MAP_LAYER_BOTTOM_DRAWER, "opened"),
     prevent_initial_call=True,
 )
-def close_bottom_drawer(_1, _2):
+def close_bottom_drawer(_1, _2, drawer_state):
+    if not drawer_state:
+        raise PreventUpdate
     return False

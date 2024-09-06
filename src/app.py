@@ -122,12 +122,11 @@ def update_map_center_in_url(center, data):
 
 @app.callback(
     Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
-    Input(ID_MAP, "clickData"),
     Input(ID_MAP, "zoom"),
     State(ID_QUERY_PARAM_STORE, "data"),
     prevent_initial_call=True,
 )
-def update_query_data_location(clickData, zoom, data):
+def update_query_data_location(zoom, data):
     if ctx.triggered_id is None:
         raise PreventUpdate
 
@@ -184,10 +183,11 @@ for source in SOURCE_PROPS.keys():
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Input(ID_MAP, "clickData"),
     State(ID_EDIT_NOTE_STORE, "data"),
+    State(ID_CHART_DRAWER, "opened"),
     prevent_initial_call=True,
 )
-def map_click(_, selected_note):
-    if selected_note["data"] is not None:
+def map_click(_, selected_note, drawer_state):
+    if selected_note["data"] is not None or not drawer_state:
         raise PreventUpdate
 
     return False, dict(data=None)

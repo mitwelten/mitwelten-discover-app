@@ -193,6 +193,7 @@ def notify(notification):
     State(ID_MAP, "bounds"),
     State(ID_MAP, "center"),
     State(ID_TAG_DATA_STORE, "data"),
+    State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_TIMEZONE_STORE, "data"),
     State(ID_APP_THEME, "forceColorScheme"),
     prevent_initial_call=True
@@ -206,10 +207,13 @@ def create_note_on_map(
         bounds,
         center,
         all_tags,
+        all_notes,
         tz,
         theme
 ):
     if click is None or click == 0:
+        raise PreventUpdate
+    if ctx.triggered_id is None:
         raise PreventUpdate
 
     user = get_user_from_cookies()
@@ -255,10 +259,11 @@ def create_note_on_map(
         return notify(notification(f"Could not create Note - {res.status_code}", NotificationType.WENT_WRONG))
 
     new_note = json.loads(res.content)
-    new_note["id"] = new_note["note_id"]
-    new_note["author"] = user.full_name
+    new_note = Note(new_note)
+    new_note.author = user.full_name
 
-    view = note_view(Note(new_note), theme, tz["tz"], True, all_tags["all"])
+    view = note_view(new_note, theme, tz["tz"], True, all_tags["all"])
+    all_notes["entries"].append(new_note.to_dict())
 
-    return dict(entries=[], type="Note"), no_update, dict(data=new_note), view, True
+    return all_notes, no_update, dict(data=new_note.to_dict()), view, True
 

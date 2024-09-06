@@ -156,10 +156,9 @@ def add_note_markers(active_checkboxes, selected_note, all_notes, tags, timezone
     visible_notes = set()
 
     selected_note_id = None
-
-    if selected_note["data"] is not None:
-        visible_notes.add(Note(selected_note["data"]))
-        selected_note_id = selected_note["data"]["id"]
+    if selected_note is not None and selected_note.get("data") is not None:
+        selected_note = selected_note.get("data")
+        selected_note_id = selected_note.get("id")
 
     for note in all_notes:
         n = Note(note)
@@ -172,8 +171,8 @@ def add_note_markers(active_checkboxes, selected_note, all_notes, tags, timezone
             visible_notes.add(n)
 
         if n.id == selected_note_id:
-            n.lat = selected_note["data"]["location"]["lat"]
-            n.lat = selected_note["data"]["location"]["lon"]
+            n.lat = selected_note.get("location", {}).get("lat")
+            n.lon = selected_note.get("location", {}).get("lon")
 
 
     markers = []
