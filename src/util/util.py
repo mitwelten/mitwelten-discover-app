@@ -64,19 +64,20 @@ def text_to_dash_elements(text):
         return []
     lines = text.split('\n')
 
-    url_pattern = re.compile(
-        r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))" 
-    )
+    markdown_pattern = re.compile(r'\[([^\]]+)\]\(([^)]+)\)')
 
     for line in lines:
         parts = []
         start = 0
 
-        for match in url_pattern.finditer(line):
-            url = match.group(1)
+
+        for match in markdown_pattern.finditer(line):
+            md_link = match.group(0)
+            url = md_link[md_link.find("(")+1:md_link.find(")")]
+            name = md_link[md_link.find("[")+1:md_link.find("]")]
             parts.append(line[start:match.start()])
             href = url if url.startswith('http') else 'http://' + url
-            parts.append(html.A(href=href, children=[url], target="_blank"))
+            parts.append(html.A(href=href, children=name, target="_blank"))
             start = match.end()
 
         parts.append(line[start:])
