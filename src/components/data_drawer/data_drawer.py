@@ -2,8 +2,9 @@ import dash_mantine_components as dmc
 from dash_mantine_components import DEFAULT_THEME
 from dash import Output, Input, html, State, no_update
 from dash.exceptions import PreventUpdate
-from pprint import pprint
 import dash_core_components as dcc
+from src.model.base import BaseDeployment
+from src.model.url_parameter import UrlParameter
 from src.model.environment import Environment
 from src.model.deployment import Deployment
 from src.components.notification.notification import NotificationType, notification
@@ -71,7 +72,7 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
 
 
 
-def chart_drawer(args, device, all_notes, env):
+def chart_drawer(params: UrlParameter, device: BaseDeployment | None, all_notes, env):
     # initially show chart of device, if a node_label is set in the query params
     notes = {}
     notes["entries"] = all_notes
@@ -80,21 +81,13 @@ def chart_drawer(args, device, all_notes, env):
     header = []
     drawer_state = False
     if device is not None:
-        start = args.get("start", None)
-        end   = args.get("end", None)
+        start = params.start
+        end   = params.end
 
-        active_device = {}
-
-        if args.get("node_label") is not None:
-            active_device["type"] = device["node"]["type"]
-            active_device["data"] = device
-        elif args.get("env_id") is not None:
-            active_device["type"] = "Environment"
-            active_device["data"] = device
-        else:
-            active_device["type"] = "Note"
-            active_device["data"] = device
-
+        active_device = dict(
+                type=device.type,
+                data=device.to_dict(),
+                )
 
         chart = create_chart_from_source(
                 active_device,

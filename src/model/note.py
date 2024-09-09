@@ -1,4 +1,4 @@
-
+from src.model.base import BaseDeployment
 from src.model.file import File
 
 empty_note = dict(
@@ -18,15 +18,19 @@ empty_note = dict(
     )
 
 
-class Note:
+class Note(BaseDeployment):
     def __init__(self, json_note):
-        self.id = json_note.get("note_id", json_note.get("id"))
+        id = json_note.get("note_id", json_note.get("id"))
+        location = json_note.get("location", {})
+        lat = location.get("lat")
+        lon = location.get("lon")
+        super().__init__(id, lat, lon, "Note")
+        self.id = id
+        self.lat = lat
+        self.lon = lon
         self.title = json_note.get("title")
         self.description = json_note.get("description")
         self.node_label = json_note.get("node_label")
-        location = json_note.get("location")
-        self.lat = location.get("lat")
-        self.lon = location.get("lon")
         self.tags = (
             [t.get("name") for t in json_note.get("tags")]
             if json_note.get("tags") is not None

@@ -33,7 +33,7 @@ def init_deployment_data():
             all_types_filtered.append(depl_type)
 
 
-    # {type: deployment}
+    # {type: deployments}
     deployment_dict = {}
     for source_type in all_types_filtered:
         deployment_dict[source_type] = [
@@ -55,7 +55,7 @@ def init_environment_data():
 
 
 
-def init_notes(auth_cookie=None):
+def init_notes(auth_cookie=None) -> list[dict]:
     all_notes = get_all_notes(auth_cookie)
     # standardize dictionary properties
     all_notes = [Note(n).to_dict() for n in all_notes]

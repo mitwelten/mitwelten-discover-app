@@ -20,7 +20,7 @@ def safe_reduce(fn: Callable[[T, T], T], iterable: Iterable[T], start: T|None) -
     return accumulator
 
 
-def was_deployed(deployment: Deployment, start_date: str, end_date: str):
+def was_deployed(deployment: Deployment, start_date: str, end_date: str) -> bool:
     selected_start = datetime.fromisoformat(start_date).date()
     selected_end   = datetime.fromisoformat(end_date).date()
 
@@ -40,4 +40,5 @@ def was_deployed(deployment: Deployment, start_date: str, end_date: str):
             return node_start < selected_start and node_end > selected_end
         else:
             return node_start <= selected_end
+    return False
 

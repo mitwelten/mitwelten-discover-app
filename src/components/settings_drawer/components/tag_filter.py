@@ -3,6 +3,7 @@ import re
 import dash_mantine_components as dmc
 from dash import Input, Output, State
 
+from src.model.url_parameter import UrlParameter
 from src.data.init import init_tags
 from src.config.id_config import *
 from src.main import app
@@ -15,8 +16,7 @@ fs_desc = dmc.Stack([
 ], gap="sm")
 
 
-def tag_filter(args):
-    all_tags  = init_tags()
+def tag_filter(params: UrlParameter, all_tags):
     all_tags = [tag["name"] for tag in all_tags]
 
     predicate = re.compile("FS\d")
@@ -28,13 +28,8 @@ def tag_filter(args):
     fs_tags = list(sorted(fs_tags))
 
     tags = sorted([t for t in all_tags if t not in fs_tags])
-    tags_value = args.get("tags")
+    tags_value = params.tags if params.tags is not None else []
 
-    if tags_value is not None:
-        tags_value = tags_value.split("+")
-        tags_value = [x.replace("_", " ") for x in tags_value]
-    else:
-        tags_value = []
     return dmc.TagsInput(
             id=ID_TAGS,
             clearable=False,

@@ -2,6 +2,8 @@ from dash.exceptions import PreventUpdate
 import dash_leaflet as dl
 from dash_extensions.javascript import assign
 from pprint import pprint
+from src.model.base import BaseDeployment
+from src.model.url_parameter import UrlParameter
 from src.main import app
 from dash import Input, Output, State
 
@@ -21,13 +23,20 @@ import dash_core_components as dcc
 
 initial_map = map_config.MAPS[1]
 
-def map_figure(args, active_depl): 
+def map_figure(params: UrlParameter, active_depl: BaseDeployment|None): 
+    print("zoom", params.zoom)
 
-    initial_center = [args.get("lat", DEFAULT_LAT), args.get("lon", DEFAULT_LON)]
+    initial_center = [params.lat, params.lon]
 
     return dl.Map([
 
-    dcc.Store("id-active-depl-store", data=dict(args=args, active_depl=active_depl)),
+    dcc.Store(
+        id="id-active-depl-store", 
+        data=dict(
+            args=params.to_dict(), 
+            active_depl=active_depl.to_dict() if active_depl is not None else None
+            )
+        ),
     dl.TileLayer(
         id=ID_BASE_LAYER_MAP,
         url=initial_map.source,
@@ -55,7 +64,7 @@ def map_figure(args, active_depl):
     ],
     id=ID_MAP,
     center=initial_center,
-    zoom=int(float(args.get("zoom"))),
+    zoom=int(float(params.zoom)),
     maxZoom=DEFAULT_MAX_ZOOM,
     zoomSnap=0,
     doubleClickZoom=False,

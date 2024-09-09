@@ -1,10 +1,9 @@
 import dash_mantine_components as dmc
 from dash_mantine_components import DEFAULT_THEME
-from dash import Output, Input, State
-from dash.exceptions import PreventUpdate
-from pprint import pprint
+from dash import Output, Input
 
 
+from src.model.url_parameter import UrlParameter
 from src.components.settings_drawer.drawer_content import drawer_content
 from src.config.app_config import BACKGROUND_COLOR, SETTINGS_DRAWER_WIDTH
 from src.config.id_config import *
@@ -16,10 +15,10 @@ light = {
         }
 
 
-def settings_drawer(args): 
+def settings_drawer(params: UrlParameter, all_tags): 
     return dmc.Drawer(
             id=ID_SETTINGS_DRAWER,
-            children=drawer_content(args),
+            children=drawer_content(params, all_tags),
             opened=True,
             size=SETTINGS_DRAWER_WIDTH,
             padding="md",

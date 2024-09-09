@@ -19,6 +19,8 @@ from dash import (
 from dash.exceptions import PreventUpdate
 from configuration import DOMAIN_NAME
 
+from src.model.base import BaseDeployment
+from src.model.url_parameter import UrlParameter
 from src.components.button.buttons import control_buttons
 from src.config.id_config import *
 from src.components.map.init_map import map_figure
@@ -35,41 +37,37 @@ from src.main import app
 from src.data.init import init_deployment_data, init_environment_data, init_notes, init_tags
 from src.url.parse import update_query_data, query_data_to_string
 import flask
-from src.url.parse import get_device_from_args
-from src.url.default import set_default_args
-notes = []
+from src.url.parse import get_device_from_params
 
 def app_content(args):
 
     # initialize data from backend
     cookies      = flask.request.cookies
 
+    envs, legend = init_environment_data()
+    env_data     = dict(entries=envs, legend=legend)
     notes        = init_notes(cookies.get("auth") if cookies else None)
-
-    environments, legend = init_environment_data()
-    env_data     = {"entries": environments, "legend": legend}
-
+    tags         = init_tags()
     deployments  = init_deployment_data()
-    active_depl  = None
+    url_params   = UrlParameter(args)
+    print(url_params.to_dict())
 
-    active_depl  = get_device_from_args(args, deployments, notes, environments)
-    tags         =  init_tags()
+    active_depl: BaseDeployment | None = get_device_from_params(url_params, deployments, notes, envs)
 
     return [
             dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
             mitwelten_bannner,
             legende_lebensraumkarte,
-            *stores(args, deployments, notes, env_data, tags, active_depl),
+            *stores(url_params, deployments, notes, env_data, tags, active_depl),
             *control_buttons,
-            map_figure(args, active_depl),
-            chart_drawer(args, active_depl, notes, env_data),
-            settings_drawer(args),
+            map_figure(url_params, active_depl),
+            chart_drawer(url_params, active_depl, notes, env_data),
+            settings_drawer(url_params, tags),
             html.Div(id=ID_NOTIFICATION),
-            ]
+        ]
 
 
 def discover_app(**kwargs): 
-    args = set_default_args(kwargs)
     return dmc.MantineProvider(
             forceColorScheme="light",
             id=ID_APP_THEME,
@@ -79,7 +77,7 @@ def discover_app(**kwargs):
                 html.Div(
                     id=ID_APP_CONTAINER,
                     children=[
-                        *app_content(args),
+                        *app_content(kwargs),
                         dcc.Location(id=ID_URL_LOCATION, refresh=False),
                         ], 
                     ),
@@ -96,7 +94,7 @@ register_page("Mitwelten Discover", layout=discover_app, path="/")
     State(ID_LOGIN_AVATAR_CONTAINER, "n_clicks"),
     prevent_initial_call=True,
 )
-def create_backend_request_to_stay_logged_in(_, avatar_clicks):
+def backend_request_to_stay_logged_in(_, avatar_clicks):
     exp = get_expiration_date_from_cookies()
     if exp is None or exp - time.time() < 0:
         return no_update, avatar_clicks + 1 if avatar_clicks is not None else 0
@@ -106,10 +104,11 @@ def create_backend_request_to_stay_logged_in(_, avatar_clicks):
 @app.callback(
     Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
     Input(ID_MAP, "center"),
+    Input(ID_MAP, "zoom"),
     State(ID_QUERY_PARAM_STORE, "data"),
     prevent_initial_call=True,
 )
-def update_map_center_in_url(center, data):
+def update_map_center_in_url(center, zoom, data):
     if ctx.triggered_id is None:
         raise PreventUpdate
 
@@ -117,24 +116,7 @@ def update_map_center_in_url(center, data):
             data, { 
              "lat": center["lat"],
              "lon": center["lng"],
-             }
-            )
-
-@app.callback(
-    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
-    Input(ID_MAP, "zoom"),
-    State(ID_QUERY_PARAM_STORE, "data"),
-    prevent_initial_call=True,
-)
-def update_query_data_location(zoom, data):
-    if ctx.triggered_id is None:
-        raise PreventUpdate
-
-    return update_query_data(
-            data,
-            { "zoom": zoom,
-             "node_label": None,
-             "env_id": None,
+             "zoom": zoom
              }
             )
 
@@ -181,16 +163,26 @@ for source in SOURCE_PROPS.keys():
 @app.callback(
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
+    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
     Input(ID_MAP, "clickData"),
     State(ID_EDIT_NOTE_STORE, "data"),
     State(ID_CHART_DRAWER, "opened"),
+    State(ID_QUERY_PARAM_STORE, "data"),
     prevent_initial_call=True,
 )
-def map_click(_, selected_note, drawer_state):
+def map_click(_, selected_note, drawer_state, data):
     if selected_note["data"] is not None or not drawer_state:
         raise PreventUpdate
 
-    return False, dict(data=None)
+    new_data = update_query_data(
+            data, { 
+             "node_label": None,
+             "env_id": None,
+             "note_id": None,
+             }
+            )
+
+    return False, dict(data=None), new_data
 
 
 clientside_callback(

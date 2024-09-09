@@ -6,6 +6,7 @@ import dash_mantine_components as dmc
 from dash import html, Output, Input, dcc, State, ctx
 from dash.exceptions import PreventUpdate
 
+from src.model.url_parameter import UrlParameter
 from src.config.app_config import PRIMARY_COLOR
 from src.config.id_config import *
 from src.config.settings_config import DEFAULT_DATE_RANGES
@@ -17,15 +18,14 @@ visible = {"display": "block"}
 not_visible = {"display": "none"}
 
 
-def date_time_section(args):
-    timerange = args.get("timerange")
-    start = args.get("start")
-    end   = args.get("end")
+def date_time_section(params: UrlParameter):
+    timerange = params.timerange
+    start = params.start
+    end = params.end
 
-    if timerange is None:
+    if timerange == "custom":
         label_start = ""
         label_end   = ""
-        timerange = "custom"
     else:
         label_start = local_formatted_date(datetime.isoformat(datetime.now() - timedelta(weeks=int(timerange))), date_format="%d %b %Y")
         label_end   = local_formatted_date(datetime.isoformat(datetime.now()), date_format="%d %b %Y")

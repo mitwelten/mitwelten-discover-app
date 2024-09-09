@@ -7,7 +7,7 @@ from src.config.id_config import *
 from src.main import app
 
 
-def general_controls(args):
+def general_controls():
     return dmc.Group(
             justify="space-between",
             gap="xs",

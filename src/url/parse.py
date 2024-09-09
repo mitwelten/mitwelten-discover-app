@@ -1,63 +1,56 @@
+from src.model.environment import Environment
+from src.model.note import Note
+from src.model.url_parameter import UrlParameter
 from src.model.deployment import Deployment
 from src.util.helper_functions import was_deployed
 from src.config.app_config import QUERY_PARAMS
 
-def get_device_from_args(args, deployments, notes, env_data):
-    types = {
-            "node_label": deployments, 
-            "note_id": notes, 
-            "env_id": env_data
-            }
+# deployments = {"type": [deployments]}
+def get_device_from_deployments(params: UrlParameter, deployments):
+    all_deployments = []
 
-    names      = list(types.keys())
-    active_idx = 0
-    active_id  = args.get(names[active_idx])
+    for key in deployments.keys():
+        all_deployments += deployments[key]
 
-    i = 1
-    while i < len(names) and active_id == None:
-        current_id = args.get(names[i])
-        if current_id is not None:
-            active_id = current_id
-            active_idx = i
-        i += 1
+    canditates: list[Deployment] = []
+    for depl in all_deployments:
+        d = Deployment(depl)
+        if d.node_label == params.node_label:
+            canditates.append(d)
 
-    if active_id == None:
-        return None
-
-    active_name = names[active_idx]
+    canditates = list(filter(lambda x: was_deployed(x, params.start, params.end), canditates))
+    canditates = sorted(canditates, key=lambda x: x.period_start)
+    if len(canditates) > 0:
+        print("candidate", canditates)
+        print("most recent", canditates[-1].to_dict())
+        return canditates[-1]
+    return None
 
 
-    is_deployment = active_name == "node_label"
-    elems = []
+def get_device_from_notes(params: UrlParameter, notes):
+    for note in notes:
+        if params.note_id == str(note["id"]):
+            return Note(note)
 
-    if is_deployment:
-        for key in deployments.keys():
-            elems += deployments[key]
+
+def get_device_from_env(params: UrlParameter, envs):
+    for env in envs:
+        if params.env_id == str(env["id"]):
+            return Environment(env)
+
+
+def get_device_from_params(params: UrlParameter, deployments, notes, env):
+    if params.node_label is not None:
+        return get_device_from_deployments(params, deployments)
+    elif params.note_id is not None:
+        return get_device_from_notes(params, notes)
+    elif params.env_id is not None:
+        return get_device_from_env(params, env)
     else:
-        elems = types[active_name]
+        return None
+    
 
-    current_id = None
-    index      = 0
-    found      = False
-    while not found and index < len(elems):
-        if is_deployment:
-            current_id = elems[index]["node"][active_name]
-        else:
-            current_id = elems[index]["id"]
-
-        if str(current_id) == str(active_id):
-            if is_deployment:
-                d = Deployment(elems[index])
-                found = was_deployed(d, args["start"], args["end"])
-            else:
-                found = True
-
-        index += 1
-    return elems[index - 1] if index < len(elems) + 1 else None
-
-
-def get_value_or_none(param, data):
-
+def _get_value_or_none(param, data):
     if data.get(param) is not None and data[param]:
         if isinstance(data[param], list):
             return f"{param}={','.join(data[param])}"
@@ -67,7 +60,6 @@ def get_value_or_none(param, data):
 
 
 def query_data_to_string(data):
-
     # special case: if timerange is set, remove start and end (happens on startup)
     if data.get("timerange") is not None:
         if data.get("start") is not None:
@@ -77,8 +69,9 @@ def query_data_to_string(data):
 
     params : list[str] = []
 
+    # TODO: replace keys with class attributes
     for key in QUERY_PARAMS.keys():
-        param = get_value_or_none(key, data)
+        param = _get_value_or_none(key, data)
         if param is not None and param != "":
             params.append(param)
 

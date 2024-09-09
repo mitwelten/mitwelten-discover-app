@@ -1,6 +1,7 @@
 import dash_mantine_components as dmc
 from dash import html, Output, Input, State
 
+from src.model.url_parameter import UrlParameter
 from src.config.id_config import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
 from src.main import app
@@ -20,16 +21,9 @@ def get_checkbox_by_type(node_type: str):
     )
 
 
-def source_filter(args):
+def source_filter(params: UrlParameter):
 
-    #active = list(SOURCE_PROPS.keys())
-    active = args.get("devices")
-    if active is not None:
-        active = active.split("+")
-        active = [x.replace("_", " ") for x in active]
-    else:
-        active = list(SOURCE_PROPS.keys())
-
+    active = list(SOURCE_PROPS.keys()) if params.devices is None else params.devices
     source_types = [get_checkbox_by_type(x) for x in  SOURCE_PROPS.keys()]
 
     return html.Div([

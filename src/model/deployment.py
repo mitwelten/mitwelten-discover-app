@@ -1,23 +1,34 @@
-class Deployment:
+from src.model.base import BaseDeployment
+
+
+class Deployment(BaseDeployment):
 
     def __init__(self, json_deployment: dict):
-        self.id = json_deployment.get("deployment_id", json_deployment.get("id"))
+        id = json_deployment.get("deployment_id", json_deployment.get("id"))
+
+        location = json_deployment.get("location", {})
+        lat = location.get("lat")
+        lon = location.get("lon")
+
+        node_type = json_deployment.get("node", {}).get("type").replace(".","")  # replace the dot (.) in Env. Sensor, based on callback issues
+
+        super().__init__(id, lat, lon, node_type)
+
+        self.id = id
         description = json_deployment.get("description")
         self.description = description if description else ""
-        self.node_label = json_deployment.get("node").get("node_label")
-        self.node_type = json_deployment.get("node").get("type").replace(".","")
-        self.node_type = self.node_type.replace(".","")  # replace the dot (.) in Env. Sensor, based on callback issues
-        period = json_deployment.get("period")
+        self.node_label = json_deployment.get("node", {}).get("node_label")
+        self.node_type = node_type
+        period = json_deployment.get("period", {})
         self.period_start = period.get("start")
         self.period_end = period.get("end")
         self.tags = (
-            [t.get("name") for t in json_deployment.get("tags")]
+            [t.get("name") for t in json_deployment.get("tags", {})]
             if json_deployment.get("tags") is not None
             else []
         )
-        location = json_deployment.get("location")
-        self.lat = location.get("lat")
-        self.lon = location.get("lon")
+        self.lat = lat
+        self.lon = lon
 
     def __str__(self):
         return f"id: {self.id}\n" \

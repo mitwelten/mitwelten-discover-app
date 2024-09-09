@@ -1,10 +1,18 @@
-class Environment:
+from src.model.base import BaseDeployment
+
+
+class Environment(BaseDeployment):
 
     def __init__(self, environment_json: dict):
-        self.id = environment_json.get("environment_id", environment_json.get("id"))
-        location = environment_json.get("location")
-        self.lat = location.get("lat")
-        self.lon = location.get("lon")
+
+        id = environment_json.get("environment_id", environment_json.get("id"))
+        location = environment_json.get("location", {})
+        lat = location.get("lat")
+        lon = location.get("lon")
+        super().__init__(id, lat, lon, "Environment")
+        self.lat = lat
+        self.lon = lon
+        self.id = id
         self.created_at = environment_json.get("created_at")
         self.updated_at = environment_json.get("updated_at")
         self.attribute_01 = location.get("attribute_01")
