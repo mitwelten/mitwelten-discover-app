@@ -1,4 +1,5 @@
 import dash_leaflet as dl
+import re
 from dash import (
     Output,
     Input,
@@ -7,6 +8,7 @@ from dash import (
     ALL,
     clientside_callback,
     ClientsideFunction,
+    no_update
 )
 from dash.exceptions import PreventUpdate
 from dash_extensions.javascript import assign
@@ -31,14 +33,17 @@ popup_events=dict(
 
 @app.callback(
     Output(ID_MAP_LAYER_GROUP, "children"),
+    Output(ID_VISIBLE_DEPLOYMENT_STORE, "data"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_TAGS, "value"),
     Input(ID_DATE_RANGE_STORE, "data"),
     Input({"role": ALL, "label": "Store", "type": "physical"}, "data"),
     Input(ID_TIMEZONE_STORE, "data"),
+    Input("id-device-select", "value"),
+    State(ID_DEVICE_FILTER_STORE, "data"),
     prevent_initial_call=True
 )
-def add_device_markers(checkboxes, tags, time_range, sources, timezone):
+def add_device_markers(checkboxes, tags, time_range, sources, timezone, device_select, active_device):
     """
     Changes the visible markers of the "physical" devices on the map.
     This callback is mainly triggered by adjusting the filter settings.
@@ -51,15 +56,20 @@ def add_device_markers(checkboxes, tags, time_range, sources, timezone):
     :return: The map layer containing all current visible markers with the selected settings.
     """
 
+    if active_device.get("id") is not None:
+        device_select = active_device.get("id")
+
     deployment_data = {}
     for source in sources:
         deployment_data[source["type"]] = source["entries"]
 
     checkboxes = list(filter(lambda c: c in deployment_data.keys(), checkboxes))
 
-    visible_deployments = []
+    visible_deployments: list[Deployment] = []
     if tags is None:
         tags = []
+
+    predicate = re.compile(r'\d{4}-\d{4}')
 
     # type filter
     for active in checkboxes:
@@ -77,6 +87,8 @@ def add_device_markers(checkboxes, tags, time_range, sources, timezone):
 
     # time filter
         visible_deployments = list(filter(lambda x: was_deployed(x, time_range["start"], time_range["end"]), visible_deployments))
+        if device_select is not None and predicate.match(device_select):
+            visible_deployments = list(filter(lambda x: x.node_label == device_select, visible_deployments))
 
     markers = []
 
@@ -99,22 +111,38 @@ def add_device_markers(checkboxes, tags, time_range, sources, timezone):
                     )
             )
 
-    return markers
-
+    if ctx.triggered_id == "id-device-select" and device_select is not None:
+        return markers, no_update
+    return markers, dict(deployments=[d.node_label for d in visible_deployments])
 
 @app.callback(
     Output(ID_ENV_LAYER_GROUP, "children"),
+    Output(ID_VISIBLE_ENV_STORE, "data"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input({"role": "Environment", "label": "Store", "type": "virtual"}, "data"),
     Input(ID_TIMEZONE_STORE, "data"),
+    Input("id-device-select", "value"),
+    State(ID_VISIBLE_ENV_STORE, "data"),
+    State(ID_DEVICE_FILTER_STORE, "data"),
     prevent_initial_call=True
 )
-def add_environment_markers(active_checkboxes, all_environments, timezone):
+def add_environment_markers(active_checkboxes, all_environments, timezone, device_select, env_store, active_device):
     if "Environment" not in active_checkboxes:
-        return []
+        if env_store.get("envs") == []:
+            return [], no_update
+        return [], dict(envs=[])
 
+    if active_device.get("id") is not None:
+        device_select = active_device.get('id')
+
+    envs = all_environments["entries"]
     markers = []
-    for env in all_environments["entries"]:
+
+    if device_select is not None and device_select.startswith("env-"):
+        device_select_str = device_select.split("-")[1]
+        envs = list(filter(lambda x: str(x["id"]) == device_select_str, envs))
+
+    for env in envs:
         env = Environment(env)
         marker = dl.Marker(
                 position=[env.lat, env.lon],
@@ -133,21 +161,32 @@ def add_environment_markers(active_checkboxes, all_environments, timezone):
                 )
         markers.append(marker)
 
-    return markers
+    if ctx.triggered_id == "id-device-select" and device_select is not None:
+        return markers, no_update
+    return markers, dict(envs=[env.get("id") for env in all_environments["entries"]])
 
 
 @app.callback(
     Output(ID_NOTES_LAYER_GROUP, "children"),
+    Output(ID_VISIBLE_NOTE_STORE, "data"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_EDIT_NOTE_STORE, "data"),
     Input({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     Input(ID_TAGS, "value"),
     Input(ID_TIMEZONE_STORE, "data"),
+    Input("id-device-select", "value"),
+    State(ID_VISIBLE_NOTE_STORE, "data"),
+    State(ID_DEVICE_FILTER_STORE, "data"),
     prevent_initial_call=True
 )
-def add_note_markers(active_checkboxes, selected_note, all_notes, tags, timezone):
+def add_note_markers(active_checkboxes, selected_note, all_notes, tags, timezone, device_select, note_store, active_device):
     if "Note" not in active_checkboxes:
-        return []
+        if note_store.get("notes") == []:
+            return [], no_update
+        return [], dict(notes=[])
+
+    if active_device.get("id") is not None:
+        device_select = active_device.get('id')
 
     marker_icon           = dict(iconUrl=get_source_props("Note")["marker"], iconAnchor=[15, 6],  iconSize=[30, 30])
     marker_icon_draggable = dict(iconUrl="assets/markers/docu_move.svg",     iconAnchor=[31, 14], iconSize=[60, 60])
@@ -159,6 +198,11 @@ def add_note_markers(active_checkboxes, selected_note, all_notes, tags, timezone
     if selected_note is not None and selected_note.get("data") is not None:
         selected_note = selected_note.get("data")
         selected_note_id = selected_note.get("id")
+
+
+    if device_select is not None and device_select.startswith("note-"):
+        device_select_str = device_select.split("-")[1]
+        all_notes = list(filter(lambda x: str(x["id"]) == device_select_str, all_notes))
 
     for note in all_notes:
         n = Note(note)
@@ -198,7 +242,10 @@ def add_note_markers(active_checkboxes, selected_note, all_notes, tags, timezone
                 id={"role": "Note", "id": note.id, "label": "Node"},
             )
         )
-    return markers
+
+    if ctx.triggered_id == "id-device-select" and device_select is not None:
+        return markers, no_update
+    return markers, dict(notes=[n.id for n in visible_notes])
 
 
 clientside_callback(
@@ -212,7 +259,6 @@ clientside_callback(
 
 @app.callback(
     Output(ID_MAP, "viewport", allow_duplicate=True),
-    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
     Input(ID_SELECTED_MARKER_STORE, "data"),
     Input(ID_CHART_DRAWER, "size"),
     State(ID_BROWSER_PROPERTIES_STORE, "data"),
@@ -222,7 +268,6 @@ clientside_callback(
     State(ID_MAP, "bounds"),
     State(ID_MAP, "zoom"),
     State(ID_MAP, "center"),
-    State(ID_QUERY_PARAM_STORE, "data"),
     prevent_initial_call=True,
 )
 def ensure_marker_visibility_in_viewport(
@@ -235,7 +280,6 @@ def ensure_marker_visibility_in_viewport(
     bounds,
     zoom,
     center,
-    query_data,
 ):
     if marker is None:
         raise PreventUpdate
@@ -295,15 +339,7 @@ def ensure_marker_visibility_in_viewport(
 
     new_center = [center["lat"] + (move_required[0] * -1), center["lng"] + (move_required[1] * -1)]
 
-    updated_query_params = update_query_data(
-            query_data,
-            { "zoom": zoom,
-             "lat": new_center[0],
-             "lon": new_center[1],
-             }
-            )
-
-    return dict(center=new_center, zoom=zoom, transition="flyTo"), updated_query_params
+    return dict(center=new_center, zoom=zoom, transition="flyTo")
 
 
 

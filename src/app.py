@@ -21,7 +21,7 @@ from configuration import DOMAIN_NAME
 
 from src.model.base import BaseDeployment
 from src.model.url_parameter import UrlParameter
-from src.components.button.buttons import control_buttons
+from src.components.button.buttons import floating_buttons
 from src.config.id_config import *
 from src.components.map.init_map import map_figure
 from src.components.map.banner import mitwelten_bannner
@@ -50,8 +50,6 @@ def app_content(args):
     tags         = init_tags()
     deployments  = init_deployment_data()
     url_params   = UrlParameter(args)
-    print(url_params.to_dict())
-
     active_depl: BaseDeployment | None = get_device_from_params(url_params, deployments, notes, envs)
 
     return [
@@ -59,10 +57,10 @@ def app_content(args):
             mitwelten_bannner,
             legende_lebensraumkarte,
             *stores(url_params, deployments, notes, env_data, tags, active_depl),
-            *control_buttons,
+            *floating_buttons,
             map_figure(url_params, active_depl),
             chart_drawer(url_params, active_depl, notes, env_data),
-            settings_drawer(url_params, tags),
+            settings_drawer(url_params, tags, active_depl),
             html.Div(id=ID_NOTIFICATION),
         ]
 
@@ -99,27 +97,6 @@ def backend_request_to_stay_logged_in(_, avatar_clicks):
     if exp is None or exp - time.time() < 0:
         return no_update, avatar_clicks + 1 if avatar_clicks is not None else 0
     raise PreventUpdate
-
-
-@app.callback(
-    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
-    Input(ID_MAP, "center"),
-    Input(ID_MAP, "zoom"),
-    State(ID_QUERY_PARAM_STORE, "data"),
-    prevent_initial_call=True,
-)
-def update_map_center_in_url(center, zoom, data):
-    if ctx.triggered_id is None:
-        raise PreventUpdate
-
-    return update_query_data(
-            data, { 
-             "lat": center["lat"],
-             "lon": center["lng"],
-             "zoom": zoom
-             }
-            )
-
 
 @app.callback(
     Output(ID_URL_LOCATION, "search", allow_duplicate=True),
@@ -182,7 +159,28 @@ def map_click(_, selected_note, drawer_state, data):
              }
             )
 
-    return False, dict(data=None), new_data
+    note_store = no_update if selected_note["data"] is None else dict(data=None)
+    return False, note_store, new_data
+
+
+@app.callback(
+    Output(ID_QUERY_PARAM_STORE, "data", allow_duplicate=True),
+    Input(ID_MAP, "center"),
+    Input(ID_MAP, "zoom"),
+    State(ID_QUERY_PARAM_STORE, "data"),
+    prevent_initial_call=True,
+)
+def update_map_center_in_url(center, zoom, data):
+    if ctx.triggered_id is None:
+        raise PreventUpdate
+
+    return update_query_data(
+            data, { 
+             "lat": center["lat"],
+             "lon": center["lng"],
+             "zoom": zoom
+             }
+            )
 
 
 clientside_callback(

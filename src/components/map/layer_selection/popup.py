@@ -1,3 +1,4 @@
+from os.path import join
 import dash_mantine_components as dmc
 from dash import html
 
@@ -36,7 +37,10 @@ def map_menu_popup(id_prefix):
                 )
 
     return dmc.Container(
-            dmc.Menu([
+            visibleFrom="sm",
+            p=0,
+            m=0,
+            children=dmc.Menu([
                     dmc.MenuTarget(
                         action_button(icon="material-symbols:layers-outline"),
                         ),
@@ -50,6 +54,4 @@ def map_menu_popup(id_prefix):
                 arrowOffset=15,
                 zIndex=500000,
                 ),
-            visibleFrom="sm",
-            style={"padding": "0"}
             )

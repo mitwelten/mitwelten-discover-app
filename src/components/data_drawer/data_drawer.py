@@ -1,6 +1,6 @@
 import dash_mantine_components as dmc
 from dash_mantine_components import DEFAULT_THEME
-from dash import Output, Input, html, State, no_update
+from dash import Output, Input, html, State, no_update, ctx
 from dash.exceptions import PreventUpdate
 import dash_core_components as dcc
 from src.model.base import BaseDeployment
@@ -176,7 +176,7 @@ def open_drawer(selected_marker, theme):
     prevent_initial_call=True
 )
 def update_drawer_content_from_marker_store(selected_marker, date_range, theme, notes, environment_data, tz):
-    if selected_marker is None:
+    if selected_marker.get("data") is None or ctx.triggered_id is None:
         raise PreventUpdate
 
     drawer_content = create_chart_from_source(

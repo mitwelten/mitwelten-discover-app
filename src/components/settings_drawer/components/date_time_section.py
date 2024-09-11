@@ -20,6 +20,7 @@ not_visible = {"display": "none"}
 
 def date_time_section(params: UrlParameter):
     timerange = params.timerange
+
     start = params.start
     end = params.end
 

@@ -15,10 +15,10 @@ light = {
         }
 
 
-def settings_drawer(params: UrlParameter, all_tags): 
+def settings_drawer(params: UrlParameter, all_tags, active_device): 
     return dmc.Drawer(
             id=ID_SETTINGS_DRAWER,
-            children=drawer_content(params, all_tags),
+            children=drawer_content(params, all_tags, active_device),
             opened=True,
             size=SETTINGS_DRAWER_WIDTH,
             padding="md",
@@ -27,7 +27,6 @@ def settings_drawer(params: UrlParameter, all_tags):
             lockScroll=False,
             bg=BACKGROUND_COLOR,
             styles={"body": {"height": "calc(100vh - 60px)"}, **light} # 60px of drawer header
-
 )
 
 

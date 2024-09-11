@@ -1,4 +1,5 @@
 from dash.dash import flask
+from src.config.app_config import CHART_DRAWER_HEIGHT, PRIMARY_COLOR
 import dash_mantine_components as dmc
 from dash import Output, Input, html, State, no_update, ctx
 from dash.exceptions import PreventUpdate
@@ -57,15 +58,18 @@ info_dialog = dmc.Modal(
         )
 
 
-login_button = dmc.Anchor(
-    action_button(button_id="", icon="material-symbols:login"),
-    id=ID_LOGIN_BUTTON_HREF,
-    href=f"{DOMAIN_NAME}/login?lat=47.52&lon=7.61"
-)
+login_button = dmc.Tooltip(
+        label="Login",
+        children=dmc.Anchor(
+            action_button(button_id="", icon="material-symbols:login"),
+            id=ID_LOGIN_BUTTON_HREF,
+            href=f"{DOMAIN_NAME}/login?lat=47.52&lon=7.61"
+            )
+        )
 
 def create_avatar(user):
     return dmc.HoverCard([
-        dmc.HoverCardTarget(dmc.Avatar(user.initials, radius="xl", color=PRIMARY_COLOR, variant="filled")),
+        dmc.HoverCardTarget(dmc.Avatar(user.initials, size=35, radius="xl", color=PRIMARY_COLOR, variant="filled")),
         dmc.HoverCardDropdown([
             dmc.Stack([
                 dmc.Avatar(user.initials, size="60px", radius="xl", color=PRIMARY_COLOR, variant="filled"),
@@ -73,16 +77,17 @@ def create_avatar(user):
                 dmc.Text(user.username, c="dimmed"),
                 dmc.Divider(size="md", color="black"),
                 dmc.Anchor(
-
                     dmc.Button(
                         "Logout",
-                        rightSection=DashIconify(icon="material-symbols:logout"),
+                        rightSection=DashIconify(
+                            icon="material-symbols:logout"
+                            ),
                         variant="filled",
                         fullWidth=True,
-                    ),
+                        ),
                     href="/logout",
                     refresh=True
-                )
+                    )
             ],
                 align="center"
             )
@@ -98,9 +103,7 @@ def create_avatar(user):
         styles={"display": "none"}
     )
 
-
-control_buttons = [
-            dmc.ActionIcon(
+settings_button= dmc.ActionIcon(
                 DashIconify(
                     icon="material-symbols:menu",
                     width=20,
@@ -110,17 +113,19 @@ control_buttons = [
                 id=ID_OPEN_SETTINGS_DRAWER_BUTTON,
                 radius="xl",
                 style={"position": "absolute", "top": 20, "left": 20, "zIndex":100},
-                ),
-        dmc.Group([
-            html.Div(
-                id=ID_LOGIN_AVATAR_CONTAINER
-                ),
-            login_button,
-            action_button(
-                button_id=ID_ADD_NOTE_BUTTON, 
-                icon="material-symbols:add-comment-outline"
-                ),
-            dmc.ActionIcon(
+                )
+
+add_note_button = dmc.Tooltip(
+        label="Add a new Note",
+        children=action_button(
+            button_id=ID_ADD_NOTE_BUTTON, 
+            icon="material-symbols:add-comment-outline"
+            )
+        )
+map_selection_bottom_drawer_button = dmc.Tooltip(
+        label="Select map layers",
+        hiddenFrom="sm",
+        children=dmc.ActionIcon(
                 DashIconify(
                     icon="material-symbols:layers-outline",
                     width=20,
@@ -132,21 +137,37 @@ control_buttons = [
                 radius="xl",
                 style={"zIndex":100},
                 hiddenFrom="sm"
-                ),
-            dmc.Drawer(
-                map_menu_drawer("drawer"),
-                id=ID_MAP_LAYER_BOTTOM_DRAWER,
-                size=400,
-                zIndex=90000,
-                position="bottom",
-                withOverlay=True,
-                closeOnClickOutside=True,
-                hiddenFrom="sm",
-                ),
-            map_menu_popup("menu"),
-            action_button(button_id=ID_INFO_DIALOG_BUTTON, icon="material-symbols:info-i"),
-            info_dialog
-            ], id=ID_FAB_CONTAINER)
+                )
+        )
+
+floating_buttons = [
+        settings_button,
+        dmc.Group(
+            gap="xs",
+            id=ID_FAB_CONTAINER,
+            children=[
+                html.Div(id=ID_LOGIN_AVATAR_CONTAINER),
+                login_button,
+                add_note_button,
+                map_selection_bottom_drawer_button,
+                dmc.Drawer(
+                    map_menu_drawer("drawer"),
+                    id=ID_MAP_LAYER_BOTTOM_DRAWER,
+                    size=400,
+                    zIndex=90000,
+                    position="bottom",
+                    withOverlay=True,
+                    closeOnClickOutside=True,
+                    hiddenFrom="sm",
+                    ),
+                map_menu_popup("menu"),
+                dmc.Tooltip(
+                    label="More Information",
+                    children=action_button(button_id=ID_INFO_DIALOG_BUTTON, icon="material-symbols:info-i")
+                    ),
+                info_dialog
+                ]
+            )
         ]
 
 @app.callback(

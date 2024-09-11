@@ -6,6 +6,7 @@ from src.components.settings_drawer.components.date_time_section import date_tim
 from src.components.settings_drawer.components.general_controls import general_controls
 from src.components.settings_drawer.components.source_filter import source_filter
 from src.components.settings_drawer.components.tag_filter import tag_filter
+from src.components.settings_drawer.components.device_filter import device_filter
 from src.config.id_config import *
 
 
@@ -36,7 +37,7 @@ title = dmc.Center(
             )
         )
 
-def drawer_content(params: UrlParameter, all_tags): 
+def drawer_content(params: UrlParameter, all_tags, active_device): 
     return dmc.Container(
             children=[
                 dmc.ScrollArea(
@@ -51,6 +52,8 @@ def drawer_content(params: UrlParameter, all_tags):
                         source_filter(params),
                         divider("Tags"),
                         tag_filter(params, all_tags),
+                        divider("Node ID"),
+                        device_filter(active_device),
                         dmc.Space(h=10),
                         general_controls(),
                         ]),

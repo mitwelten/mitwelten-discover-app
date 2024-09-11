@@ -3,8 +3,6 @@ from dash.exceptions import PreventUpdate
 from dash import Output, Input, State, ctx
 
 
-from src.model.environment import Environment
-from src.model.note import Note
 from src.model.url_parameter import UrlParameter
 from src.components.data_drawer.types.pollinator import *
 from src.config.map_config import SOURCE_PROPS, get_source_props
@@ -14,6 +12,15 @@ from src.url.parse import update_query_data
 
 
 def stores(params: UrlParameter, deployments, notes, env_data, tags, active_depl):
+    if params.node_label is not None:
+        active_id = params.node_label
+    elif params.note_id is not None:
+        active_id = f"note-{params.note_id}"
+    elif params.env_id is not None:
+        active_id = f"env-{params.env_id}"
+    else:
+        active_id = None
+
     all_sources = [
             source for source in SOURCE_PROPS.keys() 
             if get_source_props(source)["type"] == "physical"
@@ -46,6 +53,10 @@ def stores(params: UrlParameter, deployments, notes, env_data, tags, active_depl
            dcc.Store(id=ID_BROWSER_PROPERTIES_STORE, data=None),
            dcc.Store(id=ID_QUERY_PARAM_STORE,        data=params.to_dict()),
            dcc.Store(id=ID_TIMEZONE_STORE),
+           dcc.Store(id=ID_VISIBLE_DEPLOYMENT_STORE, data=dict(deployments=[])),
+           dcc.Store(id=ID_VISIBLE_NOTE_STORE,       data=dict(notes=[])),
+           dcc.Store(id=ID_VISIBLE_ENV_STORE,        data=dict(envs=[])),
+           dcc.Store(id=ID_DEVICE_FILTER_STORE,      data=dict(id=active_id)),
            ]
 
 @app.callback(
@@ -54,7 +65,6 @@ def stores(params: UrlParameter, deployments, notes, env_data, tags, active_depl
     prevent_initial_call=True,
 )
 def refresh_notes_from_backend(data):
-    print("refresh_notes_from_backend", data)
 
     if ctx.triggered_id == None:
         raise PreventUpdate
@@ -104,7 +114,7 @@ def update_url(marker, data):
         name = "node_label"
         id = marker["data"]["node"]["node_label"]
 
-    update_query_data(
+    data = update_query_data(
             data, 
             {
                 "node_label": None,
@@ -112,5 +122,6 @@ def update_url(marker, data):
                 "env_id": None,
              }
             )
+
     return update_query_data(data, {name: id})
 

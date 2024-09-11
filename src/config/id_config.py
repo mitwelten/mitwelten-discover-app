@@ -49,6 +49,10 @@ ID_BLOB_URLS_STORE = "id-blob-urls-store"
 ID_NOTE_FILE_STORE = "id-note-file-store"
 ID_QUERY_PARAM_STORE = "id-query-param-store"
 ID_TIMEZONE_STORE = "id-timezone-store"
+ID_VISIBLE_DEPLOYMENT_STORE = "id-visible-deployment-store"
+ID_VISIBLE_NOTE_STORE = "id-visible-note-store"
+ID_VISIBLE_ENV_STORE = "id-visible-env-store"
+ID_DEVICE_FILTER_STORE = "id-device-filter-store"
 ID_TAGS = "id-tags"
 
 # node types
