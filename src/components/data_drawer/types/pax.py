@@ -12,7 +12,7 @@ def create_pax_chart(marker_data, date_range, theme):
     d = Deployment(marker_data)
     resp = get_pax_timeseries(
         deployment_id=d.id,
-        bucket_width="1d",
+        bucket_width="15min",
         time_from=date_range["start"],
         time_to=date_range["end"]
     )
@@ -27,18 +27,15 @@ def create_pax_chart(marker_data, date_range, theme):
             xaxis={"visible": True},
             yaxis={"visible": True},
         )
-        timeseries = pd.bdate_range(date_range["start"], date_range["end"], tz="UTC", freq="D")
-        empty_head = [0] * (pd.to_datetime(resp["buckets"][0]) - pd.to_datetime(timeseries[0])).days
-        empty_tail = [0] * (pd.to_datetime(timeseries[-1]) - pd.to_datetime(resp["buckets"][-1])).days
-        pax_data = []
-
-        pax_data.extend(empty_head)
-        pax_data.extend(resp["pax"])
-        pax_data.extend(empty_tail)
+        timeseries = pd.bdate_range(date_range["start"], date_range["end"], tz="UTC", freq="15min")
+        daten_df = pd.DataFrame(resp)
+        daten_df['buckets'] = pd.to_datetime(daten_df['buckets'])
+        full_df = pd.DataFrame(timeseries, columns=['buckets'])
+        full_df = full_df.set_index('buckets').join(daten_df.set_index('buckets')).reset_index()
 
         figure.add_trace(go.Bar(
-            x=timeseries,
-            y=pax_data,
+            x=full_df["buckets"],
+            y=full_df["pax"],
         ))
     graph = dcc.Graph(
         figure=figure,
