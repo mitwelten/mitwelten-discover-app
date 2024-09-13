@@ -32,7 +32,7 @@ popup_events=dict(
 ) 
 
 @app.callback(
-    Output(ID_MAP_LAYER_GROUP, "children"),
+    Output(ID_DEPLOYMENT_LAYER_GROUP, "children"),
     Output(ID_VISIBLE_DEPLOYMENT_STORE, "data"),
     Input(ID_TYPE_CHECKBOX_GROUP, "value"),
     Input(ID_TAGS, "value"),

@@ -79,7 +79,7 @@ ID_CHART_DRAWER = "id-chart-drawer"
 ID_ENVIRONMENT_CHECKBOX = "id-environment-checkbox"
 
 # map selection & handling
-ID_MAP_LAYER_GROUP = "id-map-data-layer"
+ID_DEPLOYMENT_LAYER_GROUP = "id-map-data-layer"
 ID_ENV_LAYER_GROUP = "id-env-data-layer"
 ID_HIGHLIGHT_LAYER_GROUP = "id-highlight-data-layer"
 ID_NOTES_LAYER_GROUP = "id-notes-data-layer"
