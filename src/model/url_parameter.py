@@ -21,7 +21,7 @@ class UrlParameter():
 
         self.lat = json.get("lat", DEFAULT_LAT)
         self.lon = json.get("lon", DEFAULT_LON)
-        self.zoom = json.get("zoom", 12)
+        self.zoom = int(float(json.get("zoom", 12)))
         self.devices = self.parse_param_list(json, "devices")
         self.tags = self.parse_param_list(json, "tags")
         self.node_label = json.get("node_label")

@@ -12,7 +12,7 @@ body {
     top: calc(100vh - 180px);
 }
 
-.leaflet-control {
+.leaflet-control-layers {
   visibility: hidden;
 }
 

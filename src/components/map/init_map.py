@@ -63,7 +63,7 @@ def map_figure(params: UrlParameter, active_depl: BaseDeployment|None):
         ),
 
     dl.LayersControl(
-        id="layer-control",
+        id="id-layer-control",
         children=[
             dl.TileLayer(
                 id=ID_BASE_LAYER_MAP,

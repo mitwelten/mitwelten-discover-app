@@ -178,7 +178,7 @@ def update_map_center_in_url(center, zoom, data):
             data, { 
              "lat": center["lat"],
              "lon": center["lng"],
-             "zoom": zoom
+             "zoom": int(zoom)
              }
             )
 
