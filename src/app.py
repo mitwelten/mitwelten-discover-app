@@ -82,7 +82,7 @@ def discover_app(**kwargs):
                 ]
             )
 
-register_page("Mitwelten Discover", layout=discover_app, path="/")
+register_page("Mitwelten Discover", layout=discover_app, path="/", title="Mitwelten Discover")
 
 
 @app.callback(

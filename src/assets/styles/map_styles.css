@@ -12,6 +12,10 @@ body {
     top: calc(100vh - 180px);
 }
 
+.leaflet-control {
+  visibility: hidden;
+}
+
 #id-app-container {
     position: relative;
     width: 100vw;

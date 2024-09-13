@@ -24,11 +24,35 @@ import dash_core_components as dcc
 initial_map = map_config.MAPS[1]
 
 def map_figure(params: UrlParameter, active_depl: BaseDeployment|None): 
-    print("zoom", params.zoom)
 
     initial_center = [params.lat, params.lon]
+    base_layers = []
+    for map in map_config.MAPS:
+        base_layers.append(
+                dl.BaseLayer(
+                    id=f"layer-{map.index}",
+                    name=map.title,
+                    children=dl.TileLayer(
+                        url=map.source, 
+                        attribution=map.source_attribution, 
+                        maxZoom=DEFAULT_MAX_ZOOM)
+                    )
+                )
+
+    overlay_layers = []
+    for map in map_config.OVERLAYS:
+        overlay_layers.append(
+                dl.Overlay(
+                    name=map.title,
+                    children=dl.TileLayer(
+                        url=map.source, 
+                        attribution=map.source_attribution, 
+                        maxZoom=DEFAULT_MAX_ZOOM)
+                    )
+                )
 
     return dl.Map([
+
 
     dcc.Store(
         id="id-active-depl-store", 
@@ -37,30 +61,53 @@ def map_figure(params: UrlParameter, active_depl: BaseDeployment|None):
             active_depl=active_depl.to_dict() if active_depl is not None else None
             )
         ),
-    dl.TileLayer(
-        id=ID_BASE_LAYER_MAP,
-        url=initial_map.source,
-        attribution="",
-        maxZoom=DEFAULT_MAX_ZOOM,
-        maxNativeZoom=19,
-    ),
 
-    dl.TileLayer(
-        url="",
-        attribution="",
-        id=ID_OVERLAY_MAP,
-        maxZoom=DEFAULT_MAX_ZOOM,
-        opacity=0.5,
-        maxNativeZoom=19,
-    ),
+    dl.LayersControl(
+        id="layer-control",
+        children=[
+            dl.TileLayer(
+                id=ID_BASE_LAYER_MAP,
+                url=initial_map.source,
+                attribution="",
+                maxZoom=DEFAULT_MAX_ZOOM,
+                maxNativeZoom=19,
+                ),
 
+            dl.TileLayer(
+                url="",
+                attribution="",
+                id=ID_OVERLAY_MAP,
+                maxZoom=DEFAULT_MAX_ZOOM,
+                opacity=0.5,
+                maxNativeZoom=19,
+                ),
+            dl.Overlay(
+                id="notes-overlay", 
+                name="Notes", 
+                checked=True,
+                children=dl.LayerGroup(id=ID_NOTES_LAYER_GROUP)
+                ),
+            dl.Overlay(
+                id="env-overlay", 
+                name="Env", 
+                checked=True,
+                children=dl.LayerGroup(id=ID_ENV_LAYER_GROUP)
+                ),
+
+            dl.Overlay(
+                id="deployment-overlay", 
+                name="Deployments", 
+                checked=True,
+                children= dl.LayerGroup(id=ID_DEPLOYMENT_LAYER_GROUP),
+                ),
+            ]
+        ),
     dl.ScaleControl(position="bottomright"),
     dl.LocateControl(locateOptions={'enableHighAccuracy': True}, position="bottomright"),
-    dl.LayerGroup(id=ID_MAP_LAYER_GROUP),
-    dl.LayerGroup(id=ID_ENV_LAYER_GROUP),
     dl.LayerGroup(id=ID_HIGHLIGHT_LAYER_GROUP),
-    dl.LayerGroup(id=ID_NOTES_LAYER_GROUP),
     dl.LayerGroup(id=ID_INIT_POPUP_LAYER),
+    dl.EasyButton(icon="fa-globe", title="So easy", id="btn")
+    #dl.GestureHandling()
     ],
     id=ID_MAP,
     center=initial_center,
@@ -75,6 +122,18 @@ def map_figure(params: UrlParameter, active_depl: BaseDeployment|None):
         "zIndex": 0,
     },
 )
+
+@app.callback(
+        Output("layer-0", "checked"), 
+        Output("layer-1", "checked"), 
+        Output("layer-2", "checked"), 
+        Output("layer-3", "checked"), 
+        Input("btn", "n_clicks"),
+        State("layer-control", "children")
+        )
+def log(n_clicks, layer):
+    print(layer)
+    return True, False, False, False
 
 
 @app.callback(
