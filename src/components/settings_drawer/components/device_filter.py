@@ -14,7 +14,7 @@ def device_filter(active_device: BaseDeployment):
             withScrollArea=True,
             searchable=True,
             clearable=True,
-            nothing_found="No ID found",
+            nothingFoundMessage="No ID found",
             placeholder="Select an ID"
             )
 
