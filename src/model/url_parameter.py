@@ -10,7 +10,7 @@ default_end = datetime.now().isoformat(timespec="seconds")
 class UrlParameter():
 
     def __init__(self, json):
-        self.timerange = json.get("timerange", "1") or "1"
+        self.timerange = json.get("timerange", "custom") or "custom"
         
         if self.timerange != "custom":
             self.start = (datetime.now() - timedelta(weeks=int(self.timerange))).isoformat(timespec="seconds")
