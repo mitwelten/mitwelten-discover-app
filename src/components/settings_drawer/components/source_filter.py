@@ -1,5 +1,5 @@
 import dash_mantine_components as dmc
-from dash import html, Output, Input, State
+from dash import html, Output, Input, State, ctx, no_update
 
 from src.model.url_parameter import UrlParameter
 from src.config.id_config import *
@@ -28,9 +28,9 @@ def source_filter(params: UrlParameter):
 
     return html.Div([
         dmc.Checkbox(
-            id="id-all-checkbox",
+            id=ID_ALL_CHECKBOX,
             label="All", 
-            checked=True,
+            checked=len(active) == len(SOURCE_PROPS.keys()),
             value="all", 
             size="sm",
             ),
@@ -46,13 +46,22 @@ def source_filter(params: UrlParameter):
 
 @app.callback(
         Output(ID_TYPE_CHECKBOX_GROUP, "value"),
-        Input("id-all-checkbox", "checked"),
+        Output(ID_ALL_CHECKBOX, "checked"),
+        Input(ID_ALL_CHECKBOX, "checked"),
+        Input(ID_TYPE_CHECKBOX_GROUP, "value"),
         prevent_initial_call=True,
 )
-def activate_all(value):
-    if value:
-        return list(SOURCE_PROPS.keys())
-    return []
+def activate_all(all, values):
+    if ctx.triggered_id == ID_ALL_CHECKBOX:
+        if all:
+            return list(SOURCE_PROPS.keys()), no_update
+        return [], no_update
+    else:
+        if len(values) == len(SOURCE_PROPS.keys()):
+            return values, True
+        else :
+            return values, False
+
 
 
 

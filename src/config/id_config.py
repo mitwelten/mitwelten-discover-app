@@ -58,6 +58,7 @@ ID_TAGS = "id-tags"
 # node types
 ID_ALL_ACTIVE_STORE = "id-active-all-checkbox"
 ID_TYPE_CHECKBOX_GROUP = "id-type-checkbox-group"
+ID_ALL_CHECKBOX = "id-all-checkbox"
 
 # date_time
 ID_DATE_RANGE_PICKER = "id-date-range-picker"
