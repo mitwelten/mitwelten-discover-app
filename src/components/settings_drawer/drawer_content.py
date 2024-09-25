@@ -37,7 +37,7 @@ title = dmc.Center(
             )
         )
 
-def drawer_content(params: UrlParameter, all_tags, active_device): 
+def drawer_content(params: UrlParameter, all_tags, active_device, deployments): 
     return dmc.Container(
             children=[
                 dmc.ScrollArea(
@@ -53,7 +53,7 @@ def drawer_content(params: UrlParameter, all_tags, active_device):
                         divider("Tags"),
                         tag_filter(params, all_tags),
                         divider("Node ID"),
-                        device_filter(active_device),
+                        device_filter(active_device, deployments),
                         dmc.Space(h=10),
                         general_controls(),
                         ]),

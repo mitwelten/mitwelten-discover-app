@@ -1,50 +1,33 @@
-from src.model.deployment import Deployment
 from src.config.id_config import *
-from src.main import app
-from dash import Output, Input, State, ALL, ctx, no_update
 import dash_mantine_components as dmc
-from dash.exceptions import PreventUpdate
 from src.model.base import BaseDeployment
 from pprint import pprint
 
-def device_filter(active_device: BaseDeployment):
+def device_filter(active_device: BaseDeployment, deployments):
+    active_id = active_device.id if active_device else None
+    all_labels = []
+    value = None
+
+    for key in deployments.keys():
+        for depl in deployments[key]:
+            label = depl.get("node",{}).get("node_label")
+            all_labels.append(label)
+            if depl.get("id") == active_id:
+                value = label
+
+    all_labels = list(sorted(set(all_labels)))
+
+    print("active_device")
+    print(active_device.id if active_device else None)
 
     return dmc.Select(
-            id="id-device-select",
+            id=ID_DEVICE_SELECT,
+            value=value,
+            data=all_labels,
             withScrollArea=True,
             searchable=True,
             clearable=True,
-            nothingFoundMessage="No ID found",
-            placeholder="Select an ID"
+            nothingFoundMessage="No label found",
+            placeholder="Node Label"
             )
-
-
-@app.callback(
-        Output("id-device-select", "data"),
-        Output("id-device-select", "value"),
-        Output(ID_DEVICE_FILTER_STORE, "data"),
-        Input(ID_VISIBLE_DEPLOYMENT_STORE, "data"),
-        Input(ID_VISIBLE_NOTE_STORE, "data"),
-        Input(ID_VISIBLE_ENV_STORE, "data"),
-        State(ID_DEVICE_FILTER_STORE, "data"),
-        prevent_initial_call=True,
-        )
-def update_select_data(depls, notes, envs, init):
-    data = [
-            {
-                "group" : "Deployments",             
-                "items": list(sorted(set(depls.get("deployments"))))
-            },
-            {
-                "group" : "Experiment and Findings", 
-                "items": list(map(lambda x: {"value": f"note-{x}", "label": str(x)}, sorted(notes.get("notes"))))
-            },
-            {
-                "group" : "Habitat Types",           
-                "items": list(map(lambda x: {"value": f"env-{x}", "label": str(x)}, sorted(envs.get("envs"))))
-            }
-        ]
-    if init.get("id") is not None:
-        return data, init.get("id"), dict(id=None) 
-    return data, no_update, no_update
 

@@ -78,6 +78,7 @@ ID_TAG_RESET_BUTTON = "id-tag-reset-button"
 ID_CHART_CONTAINER = "id-chart-container"
 ID_CHART_DRAWER = "id-chart-drawer"
 ID_ENVIRONMENT_CHECKBOX = "id-environment-checkbox"
+ID_DEVICE_SELECT = "id-device-select"
 
 # map selection & handling
 ID_DEPLOYMENT_LAYER_GROUP = "id-map-data-layer"

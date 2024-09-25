@@ -60,7 +60,7 @@ def app_content(args):
             *floating_buttons,
             map_figure(url_params, active_depl),
             chart_drawer(url_params, active_depl, notes, env_data),
-            settings_drawer(url_params, tags, active_depl),
+            settings_drawer(url_params, tags, active_depl, deployments),
             html.Div(id=ID_NOTIFICATION),
         ]
 

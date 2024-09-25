@@ -15,10 +15,10 @@ light = {
         }
 
 
-def settings_drawer(params: UrlParameter, all_tags, active_device): 
+def settings_drawer(params: UrlParameter, all_tags, active_device, deployments): 
     return dmc.Drawer(
             id=ID_SETTINGS_DRAWER,
-            children=drawer_content(params, all_tags, active_device),
+            children=drawer_content(params, all_tags, active_device, deployments),
             opened=True,
             size=SETTINGS_DRAWER_WIDTH,
             padding="md",
