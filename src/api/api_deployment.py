@@ -31,7 +31,11 @@ def get_env_timeseries(deployment_id: int, measurement_type, aggregation, bucket
 def get_pax_timeseries(deployment_id: int, bucket_width: str, time_from=None, time_to=None):
     url = construct_url(
         f"sensordata/pax/{deployment_id}",
-        {"bucket_width": bucket_width, "from": time_from, "to": time_to})
+        {
+            "bucket_width": bucket_width, 
+            "from": time_from, 
+            "to": time_to}
+        )
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()

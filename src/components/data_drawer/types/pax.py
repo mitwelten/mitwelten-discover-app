@@ -1,7 +1,9 @@
 import pandas as pd
+
 import plotly.graph_objects as go
 from dash import dcc
 from src.model.deployment import Deployment
+from datetime import datetime
 import dash_mantine_components as dmc
 
 from src.api.api_deployment import get_pax_timeseries
@@ -9,10 +11,22 @@ from src.components.data_drawer.charts import create_themed_figure
 
 
 def create_pax_chart(marker_data, date_range, theme):
+    print("date_range", date_range)
+    start = datetime.fromisoformat(date_range["start"])
+    end = datetime.fromisoformat(date_range["end"])
+    delta_time = (end - start).days
+
+    bucket_width = "1d"
+    if delta_time <= 7:
+        bucket_width = "15min"
+    elif delta_time <= 30:
+        bucket_width = "1h"
+
+
     d = Deployment(marker_data)
     resp = get_pax_timeseries(
         deployment_id=d.id,
-        bucket_width="15min",
+        bucket_width=bucket_width,
         time_from=date_range["start"],
         time_to=date_range["end"]
     )
@@ -27,7 +41,7 @@ def create_pax_chart(marker_data, date_range, theme):
             xaxis={"visible": True},
             yaxis={"visible": True},
         )
-        timeseries = pd.bdate_range(date_range["start"], date_range["end"], tz="UTC", freq="15min")
+        timeseries = pd.bdate_range(date_range["start"], date_range["end"], tz="UTC", freq=bucket_width)
         daten_df = pd.DataFrame(resp)
         daten_df['buckets'] = pd.to_datetime(daten_df['buckets'])
         full_df = pd.DataFrame(timeseries, columns=['buckets'])
