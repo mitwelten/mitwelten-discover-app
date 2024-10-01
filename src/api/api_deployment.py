@@ -140,3 +140,24 @@ def get_all_species():
 
     return None
 
+def get_wild_cam_image(
+        deployment_id: int, 
+        period_start=None, 
+        period_end=None, 
+        phase=None, 
+        interval=None):
+    url = construct_url(
+        f"tv/stack-selection/", 
+        {
+            "deployment_id": deployment_id,
+            "period_start": period_start,
+            "period_end": period_end,
+            "phase": phase,
+            "interval": interval,
+        }
+    )
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+
+    return None

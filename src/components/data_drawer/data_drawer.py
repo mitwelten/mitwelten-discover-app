@@ -3,6 +3,7 @@ from dash_mantine_components import DEFAULT_THEME
 from dash import Output, Input, html, State, no_update, ctx
 from dash.exceptions import PreventUpdate
 import dash_core_components as dcc
+from src.components.data_drawer.types.wild_cam import create_wild_cam_chart
 from src.model.base import BaseDeployment
 from src.model.url_parameter import UrlParameter
 from src.model.environment import Environment
@@ -61,6 +62,8 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
             drawer_content = create_pax_chart(marker_data, date_range, theme)
         case "Pollinator Cam":
             drawer_content = create_pollinator_chart(marker_data, date_range, theme)
+        case "Wild Cam":
+            drawer_content = create_wild_cam_chart(marker_data, date_range, theme)
         case "Environment":
             drawer_content = create_environment_point_chart(environment_data["legend"], marker_id, theme)
         case "Note":

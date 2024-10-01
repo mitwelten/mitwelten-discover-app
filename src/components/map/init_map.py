@@ -106,8 +106,6 @@ def map_figure(params: UrlParameter, active_depl: BaseDeployment|None):
     dl.LocateControl(locateOptions={'enableHighAccuracy': True}, position="bottomright"),
     dl.LayerGroup(id=ID_HIGHLIGHT_LAYER_GROUP),
     dl.LayerGroup(id=ID_INIT_POPUP_LAYER),
-    dl.EasyButton(icon="fa-globe", title="So easy", id="btn")
-    #dl.GestureHandling()
     ],
     id=ID_MAP,
     center=initial_center,
@@ -122,19 +120,6 @@ def map_figure(params: UrlParameter, active_depl: BaseDeployment|None):
         "zIndex": 0,
     },
 )
-
-@app.callback(
-        Output("layer-0", "checked"), 
-        Output("layer-1", "checked"), 
-        Output("layer-2", "checked"), 
-        Output("layer-3", "checked"), 
-        Input("btn", "n_clicks"),
-        State("layer-control", "children")
-        )
-def log(n_clicks, layer):
-    print(layer)
-    return True, False, False, False
-
 
 @app.callback(
         Output(ID_INIT_POPUP_LAYER, "children"),

@@ -21,8 +21,6 @@ def get_device_from_deployments(params: UrlParameter, deployments):
     canditates = list(filter(lambda x: was_deployed(x, params.start, params.end), canditates))
     canditates = sorted(canditates, key=lambda x: x.period_start)
     if len(canditates) > 0:
-        print("candidate", canditates)
-        print("most recent", canditates[-1].to_dict())
         return canditates[-1]
     return None
 

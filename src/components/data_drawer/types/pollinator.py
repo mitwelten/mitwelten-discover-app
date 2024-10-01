@@ -6,10 +6,7 @@ from plotly.colors import hex_to_rgb
 from dash import dcc
 import dash_mantine_components as dmc
 from src.model.deployment import Deployment
-from src.config.app_config import SECONDARY_COLOR
-from src.components.data_drawer.header import data_drawer_header
 
-from src.config.map_config import get_source_props
 from src.api.api_deployment import get_pollinator_heatmap, get_pollinator_timeseries
 from src.components.data_drawer.charts import create_themed_figure
 from src.config.id_config import *

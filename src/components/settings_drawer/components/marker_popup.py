@@ -1,5 +1,6 @@
 import dash_mantine_components as dmc
 from dash import html
+from pprint import pprint
 
 
 from src.config.map_config import get_source_props
@@ -68,6 +69,8 @@ def details(fst_label, fst_time, snd_label=None, snd_time=None):
 
 
 def device_popup(deployment, timezone):
+    pprint(deployment.to_dict())
+    print("tz", timezone)
     start = local_formatted_date(deployment.period_start, timezone=timezone)
     end   = local_formatted_date(deployment.period_end, timezone=timezone) if deployment.period_end else "-"
     return dmc.Container([

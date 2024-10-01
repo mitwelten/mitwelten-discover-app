@@ -10,19 +10,18 @@ from src.model.tag import Tag
 
 def init_deployment_data():
     all_deployments_json = get_deployments()
-    if all_deployments_json is None:
-        all_deployments_json = []
 
-    all_deployments = [Deployment(d) for d in all_deployments_json]
+    all_deployments = [Deployment(d) for d in all_deployments_json or []]
 
     # filter out deployments with "Bats" in the tags
     all_deployments = [d for d in all_deployments
-                       if not (
-                           d.node_type == "Audio Logger" 
-                           and "Bats" in d.tags
-                           )
+                       if not (d.node_type == "Audio Logger" and "Bats" in d.tags)
                        ]
 
+    # change type Phaeno Cam to Wild Cam
+    for d in all_deployments:
+        if d.node_type == "Phaeno Cam":
+            d.node_type = "Wild Cam"
 
     all_types = sorted(set(map(lambda d: d.node_type, all_deployments)))
     excluded  = [excl.lower().strip() for excl in EXCLUDED_DEPLOYMENTS]
