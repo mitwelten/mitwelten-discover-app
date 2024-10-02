@@ -1,4 +1,6 @@
 from src.main import app
+from pprint import pprint
+from datetime import datetime, timezone
 from dash import Output, Input, html, State, no_update, ctx
 from dash import html
 import dash_mantine_components as dmc
@@ -50,7 +52,20 @@ def create_wild_cam_chart(marker_data, date_range, theme):
     if res is None:
         return dmc.Text("No images found")
 
-    object_names = [image.get("object_name") for image in res]
+    start_time = datetime.strptime(date_range['start'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
+    end_time = datetime.strptime(date_range['end'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
+    
+    filtered_data = [
+        item for item in res
+        if start_time <= datetime.fromisoformat(item['time']) <= end_time
+    ]
+
+    sorted_filtered_data = sorted(
+        filtered_data,
+        key=lambda x: datetime.fromisoformat(x['time'])
+    )
+
+    object_names = [image.get("object_name") for image in sorted_filtered_data]
     
     images = [slide(names, RATIO) for names in object_names[:STACK_SIZE]]
 
@@ -58,24 +73,29 @@ def create_wild_cam_chart(marker_data, date_range, theme):
         images.append(loader_slide(RATIO))
 
     if len(object_names) == 0:
-        content = dmc.Text("No images found", dimmed=True)
+        content = dmc.Text("No images found", c="dimmed")
     else:
         content = dmc.Carousel(
                 children=images,
                 orientation="horizontal",
-                align="center",
+                align="start",
                 slideGap={ "base": "xl" },
                 height="100%",
                 controlsOffset="md",
                 withIndicators=False,
                 bg=PRIMARY_COLOR,
-                maw=800,
                 w="100%",
                 id="carousel-id",
                 styles={"root": {"height":"100%"}}
                 
                 )
     return dmc.Paper(
+            shadow="md",
+            p="sm",
+            radius="md",
+            bg=BACKGROUND_COLOR,
+            m="md",
+            h=360,
             children=html.Div(
                 style={
                     "display":"flex", 
@@ -94,12 +114,7 @@ def create_wild_cam_chart(marker_data, date_range, theme):
                         ),
                     ],
                 ),
-            shadow="md",
-            p="md",
-            radius="md",
-            bg=BACKGROUND_COLOR,
-            style={"margin":"20px", "height":"360px"}
-        )
+            )
 
 
 @app.callback(
