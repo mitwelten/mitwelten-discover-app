@@ -1,5 +1,7 @@
 import plotly.graph_objects as go
 import pandas as pd
+from datetime import datetime, timezone
+from pprint import pprint
 from dash import dcc
 import dash_mantine_components as dmc
 from plotly.graph_objs.layout import Modebar, coloraxis
@@ -25,11 +27,21 @@ def get_german_label(item):
 
 def create_audio_chart(deployment_data, date_range, theme):
 
+    start_time = datetime.strptime(date_range['start'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
+    end_time = datetime.strptime(date_range['end'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
+
+    deployment_start = datetime.fromisoformat(deployment_data['period']['start'])
+    deployment_end = deployment_data['period'].get('end')
+    deployment_end = datetime.fromisoformat(deployment_end) if deployment_end else None
+    
+    start = max(start_time, deployment_start)
+    end = min(end_time, deployment_end) if deployment_end else end_time
+
     d = Deployment(deployment_data)
     resp = get_bird_stacked_bar(
         deployment_id=d.id,
-        time_from=date_range["start"],
-        time_to=date_range["end"],
+        time_from=start,
+        time_to=end,
         bucket_width="1d",
         confidence=0.9,
     )
@@ -52,7 +64,7 @@ def create_audio_chart(deployment_data, date_range, theme):
             y=dfg['count']
             bars.append(go.Bar(name=name,x=x, y=y))
 
-        timeseries = pd.bdate_range(date_range["start"], date_range["end"], tz="UTC", freq="D")
+        timeseries = pd.bdate_range(start, end, tz="UTC", freq="D")
 
         figure.add_traces(bars)
         figure.add_traces(go.Bar(x=timeseries, y=[0] * len(timeseries), showlegend=False))
