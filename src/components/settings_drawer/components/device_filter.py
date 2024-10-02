@@ -17,9 +17,6 @@ def device_filter(active_device: BaseDeployment, deployments):
 
     all_labels = list(sorted(set(all_labels)))
 
-    print("active_device")
-    print(active_device.id if active_device else None)
-
     return dmc.Select(
             id=ID_DEVICE_SELECT,
             value=value,

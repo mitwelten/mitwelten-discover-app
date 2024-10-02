@@ -69,8 +69,6 @@ def details(fst_label, fst_time, snd_label=None, snd_time=None):
 
 
 def device_popup(deployment, timezone):
-    pprint(deployment.to_dict())
-    print("tz", timezone)
     start = local_formatted_date(deployment.period_start, timezone=timezone)
     end   = local_formatted_date(deployment.period_end, timezone=timezone) if deployment.period_end else "-"
     return dmc.Container([

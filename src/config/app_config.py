@@ -1,4 +1,3 @@
-DATA_SOURCES_WITHOUT_CHART_SUPPORT = ["Access Point", "Wild Cam"]
 DATE_FORMAT = "%Y-%m-%d"
 TIMEZONE = "Europe/Zurich"
 

@@ -1,12 +1,47 @@
-import json
+from src.main import app
+from dash import Output, Input, html, State, no_update, ctx
 from dash import html
-from pprint import pprint
 import dash_mantine_components as dmc
-from pandas.io.formats.printing import justify
+import dash_core_components as dcc
 from src.api.api_client import construct_url
 from src.api.api_deployment import get_wild_cam_image
 from src.model.deployment import Deployment
-from src.config.app_config import PRIMARY_COLOR
+from src.config.app_config import BACKGROUND_COLOR, PRIMARY_COLOR
+
+
+STACK_SIZE = 30
+RATIO = 1920/1440
+
+def slide(object_name, ratio):
+    return dmc.CarouselSlide(
+            display="flex",
+            maw=328 * ratio,
+            children=dmc.AspectRatio(
+                ratio=ratio,
+                children=dmc.Anchor(
+                    href=construct_url(f"tv/file/{object_name}"),
+                    target="_blank",
+                    children=dmc.Image(
+                        h="100%",
+                        fallbackSrc="https://placehold.co/600x400?text=Placeholder",
+                        src=construct_url(f"tv/file/{object_name}"),
+                        )
+                    )
+                    
+                )
+            )
+
+def loader_slide(ratio):
+    return dmc.CarouselSlide(
+            display="flex",
+            bg="#88aeae",
+            maw=328 * ratio,
+            style={"justifyContent":"center", "alignItems":"center"},
+            children=[
+                dmc.Button(
+                    "Load more", 
+                    id="load-more-button")
+                ])
 
 def create_wild_cam_chart(marker_data, date_range, theme):
     d = Deployment(marker_data)
@@ -15,43 +50,85 @@ def create_wild_cam_chart(marker_data, date_range, theme):
     if res is None:
         return dmc.Text("No images found")
 
-    names = [image.get("object_name") for image in res]
-    ratio = 1920/1440
+    object_names = [image.get("object_name") for image in res]
+    
+    images = [slide(names, RATIO) for names in object_names[:STACK_SIZE]]
 
-    def slide(image):
-        return dmc.CarouselSlide(
-                display="flex",
-                maw=328 * ratio,
-                children=dmc.AspectRatio(
-                    ratio=ratio,
-                    children=dmc.Image(
-                        "Slide 1", 
-                        src=construct_url(f"tv/file/{image}"),
-                        ),
-                    )
+    if len(object_names) > STACK_SIZE:
+        images.append(loader_slide(RATIO))
+
+    if len(object_names) == 0:
+        content = dmc.Text("No images found", dimmed=True)
+    else:
+        content = dmc.Carousel(
+                children=images,
+                orientation="horizontal",
+                align="center",
+                slideGap={ "base": "xl" },
+                height="100%",
+                controlsOffset="md",
+                withIndicators=False,
+                bg=PRIMARY_COLOR,
+                maw=800,
+                w="100%",
+                id="carousel-id",
+                styles={"root": {"height":"100%"}}
+                
                 )
-
-    carousel = dmc.Carousel(
-            [slide(name) for name in names],
-            orientation="horizontal",
-            align="center",
-            slideGap={ "base": "xl" },
-            height="auto",
-            loop=True,
-            controlsOffset="md",
-            withIndicators=True,
-            bg=PRIMARY_COLOR,
-            maw=800,
-            w="100%"
-            )
     return dmc.Paper(
             children=html.Div(
-                carousel, 
-                style={"display":"flex", "justifyContent":"center", "alignItems":"center"}
+                style={
+                    "display":"flex", 
+                    "justifyContent":"center", 
+                    "alignItems":"center", 
+                    "height":"100%"
+                    },
+                children=[
+                    content, 
+                    dcc.Store(
+                        id="carousel-store", 
+                        data=dict(
+                            object_names=object_names,
+                            index=STACK_SIZE
+                            )
+                        ),
+                    ],
                 ),
             shadow="md",
             p="md",
             radius="md",
+            bg=BACKGROUND_COLOR,
             style={"margin":"20px", "height":"360px"}
         )
-    pass
+
+
+@app.callback(
+        Output("carousel-id", "children"),
+        Output("carousel-store", "data"),
+        Input("load-more-button", "n_clicks"),
+        Input("carousel-id", "children"),
+        State("carousel-store", "data"),
+        prevent_initial_call=True
+        )
+
+def load_more_images(_, slides, data):
+    if ctx.triggered_id is None:
+        return no_update
+
+    object_names = data["object_names"]
+    index = data["index"]
+
+    # get load more button slide
+    load_more_slide = slides[-1]
+    slides = slides[:-1]
+
+    new_slides = [slide(names, RATIO) for names in object_names[index:index+STACK_SIZE]]
+    slides.extend(new_slides)
+
+    # add load more button slide
+    if len(object_names) > index + STACK_SIZE:
+        slides.append(load_more_slide)
+
+    data["index"] = index + STACK_SIZE
+
+    return slides, data

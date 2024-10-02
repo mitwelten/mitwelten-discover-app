@@ -18,7 +18,7 @@ from src.components.data_drawer.types.env import create_env_chart
 from src.components.data_drawer.types.environment_point import create_environment_point_chart
 from src.components.data_drawer.types.pax import create_pax_chart
 from src.components.data_drawer.types.pollinator import create_pollinator_chart
-from src.config.app_config import BACKGROUND_COLOR, CHART_DRAWER_HEIGHT, SETTINGS_DRAWER_WIDTH, DATA_SOURCES_WITHOUT_CHART_SUPPORT
+from src.config.app_config import BACKGROUND_COLOR, CHART_DRAWER_HEIGHT, SETTINGS_DRAWER_WIDTH, EXCLUDED_DEPLOYMENTS
 from src.config.id_config import *
 from src.main import app
 from src.components.data_drawer.header import data_drawer_header
@@ -141,7 +141,7 @@ def open_drawer(selected_marker, theme):
     if selected_marker is None:
         raise PreventUpdate
 
-    if selected_marker["type"] in DATA_SOURCES_WITHOUT_CHART_SUPPORT:
+    if selected_marker["type"] in EXCLUDED_DEPLOYMENTS:
         n = notification("No chart available for this device type.", NotificationType.INFO)
         return False, n, False, no_update
 

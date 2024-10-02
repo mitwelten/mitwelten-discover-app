@@ -50,9 +50,6 @@ def app_content(args):
     deployments  = init_deployment_data()
     url_params   = UrlParameter(args)
     active_depl: BaseDeployment | None = get_device_from_params(url_params, deployments, notes, envs)
-    print("---")
-    print(active_depl)
-    print("---")
 
     return [
             dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
