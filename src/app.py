@@ -2,7 +2,6 @@ import time
 from functools import partial
 
 import dash_mantine_components as dmc
-import dash_core_components as dcc
 from dash import (
     register_page,
     ALL,
@@ -13,10 +12,11 @@ from dash import (
     ctx,
     no_update,
     clientside_callback,
-    ClientsideFunction
+    ClientsideFunction,
+    dcc
 )
 from dash.exceptions import PreventUpdate
-from configuration import DOMAIN_NAME
+from configuration import API_URL, DOMAIN_NAME
 
 from src.model.base import BaseDeployment
 from src.model.url_parameter import UrlParameter
@@ -36,13 +36,14 @@ from src.main import app
 from src.data.init import init_deployment_data, init_environment_data, init_notes, init_tags
 from src.url.parse import update_query_data, query_data_to_string
 import flask
+import requests
 from src.url.parse import get_device_from_params
+app_kwargs = {}
 
 def app_content(args):
 
     # initialize data from backend
     cookies      = flask.request.cookies
-
     envs, legend = init_environment_data()
     env_data     = dict(entries=envs, legend=legend)
     notes        = init_notes(cookies.get("auth") if cookies else None)
@@ -52,7 +53,7 @@ def app_content(args):
     active_depl: BaseDeployment | None = get_device_from_params(url_params, deployments, notes, envs)
 
     return [
-            dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=True),
+            dcc.Interval(id=ID_STAY_LOGGED_IN_INTERVAL, interval=30 * 1000, disabled=False),
             mitwelten_bannner,
             legende_lebensraumkarte,
             *stores(url_params, deployments, notes, env_data, tags, active_depl),
@@ -61,22 +62,34 @@ def app_content(args):
             chart_drawer(url_params, active_depl, notes, env_data),
             settings_drawer(url_params, tags, active_depl, deployments),
             html.Div(id=ID_NOTIFICATION),
+            dcc.Location(id=ID_URL_LOCATION, refresh=False),
         ]
 
 
 def discover_app(**kwargs): 
+    backend_available = False
+    try:
+        r = requests.get(API_URL + "/environment/legend", timeout=2)
+        r.raise_for_status()  # Raises a HTTPError if the status is 4xx, 5xxx
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+        print("Down")
+    except requests.exceptions.HTTPError:
+        print("HTTP Error: ", r.status_code)
+    else:
+        backend_available = True
+
     return dmc.MantineProvider(
             forceColorScheme="light",
             id=ID_APP_THEME,
-            theme=app_theme,
+            theme=app_theme,    
             children=[
                 dmc.NotificationProvider(position="bottom-right"),
                 html.Div(
                     id=ID_APP_CONTAINER,
-                    children=[
-                        *app_content(kwargs),
-                        dcc.Location(id=ID_URL_LOCATION, refresh=False),
-                        ], 
+                     children=app_content(kwargs) if backend_available 
+                     else [
+                         html.Div("Backend not available", style={"color": "red"}),
+                         ]
                     ),
                 ]
             )
@@ -85,7 +98,7 @@ register_page("Mitwelten Discover", layout=discover_app, path="/", title="Mitwel
 
 
 @app.callback(
-    Output(ID_STAY_LOGGED_IN_INTERVAL, "interval"),
+    Output(ID_STAY_LOGGED_IN_INTERVAL, "n_intervals"),
     Output(ID_LOGIN_AVATAR_CONTAINER, "n_clicks"),
     Input(ID_STAY_LOGGED_IN_INTERVAL, "n_intervals"),
     State(ID_LOGIN_AVATAR_CONTAINER, "n_clicks"),
