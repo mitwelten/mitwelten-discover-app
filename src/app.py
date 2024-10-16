@@ -38,6 +38,8 @@ from src.url.parse import update_query_data, query_data_to_string
 import flask
 import requests
 from src.url.parse import get_device_from_params
+import logging
+logger = logging.getLogger(__name__)
 app_kwargs = {}
 
 def app_content(args):
@@ -67,14 +69,15 @@ def app_content(args):
 
 
 def discover_app(**kwargs): 
+    logger.info("Start app with args: %s", kwargs)
     backend_available = False
     try:
         r = requests.get(API_URL + "/environment/legend", timeout=2)
         r.raise_for_status()  # Raises a HTTPError if the status is 4xx, 5xxx
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-        print("Connection Error: Backend not available")
+        logger.error("Connection Error: Backend not available")
     except requests.exceptions.HTTPError:
-        print("HTTP Error: ", r.status_code)
+        logger.error("HTTP Error: ", r.status_code)
     else:
         backend_available = True
 

@@ -1,11 +1,9 @@
 from dash import Output, Input, ALL, State, ctx, no_update
 from dash.exceptions import PreventUpdate
-from pprint import pprint
 
 from src.config.id_config import *
 from src.config.map_config import MAPS, OVERLAYS, MAP_TYPES
 from src.main import app
-from src.util.helper_functions import safe_reduce
 from src.url.parse import update_query_data
 
 def update_store(store, collection):

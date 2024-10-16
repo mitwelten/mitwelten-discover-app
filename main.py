@@ -7,6 +7,9 @@ from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from keycloak import KeycloakOpenID
 from urllib import parse
+import logging
+
+logger = logging.getLogger(__name__)
 
 from configuration import (
     KC_SERVER_URL,
@@ -107,6 +110,7 @@ def logout(request: Request):
     keycloak_openid.logout(auth_r_cookie)
     response.delete_cookie("auth")
     response.delete_cookie("auth_r")
+    logger.info("User logged out")
     return response
 
 

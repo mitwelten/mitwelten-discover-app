@@ -1,5 +1,4 @@
 from src.model.map_configuration import MapConfiguration
-from pprint import pprint
 
 DEFAULT_LAT = 47.53522891224535
 DEFAULT_LON = 7.606299048260731

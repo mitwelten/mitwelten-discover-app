@@ -21,6 +21,8 @@ from src.util.user_validation import get_user_from_cookies
 from src.components.data_drawer.types.note.note_view import note_view
 from src.config.app_config import DISCOVER_DESCRIPTION
 from src.components.info.info import deployment_info
+import logging
+logger = logging.getLogger(__name__)
 
 info_dialog = dmc.Modal(
             id=ID_INFO_DIALOG_MODAL,
@@ -192,7 +194,10 @@ def login(_):
     visible = {"display": "block"}
     hidden  = {"display": "none"}
     if user is None:
+        logger.debug("No user logged in")
         return no_update, hidden, visible 
+
+    logger.info("User is logged in")
     return create_avatar(user), visible, hidden
 
 

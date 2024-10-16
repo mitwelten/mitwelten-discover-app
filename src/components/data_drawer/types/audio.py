@@ -1,15 +1,11 @@
 import plotly.graph_objects as go
 import pandas as pd
 from datetime import datetime, timezone
-from pprint import pprint
 from dash import dcc
 import dash_mantine_components as dmc
-from plotly.graph_objs.layout import Modebar, coloraxis
 from src.model.deployment import Deployment
-from src.config.map_config import get_source_props
 
 from src.api.api_deployment import get_bird_stacked_bar
-from src.components.data_drawer.header import data_drawer_header
 from src.components.data_drawer.charts import create_themed_figure
 from src.api.api_deployment import get_all_species
 

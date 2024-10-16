@@ -1,4 +1,7 @@
 import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 from src.api.api_client import construct_url
 
@@ -6,8 +9,9 @@ def get_tags():
     url = construct_url("tags")
     response = requests.get(url)
     if response.status_code == 200:
+        logger.info(f"Fetch Tags: Status Code  {response.status_code}")
         return response.json()
-    print("Fetch Tags failed: : Status Code ", response.status_code)
+    logger.error(f"Fetch Tags failed: Status Code  {response.status_code}")
     return None
 
 
@@ -17,7 +21,7 @@ def get_deployments():
     if response.status_code == 200:
         return response.json()
 
-    print("Fetch Deployments failed: : Status Code ", response.status_code)
+    logger.error("Fetch Deployments failed: : Status Code ", response.status_code)
     return []
 
 
@@ -27,9 +31,10 @@ def get_env_timeseries(deployment_id: int, measurement_type, aggregation, bucket
         {"aggregation": aggregation, "bucket_width_m": bucket_width_m, "from": time_from, "to": time_to})
     response = requests.get(url)
     if response.status_code == 200:
+        logger.info(f"Fetch sensordata env: Status Code {response.status_code}")
         return response.json()
 
-    print("Fetch sensordata env failed: Status Code ", response.status_code)
+    logger.error(f"Fetch sensordata env failed: Status Code {response.status_code}")
     return None
 
 
@@ -43,9 +48,10 @@ def get_pax_timeseries(deployment_id: int, bucket_width: str, time_from=None, ti
         )
     response = requests.get(url)
     if response.status_code == 200:
+        logger.info(f"sensor data pax: Status Code {response.status_code}")
         return response.json()
 
-    print("sensor data pax failed: : Status Code ", response.status_code)
+    logger.error(f"sensor data pax failed: Status Code {response.status_code}")
     return None
 
 
@@ -71,9 +77,10 @@ def get_audio_timeseries(
     )
     response = requests.get(url)
     if response.status_code == 200:
+        logger.info(f"Fetch audio timeseries data: Status Code {response.status_code}")
         return response.json()
 
-    print("Fetch audio timeseries data failed: : Status Code ", response.status_code)
+    logger.error(f"Fetch audio timeseries data failed: Status Code {response.status_code}")
     return None
 
 
@@ -81,9 +88,10 @@ def get_audio_top3(deployment_id):
     url = construct_url(f"discover/birds/top3/{deployment_id}")
     response = requests.get(url)
     if response.status_code == 200:
+        logger.info(f"Fetch audio top 3: Status Code {response.status_code}")
         return response.json()
 
-    print("Fetch audio top 3 failed: : Status Code ", response.status_code)
+    logger.error(f"Fetch audio top 3 failed: Status Code {response.status_code}")
     return []
 
 
@@ -103,9 +111,10 @@ def get_pollinator_timeseries(
     )
     response = requests.get(url)
     if response.status_code == 200:
+        logger.info(f"Fetch pollinator timeseries: Status Code {response.status_code}")
         return response.json()
 
-    print("Fetch pollinator timeseries failed: : Status Code ", response.status_code)
+    logger.error(f"Fetch pollinator timeseries failed: Status Code {response.status_code}")
     return None
 
 
@@ -120,9 +129,10 @@ def get_pollinator_heatmap( deployment_id: int, confidence, time_from=None, time
     )
     response = requests.get(url)
     if response.status_code == 200:
+        logger.info(f"Fetch pollinator heatmap: Status Code {response.status_code}")
         return response.json()
  
-    print("Fetch pollinator heatmap failed: : Status Code ", response.status_code)
+    logger.error(f"Fetch pollinator heatmap failed: Status Code {response.status_code}")
     return []
 
 
@@ -138,16 +148,20 @@ def get_bird_stacked_bar(deployment_id: int, time_from=None, time_to=None, bucke
     )
     response = requests.get(url)
     if response.status_code == 200:
+        logger.info(f"Fetch bird stacked bars: Status Code {response.status_code}")
         return response.json()
 
+    logger.error(f"Fetch bird stacked bars failed: Status Code {response.status_code}")
     return None
 
 def get_all_species():
     url = construct_url(f"species")
     response = requests.get(url)
     if response.status_code == 200:
+        logger.info(f"Fetch all species: Status Code {response.status_code}")
         return response.json()
 
+    logger.error(f"Fetch all species failed: Status Code {response.status_code}")
     return []
 
 def get_wild_cam_image(
@@ -168,7 +182,8 @@ def get_wild_cam_image(
     )
     response = requests.get(url)
     if response.status_code == 200:
+        logger.info(f"Fetch wild cam pictures: Status Code {response.status_code}")
         return response.json()
 
-    print("Fetch wild cam pictures failed: : Status Code ", response.status_code)
+    logger.error(f"Fetch wild cam pictures failed: Status Code {response.status_code}")
     return []

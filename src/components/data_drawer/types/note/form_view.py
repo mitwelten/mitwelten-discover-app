@@ -22,6 +22,10 @@ from src.main import app
 from src.model.note import Note
 from src.util.util import local_formatted_date
 from src.components.notification.notification import notification
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 
 min_width_style = {"minWidth": "200px"}
@@ -396,6 +400,7 @@ def persist_note(click, notes, selected_note, title, description, is_public, tag
  
     res = update_note(note, auth_cookie)
     if res.status_code != 200:
+        logger.error(f"Could not save note with id {note.id}!")
         return error_return_values(notification(f"Could not save note with id {note.id}", NotificationType.WENT_WRONG))
 
     tags_to_delete = find_deleted_tags(note, original_note)
@@ -406,6 +411,7 @@ def persist_note(click, notes, selected_note, title, description, is_public, tag
         for t in tags_to_delete:
             del_tag_res = delete_tag_by_note_id(note.id, t, auth_cookie)
             if del_tag_res != 200:
+                logger.error(f"Could not delete tag {t} of note with id {note.id}!")
                 return error_return_values(notification(f"Could not delete tag {t} of note with id {note.id}!", NotificationType.WENT_WRONG))
 
     # Persists added tags to a note
@@ -413,6 +419,7 @@ def persist_note(click, notes, selected_note, title, description, is_public, tag
         for t in tags_to_add:
             add_tag_res = add_tag_by_note_id(note.id, t, auth_cookie)
             if add_tag_res != 200:
+                logger.error(f"Could not add tag {t} to note with id {note.id}!")
                 return error_return_values(notification(f"Could not delete tag {t} of note with id {note.id}!", NotificationType.WENT_WRONG))
 
 

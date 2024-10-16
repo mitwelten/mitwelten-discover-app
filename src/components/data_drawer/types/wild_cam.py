@@ -1,5 +1,4 @@
 from src.main import app
-from pprint import pprint
 from datetime import datetime, timezone
 from dash import Output, Input, html, State, no_update, ctx, dcc
 from dash import html

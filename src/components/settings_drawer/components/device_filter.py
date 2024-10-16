@@ -1,7 +1,6 @@
 from src.config.id_config import *
 import dash_mantine_components as dmc
 from src.model.base import BaseDeployment
-from pprint import pprint
 
 def device_filter(active_device: BaseDeployment, deployments):
     active_id = active_device.id if active_device else None

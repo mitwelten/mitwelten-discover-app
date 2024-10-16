@@ -1,7 +1,4 @@
-from dash.exceptions import PreventUpdate
 import dash_leaflet as dl
-from dash_extensions.javascript import assign
-from pprint import pprint
 from src.model.base import BaseDeployment
 from src.model.url_parameter import UrlParameter
 from src.main import app
@@ -12,13 +9,12 @@ from src.model.environment import Environment
 from src.model.note import Note
 from src.config import map_config as map_config
 from src.config.id_config import *
-from src.config.map_config import DEFAULT_LAT, DEFAULT_LON, DEFAULT_MAX_ZOOM
+from src.config.map_config import DEFAULT_MAX_ZOOM
 
 # import marker callbacks
 import src.components.map.layer_selection.callbacks
 import src.components.map.markers
 from src.components.settings_drawer.components.marker_popup import environment_popup, device_popup, note_popup
-import dash_mantine_components as dmc
 
 initial_map = map_config.MAPS[1]
 

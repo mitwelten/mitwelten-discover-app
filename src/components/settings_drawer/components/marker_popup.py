@@ -1,6 +1,5 @@
 import dash_mantine_components as dmc
 from dash import html
-from pprint import pprint
 
 
 from src.config.map_config import get_source_props

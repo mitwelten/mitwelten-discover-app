@@ -3,12 +3,10 @@ import re
 from dash import (
     Output,
     Input,
-    ctx,
     State,
     ALL,
     clientside_callback,
     ClientsideFunction,
-    no_update
 )
 from dash.exceptions import PreventUpdate
 from dash_extensions.javascript import assign
@@ -22,8 +20,6 @@ from src.model.environment import Environment
 from src.model.note import Note
 from src.util.helper_functions import was_deployed
 
-from src.url.parse import update_query_data
-from pprint import pprint
 
 popup_events=dict(
     mouseout  = assign("", "mouseout"),
