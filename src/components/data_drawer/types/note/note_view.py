@@ -1,8 +1,7 @@
 import dash_mantine_components as dmc
-from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_update
+from dash import html, Output, Input, State, ctx, ALL, ClientsideFunction, no_update, dcc
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
-import dash_core_components as dcc
 
 from src.components.notification.notification import NotificationType, notification
 from configuration import API_URL

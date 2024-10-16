@@ -1,10 +1,9 @@
 from src.main import app
 from pprint import pprint
 from datetime import datetime, timezone
-from dash import Output, Input, html, State, no_update, ctx
+from dash import Output, Input, html, State, no_update, ctx, dcc
 from dash import html
 import dash_mantine_components as dmc
-import dash_core_components as dcc
 from src.api.api_client import construct_url
 from src.api.api_deployment import get_wild_cam_image
 from src.model.deployment import Deployment

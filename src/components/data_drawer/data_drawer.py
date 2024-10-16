@@ -1,8 +1,7 @@
 import dash_mantine_components as dmc
 from dash_mantine_components import DEFAULT_THEME
-from dash import Output, Input, html, State, no_update, ctx
+from dash import Output, Input, html, State, no_update, ctx, dcc
 from dash.exceptions import PreventUpdate
-import dash_core_components as dcc
 from src.components.data_drawer.types.wild_cam import create_wild_cam_chart
 from src.model.base import BaseDeployment
 from src.model.url_parameter import UrlParameter
