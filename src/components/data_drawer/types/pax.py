@@ -29,7 +29,6 @@ def create_pax_chart(deployment_data, date_range, theme):
     elif delta_time <= 30:
         bucket_width = "1h"
 
-    print(bucket_width)
     d = Deployment(deployment_data)
     resp = get_pax_timeseries(
         deployment_id=d.id,
@@ -40,7 +39,6 @@ def create_pax_chart(deployment_data, date_range, theme):
 
     figure = create_themed_figure(theme)
 
-    print(resp)
     if resp is not None and len(resp["buckets"]) != 0:
 
         figure.update_layout(

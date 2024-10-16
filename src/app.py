@@ -72,7 +72,7 @@ def discover_app(**kwargs):
         r = requests.get(API_URL + "/environment/legend", timeout=2)
         r.raise_for_status()  # Raises a HTTPError if the status is 4xx, 5xxx
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-        print("Down")
+        print("Connection Error: Backend not available")
     except requests.exceptions.HTTPError:
         print("HTTP Error: ", r.status_code)
     else:

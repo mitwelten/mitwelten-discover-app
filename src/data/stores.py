@@ -70,7 +70,6 @@ def refresh_notes_from_backend(data):
         raise PreventUpdate
 
     if data is None or data["entries"] == []:
-        print("refreshing notes")
         cookies = flask.request.cookies
         data["entries"] = init_notes(cookies["auth"] if cookies else None)
         return data
