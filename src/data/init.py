@@ -16,6 +16,7 @@ def init_deployment_data():
     # filter out deployments with "Bats" in the tags
     all_deployments = [d for d in all_deployments
                        if not (d.node_type == "Audio Logger" and "Bats" in d.tags)
+                       and not "Critical Media Lab" in d.tags
                        ]
 
     # change type Phaeno Cam to Wild Cam
