@@ -17,6 +17,8 @@ def get_all_notes(auth_cookie = None):
     print(f"Get Notes:  status={res.status_code}")
     if res.status_code == 200:
         return res.json()
+
+    print("Fetch notes failed: : Status Code ", res.status_code)
     return []
 
 

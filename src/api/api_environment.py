@@ -7,6 +7,8 @@ def get_environment_data():
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
+    
+    print("Fetch environment data failed: : Status Code ", response.status_code)
     return None
 
 
@@ -15,6 +17,7 @@ def get_environment_data_by_id(environment_id):
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
+    print("Fetch environment data by id failed: : Status Code ", response.status_code)
     return None
 
 
@@ -23,4 +26,6 @@ def get_environment_legend():
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
-    return None
+
+    print("Fetch environment legend by id failed: : Status Code ", response.status_code)
+    return []

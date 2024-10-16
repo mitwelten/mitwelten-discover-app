@@ -7,6 +7,7 @@ def get_tags():
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
+    print("Fetch Tags failed: : Status Code ", response.status_code)
     return None
 
 
@@ -15,7 +16,9 @@ def get_deployments():
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
-    return None
+
+    print("Fetch Deployments failed: : Status Code ", response.status_code)
+    return []
 
 
 def get_env_timeseries(deployment_id: int, measurement_type, aggregation, bucket_width_m, time_from=None, time_to=None):
@@ -25,6 +28,8 @@ def get_env_timeseries(deployment_id: int, measurement_type, aggregation, bucket
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
+
+    print("Fetch sensordata env failed: Status Code ", response.status_code)
     return None
 
 
@@ -40,6 +45,7 @@ def get_pax_timeseries(deployment_id: int, bucket_width: str, time_from=None, ti
     if response.status_code == 200:
         return response.json()
 
+    print("sensor data pax failed: : Status Code ", response.status_code)
     return None
 
 
@@ -67,6 +73,7 @@ def get_audio_timeseries(
     if response.status_code == 200:
         return response.json()
 
+    print("Fetch audio timeseries data failed: : Status Code ", response.status_code)
     return None
 
 
@@ -76,7 +83,8 @@ def get_audio_top3(deployment_id):
     if response.status_code == 200:
         return response.json()
 
-    return None
+    print("Fetch audio top 3 failed: : Status Code ", response.status_code)
+    return []
 
 
 def get_pollinator_timeseries(
@@ -97,6 +105,7 @@ def get_pollinator_timeseries(
     if response.status_code == 200:
         return response.json()
 
+    print("Fetch pollinator timeseries failed: : Status Code ", response.status_code)
     return None
 
 
@@ -112,8 +121,9 @@ def get_pollinator_heatmap( deployment_id: int, confidence, time_from=None, time
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
-
-    return None
+ 
+    print("Fetch pollinator heatmap failed: : Status Code ", response.status_code)
+    return []
 
 
 def get_bird_stacked_bar(deployment_id: int, time_from=None, time_to=None, bucket_width="1d", confidence=0.7):
@@ -138,7 +148,7 @@ def get_all_species():
     if response.status_code == 200:
         return response.json()
 
-    return None
+    return []
 
 def get_wild_cam_image(
         deployment_id: int, 
@@ -160,4 +170,5 @@ def get_wild_cam_image(
     if response.status_code == 200:
         return response.json()
 
-    return None
+    print("Fetch wild cam pictures failed: : Status Code ", response.status_code)
+    return []
