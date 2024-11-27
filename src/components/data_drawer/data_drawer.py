@@ -114,13 +114,18 @@ def chart_drawer(params: UrlParameter, device: BaseDeployment | None, all_notes,
         position="bottom",
         styles={"content": {"background": BACKGROUND_COLOR}, "body": {"paddingBottom": 0}},
         children=[
-            html.Div(id=ID_CHART_DRAWER_HEADER, children=header),
+            html.Div(
+                id=ID_CHART_DRAWER_HEADER, 
+                style={"maxWidth": "1200px"},
+                children=header
+                ),
             dcc.Loading(
                 id=ID_LOADER,
                 type="default",
                 color="#6c9d9d",
                 children=html.Div(
                 id=ID_CHART_CONTAINER, 
+                style={"maxWidth": "1200px"},
                 children=chart
                 ))
             ],

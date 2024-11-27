@@ -163,7 +163,6 @@ def carousel_card(file: File):
 
 
 def note_detail_view(note: Note, theme):
-    user            = get_user_from_cookies()
     files           = list(sorted(note.files, key=lambda file: file.name.lower()))
     has_media_files = len(files) != 0
     private         = icon_private if not note.public else None
@@ -208,7 +207,7 @@ def note_detail_view(note: Note, theme):
                 "assets/markers/docu.svg",
                 theme,
                 dmc.Group([private, edit_button]),
-                note.author
+                desc=note.author
                 ),
             dmc.Container(
                 fluid=True, 
