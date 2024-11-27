@@ -21,6 +21,7 @@ from src.config.app_config import BACKGROUND_COLOR, CHART_DRAWER_HEIGHT, SETTING
 from src.config.id_config import *
 from src.main import app
 from src.components.data_drawer.header import data_drawer_header
+from pprint import pprint
 
 def create_chart_header_from_source(selected_marker, theme):
     type = selected_marker.get("type")
@@ -64,6 +65,7 @@ def create_chart_from_source(selected_marker, date_range, theme, notes, environm
         case "Wild Cam":
             drawer_content = create_wild_cam_chart(marker_data, date_range, theme)
         case "Environment":
+            pprint(environment_data["legend"])
             drawer_content = create_environment_point_chart(environment_data["legend"], marker_id, theme)
         case "Note":
             for note in notes["entries"]:

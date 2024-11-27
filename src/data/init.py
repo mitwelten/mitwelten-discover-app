@@ -6,6 +6,7 @@ from src.model.deployment import Deployment
 from src.model.environment import Environment
 from src.model.note import Note
 from src.model.tag import Tag
+from pprint import pprint
 
 
 def init_deployment_data():
@@ -44,6 +45,25 @@ def init_deployment_data():
     return deployment_dict
 
 
+env_legend_en = {
+        "Gewässer" : "Aquatic environment",
+        "Blühangebot" : "Availability of flowers",
+        "Substratvorkommen" : "Availability of substrate",
+        "Nistmöglichkeit" : "Nesting opportunity",
+        "Fragmentierung" : "Fragmentation",
+        "Habitatvielfalt" : "Habitat diversity",
+        "Pflanzenvielfalt" : "Plant diversity",
+        "Siedlungsfaktor" : "Settlement factor",
+        "Bodenversiegelung" : "Soil sealing",
+        "Sonneneinstrahlung" : "Solar radiation",
+        }
+
+def translate_lables(legend):
+    for key in legend.keys():
+        legend[key]["label"] = env_legend_en[legend[key]["label"]]
+    return legend
+
+
 def init_environment_data():
     all_environments_json = get_environment_data()
     if all_environments_json is None:
@@ -51,6 +71,7 @@ def init_environment_data():
     # standardize dictionary properties
     all_environments = [Environment(env).to_dict() for env in all_environments_json]
     environment_legend = get_environment_legend()
+    environment_legend = translate_lables(environment_legend)
     return all_environments, environment_legend
 
 
