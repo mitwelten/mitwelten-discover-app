@@ -6,7 +6,6 @@ from src.model.deployment import Deployment
 from src.model.environment import Environment
 from src.model.note import Note
 from src.model.tag import Tag
-from pprint import pprint
 
 
 def init_deployment_data():

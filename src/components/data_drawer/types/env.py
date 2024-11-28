@@ -73,7 +73,7 @@ def create_env_moi_chart(trigger_id, bucket_width, light_mode):
     return figure
 
 
-def create_env_chart(deployment_data, theme):
+def create_env_chart(deployment_data, _date_range, theme):
     d = Deployment(deployment_data)
     bucket_width = "1h"
     tabs = [

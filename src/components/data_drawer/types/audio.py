@@ -8,7 +8,6 @@ from src.model.deployment import Deployment
 from src.api.api_deployment import get_bird_stacked_bar
 from src.components.data_drawer.charts import create_themed_figure
 from src.api.api_deployment import get_all_species
-from pprint import pprint
 
 all_species = get_all_species()
 
