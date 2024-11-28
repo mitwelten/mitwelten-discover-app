@@ -11,7 +11,12 @@ from src.components.data_drawer.charts import create_themed_figure
 
 
 def create_pax_chart(deployment_data, date_range, theme):
-    start_time = datetime.strptime(date_range['start'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
+
+    date_str = date_range['start']
+    try:
+        start_time = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
+    except ValueError:
+        start_time = datetime.strptime(date_str, '%Y-%m-%d').replace(tzinfo=timezone.utc)
     end_time = datetime.strptime(date_range['end'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
 
     deployment_start = datetime.fromisoformat(deployment_data['period']['start'])
