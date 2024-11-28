@@ -128,7 +128,7 @@ def open_drawer(selected_marker, theme):
 
     type_ = selected_marker["type"]
     if type_ in EXCLUDED_DEPLOYMENTS:
-        n = notification("Für diesen Gerätetyp ist kein Diagramm verfügbar.", NotificationType.INFO)
+        n = notification("No further information available!", NotificationType.INFO)
         return False, n, False, no_update
 
     header = create_chart_header_from_source(selected_marker, theme)
