@@ -215,87 +215,87 @@ clientside_callback(
 )
 
 
-# @app.callback(
-#     Output(ID_MAP, "viewport", allow_duplicate=True),
-#     Input(ID_SELECTED_MARKER_STORE, "data"),
-#     Input(ID_CHART_DRAWER, "size"),
-#     State(ID_BROWSER_PROPERTIES_STORE, "data"),
-#     State(ID_SETTINGS_DRAWER, "opened"),
-#     State(ID_SETTINGS_DRAWER, "size"),
-#     State(ID_CHART_DRAWER, "size"),
-#     State(ID_MAP, "bounds"),
-#     State(ID_MAP, "zoom"),
-#     State(ID_MAP, "center"),
-#     prevent_initial_call=True,
-# )
-# def ensure_marker_visibility_in_viewport(
-#     marker,
-#     _,
-#     browser_props,
-#     drawer_state,
-#     settings_drawer_size,
-#     data_drawer_size,
-#     bounds,
-#     zoom,
-#     center,
-# ):
-#     if marker is None:
-#         raise PreventUpdate
+@app.callback(
+    Output(ID_MAP, "viewport", allow_duplicate=True),
+    Input(ID_SELECTED_MARKER_STORE, "data"),
+    Input(ID_CHART_DRAWER, "size"),
+    State(ID_BROWSER_PROPERTIES_STORE, "data"),
+    State(ID_SETTINGS_DRAWER, "opened"),
+    State(ID_SETTINGS_DRAWER, "size"),
+    State(ID_CHART_DRAWER, "size"),
+    State(ID_MAP, "bounds"),
+    State(ID_MAP, "zoom"),
+    State(ID_MAP, "center"),
+    prevent_initial_call=True,
+)
+def ensure_marker_visibility_in_viewport(
+    marker,
+    _,
+    browser_props,
+    drawer_state,
+    settings_drawer_size,
+    data_drawer_size,
+    bounds,
+    zoom,
+    center,
+):
+    if marker is None:
+        raise PreventUpdate
 
-#     if bounds is None:
-#         raise PreventUpdate
+    if bounds is None:
+        raise PreventUpdate
 
-#     top    = bounds[1][0]
-#     bottom = bounds[0][0]
-#     left   = bounds[0][1]
-#     right  = bounds[1][1]
+    top    = bounds[1][0]
+    bottom = bounds[0][0]
+    left   = bounds[0][1]
+    right  = bounds[1][1]
 
-#     # visibile map distance in grad
-#     map_delta_lat = top - bottom
-#     map_delta_lon = right - left
+    # visibile map distance in grad
+    map_delta_lat = top - bottom
+    map_delta_lon = right - left
 
-#     # set drawer size to 1 if the settings drawer is closed
-#     settings_drawer_size = 1 if not drawer_state else settings_drawer_size
+    # set drawer size to 1 if the settings drawer is closed
+    settings_drawer_size = 1 if not drawer_state else settings_drawer_size
 
-#     # the height of the data drawer in grad
-#     data_drawer_height = map_delta_lat   / browser_props["height"] * data_drawer_size
+    # the height of the data drawer in grad
+    data_drawer_height = map_delta_lat   / browser_props["height"] * data_drawer_size
 
-#     # the width of the settings drawer in grad
-#     settings_drawer_width = map_delta_lon / browser_props["width"]  * settings_drawer_size
+    # the width of the settings drawer in grad
+    settings_drawer_width = map_delta_lon / browser_props["width"]  * settings_drawer_size
 
-#     # the range, in which markers are moved to the center in %
-#     moving_zone_bounds = [[10, 20],[40, 20]] 
+    # the range, in which markers are moved to the center in %
+    moving_zone_bounds = [[10, 20],[40, 20]] 
 
-#     zone_factor_h = (top - (bottom + data_drawer_height)) / 100
-#     zone_factor_w = (right - (left + settings_drawer_width)) / 100
+    zone_factor_h = (top - (bottom + data_drawer_height)) / 100
+    zone_factor_w = (right - (left + settings_drawer_width)) / 100
 
-#     ok_zone = [
-#         [bottom + data_drawer_height + moving_zone_bounds[0][0] * zone_factor_h, left + settings_drawer_width + moving_zone_bounds[0][1] * zone_factor_w],
-#         [top - moving_zone_bounds[1][0] * zone_factor_h, right -  moving_zone_bounds[1][1] * zone_factor_w]
-#          ]
+    ok_zone = [
+        [bottom + data_drawer_height + moving_zone_bounds[0][0] * zone_factor_h, left + settings_drawer_width + moving_zone_bounds[0][1] * zone_factor_w],
+        [top - moving_zone_bounds[1][0] * zone_factor_h, right -  moving_zone_bounds[1][1] * zone_factor_w]
+         ]
 
-#     marker_loc = marker["data"]["location"]
+    marker_loc = marker["data"]["location"]
 
-#     # returns an array containing the values to be moved: [[bottom/top], [left/right]]
-#     def check_marker_pos(marker_loc, ok_zone):
-#         overlapping = [0,0]
-#         # bottom
-#         if marker_loc["lat"] < ok_zone[0][0]: 
-#             overlapping[0] = ok_zone[0][0] - marker_loc["lat"]
-#         # top
-#         if marker_loc["lat"] > ok_zone[1][0]: 
-#             overlapping[0] = ok_zone[1][0] - marker_loc["lat"]
-#         # left
-#         if marker_loc["lon"] < ok_zone[0][1]:
-#             overlapping[1] = ok_zone[0][1] - marker_loc["lon"]
-#         # right
-#         if marker_loc["lon"] > ok_zone[1][1]:
-#             overlapping[1] = ok_zone[1][1] - marker_loc["lon"]
-#         return overlapping
+    # returns an array containing the values to be moved: [[bottom/top], [left/right]]
+    def check_marker_pos(marker_loc, ok_zone):
+        overlapping = [0,0]
+        # bottom
+        if marker_loc["lat"] < ok_zone[0][0]: 
+            overlapping[0] = ok_zone[0][0] - marker_loc["lat"]
+        # top
+        if marker_loc["lat"] > ok_zone[1][0]: 
+            overlapping[0] = ok_zone[1][0] - marker_loc["lat"]
+        # left
+        if marker_loc["lon"] < ok_zone[0][1]:
+            overlapping[1] = ok_zone[0][1] - marker_loc["lon"]
+        # right
+        if marker_loc["lon"] > ok_zone[1][1]:
+            overlapping[1] = ok_zone[1][1] - marker_loc["lon"]
+        return overlapping
 
-#     move_required = check_marker_pos(marker_loc, ok_zone)
+    move_required = check_marker_pos(marker_loc, ok_zone)
 
-#     new_center = [center["lat"] + (move_required[0] * -1), center["lng"] + (move_required[1] * -1)]
+    new_center = [center["lat"] + (move_required[0] * -1), center["lng"] + (move_required[1] * -1)]
 
-#     return dict(center=new_center, zoom=zoom, transition="flyTo")
+    return dict(center=new_center, zoom=zoom, transition="flyTo")
 

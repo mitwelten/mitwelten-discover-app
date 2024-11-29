@@ -106,8 +106,6 @@ def map_figure(params: UrlParameter, active_depl: BaseDeployment|None):
     center=initial_center,
     zoom=int(float(params.zoom)),
     maxZoom=DEFAULT_MAX_ZOOM,
-    zoomSnap=0,
-    doubleClickZoom=False,
     className="id-map",
     style={
         "width": "100vw",

@@ -117,6 +117,7 @@ def doc_card(file):
                         children=[
                             dmc.Image(
                                 h="100%",
+                                w="150px",
                                 p=20,
                                 mt=60,
                                 src=f"assets/mime/{(file.type).rsplit('/', 1)[1]}.svg",

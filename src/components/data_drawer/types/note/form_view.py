@@ -69,14 +69,14 @@ def header(note: Note):
 def content(note: Note, all_tags, tz):
     accepted_types =",".join(list(chain.from_iterable(supported_mime_types.values())))
     return dmc.Stack(
-            gap="sm",
+            gap=5,
             children=[
                 dmc.TagsInput(
                     id=ID_NOTE_TAG_SELECT,
-                    label="Tags",
                     data=sorted([t["name"] for t in all_tags]) if all_tags else [],
                     value=note.tags,
                     size="xs",
+                    mt=5,
                     placeholder="Pick tag from list"),
 
                 dmc.Group(
@@ -130,8 +130,7 @@ def content(note: Note, all_tags, tz):
                         value=note.description,
                         label="Description",
                         autosize=True,
-                        minRows=4,
-                        maxRows=4,
+                        minRows=7,
                         debounce=500,
                         size="xs",
                         style=min_width_style),
