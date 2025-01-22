@@ -29,7 +29,7 @@ def stores(params: UrlParameter, deployments, notes, env_data, tags, active_depl
     return[*[
         dcc.Store(
             id={"role": source_type, "label": "Store", "type": "physical"},
-            data=dict(entries=deployments[source_type], type=source_type))
+            data=dict(entries=deployments.get(source_type, []), type=source_type))
         for source_type in all_sources
         ],
 

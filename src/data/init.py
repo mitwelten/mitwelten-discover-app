@@ -66,7 +66,7 @@ def translate_lables(legend):
 def init_environment_data():
     all_environments_json = get_environment_data()
     if all_environments_json is None:
-        return []
+        return [], []
     # standardize dictionary properties
     all_environments = [Environment(env).to_dict() for env in all_environments_json]
     environment_legend = get_environment_legend()

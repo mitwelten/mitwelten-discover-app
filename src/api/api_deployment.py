@@ -21,7 +21,7 @@ def get_deployments():
     if response.status_code == 200:
         return response.json()
 
-    logger.error("Fetch Deployments failed: : Status Code ", response.status_code)
+    logger.error(f"Fetch Deployments failed: Status Code {response.status_code}")
     return []
 
 
