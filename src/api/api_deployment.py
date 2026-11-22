@@ -155,7 +155,7 @@ def get_bird_stacked_bar(deployment_id: int, time_from=None, time_to=None, bucke
     return None
 
 def get_all_species():
-    url = construct_url(f"species")
+    url = construct_url("species/")
     response = requests.get(url)
     if response.status_code == 200:
         logger.info(f"Fetch all species: Status Code {response.status_code}")
