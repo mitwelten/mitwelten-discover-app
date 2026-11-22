@@ -45,7 +45,7 @@ def deactivate_edit_mode_from_delete(delete_click, note):
         return dict(data=None), False, n, dict(entries=[], type="Note")
     else:
         n = notification(f"Could not delete Experiment & Finding - {res.status_code}", NotificationType.WENT_WRONG)
-        return no_update, no_update, notification, no_update
+        return no_update, no_update, n, no_update
 
 
 
