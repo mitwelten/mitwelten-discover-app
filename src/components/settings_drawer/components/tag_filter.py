@@ -19,7 +19,7 @@ fs_desc = dmc.Stack([
 def tag_filter(params: UrlParameter, all_tags):
     all_tags = [tag["name"] for tag in all_tags]
 
-    predicate = re.compile("FS\d")
+    predicate = re.compile(r"FS\d")
 
     fs_tags = []
     for tag in all_tags:
