@@ -42,7 +42,7 @@ def map_menu_drawer(id_prefix):
                     lambda x: dmc.GridCol(minimap_button(id_prefix, x, MAP_TYPES[0]), style={"textAlign": "center"}, span=3),
                     MAPS)
                 ),
-                gutter="sm",
+                gap="sm",
                 grow=True,
             ),
             dmc.Space(h=10),
@@ -53,7 +53,7 @@ def map_menu_drawer(id_prefix):
                     lambda x: dmc.GridCol(minimap_button(id_prefix, x, MAP_TYPES[1]), style={"textAlign": "center"}, span=3),
                     OVERLAYS)
                 ),
-                gutter="sm",
+                gap="sm",
                 grow=True,
             ),
         ],

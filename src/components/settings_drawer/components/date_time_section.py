@@ -46,7 +46,7 @@ def date_time_section(params: UrlParameter):
         ),
         dmc.Space(h=20),
         dmc.Center([
-            dmc.DatePicker(
+            dmc.DatePickerInput(
                 id=ID_DATE_RANGE_PICKER,
                 description="",
                 minDate=date(2020, 1, 1),

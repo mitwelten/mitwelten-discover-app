@@ -177,10 +177,9 @@ def note_detail_view(note: Note, theme):
 
     carousel = dmc.Carousel(
             orientation="horizontal",
-            align="center",
+            emblaOptions={"align": "center", "loop": True},
             slideGap={ "base": "sm" },
             height="300",
-            loop=True,
             controlsOffset="md",
             withIndicators=True,
             bg=PRIMARY_COLOR,

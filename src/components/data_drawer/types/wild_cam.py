@@ -76,7 +76,7 @@ def create_wild_cam_chart(marker_data, date_range, theme):
         content = dmc.Carousel(
                 children=images,
                 orientation="horizontal",
-                align="start",
+                emblaOptions={"align": "start"},
                 slideGap={ "base": "xl" },
                 height="100%",
                 controlsOffset="md",
