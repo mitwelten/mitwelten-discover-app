@@ -16,7 +16,7 @@ from src.components.data_drawer.types.note.attachment import attachment_area
 from src.util.helper_functions import safe_reduce
 from src.api.api_files import upload_file,  delete_file
 from src.api.api_note import update_note, delete_tag_by_note_id, add_tag_by_note_id, add_file_to_note
-from src.config.app_config import supported_mime_types, PRIMARY_COLOR
+from src.config.app_config import supported_mime_types, PRIMARY_COLOR, TIMEZONE
 from src.config.id_config import *
 from src.main import app
 from src.model.note import Note
@@ -193,22 +193,26 @@ def note_form_view(note: Note, all_tags, tz):
     Input(ID_NOTE_DATE_INPUT, "value"),
     Input(ID_NOTE_TIME_INPUT, "value"),
     State(ID_EDIT_NOTE_STORE, "data"),
+    State(ID_TIMEZONE_STORE, "data"),
     prevent_initial_call = True
 )
-def update_date_time(input_date, input_time, selected_note):
+def update_date_time(input_date, input_time, selected_note, timezone):
     if selected_note["data"] is None:
         raise PreventUpdate
     date = datetime.fromisoformat(input_date)
     time = datetime.strptime(input_time, "%H:%M:%S")
 
-    date = date.replace(
+    local_date = date.replace(
             hour=time.hour,
             minute=time.minute,
             second=time.second,
+            tzinfo=None,
             )
 
-    tz = pytz.timezone("UTC")
-    utc_date= date.astimezone(tz)
+    # inputs show the note's time in the browser's timezone (see content()),
+    # interpret values in that zone, not in the server's.
+    tz_name = (timezone or {}).get("tz") or TIMEZONE
+    utc_date = pytz.timezone(tz_name).localize(local_date).astimezone(pytz.UTC)
 
     selected_note["data"]["date"] = utc_date.isoformat()
     return selected_note
