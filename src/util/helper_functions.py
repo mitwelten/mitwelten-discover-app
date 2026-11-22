@@ -41,4 +41,3 @@ def was_deployed(deployment: Deployment, start_date: str, end_date: str) -> bool
         else:
             return node_start <= selected_end
     return False
-

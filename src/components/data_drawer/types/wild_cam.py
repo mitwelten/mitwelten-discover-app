@@ -27,7 +27,7 @@ def slide(object_name, ratio):
                         src=construct_url(f"tv/file/{object_name}"),
                         )
                     )
-                    
+
                 )
             )
 
@@ -39,7 +39,7 @@ def loader_slide(ratio):
             style={"justifyContent":"center", "alignItems":"center"},
             children=[
                 dmc.Button(
-                    "Load more", 
+                    "Load more",
                     id="load-more-button")
                 ])
 
@@ -52,7 +52,7 @@ def create_wild_cam_chart(marker_data, date_range, theme):
 
     start_time = datetime.strptime(date_range['start'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
     end_time = datetime.strptime(date_range['end'], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
-    
+
     filtered_data = [
         item for item in res
         if start_time <= datetime.fromisoformat(item['time']) <= end_time
@@ -64,7 +64,7 @@ def create_wild_cam_chart(marker_data, date_range, theme):
     )
 
     object_names = [image.get("object_name") for image in sorted_filtered_data]
-    
+
     images = [slide(names, RATIO) for names in object_names[:STACK_SIZE]]
 
     if len(object_names) > STACK_SIZE:
@@ -85,7 +85,7 @@ def create_wild_cam_chart(marker_data, date_range, theme):
                 w="100%",
                 id="carousel-id",
                 styles={"root": {"height":"100%"}}
-                
+
                 )
     return dmc.Paper(
             shadow="md",
@@ -96,15 +96,15 @@ def create_wild_cam_chart(marker_data, date_range, theme):
             h=360,
             children=html.Div(
                 style={
-                    "display":"flex", 
-                    "justifyContent":"center", 
-                    "alignItems":"center", 
+                    "display":"flex",
+                    "justifyContent":"center",
+                    "alignItems":"center",
                     "height":"100%"
                     },
                 children=[
-                    content, 
+                    content,
                     dcc.Store(
-                        id="carousel-store", 
+                        id="carousel-store",
                         data=dict(
                             object_names=object_names,
                             index=STACK_SIZE

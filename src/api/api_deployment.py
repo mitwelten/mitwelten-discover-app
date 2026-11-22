@@ -42,8 +42,8 @@ def get_pax_timeseries(deployment_id: int, bucket_width: str, time_from=None, ti
     url = construct_url(
         f"sensordata/pax/{deployment_id}",
         {
-            "bucket_width": bucket_width, 
-            "from": time_from, 
+            "bucket_width": bucket_width,
+            "from": time_from,
             "to": time_to}
         )
     response = requests.get(url)
@@ -120,7 +120,7 @@ def get_pollinator_timeseries(
 
 def get_pollinator_heatmap( deployment_id: int, confidence, time_from=None, time_to=None):
     url = construct_url(
-        f"discover/pollinators/heatmap/{deployment_id}", 
+        f"discover/pollinators/heatmap/{deployment_id}",
         {
             "from": time_from,
             "to": time_to,
@@ -131,14 +131,14 @@ def get_pollinator_heatmap( deployment_id: int, confidence, time_from=None, time
     if response.status_code == 200:
         logger.info(f"Fetch pollinator heatmap: Status Code {response.status_code}")
         return response.json()
- 
+
     logger.error(f"Fetch pollinator heatmap failed: Status Code {response.status_code}")
     return []
 
 
 def get_bird_stacked_bar(deployment_id: int, time_from=None, time_to=None, bucket_width="1d", confidence=0.7):
     url = construct_url(
-        f"discover/birds/top/{deployment_id}", 
+        f"discover/birds/top/{deployment_id}",
         {
             "bucket_width": bucket_width,
             "confidence": confidence,
@@ -165,13 +165,13 @@ def get_all_species():
     return []
 
 def get_wild_cam_image(
-        deployment_id: int, 
-        period_start=None, 
-        period_end=None, 
-        phase=None, 
+        deployment_id: int,
+        period_start=None,
+        period_end=None,
+        phase=None,
         interval=None):
     url = construct_url(
-        f"tv/stack-selection/", 
+        f"tv/stack-selection/",
         {
             "deployment_id": deployment_id,
             "period_start": period_start,

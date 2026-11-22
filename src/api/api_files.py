@@ -41,4 +41,3 @@ def delete_file(file_id, auth_cookie):
     )
     logger.info(f"Delete File: {res.status_code}")
     return res
-

@@ -46,7 +46,7 @@ def get_device_from_params(params: UrlParameter, deployments, notes, env):
         return get_device_from_env(params, env)
     else:
         return None
-    
+
 
 def _get_value_or_none(param, data):
     if data.get(param) is not None and data[param]:
@@ -86,4 +86,3 @@ def update_query_data(data, params: dict):
                 del data[param]
 
     return dict(sorted(data.items()))
-

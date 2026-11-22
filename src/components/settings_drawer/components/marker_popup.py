@@ -9,9 +9,9 @@ from src.util.util import apply_newlines, local_formatted_date, text_to_dash_ele
 
 def header(source_type, title=None, label=None):
     title = dmc.Text(
-                    get_source_props(source_type)["name"] if title is None else title, 
+                    get_source_props(source_type)["name"] if title is None else title,
                     fw=700,
-                    size="xs", 
+                    size="xs",
                     className="note-marker-title",
                     my="0",
                     lineClamp=3

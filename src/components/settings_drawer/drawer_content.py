@@ -15,7 +15,7 @@ def divider(title: str):
 
 label = dmc.Stack(
         children=[dmc.Title(
-            "Mitwelten Discover is a map-based publication of the research project MITWELTEN.", order=3), 
+            "Mitwelten Discover is a map-based publication of the research project MITWELTEN.", order=3),
                   dmc.Text(DISCOVER_DESCRIPTION)
                   ]
         )
@@ -30,14 +30,14 @@ title = dmc.Center(
             p=20,
             color=PRIMARY_COLOR,
             children= dmc.Title(
-                "Mitwelten Discover", 
-                order=3, 
+                "Mitwelten Discover",
+                order=3,
                 style={"cursor": "pointer"}
                 )
             )
         )
 
-def drawer_content(params: UrlParameter, all_tags, active_device, deployments): 
+def drawer_content(params: UrlParameter, all_tags, active_device, deployments):
     return dmc.Container(
             children=[
                 dmc.ScrollArea(
@@ -57,8 +57,8 @@ def drawer_content(params: UrlParameter, all_tags, active_device, deployments):
                         dmc.Space(h=10),
                         general_controls(),
                         ]),
-                ], 
-                         justify="space-between", 
+                ],
+                         justify="space-between",
                          direction="column",
                          style={"height":"100%"}
                          )),

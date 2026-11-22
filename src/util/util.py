@@ -91,4 +91,3 @@ def text_to_dash_elements(text):
             elements.append(html.Br())
 
     return elements
-

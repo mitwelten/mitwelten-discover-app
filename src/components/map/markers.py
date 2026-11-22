@@ -24,8 +24,8 @@ from src.util.helper_functions import was_deployed
 popup_events=dict(
     mouseout  = assign("", "mouseout"),
     click     = assign("", "click"),
-    mouseover = assign("", "mouseover"), 
-) 
+    mouseover = assign("", "mouseover"),
+)
 
 @app.callback(
     Output(ID_DEPLOYMENT_LAYER_GROUP, "children"),
@@ -73,7 +73,7 @@ def add_device_markers(checkboxes, tags, time_range, sources, timezone, device_s
                     tag_filter = False
                     break
 
-            if tag_filter: 
+            if tag_filter:
                 visible_deployments.append(d)
 
     # time filter
@@ -264,7 +264,7 @@ def ensure_marker_visibility_in_viewport(
     settings_drawer_width = map_delta_lon / browser_props["width"]  * settings_drawer_size
 
     # the range, in which markers are moved to the center in %
-    moving_zone_bounds = [[10, 20],[40, 20]] 
+    moving_zone_bounds = [[10, 20],[40, 20]]
 
     zone_factor_h = (top - (bottom + data_drawer_height)) / 100
     zone_factor_w = (right - (left + settings_drawer_width)) / 100
@@ -280,10 +280,10 @@ def ensure_marker_visibility_in_viewport(
     def check_marker_pos(marker_loc, ok_zone):
         overlapping = [0,0]
         # bottom
-        if marker_loc["lat"] < ok_zone[0][0]: 
+        if marker_loc["lat"] < ok_zone[0][0]:
             overlapping[0] = ok_zone[0][0] - marker_loc["lat"]
         # top
-        if marker_loc["lat"] > ok_zone[1][0]: 
+        if marker_loc["lat"] > ok_zone[1][0]:
             overlapping[0] = ok_zone[1][0] - marker_loc["lat"]
         # left
         if marker_loc["lon"] < ok_zone[0][1]:
@@ -298,4 +298,3 @@ def ensure_marker_visibility_in_viewport(
     new_center = [center["lat"] + (move_required[0] * -1), center["lng"] + (move_required[1] * -1)]
 
     return dict(center=new_center, zoom=zoom, transition="flyTo")
-

@@ -11,7 +11,7 @@ def get_environment_data():
     if response.status_code == 200:
         logger.info(f"Fetch environment data: Status Code {response.status_code}")
         return response.json()
-    
+
     logger.error(f"Fetch environment data failed: Status Code {response.status_code}")
     return None
 

@@ -42,7 +42,7 @@ def attachment_area(files: list[File], editable = False):
     ]
 
 
-def _attachment_card(file: File, auth_cookie, editable = False): 
+def _attachment_card(file: File, auth_cookie, editable = False):
     name, ext = file.object_name.split('.')
     thumbnail = f"{name}_{thumbnail_size[0]}x{thumbnail_size[1]}.{ext}"
     is_image = file.type in supported_mime_types["image"]
@@ -92,8 +92,8 @@ def _attachment_card(file: File, auth_cookie, editable = False):
                                 ) if editable else {},
 
                             action_button(
-                                button_id={"element": "download_button", "file_id": file.id}, 
-                                icon="material-symbols:download", 
+                                button_id={"element": "download_button", "file_id": file.id},
+                                icon="material-symbols:download",
                                 size="sm",
                                 variant="transparent"
                                 ),
@@ -129,4 +129,3 @@ def download_attachment(click, files):
     _, content_string = file.split(',')
 
     return dict(base64=True, type=file_type, filename=object_name.rsplit('/', 1)[1], content=content_string)
-

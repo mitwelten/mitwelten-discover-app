@@ -18,7 +18,7 @@ from src.components.settings_drawer.components.marker_popup import environment_p
 
 initial_map = map_config.MAPS[1]
 
-def map_figure(params: UrlParameter, active_depl: BaseDeployment|None): 
+def map_figure(params: UrlParameter, active_depl: BaseDeployment|None):
 
     initial_center = [params.lat, params.lon]
     base_layers = []
@@ -28,8 +28,8 @@ def map_figure(params: UrlParameter, active_depl: BaseDeployment|None):
                     id=f"layer-{map.index}",
                     name=map.title,
                     children=dl.TileLayer(
-                        url=map.source, 
-                        attribution=map.source_attribution, 
+                        url=map.source,
+                        attribution=map.source_attribution,
                         maxZoom=DEFAULT_MAX_ZOOM)
                     )
                 )
@@ -40,8 +40,8 @@ def map_figure(params: UrlParameter, active_depl: BaseDeployment|None):
                 dl.Overlay(
                     name=map.title,
                     children=dl.TileLayer(
-                        url=map.source, 
-                        attribution=map.source_attribution, 
+                        url=map.source,
+                        attribution=map.source_attribution,
                         maxZoom=DEFAULT_MAX_ZOOM)
                     )
                 )
@@ -50,9 +50,9 @@ def map_figure(params: UrlParameter, active_depl: BaseDeployment|None):
 
 
     dcc.Store(
-        id="id-active-depl-store", 
+        id="id-active-depl-store",
         data=dict(
-            args=params.to_dict(), 
+            args=params.to_dict(),
             active_depl=active_depl.to_dict() if active_depl is not None else None
             )
         ),
@@ -77,21 +77,21 @@ def map_figure(params: UrlParameter, active_depl: BaseDeployment|None):
                 maxNativeZoom=19,
                 ),
             dl.Overlay(
-                id="notes-overlay", 
-                name="Notes", 
+                id="notes-overlay",
+                name="Notes",
                 checked=True,
                 children=dl.LayerGroup(id=ID_NOTES_LAYER_GROUP)
                 ),
             dl.Overlay(
-                id="env-overlay", 
-                name="Env", 
+                id="env-overlay",
+                name="Env",
                 checked=True,
                 children=dl.LayerGroup(id=ID_ENV_LAYER_GROUP)
                 ),
 
             dl.Overlay(
-                id="deployment-overlay", 
-                name="Deployments", 
+                id="deployment-overlay",
+                name="Deployments",
                 checked=True,
                 children= dl.LayerGroup(id=ID_DEPLOYMENT_LAYER_GROUP),
                 ),

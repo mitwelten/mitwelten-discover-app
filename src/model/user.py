@@ -16,5 +16,3 @@ class User:
                 f"Fullname: {self.full_name}\n"
                 f"Initials: {self.initials}\n"
                 f"Roles: {self.roles}")
-
-

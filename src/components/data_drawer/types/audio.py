@@ -32,7 +32,7 @@ def create_audio_chart(deployment_data, date_range, theme):
     deployment_start = datetime.fromisoformat(deployment_data['period']['start'])
     deployment_end = deployment_data['period'].get('end')
     deployment_end = datetime.fromisoformat(deployment_end) if deployment_end else None
-    
+
     start = max(start_time, deployment_start)
     end = min(end_time, deployment_end) if deployment_end else end_time
 
@@ -52,18 +52,18 @@ def create_audio_chart(deployment_data, date_range, theme):
             xaxis={"visible": True},
             yaxis={"visible": True},
             barmode='stack',
-            margin_pad=20, 
-            font_size=12, 
+            margin_pad=20,
+            font_size=12,
             legend=dict(y=0.9),
         )
 
         df = pd.DataFrame(resp)
         df["species"] = df["species"].map(get_label)
-        
+
         df['date'] = pd.to_datetime(df['bucket']).dt.date
-        
+
         pivot_df = df.pivot_table(index='date', columns='species', values='count', aggfunc='sum', fill_value=0)
-        
+
         for species in sorted(pivot_df.columns)[::-1]:
             figure.add_trace(go.Bar(
                 x=pivot_df.index.astype(str),

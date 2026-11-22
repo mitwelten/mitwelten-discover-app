@@ -1,23 +1,23 @@
 DATE_FORMAT = "%Y-%m-%d"
 TIMEZONE = "Europe/Zurich"
 
-SETTINGS_DRAWER_WIDTH = 320 
+SETTINGS_DRAWER_WIDTH = 320
 CHART_DRAWER_HEIGHT = 500
 ALERT_DURATION = 4000
 
 REFRESH_KEY_TIME_LEFT_S = 10 * 60
 
 QUERY_PARAMS = {
-        "start": None, 
-        "end": None, 
-        "timerange": None, 
-        "lat": 47.5339807306196, 
-        "lon": 7.6169566067567, 
-        "zoom": 12, 
-        "tags": None, 
-        "devices": None, 
-        "node_label": None, 
-        "note_id": None, 
+        "start": None,
+        "end": None,
+        "timerange": None,
+        "lat": 47.5339807306196,
+        "lon": 7.6169566067567,
+        "zoom": 12,
+        "tags": None,
+        "devices": None,
+        "node_label": None,
+        "note_id": None,
         "env_id": None,
         "map": 0,
         "overlay": 0,

@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 min_width_style = {"minWidth": "200px"}
 
-def header(note: Note): 
+def header(note: Note):
     is_public = True if note.public == True else False
 
     return dmc.Flex(
@@ -38,12 +38,12 @@ def header(note: Note):
             children=[
                 dmc.Group(
                     children=[
-                        dmc.Title("Edit Note", order=4), 
+                        dmc.Title("Edit Note", order=4),
                         dmc.Title(dmc.Text(note.author, c="dimmed", size="sm"), order=4)
                         ]
-                    ), 
+                    ),
                 dmc.Group(
-                    gap="sm", 
+                    gap="sm",
                     style={"justifyContent":"flex-end"},
                     children=[
                         dmc.Switch(
@@ -61,7 +61,7 @@ def header(note: Note):
                             ),
                         ]
                     )
-                ], 
+                ],
             )
 
 
@@ -83,15 +83,15 @@ def content(note: Note, all_tags, tz):
                     grow=True,
                     children=[
                         dmc.DateInput(
-                            id=ID_NOTE_DATE_INPUT, 
-                            value=local_formatted_date(note.date, timezone=tz, date_format="%Y-%m-%dT%H:%M:%S"), 
-                            valueFormat="DD-MM-YYYY", 
+                            id=ID_NOTE_DATE_INPUT,
+                            value=local_formatted_date(note.date, timezone=tz, date_format="%Y-%m-%dT%H:%M:%S"),
+                            valueFormat="DD-MM-YYYY",
                             size="xs",
                             label="Date"
                             ),
                         dmc.TimeInput(
-                            id=ID_NOTE_TIME_INPUT, 
-                            value=local_formatted_date(note.date, timezone=tz,date_format="%H:%M:%S"), 
+                            id=ID_NOTE_TIME_INPUT,
+                            value=local_formatted_date(note.date, timezone=tz,date_format="%H:%M:%S"),
                             withSeconds=True,
                             size="xs",
                             label="Time"
@@ -102,25 +102,25 @@ def content(note: Note, all_tags, tz):
                     grow=True,
                     children=[
                         dmc.NumberInput(
-                            id=ID_NOTE_EDIT_LAT, 
-                            label="Latitude", 
-                            value=note.lat, 
-                            size="xs", 
+                            id=ID_NOTE_EDIT_LAT,
+                            label="Latitude",
+                            value=note.lat,
+                            size="xs",
                             decimalScale=12),
 
                         dmc.NumberInput(
-                            id=ID_NOTE_EDIT_LON, 
-                            label="Longitude", 
-                            value=note.lon, 
-                            size="xs", 
+                            id=ID_NOTE_EDIT_LON,
+                            label="Longitude",
+                            value=note.lon,
+                            size="xs",
                             decimalScale=12),
                         ]),
 
                     dmc.TextInput(
-                        id=ID_NOTE_EDIT_TITLE, 
-                        value=note.title, 
-                        label="Title", 
-                        debounce=500, 
+                        id=ID_NOTE_EDIT_TITLE,
+                        value=note.title,
+                        label="Title",
+                        debounce=500,
                         size="xs",
                         style=min_width_style),
 
@@ -139,18 +139,18 @@ def content(note: Note, all_tags, tz):
                             grow=True,
                             children=[
                                 dmc.Button(
-                                    "Cancel", 
-                                    id=ID_NOTE_FORM_CANCEL_BUTTON, 
+                                    "Cancel",
+                                    id=ID_NOTE_FORM_CANCEL_BUTTON,
                                     color="gray"),
 
                                 dmc.Button(
-                                    "Save", 
+                                    "Save",
                                     id=ID_NOTE_FORM_SAVE_BUTTON),
                                 ]),
                         dcc.Upload(
                                 id=ID_IMAGE_UPLOAD,
                                 children=[
-                                    "Drag and Drop or ", 
+                                    "Drag and Drop or ",
                                     html.A("Select files", style={"fontWeight": "bold"})
                                     ] ,
                                 accept=accepted_types,
@@ -175,7 +175,7 @@ def content(note: Note, all_tags, tz):
 def note_form_view(note: Note, all_tags, tz):
 
     return dmc.Container(
-            fluid=True, 
+            fluid=True,
             children=[
                 header(note),
                 dmc.ScrollArea(
@@ -184,7 +184,7 @@ def note_form_view(note: Note, all_tags, tz):
                     offsetScrollbars=True,
                     children=[content(note, all_tags, tz)],
                     )
-                ], 
+                ],
             )
 
 
@@ -202,8 +202,8 @@ def update_date_time(input_date, input_time, selected_note):
     time = datetime.strptime(input_time, "%H:%M:%S")
 
     date = date.replace(
-            hour=time.hour, 
-            minute=time.minute, 
+            hour=time.hour,
+            minute=time.minute,
             second=time.second,
             )
 
@@ -258,7 +258,7 @@ def add_attachment(list_of_contents, list_of_names, note):
         filename, ext = name.rsplit('.')
         if ext == "jpg":
             ext = "jpeg"
-            name = filename + "." + ext 
+            name = filename + "." + ext
 
 
         # string to split: `data:image/png;base64`
@@ -268,7 +268,7 @@ def add_attachment(list_of_contents, list_of_names, note):
 
         if upload_file_response.status_code != 200:
             notify = notification(
-                    f"Could not add attachment - {upload_file_response.status_code}", 
+                    f"Could not add attachment - {upload_file_response.status_code}",
                     NotificationType.WENT_WRONG
                     )
             return no_update, no_update, notify
@@ -279,7 +279,7 @@ def add_attachment(list_of_contents, list_of_names, note):
 
         if add_file_to_note_res.status_code != 200:
             notify = notification(
-                    f"Could not add attachment to note- {add_file_to_note_res.status_code}", 
+                    f"Could not add attachment to note- {add_file_to_note_res.status_code}",
                     NotificationType.WENT_WRONG
                     )
             return no_update, no_update, notify
@@ -289,7 +289,7 @@ def add_attachment(list_of_contents, list_of_names, note):
 
     note["data"]["file"] = new_files
     new_files = [File(f) for f in new_files]
-                
+
     return dict(data=note["data"]), attachment_area(new_files, True), no_update
 
 
@@ -383,9 +383,9 @@ def persist_note(click, notes, selected_note, title, description, is_public, tag
     original_note = None
     def error_return_values(alert):
         return [
-            no_update, 
-            no_update, 
-            no_update, 
+            no_update,
+            no_update,
+            no_update,
             alert,
             no_update
         ]
@@ -396,7 +396,7 @@ def persist_note(click, notes, selected_note, title, description, is_public, tag
 
     if original_note is None:
         return error_return_values(notification(f"Note with id {note.id} not found, could not save note!", NotificationType.WENT_WRONG))
- 
+
     res = update_note(note, auth_cookie)
     if res.status_code != 200:
         logger.error(f"Could not save note with id {note.id}!")
@@ -424,5 +424,4 @@ def persist_note(click, notes, selected_note, title, description, is_public, tag
 
     notes["entries"] = [] # refresh note store
     update_tag_store = None if tags_to_add else no_update
-    return False, notes, dict(data=None), no_update, update_tag_store 
-
+    return False, notes, dict(data=None), no_update, update_tag_store

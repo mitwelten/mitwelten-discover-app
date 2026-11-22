@@ -53,4 +53,3 @@ def update_fs_tag_in_url_params(value, data):
     value = "+".join(value)
     value = value.replace(" ", "_")
     return update_query_data(data, {"tags": value})
-

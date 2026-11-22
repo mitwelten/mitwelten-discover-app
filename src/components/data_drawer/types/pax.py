@@ -22,7 +22,7 @@ def create_pax_chart(deployment_data, date_range, theme):
     deployment_start = datetime.fromisoformat(deployment_data['period']['start'])
     deployment_end = deployment_data['period'].get('end')
     deployment_end = datetime.fromisoformat(deployment_end) if deployment_end else None
-    
+
     start = max(start_time, deployment_start)
     end = min(end_time, deployment_end) if deployment_end else end_time
 

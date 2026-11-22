@@ -65,7 +65,7 @@ def create_pollinator_chart(marker_data, date_range, theme):
 
         types = ["Fliege", "Honigbiene", "Hummel", "Schwebfliege", "Wildbiene"]
         months = [it["month"] for it in resp["datapoints"]]
-        
+
 
         nof_month = max(months) - min(months) + 1
         heat_data = {t: [0] * nof_month for t in types}
@@ -87,7 +87,7 @@ def create_pollinator_chart(marker_data, date_range, theme):
             opacity=0.8,
             text=list(heat_data.values()),
             texttemplate="%{text}",
-            
+
         ))
         figure.update_xaxes(side="top")
         figure.update_layout(margin_pad=20, font_size=12)

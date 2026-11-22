@@ -19,7 +19,7 @@ def data_drawer_header(title, tags, icon, theme, title_icons=None, info=None, de
                                 dmc.Title(title, order=4),
                                 dmc.Text(desc, c="dimmed", size="xs") if desc else None,
                                 title_icons
-                                ], 
+                                ],
                             ),
                         dmc.ScrollArea(
                             w="100%",
@@ -51,7 +51,7 @@ def data_drawer_header(title, tags, icon, theme, title_icons=None, info=None, de
                 #sm=2,
                 style={"display":"flex", "justifyContent":"flex-end"}
                 )
-        ]), 
+        ]),
         dmc.Space(h=10),
         dmc.Divider(size="xs"),
     ], fluid=True

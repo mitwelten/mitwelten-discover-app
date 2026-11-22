@@ -9,4 +9,3 @@ def construct_url(path: str, args: dict|None = None):
             encoded_args = urlencode(filtered_args)
             url += f"?{encoded_args}"
     return url
-

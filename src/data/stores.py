@@ -22,7 +22,7 @@ def stores(params: UrlParameter, deployments, notes, env_data, tags, active_depl
         active_id = None
 
     all_sources = [
-            source for source in SOURCE_PROPS.keys() 
+            source for source in SOURCE_PROPS.keys()
             if get_source_props(source)["type"] == "physical"
             ]
 
@@ -34,14 +34,14 @@ def stores(params: UrlParameter, deployments, notes, env_data, tags, active_depl
         ],
 
            dcc.Store(
-               id={"role": "Note", "label": "Store", "type": "virtual"}, 
+               id={"role": "Note", "label": "Store", "type": "virtual"},
                data=dict(entries=notes)),
            dcc.Store(
-               id={"role": "Environment", "label": "Store", "type": "virtual"}, 
+               id={"role": "Environment", "label": "Store", "type": "virtual"},
                data=dict(entries=env_data["entries"], legend=env_data["legend"])),
 
            dcc.Store(id=ID_SELECTED_MARKER_STORE,    data=dict(
-               data=active_depl.to_dict() if active_depl is not None else None, 
+               data=active_depl.to_dict() if active_depl is not None else None,
                type=active_depl.type if active_depl else None)),
 
            dcc.Store(id=ID_TAG_DATA_STORE,           data=dict(all=tags)),
@@ -114,7 +114,7 @@ def update_url(marker, data):
         id = marker["data"]["node"]["node_label"]
 
     data = update_query_data(
-            data, 
+            data,
             {
                 "node_label": None,
                 "note_id": None,
@@ -123,4 +123,3 @@ def update_url(marker, data):
             )
 
     return update_query_data(data, {name: id})
-

@@ -15,7 +15,7 @@ light = {
         }
 
 
-def settings_drawer(params: UrlParameter, all_tags, active_device, deployments): 
+def settings_drawer(params: UrlParameter, all_tags, active_device, deployments):
     return dmc.Drawer(
             id=ID_SETTINGS_DRAWER,
             children=drawer_content(params, all_tags, active_device, deployments),

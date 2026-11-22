@@ -16,5 +16,5 @@ legende_lebensraumkarte = dmc.Affix(
                             dmc.Image(src="assets/lebensraumkarte_legende.png")
                             ]
                         ),
-                    ], 
+                    ],
                 )

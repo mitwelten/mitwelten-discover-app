@@ -26,4 +26,3 @@ def device_filter(active_device: BaseDeployment, deployments):
             nothingFoundMessage="No label found",
             placeholder="Node Label"
             )
-

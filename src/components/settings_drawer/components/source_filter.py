@@ -29,9 +29,9 @@ def source_filter(params: UrlParameter):
     return html.Div([
         dmc.Checkbox(
             id=ID_ALL_CHECKBOX,
-            label="All", 
+            label="All",
             checked=len(active) == len(SOURCE_PROPS.keys()),
-            value="all", 
+            value="all",
             size="sm",
             ),
         dmc.Space(h=20),

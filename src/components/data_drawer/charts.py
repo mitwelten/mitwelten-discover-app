@@ -16,7 +16,7 @@ def create_themed_figure(theme):
                 "yref": "paper",
                 "showarrow": False,
                 "font": {
-                    "size": 20 
+                    "size": 20
                 }
             }
         ]
@@ -62,5 +62,3 @@ def spider_chart(labels, keys, theme):
         margin=dict(l=0, r=0, t=10, b=35),
     )
     return fig
-
-

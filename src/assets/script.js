@@ -108,14 +108,14 @@ window.dash_clientside.attachment = {
       }
     }
     blob_store.files = [];
-    blob_store.active_id = undefined; 
+    blob_store.active_id = undefined;
     return blob_store;
   },
 
   //load_audio_files: async (_clicks, file_store, blob_store) => {
 
   //  const isInitCall = dash_clientside.callback_context.triggered.every(({ value }) => value === null);
-  //  // load audio files eagerly on initialization 
+  //  // load audio files eagerly on initialization
   //  if (!isInitCall) {
   //    throw dash_clientside.PreventUpdate;
   //  }
@@ -187,13 +187,13 @@ window.dashExtensions = Object.assign({}, window.dashExtensions, {
       e.target.openPopup();
     },
 
-    mouseout: function(e, ctx) {  
+    mouseout: function(e, ctx) {
       if (window.activePopup != ctx.id) {
         e.target.closePopup();
       }
-    },  
+    },
 
-    click: function(e, ctx) {  
+    click: function(e, ctx) {
       for (const [_, value] of Object.entries(ctx.map._targets)) {
         if (value.options.id != ctx.id) {
           value.closePopup();
@@ -202,7 +202,6 @@ window.dashExtensions = Object.assign({}, window.dashExtensions, {
 
       e.target.openPopup();
       window.activePopup = ctx.id;
-    },  
+    },
   }
 });
-

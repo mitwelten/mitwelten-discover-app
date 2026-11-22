@@ -5,7 +5,7 @@ from src.config.app_config import *
 def deployment_icon(file_name):
     return dmc.Image(
             src=f"assets/markers/{file_name}.svg",
-            alt=f"{file_name} icon", 
+            alt=f"{file_name} icon",
             style={"minWidth": "25px", "width": "50px"}
             )
 

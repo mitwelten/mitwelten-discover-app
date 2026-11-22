@@ -15,11 +15,11 @@ from src.config.app_config import (
 
 confirm_dialogs = [
             dcc.ConfirmDialog(
-                id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG, 
+                id=ID_CONFIRM_UNSAVED_CHANGES_DIALOG,
                 message=CONFIRM_UNSAVED_CHANGES_MESSAGE
                 ),
             dcc.ConfirmDialog(
-                id=ID_CONFIRM_DELETE_DIALOG, 
+                id=ID_CONFIRM_DELETE_DIALOG,
                 message=CONFIRM_DELETE_MESSAGE
                 ),
             ]
@@ -46,6 +46,3 @@ def deactivate_edit_mode_from_delete(delete_click, note):
     else:
         n = notification(f"Could not delete Experiment & Finding - {res.status_code}", NotificationType.WENT_WRONG)
         return no_update, no_update, n, no_update
-
-
-

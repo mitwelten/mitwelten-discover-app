@@ -52,7 +52,7 @@ info_dialog = dmc.Modal(
                             size="sm"),
                         ]),
                     dmc.Button(
-                        id="id-info-modal-close-button", 
+                        id="id-info-modal-close-button",
                         children=dmc.Text("Close")
                         ),
                     ], justify="space-between")
@@ -120,7 +120,7 @@ settings_button= dmc.ActionIcon(
 add_note_button = dmc.Tooltip(
         label="Add a new Note",
         children=action_button(
-            button_id=ID_ADD_NOTE_BUTTON, 
+            button_id=ID_ADD_NOTE_BUTTON,
             icon="material-symbols:add-comment-outline"
             )
         )
@@ -195,7 +195,7 @@ def login(_):
     hidden  = {"display": "none"}
     if user is None:
         logger.debug("No user logged in")
-        return no_update, hidden, visible 
+        return no_update, hidden, visible
 
     logger.info("User is logged in")
     return create_avatar(user), visible, hidden
@@ -246,7 +246,7 @@ def create_note_on_map(
 
     if user is None:
         return notify(notification("Log in to create notes!", NotificationType.NOT_PERMITTED))
-    
+
     new_note = Note(empty_note)
 
     # initially the bounds of the map are None
@@ -292,4 +292,3 @@ def create_note_on_map(
     all_notes["entries"].append(new_note.to_dict())
 
     return all_notes, no_update, dict(data=new_note.to_dict()), view, True
-

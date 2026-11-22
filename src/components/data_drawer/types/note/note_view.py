@@ -44,7 +44,7 @@ def note_view(note: Note, theme, tz, edit=False, all_tags=None):
 
     return [
             dcc.Store(
-                id=ID_NOTE_FILE_STORE, 
+                id=ID_NOTE_FILE_STORE,
                 data=dict(files=media_files + documents, focus=0, API_URL=API_URL)
                 ),
             html.Div(
@@ -57,8 +57,8 @@ def note_view(note: Note, theme, tz, edit=False, all_tags=None):
 
 
 icon_private = DashIconify(
-    icon="material-symbols:lock",                    
-    width=14, 
+    icon="material-symbols:lock",
+    width=14,
     style={"display":"block", "marginLeft":"3px", "color": "#868e96"}
 )
 
@@ -79,15 +79,15 @@ def audio_card(file):
                     ),
                 dmc.Center(
                     children=dmc.Text(
-                        file.name, 
-                        fw=500, 
-                        m=20, 
+                        file.name,
+                        fw=500,
+                        m=20,
                         style={"textOverflow": "ellipsis", "overflow": "hidden"}
-                        ), 
+                        ),
                     style={"textOverflow": "ellipsis"}),
                 html.Audio(
-                    src=get_file_url(file.object_name), 
-                    controls=True, 
+                    src=get_file_url(file.object_name),
+                    controls=True,
                     style={"width": "100%"}
                     )
                 ],
@@ -109,7 +109,7 @@ def doc_card(file):
                         className="docu-card",
                         h=120,
                         style={
-                            "cursor": "pointer", 
+                            "cursor": "pointer",
                             "display": "flex",
                             "alignItems": "center",
                             "justifyContent": "center"
@@ -126,11 +126,11 @@ def doc_card(file):
                         ),
                 dmc.Center(
                     dmc.Text(
-                        file.name, 
-                        fw=500, 
-                        m=20, 
+                        file.name,
+                        fw=500,
+                        m=20,
                         style={"textOverflow": "ellipsis", "overflow": "hidden"}
-                      ), 
+                      ),
                     )
                     ])
                     ]
@@ -147,13 +147,13 @@ def carousel_card(file: File):
                     dmc.Text(
                         size="xs",
                         style={
-                            "textOverflow": "ellipsis", 
-                            "overflow": "hidden", 
+                            "textOverflow": "ellipsis",
+                            "overflow": "hidden",
                             "position": "absolute",
                             "bottom": 0,
                             "background": "#ffffff80",
                             },
-                        children=file.name.split(".")[0], 
+                        children=file.name.split(".")[0],
                         )
                 ]
                 )
@@ -210,14 +210,14 @@ def note_detail_view(note: Note, theme):
                 desc=note.author
                 ),
             dmc.Container(
-                fluid=True, 
+                fluid=True,
                 pt=20,
                 children=
                     dmc.ScrollArea(
                         h=335,
                         type="hover",
                         offsetScrollbars=True,
-                        children=content, 
+                        children=content,
                         )
                 ),
             ]
@@ -262,7 +262,7 @@ def activate_edit_mode(click, notes, all_tags, tz):
                 return dict(data=note), note_form_view(n, all_tags["all"], tz["tz"]), CHART_DRAWER_HEIGHT, no_update
             else:
                 n = notification("Only the author can edit this note!", NotificationType.NOT_PERMITTED)
-                return no_update, no_update, no_update, n 
+                return no_update, no_update, no_update, n
 
 
 app.clientside_callback(
@@ -320,12 +320,10 @@ def cancel_click(cancel_click, notes, selected_note, theme):
 def deactivate_edit_mode(cancel_click, selected_note, notes, theme, tz):
     if cancel_click is None or cancel_click == 0:
         raise PreventUpdate
-    
+
     for note in notes["entries"]:
         if note["id"] == selected_note["data"]["id"]:
             n = Note(note)
             return dict(data=None), CHART_DRAWER_HEIGHT, True, note_view(n, theme, tz["tz"])
 
     raise PreventUpdate
-
-

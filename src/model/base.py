@@ -11,4 +11,3 @@ class BaseDeployment(ABC):
     @abstractmethod
     def to_dict(self):
         pass
-

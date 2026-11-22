@@ -52,7 +52,7 @@ def audio_player(id: str, src: str, light_mode):
                             style={"width": "60px", "height": "60px"}
                         ),
                         className="audio-player-circle",
-                        style={ "width": "80px", "height": "80px", "boxShadow": "0 2px 4px rgba(0,0,0,0.2)", "background": player_background} 
+                        style={ "width": "80px", "height": "80px", "boxShadow": "0 2px 4px rgba(0,0,0,0.2)", "background": player_background}
                     ),
                     html.Div(
                         dmc.ActionIcon(

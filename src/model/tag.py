@@ -4,5 +4,3 @@ class Tag:
 
     def to_dict(self):
         return dict(name=self.name)
-
-

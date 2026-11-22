@@ -126,4 +126,3 @@ def update_query_params(data, segment, params):
     if segment == "custom":
         return update_query_data(params, {"start": data["start"], "end": data["end"], "timerange": None})
     return update_query_data(params, {"start": None, "end": None, "timerange": segment})
-    

@@ -117,10 +117,10 @@ def create_env_chart(deployment_data, _date_range, theme):
                 dmc.TabsList(
                     children=[
                         dmc.TabsTab(
-                            children=f"{tab['title']}", 
-                            value=f"{idx}") 
-                        for (idx, tab) in enumerated_tabs] 
-                    ), 
+                            children=f"{tab['title']}",
+                            value=f"{idx}")
+                        for (idx, tab) in enumerated_tabs]
+                    ),
                 *panel_list
                 ],
             )

@@ -8,7 +8,7 @@ from dash import (
     html,
     Output,
     Input,
-    State, 
+    State,
     ctx,
     no_update,
     clientside_callback,
@@ -67,7 +67,7 @@ def app_content(args):
         ]
 
 
-def discover_app(**kwargs): 
+def discover_app(**kwargs):
     logger.info("Start app with args: %s", kwargs)
     backend_available = False
     try:
@@ -84,12 +84,12 @@ def discover_app(**kwargs):
             forceColorScheme="light",
             useV8CssVariablesResolver=True,
             id=ID_APP_THEME,
-            theme=app_theme,    
+            theme=app_theme,
             children=[
                 dmc.NotificationContainer(id=ID_NOTIFICATION, position="bottom-right"),
                 html.Div(
                     id=ID_APP_CONTAINER,
-                     children=app_content(kwargs) if backend_available 
+                     children=app_content(kwargs) if backend_available
                      else [
                          html.Div("Backend not available", style={"color": "red"}),
                          ]
@@ -121,7 +121,7 @@ def backend_request_to_stay_logged_in(_, avatar_clicks):
     )
 def update_url_of_login_logout_button(data):
     query_params = query_data_to_string(data)
-    login_url = f"{DOMAIN_NAME}/login{query_params}" 
+    login_url = f"{DOMAIN_NAME}/login{query_params}"
     return query_params, login_url
 
 
@@ -167,7 +167,7 @@ def map_click(_, selected_note, drawer_state, data):
         raise PreventUpdate
 
     new_data = update_query_data(
-            data, { 
+            data, {
              "node_label": None,
              "env_id": None,
              "note_id": None,
@@ -190,7 +190,7 @@ def update_map_center_in_url(center, zoom, data):
         raise PreventUpdate
 
     return update_query_data(
-            data, { 
+            data, {
              "lat": center["lat"],
              "lon": center["lng"],
              "zoom": int(zoom)
@@ -205,4 +205,3 @@ clientside_callback(
     Output(ID_TIMEZONE_STORE, "data"),
     Input(ID_TIMEZONE_STORE, "data"),
 )
-

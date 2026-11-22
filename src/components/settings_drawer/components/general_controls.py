@@ -11,7 +11,7 @@ def general_controls():
     return dmc.Group(
             justify="space-between",
             gap="xs",
-            children=[ 
+            children=[
                       dmc.Text("Light / Dark Theme", size="sm"),
                       dmc.Switch(
                           offLabel=DashIconify(icon="radix-icons:moon", width=16),

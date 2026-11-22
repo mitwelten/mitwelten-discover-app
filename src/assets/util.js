@@ -87,7 +87,7 @@ const getBlobUrlAuth = async (api_url, auth_token, file) => {
 const formatTime = seconds => {
   const min = Math.floor(seconds / 60);
   let sec = Math.floor(seconds - min * 60);
-  if (sec < 10){ 
+  if (sec < 10){
     sec = `0${sec}`;
   }
   return `${min}:${sec}`;
