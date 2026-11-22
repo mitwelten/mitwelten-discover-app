@@ -83,6 +83,7 @@ def discover_app(**kwargs):
 
     return dmc.MantineProvider(
             forceColorScheme="light",
+            useV8CssVariablesResolver=True,
             id=ID_APP_THEME,
             theme=app_theme,    
             children=[

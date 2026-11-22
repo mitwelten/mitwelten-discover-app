@@ -56,6 +56,11 @@ app_theme = {
                 ],
     },
     "primaryColor": PRIMARY_COLOR,
+    "defaultRadius": "sm",
+    "fontWeights": {"medium": 500},
+    "components": {
+        "Switch": {"defaultProps": {"withThumbIndicator": False}},
+    },
 }
 
 
