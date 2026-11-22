@@ -1,6 +1,5 @@
 from enum import Enum
 
-import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
 
@@ -16,11 +15,11 @@ def notification(message: str, type: NotificationType):
     icon  = type.value[0]["icon"]
     color = type.value[0]["color"]
 
-    return dmc.Notification(
-         title=title,
-         id=f"id-notification-{title}",
-         action="show",
-         message=message,
-         color=color,
-         icon=DashIconify(icon=icon, height=24)
-     )
+    return [dict(
+        title=title,
+        id=f"id-notification-{title}",
+        action="show",
+        message=message,
+        color=color,
+        icon=DashIconify(icon=icon, height=24),
+    )]

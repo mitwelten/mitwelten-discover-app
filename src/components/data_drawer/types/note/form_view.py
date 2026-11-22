@@ -237,7 +237,7 @@ def marker_click(coordinates):
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_ATTACHMENTS, "children", allow_duplicate=True),
-    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
+    Output(ID_NOTIFICATION, "sendNotifications", allow_duplicate=True),
     Input(ID_IMAGE_UPLOAD, "contents"),
     State(ID_IMAGE_UPLOAD, "filename"),
     State(ID_EDIT_NOTE_STORE, "data"),
@@ -354,7 +354,7 @@ def find_added_tags(modified_note, original_note):
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
-    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
+    Output(ID_NOTIFICATION, "sendNotifications", allow_duplicate=True),
     Output(ID_TAG_DATA_STORE, "data", allow_duplicate=True),
     Input(ID_NOTE_FORM_SAVE_BUTTON, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),

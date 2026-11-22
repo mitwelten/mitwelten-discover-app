@@ -237,7 +237,7 @@ def delete_click(click):
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_NOTE_CONTAINER, "children", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "size", allow_duplicate=True),
-    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
+    Output(ID_NOTIFICATION, "sendNotifications", allow_duplicate=True),
     Input({"button":"edit_note", "note_id": ALL}, "n_clicks"),
     State({"role": "Note", "label": "Store", "type": "virtual"}, "data"),
     State(ID_TAG_DATA_STORE, "data"),

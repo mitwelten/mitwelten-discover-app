@@ -28,7 +28,7 @@ confirm_dialogs = [
 @app.callback(
     Output(ID_EDIT_NOTE_STORE, "data", allow_duplicate=True),
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
+    Output(ID_NOTIFICATION, "sendNotifications", allow_duplicate=True),
     Output({"role": "Note", "label": "Store", "type": "virtual"}, "data", allow_duplicate=True),
     Input(ID_CONFIRM_DELETE_DIALOG, "submit_n_clicks"),
     State(ID_EDIT_NOTE_STORE, "data"),

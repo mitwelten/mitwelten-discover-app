@@ -63,7 +63,6 @@ def app_content(args):
             map_figure(url_params, active_depl),
             chart_drawer(url_params, active_depl, notes, env_data),
             settings_drawer(url_params, tags, active_depl, deployments),
-            html.Div(id=ID_NOTIFICATION),
             dcc.Location(id=ID_URL_LOCATION, refresh=False),
         ]
 
@@ -87,7 +86,7 @@ def discover_app(**kwargs):
             id=ID_APP_THEME,
             theme=app_theme,    
             children=[
-                dmc.NotificationProvider(position="bottom-right"),
+                dmc.NotificationContainer(id=ID_NOTIFICATION, position="bottom-right"),
                 html.Div(
                     id=ID_APP_CONTAINER,
                      children=app_content(kwargs) if backend_available 

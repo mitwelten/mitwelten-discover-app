@@ -115,7 +115,7 @@ def chart_drawer(params: UrlParameter, device: BaseDeployment | None, all_notes,
 
 @app.callback(
     Output(ID_CHART_DRAWER, "opened", allow_duplicate=True),
-    Output(ID_NOTIFICATION, "children", allow_duplicate=True),
+    Output(ID_NOTIFICATION, "sendNotifications", allow_duplicate=True),
     Output(ID_LOADER, "visible", allow_duplicate=True),
     Output(ID_CHART_DRAWER_HEADER, "children"),
     Input(ID_SELECTED_MARKER_STORE, "data"),
