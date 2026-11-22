@@ -28,7 +28,7 @@ jobs:
 
       - name: Docker Build 
         run: |
-          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} .
+          docker build --pull -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} .
 
       - name: Docker Push
         run: |
