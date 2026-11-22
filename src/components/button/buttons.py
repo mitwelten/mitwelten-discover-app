@@ -1,4 +1,4 @@
-from dash.dash import flask
+import flask
 from src.config.app_config import CHART_DRAWER_HEIGHT, PRIMARY_COLOR
 import dash_mantine_components as dmc
 from dash import Output, Input, html, State, no_update, ctx

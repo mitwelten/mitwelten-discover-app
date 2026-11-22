@@ -1,4 +1,3 @@
-import dash_html_components as html
 import dash_mantine_components as dmc
 from dash import Output, Input, State, ALL
 from dash_extensions import EventListener

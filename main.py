@@ -2,7 +2,7 @@ import time
 
 from fastapi import FastAPI
 from fastapi import Request, HTTPException, status
-from fastapi.middleware.wsgi import WSGIMiddleware
+from a2wsgi import WSGIMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from keycloak import KeycloakOpenID
