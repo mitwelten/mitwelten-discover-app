@@ -1,0 +1,12 @@
+.git
+.github
+.venv
+venv
+.env
+**/__pycache__
+cache
+tests
+build-docker.sh
+run-tests.sh
+start-server.sh
+src/assets/markers/test
