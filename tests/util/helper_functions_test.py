@@ -31,18 +31,31 @@ class FunctionsTestSuite(unittest.TestCase):
         self.assertEqual(result, 6)
 
     def test_safe_reduce_only_none_values(self):
+        # returns the start value, callers check `click_sum == 0`
         result = safe_reduce(lambda x, y: x + y, [None, None, None], 0)
+        self.assertEqual(result, 0)
+
+    def test_safe_reduce_only_none_values_no_start(self):
+        result = safe_reduce(lambda x, y: x + y, [None, None, None], None)
         self.assertEqual(result, None)
 
     def test_safe_reduce_start_value(self):
         result = safe_reduce(lambda x, y: x + y, [0, 1, 2], 10)
         self.assertEqual(result, 13)
 
+    def test_safe_reduce_no_start_value(self):
+        result = safe_reduce(lambda x, y: x + y, [1, 2, 3], None)
+        self.assertEqual(result, 6)
+
     def test_safe_reduce_empty_iterable(self):
-        result = safe_reduce(lambda x, y: x + y, [])
+        result = safe_reduce(lambda x, y: x + y, [], 0)
+        self.assertEqual(result, 0)
+
+    def test_safe_reduce_empty_iterable_no_start(self):
+        result = safe_reduce(lambda x, y: x + y, [], None)
         self.assertEqual(result, None)
 
-    # Attention: Run the hole file to get this test work!
+    # Attention: Run the whole file to get this test work!
     # was_deployed function tests
     @parameterized.expand([
         # yyyy-mm-dd
