@@ -5,6 +5,7 @@ from fastapi import Request, HTTPException, status
 from a2wsgi import WSGIMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2AuthorizationCodeBearer
+from jwcrypto import jwk
 from keycloak import KeycloakOpenID
 from urllib import parse
 import logging
@@ -33,11 +34,17 @@ oauth2_scheme = OAuth2AuthorizationCodeBearer(
     authorizationUrl=f"{KC_SERVER_URL}realms/{KC_REALM_NAME}/protocol/openid-connect/auth",
     tokenUrl=f"{KC_SERVER_URL}realms/{KC_REALM_NAME}/protocol/openid-connect/token",
 )
-KEYCLOAK_PUBLIC_KEY = (
-    "-----BEGIN PUBLIC KEY-----\n"
-    + keycloak_openid.public_key()
-    + "\n-----END PUBLIC KEY-----"
+KEYCLOAK_PUBLIC_KEY = jwk.JWK.from_pem(
+    (
+        "-----BEGIN PUBLIC KEY-----\n"
+        + keycloak_openid.public_key()
+        + "\n-----END PUBLIC KEY-----"
+    ).encode()
 )
+
+
+def decode_token(token: str) -> dict:
+    return keycloak_openid.decode_token(token, key=KEYCLOAK_PUBLIC_KEY)
 
 
 async def get_current_user(request: Request):
@@ -47,21 +54,13 @@ async def get_current_user(request: Request):
     if auth_header:
         auth_header = auth_header.split(" ")[1]
         try:
-            return keycloak_openid.decode_token(
-                auth_header,
-                key=KEYCLOAK_PUBLIC_KEY,
-                options={"verify_signature": True, "verify_aud": False, "exp": True},
-            )
+            return decode_token(auth_header)
         except:
             pass
     cookie_authorization: str = request.cookies.get("auth")
     if cookie_authorization is not None:
         try:
-            return keycloak_openid.decode_token(
-                cookie_authorization,
-                key=KEYCLOAK_PUBLIC_KEY,
-                options={"verify_signature": True, "verify_aud": False, "exp": True},
-            )
+            return decode_token(cookie_authorization)
         except:
             pass
 
