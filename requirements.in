@@ -1,0 +1,21 @@
+# top-level dependencies
+# compile the pinned requirements.txt from this file.
+a2wsgi           # replaces the deprecated starlette WSGIMiddleware
+dash
+dash-extensions
+dash-iconify
+dash-leaflet
+dash-mantine-components
+diskcache
+fastapi
+flask
+jwcrypto         # token verification (also used by python-keycloak)
+pandas
+plotly
+pyjwt
+python-dotenv
+python-keycloak
+pytz
+requests
+uvicorn
+parameterized    # tests only
